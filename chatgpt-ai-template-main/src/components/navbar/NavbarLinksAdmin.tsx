@@ -14,12 +14,12 @@ import {
   useColorMode,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { SearchBar } from '../src/components/navbar/searchBar/SearchBar';
-import { SidebarResponsive } from '../src/components/sidebar/Sidebar';
+import { SearchBar } from '../../src/components/navbar/searchBar/SearchBar';
+import { SidebarResponsive } from '../../src/components/sidebar/Sidebar';
 import { IoMdMoon, IoMdSunny } from 'react-icons/io';
-import APIModal from '../src/components/apiModal';
+import APIModal from '../../src/components/apiModal';
 import NavLink from '../link/NavLink';
-import routes from '../src/routes';
+import routes from '../../src/routes';
 
 export default function HeaderLinks(props: {
   secondary: boolean;
