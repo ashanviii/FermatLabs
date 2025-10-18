@@ -1,9 +1,9 @@
 'use client';
 import React, { ReactNode } from 'react';
-import '@/styles/App.css';
-import '@/styles/Contact.css';
-import '@/styles/Plugins.css';
-import '@/styles/MiniCalendar.css';
+import '../src/styles/App.css';
+import '../src/styles/Contact.css';
+import '../src/styles/Plugins.css';
+import '../src/styles/MiniCalendar.css';
 import { ChakraProvider } from '@chakra-ui/react';
 
 // import dynamic from 'next/dynamic';
