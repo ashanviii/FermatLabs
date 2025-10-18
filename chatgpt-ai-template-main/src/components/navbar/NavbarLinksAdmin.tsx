@@ -14,7 +14,7 @@ import {
   useColorMode,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { SearchBar } from '../searchBar/SearchBar';
+import { SearchBar } from './searchBar/SearchBar';
 import { SidebarResponsive } from '../sidebar/Sidebar';
 import { IoMdMoon, IoMdSunny } from 'react-icons/io';
 import APIModal from '../apiModal';
