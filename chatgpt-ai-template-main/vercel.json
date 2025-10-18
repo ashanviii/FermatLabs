@@ -15,14 +15,6 @@
   "env": {
     "NEXT_PUBLIC_BASE_PATH": ""
   },
-  "functions": {
-    "app/api/chatAPI/route.ts": {
-      "maxDuration": 60
-    },
-    "app/api/redditRAG/route.ts": {
-      "maxDuration": 30
-    }
-  },
-  "regions": ["iad1"],
+   "regions": ["iad1"],
   "framework": "nextjs"
 }
