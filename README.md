@@ -2,7 +2,7 @@
 
 A comprehensive Retrieval-Augmented Generation (RAG) system that scrapes Reddit posts and provides AI-powered Q&A using OpenAI's GPT models and semantic search.
 
-## 🚀 Features
+## 🚀 Feature
 
 - **Multi-Subreddit Support**: Scrapes and processes posts from r/h1b, r/USCIS, r/Indians_StudyAbroad, and r/SchengenVisa
 - **Semantic Search**: Uses sentence transformers for finding relevant posts
