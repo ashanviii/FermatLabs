@@ -1,19 +1,22 @@
 'use client';
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode } from 'react';
+import type { AppProps } from 'next/app';
 import { ChakraProvider, Box, Portal, useDisclosure } from '@chakra-ui/react';
-import theme from '@/theme/theme';
-import routes from '@/routes';
-import Sidebar from '@/components/sidebar/Sidebar';
-import Footer from '@/components/footer/FooterAdmin';
-import Navbar from '@/components/navbar/NavbarAdmin';
-import { getActiveRoute, getActiveNavbar } from '@/utils/navigation';
+import theme from '../src/theme/theme';
+import routes from '../src/routes';
+import Sidebar from '../src/components/sidebar/Sidebar';
+import Footer from '../src/components/footer/FooterAdmin';
+import Navbar from '../src/components/navbar/NavbarAdmin';
+import { getActiveRoute, getActiveNavbar } from '../src/utils/navigation';
 import { usePathname } from 'next/navigation';
-import '@/styles/App.css';
-import '@/styles/Contact.css';
-import '@/styles/Plugins.css';
-import '@/styles/MiniCalendar.css';
+import { useEffect, useState } from 'react';
+import '../src/styles/App.css';
+import '../src/styles/Contact.css';
+import '../src/styles/Plugins.css';
+import '../src/styles/MiniCalendar.css';
 import AppWrappers from './AppWrappers';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
