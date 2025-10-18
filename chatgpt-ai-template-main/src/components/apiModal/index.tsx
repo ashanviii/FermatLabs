@@ -1,5 +1,5 @@
 'use client';
-import Card from '@/components/card/Card';
+import Card from '../card/Card';
 import {
   Accordion,
   AccordionItem,
