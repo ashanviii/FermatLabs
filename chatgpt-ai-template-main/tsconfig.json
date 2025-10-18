@@ -15,13 +15,13 @@
     "isolatedModules": true,
     "incremental": true,
 
-    // 👇 ADD THESE TWO LINES
+    // ✅ Ensures Node types + correct alias base
     "types": ["node"],
-    "baseUrl": ".",
+    "baseUrl": "src",
 
-    // 👇 FIXED: correct alias resolution
+    // ✅ Correct alias resolution for @/
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["*"]
     },
 
     "plugins": [{ "name": "next" }]
