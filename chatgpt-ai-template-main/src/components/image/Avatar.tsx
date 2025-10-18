@@ -28,7 +28,7 @@ export function NextAvatar({
           }
         : {})}
       alt={alt}
-      objectFit={{ base: 'fill' }}     // ✅ fixed line
+      objectFit={'fill' as any}  // ✅ build-safe cast
       src={src}
       style={{ ...style, borderRadius: '50%' }}
     />
