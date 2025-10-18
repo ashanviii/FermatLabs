@@ -1,0 +1,39 @@
+UNIFIED REDDIT QA SYSTEM RESULT
+==================================================
+
+Question: I have lost my passport abroad,what are the next steps
+Generated: 2025-09-29 15:34:45
+
+ANSWER:
+--------------------
+**From r/SchengenVisa:** I'm from Australia and currently traveling in Belgium, but I've lost my passport.
+Post: Hello, Any suggestions or guidance would be really helpful.
+Top Answer: your ONLY option is to contact Australian embassy and apply for temporary passport. you will not be able to travel out of Belgium without it.
+
+
+**From r/h1b:** Indian passport expiration
+Post: My Indian passport is expiring. How do I renew it from USA?
+Top Answer: wrong sub
+
+
+**From r/SchengenVisa:** DPD lost my passport (Spain visa via BLS Dublin ) what happens now?
+Post: Hi all,
+I’m in a really stressful spot and hoping to hear from anyone who’s faced something similar.
+I applied for a Spain visa through BLS Spain Global, and my passport was being returned via DPD. I’ve now been told by DPD that the parcel is “missing,” and they’re suggesting the sender (BLS) needs ...
+Top Answer: I saw some other post as well about lost passport after visa application. Please check in this sub, maybe you will find something helpful there
+
+
+SOURCES:
+--------------------
+1. r/SchengenVisa: I'm from Australia and currently traveling in Belgium, but I've lost my passport.
+   Similarity: 0.739
+   URL: https://www.reddit.com/r/SchengenVisa/comments/1nlrm9h/im_from_australia_and_currently_traveling_in/
+
+2. r/h1b: Indian passport expiration
+   Similarity: 0.540
+   URL: https://www.reddit.com/r/h1b/comments/1niwhs5/indian_passport_expiration/
+
+3. r/SchengenVisa: DPD lost my passport (Spain visa via BLS Dublin ) what happens now?
+   Similarity: 0.516
+   URL: https://www.reddit.com/r/SchengenVisa/comments/1nnnhkn/dpd_lost_my_passport_spain_visa_via_bls_dublin/
+

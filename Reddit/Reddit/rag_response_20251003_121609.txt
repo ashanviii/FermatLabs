@@ -1,0 +1,67 @@
+OPTIMIZED RAG SYSTEM RESPONSE
+==================================================
+
+Query: What are the H1B visa requirements?
+Generated: 2025-10-03 12:16:09
+
+AI RESPONSE:
+--------------------
+Based on the context provided from the Reddit posts, the H-1B visa requirements can be summarized as follows:
+
+1. **General Requirements**: 
+   - The H-1B visa is for foreign workers in specialty occupations that require theoretical or technical expertise.
+   - Employers in the U.S. sponsor H-1B visa holders.
+
+2. **New $100,000 Fee Requirement**:
+   - Starting from September 21, 2025, new H-1B workers entering the U.S. from abroad must be tied to a petition where the employer paid a $100,000 fee.
+   - This fee requirement applies only to individuals entering the U.S. from abroad seeking H-1B visas.
+
+3. **Exception for Status Changes or Extensions**: 
+   - The $100,000 fee requirement does not apply to status changes or extensions processed entirely within the U.S.
+
+4. **Impact on Domestic H-1B Workers**:
+   - The fee requirement may not impact individuals transitioning from F1 student visas to H-1B visas if they are already in the U.S. and their employer is petitioning for a change of status.
+
+5. **Compliance and Enforcement**:
+   - Employers must keep proof of fee payment for new H-1B workers entering the U.S. from abroad.
+   - The State Department will only issue H-1B visas if the fee is paid.
+   - The Department of Homeland Security and the Department of State will coordinate to block entry without the required payment.
+
+6. **Potential Exceptions**:
+   - Exceptions may be granted if hiring certain individuals as H-1B specialty occupation workers is deemed in the national interest and does not pose a threat to the security or welfare of the U.S.
+
+7. **Prevailing Wage and Prioritization**:
+   - The Department of Labor must raise H-1B wage levels.
+   - DHS must propose rules to prioritize high-paid, high-skilled workers in future admissions.
+
+It's important to stay updated on any changes in H-1B visa requirements and consult with immigration authorities or legal experts for personalized guidance based on individual circumstances.
+
+SOURCES:
+--------------------
+1. r/h1b: Does anyone know how this affects the H-1B1?
+   Similarity: 0.657
+   🔗 URL: https://www.reddit.com/r/h1b/comments/1nlzorm/does_anyone_know_how_this_affects_the_h1b1/
+
+2. r/h1b: H1b cap approval
+   Similarity: 0.651
+   🔗 URL: https://www.reddit.com/r/h1b/comments/1ngi7jn/h1b_cap_approval/
+
+3. r/h1b: Honestly what u guys think Arthur Morgan would say about H1B Visa $100k fee requirements.
+   Similarity: 0.627
+   🔗 URL: https://www.reddit.com/r/h1b/comments/1nm3azv/honestly_what_u_guys_think_arthur_morgan_would/
+
+4. r/h1b: Summary of The 100K Restriction Once and for All
+   Similarity: 0.615
+   🔗 URL: https://www.reddit.com/r/h1b/comments/1nlit0i/summary_of_the_100k_restriction_once_and_for_all/
+
+5. r/h1b: Question on New H1B rules
+   Similarity: 0.614
+   🔗 URL: https://www.reddit.com/r/h1b/comments/1nmextc/question_on_new_h1b_rules/
+
+METADATA:
+--------------------
+total_time: 6.028998374938965
+llm_time: 5.9016499519348145
+context_tokens: 1756
+posts_found: 5
+subreddit_filter: None

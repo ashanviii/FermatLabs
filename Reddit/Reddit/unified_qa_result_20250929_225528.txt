@@ -1,0 +1,38 @@
+UNIFIED REDDIT QA SYSTEM RESULT
+==================================================
+
+Question: i love sachin
+Generated: 2025-09-29 22:55:28
+
+ANSWER:
+--------------------
+**From r/h1b:** Hard times create strong men. Strong men build their own path.
+Post: And sometimes you realize the war chest you’ve saved is already enough to carry you for decades back home.
+I created this post a few days back in r/backtoindia
+https://www.reddit.com/r/backtoindia/comments/1nijdgp/living\_20\_years\_in\_india\_off\_just\_350k\_heres\_the/
+I am definitely moving back...
+
+
+**From r/SchengenVisa:** the visa application is pending ne demek
+Post: eksik bir belgem vardı onu yollamıstım. aradan 7 gun gecti durumu sordum bunu dediler ne demek oluyor?
+Top Answer: vize başvurusu beklemede
+
+
+**From r/h1b:** God is with us
+Top Answer: Which one?
+
+
+SOURCES:
+--------------------
+1. r/h1b: Hard times create strong men. Strong men build their own path.
+   Similarity: 0.212
+   URL: https://www.reddit.com/r/h1b/comments/1nly7z5/hard_times_create_strong_men_strong_men_build/
+
+2. r/SchengenVisa: the visa application is pending ne demek
+   Similarity: 0.211
+   URL: https://www.reddit.com/r/SchengenVisa/comments/1nc4zux/the_visa_application_is_pending_ne_demek/
+
+3. r/h1b: God is with us
+   Similarity: 0.195
+   URL: https://www.reddit.com/r/h1b/comments/1nmdi5d/god_is_with_us/
+

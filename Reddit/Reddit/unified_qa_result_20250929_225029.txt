@@ -1,0 +1,42 @@
+UNIFIED REDDIT QA SYSTEM RESULT
+==================================================
+
+Question: Hi,I am working remotely in my home country and would be working in France under a researcher visa (Passeport talent - chercheur), is it legal
+Generated: 2025-09-29 22:50:29
+
+ANSWER:
+--------------------
+**From r/SchengenVisa:** Remote work while on a type D VISA
+Post: Hello, I'm currently working remotely with a company in my home country on an hourly basis (1-2 hours per day). In a few months, I will start a research engineer position at a university in France under a researcher visa (Passeport talent - chercheur)
+I would like to know if it is legally possible t...
+Top Answer: The income is derived from your home country not France. As long as the justification for your residency in France is valid it is not an issue. You will have to report income on your tax declarations and pay tax for that work in France though.
+
+
+**From r/SchengenVisa:** Can you work remote on a student Visa?
+Post: I work remote for a US company, I pay my taxes, and I'm a citizen of the US. However, I'll be starting a Masters Degree in an Italian University, it's to my understanding that I could work for a local company like 20hrs/week with my student Visa, but why would I do that when I already have a remote ...
+Top Answer: "Could".
+it says "could", not "have to". 
+It's optional.
+It's not compulsory.   
+You'll need to check how to pay your compulsory social security contributions to Italy, since you'll be working IN and FROM Italy.
+And you should also take the time to understand your tax position as a legal resident of...
+
+
+**From r/SchengenVisa:** Work in france
+Post: I would like to know if employers in France usually offer work contracts to foreigners only when they are already residing in France, or if it is also possible to receive a contract while applying from abroad?
+
+
+SOURCES:
+--------------------
+1. r/SchengenVisa: Remote work while on a type D VISA
+   Similarity: 0.785
+   URL: https://www.reddit.com/r/SchengenVisa/comments/1nnvjg0/remote_work_while_on_a_type_d_visa/
+
+2. r/SchengenVisa: Can you work remote on a student Visa?
+   Similarity: 0.581
+   URL: https://www.reddit.com/r/SchengenVisa/comments/1ncov7l/can_you_work_remote_on_a_student_visa/
+
+3. r/SchengenVisa: Work in france
+   Similarity: 0.547
+   URL: https://www.reddit.com/r/SchengenVisa/comments/1naq4kd/work_in_france/
+

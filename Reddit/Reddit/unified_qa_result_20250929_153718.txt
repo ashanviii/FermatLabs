@@ -1,0 +1,45 @@
+UNIFIED REDDIT QA SYSTEM RESULT
+==================================================
+
+Question: Hello, I'm currently working remotely with a company in my home country on an hourly basis (1-2 hours per day). In a few months, I will start a research engineer position at a university in France under a researcher visa (Passeport talent - chercheur)
+Generated: 2025-09-29 15:37:18
+
+ANSWER:
+--------------------
+**From r/SchengenVisa:** Remote work while on a type D VISA
+Post: Hello, I'm currently working remotely with a company in my home country on an hourly basis (1-2 hours per day). In a few months, I will start a research engineer position at a university in France under a researcher visa (Passeport talent - chercheur)
+I would like to know if it is legally possible t...
+Top Answer: The income is derived from your home country not France. As long as the justification for your residency in France is valid it is not an issue. You will have to report income on your tax declarations and pay tax for that work in France though.
+
+
+**From r/SchengenVisa:** Can you work remote on a student Visa?
+Post: I work remote for a US company, I pay my taxes, and I'm a citizen of the US. However, I'll be starting a Masters Degree in an Italian University, it's to my understanding that I could work for a local company like 20hrs/week with my student Visa, but why would I do that when I already have a remote ...
+Top Answer: "Could".
+it says "could", not "have to". 
+It's optional.
+It's not compulsory.   
+You'll need to check how to pay your compulsory social security contributions to Italy, since you'll be working IN and FROM Italy.
+And you should also take the time to understand your tax position as a legal resident of...
+
+
+**From r/SchengenVisa:** Algerian chemical engineer looking for options to work in Europe – and I also work as a technical sales engineer. I’m fluent in French and English.
+Post: Hi everyone,
+I’m an Algerian citizen, a chemical engineer with 4 years of experience, and I also work as a technical sales engineer. I’m fluent in French and English.
+I’ve been trying to find opportunities to work in Europe, but I’m completely stuck in a loop: companies ask for a work permit, but I ...
+Top Answer: Welcome to the jungle, they usually offer work permit
+
+
+SOURCES:
+--------------------
+1. r/SchengenVisa: Remote work while on a type D VISA
+   Similarity: 0.865
+   URL: https://www.reddit.com/r/SchengenVisa/comments/1nnvjg0/remote_work_while_on_a_type_d_visa/
+
+2. r/SchengenVisa: Can you work remote on a student Visa?
+   Similarity: 0.639
+   URL: https://www.reddit.com/r/SchengenVisa/comments/1ncov7l/can_you_work_remote_on_a_student_visa/
+
+3. r/SchengenVisa: Algerian chemical engineer looking for options to work in Europe – and I also work as a technical sales engineer. I’m fluent in French and English.
+   Similarity: 0.592
+   URL: https://i.redd.it/jabt4024zqof1.jpeg
+
