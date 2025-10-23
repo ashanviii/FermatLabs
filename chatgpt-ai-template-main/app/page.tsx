@@ -82,7 +82,7 @@ export default function Chat() {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://3.111.217.13:8000/api/redditRAG?query=${encodeURIComponent(inputCode)}`,
+        `/api/redditRAG?query=${encodeURIComponent(inputCode)}`,
         { method: 'GET', headers: { 'Content-Type': 'application/json' } }
       );
       if (!response.ok) throw new Error(`API error: ${response.status}`);
