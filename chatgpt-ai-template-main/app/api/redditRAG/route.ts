@@ -14,7 +14,7 @@ export async function POST(req: Request): Promise<Response> {
     }
 
     // Your Reddit RAG API configuration
-    const REDDIT_RAG_API_URL = 'http://localhost:8000';
+    const REDDIT_RAG_API_URL = 'http://3.111.217.13:8000';
     const endpoint = '/query';
     
     // Make request to your Reddit RAG API with the correct parameter name 'q'
@@ -55,7 +55,7 @@ export async function GET(req: Request): Promise<Response> {
     }
 
     // Your Reddit RAG API configuration
-    const REDDIT_RAG_API_URL = 'http://localhost:8000';
+    const REDDIT_RAG_API_URL = 'http://3.111.217.13:8000';
     const endpoint = '/query';
     const fullUrl = `${REDDIT_RAG_API_URL}${endpoint}?q=${encodeURIComponent(query)}`;
     
