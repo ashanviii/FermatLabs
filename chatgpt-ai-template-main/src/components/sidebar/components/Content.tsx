@@ -70,7 +70,8 @@ function SidebarContent(props: SidebarContent) {
         </Box>
       </Stack>
 
-      <APIModal setApiKey={setApiKey} sidebar={true} />
+      {/* <APIModal setApiKey={setApiKey} sidebar={true} /> */}
+      {/* User Profile Section Commented Out
       <Flex
         mt="8px"
         justifyContent="center"
@@ -272,6 +273,7 @@ function SidebarContent(props: SidebarContent) {
           <Icon as={FiLogOut} width="16px" height="16px" color="inherit" />
         </Button>
       </Flex>
+      */}
     </Flex>
   );
 }

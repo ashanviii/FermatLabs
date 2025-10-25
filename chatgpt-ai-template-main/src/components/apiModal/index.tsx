@@ -27,11 +27,13 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { MdLock } from 'react-icons/md';
+import { useAuth } from '../../contexts/AuthContext';
 
 function APIModal(props: { setApiKey: any; sidebar?: boolean }) {
   const { setApiKey, sidebar } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [inputCode, setInputCode] = useState<string>('');
+  const { user } = useAuth();
 
   const textColor = useColorModeValue('navy.700', 'white');
   const grayColor = useColorModeValue('gray.500', 'gray.500');
@@ -53,33 +55,33 @@ function APIModal(props: { setApiKey: any; sidebar?: boolean }) {
   return (
     <>
       {sidebar ? (
-        <Button
-          onClick={onOpen}
-          display="flex"
-          variant="api"
+        <Text
+          color="white"
           fontSize={'sm'}
           fontWeight="600"
           borderRadius={'45px'}
           mt="8px"
           minH="40px"
+          display="flex"
+          alignItems="center"
+          px="16px"
         >
-          Set API Key
-        </Button>
+          {user?.displayName || 'User'}
+        </Text>
       ) : (
-        <Button
-          onClick={onOpen}
-          minW="max-content !important"
-          p="0px"
-          me="10px"
-          _hover={{ bg: 'none' }}
-          _focus={{ bg: 'none' }}
-          _selected={{ bg: 'none' }}
-          bg="none !important"
+        <Text
+          color="white"
+          fontSize={'sm'}
+          fontWeight="600"
+          display="flex"
+          alignItems="center"
+          px="10px"
         >
-          <Icon w="18px" h="18px" as={MdLock} color={navbarIcon} />
-        </Button>
+          {user?.displayName || 'User'}
+        </Text>
       )}
 
+      {/* Commented out API Key Modal
       <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent bg="none" boxShadow="none">
@@ -246,6 +248,7 @@ function APIModal(props: { setApiKey: any; sidebar?: boolean }) {
           </Card>
         </ModalContent>
       </Modal>
+      */}
     </>
   );
 }
