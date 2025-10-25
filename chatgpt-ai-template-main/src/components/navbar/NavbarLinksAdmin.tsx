@@ -1,6 +1,7 @@
 'use client';
 // Chakra Imports
 import {
+  Avatar,
   Box,
   Button,
   Center,
@@ -20,6 +21,7 @@ import { IoMdMoon, IoMdSunny } from 'react-icons/io';
 import APIModal from '../apiModal';
 import NavLink from '../link/NavLink';
 import routes from '../../routes';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function HeaderLinks(props: {
   secondary: boolean;
@@ -27,6 +29,7 @@ export default function HeaderLinks(props: {
 }) {
   const { secondary, setApiKey } = props;
   const { colorMode, toggleColorMode } = useColorMode();
+  const { user, logOut } = useAuth();
 
   // Chakra Color Mode
   const navbarIcon = useColorModeValue('gray.600', 'gray.300');
@@ -51,11 +54,11 @@ export default function HeaderLinks(props: {
       boxShadow={shadow}
     >
       {/* Search Bar */}
-      <SearchBar
+      {/* <SearchBar
         placeholder="Search ..."
         me="10px"
         borderRadius="25px"
-      />
+      /> */}
 
       {/* Sidebar Responsive for mobile */}
       <SidebarResponsive routes={routes} />
@@ -64,6 +67,7 @@ export default function HeaderLinks(props: {
       <APIModal setApiKey={setApiKey} />
 
       {/* Theme Toggle */}
+      {/* Theme Toggle Button Commented Out
       <Button
         variant="ghost"
         bg="transparent"
@@ -83,29 +87,20 @@ export default function HeaderLinks(props: {
           as={colorMode === 'light' ? IoMdMoon : IoMdSunny}
         />
       </Button>
+      */}
 
       {/* Profile Menu */}
       <Menu>
         <MenuButton p="0px" style={{ position: 'relative' }}>
-          <Box
+          <Avatar
             _hover={{ cursor: 'pointer' }}
             color="white"
             bg="gray.700"
             w="40px"
             h="40px"
-            borderRadius={'50%'}
+            src={user?.photoURL || undefined}
+            name={user?.displayName || 'User'}
           />
-          <Center
-            top={0}
-            left={0}
-            position={'absolute'}
-            w={'100%'}
-            h={'100%'}
-          >
-            <Text fontSize={'xs'} fontWeight="bold" color={'white'}>
-              ST
-            </Text>
-          </Center>
         </MenuButton>
         <MenuList
           boxShadow={shadow}
@@ -128,7 +123,7 @@ export default function HeaderLinks(props: {
               fontWeight="700"
               color={textColor}
             >
-              👋&nbsp; Hey, Srijan
+              👋&nbsp; Hey, {user?.displayName || 'User'}
             </Text>
           </Flex>
           <Flex flexDirection="column" p="10px">
@@ -144,6 +139,7 @@ export default function HeaderLinks(props: {
                 </Text>
               </MenuItem>
             </NavLink>
+            {/* Newsletter Settings Commented Out
             <MenuItem
               _hover={{ bg: 'gray.50', _dark: { bg: 'gray.800' } }}
               color={textColor}
@@ -154,11 +150,19 @@ export default function HeaderLinks(props: {
                 Newsletter Settings
               </Text>
             </MenuItem>
+            */}
             <MenuItem
               _hover={{ bg: 'gray.50', _dark: { bg: 'gray.800' } }}
               color="red.400"
               borderRadius="8px"
               px="14px"
+              onClick={async () => {
+                try {
+                  await logOut();
+                } catch (error) {
+                  console.error('Error logging out:', error);
+                }
+              }}
             >
               <Text fontWeight="500" fontSize="sm">
                 Log out

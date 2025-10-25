@@ -22,7 +22,7 @@ import { useAuth } from '../src/contexts/AuthContext';
 export default function Chat() {
   const [inputCode, setInputCode] = useState('');
   const [outputCode, setOutputCode] = useState('');
-  const [model, setModel] = useState<OpenAIModel>('gpt-4o');
+  const [model, setModel] = useState<OpenAIModel>('reddit-rag');
   const [loading, setLoading] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
   
@@ -190,7 +190,7 @@ export default function Chat() {
       transition="opacity 0.8s ease"
     >
       {/* Header */}
-      <Flex justify="center" align="center" mt="20px" mb="30px" gap="12px">
+      {/* <Flex justify="center" align="center" mt="20px" mb="30px" gap="12px">
         {avatar && (
           <Img src={avatar} alt="user" borderRadius="full" w="36px" h="36px" />
         )}
@@ -206,7 +206,7 @@ export default function Chat() {
         >
           Logout
         </Button>
-      </Flex>
+      </Flex> */}
 
       {/* ✈️ Background Plane */}
       {!outputCode && (
@@ -224,7 +224,7 @@ export default function Chat() {
       )}
 
       {/* Model Selector */}
-      <Flex direction="column" align="center" zIndex={1} mb={outputCode ? '10px' : '40px'}>
+      {/* <Flex direction="column" align="center" zIndex={1} mb={outputCode ? '10px' : '40px'}>
         <Flex w="max-content" borderRadius="60px" boxShadow="sm" gap="20px">
           {[
             { label: 'GPT-4o', value: 'gpt-4o', icon: MdAutoAwesome },
@@ -262,7 +262,7 @@ export default function Chat() {
             </Flex>
           ))}
         </Flex>
-      </Flex>
+      </Flex> */}
 
       {/* Output */}
       {outputCode && (
