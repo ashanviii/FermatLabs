@@ -5,6 +5,8 @@ import Link from '@/components/link/Link';
 import MessageBoxChat from '@/components/MessageBox';
 import TypewriterText from '../src/components/TypewriterText';
 import ThinkingAnimation from '../src/components/ThinkingAnimation';
+import FormattedAnswer from '../src/components/FormattedAnswer';
+import AnswerContainer from '../src/components/AnswerContainer';
 import { ChatBody, OpenAIModel } from '@/types/types';
 import {
   Box,
@@ -28,11 +30,22 @@ export default function Chat() {
   const [model, setModel] = useState<OpenAIModel>('reddit-rag');
   const [loading, setLoading] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
+  const [showMainUI, setShowMainUI] = useState(false);
   const [showTypewriter, setShowTypewriter] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   
   // Use Firebase auth
   const { user, loading: authLoading, signInWithGoogle, logOut } = useAuth();
+
+  // Handle showing main UI after authentication
+  useEffect(() => {
+    if (user && !authLoading && !showMainUI) {
+      setTimeout(() => {
+        setShowMainUI(true);
+      }, 300);
+    }
+  }, [user, authLoading, showMainUI]);
 
   const borderColor = useColorModeValue('gray.200', 'whiteAlpha.200');
   const iconColor = useColorModeValue('brand.500', 'white');
@@ -53,9 +66,11 @@ export default function Chat() {
     try {
       setFadeOut(true);
       await signInWithGoogle();
+      // Add a delay before showing main UI for smooth transition
       setTimeout(() => {
+        setShowMainUI(true);
         setFadeOut(false);
-      }, 600);
+      }, 800);
     } catch (error) {
       console.error('Google Sign In Error:', error);
       alert('Google Login Failed');
@@ -94,11 +109,21 @@ export default function Chat() {
 
   const handleTranslate = async () => {
     if (!inputCode) return alert('Please enter your message.');
+    
+    // Start transition immediately
+    setIsTransitioning(true);
+    
+    // Clear previous states
     setOutputCode('');
     setFullAnswer('');
     setShowTypewriter(false);
     setIsTyping(false);
-    setLoading(true);
+    
+    // Small delay to show the transition effect before loading
+    setTimeout(() => {
+      setLoading(true);
+    }, 200);
+    
     try {
       const response = await fetch(
         `/api/redditRAG?query=${encodeURIComponent(inputCode)}`,
@@ -108,16 +133,21 @@ export default function Chat() {
       const data = await response.json();
       const answer = data.answer || 'No answer found.';
       setFullAnswer(answer); // Store the complete answer
-      // Small delay before starting typewriter to show loading completed
+      
+      // Smooth transition from loading to typewriter
       setTimeout(() => {
-        setShowTypewriter(true);
-        setIsTyping(true);
+        setLoading(false);
+        setTimeout(() => {
+          setShowTypewriter(true);
+          setIsTyping(true);
+          setIsTransitioning(false);
+        }, 400);
       }, 300);
     } catch (err) {
       console.error(err);
       alert('Backend connection failed.');
-    } finally {
       setLoading(false);
+      setIsTransitioning(false);
     }
   };
 
@@ -187,13 +217,33 @@ export default function Chat() {
         direction="column"
         justify="center"
         align="center"
-        bg="transparent"
+        bg="white"
         color="black"
         textAlign="center"
+        position="relative"
       >
-        <Text fontSize="lg" fontWeight="500">
-          Loading...
-        </Text>
+        <Img
+          src={Bg.src}
+          alt="background"
+          position="absolute"
+          top="50%"
+          left="50%"
+          transform="translate(-50%, -50%) scale(0.6)"
+          w="200px"
+          opacity={0.2}
+          zIndex="0"
+          pointerEvents="none"
+          animation="float 3s ease-in-out infinite"
+          sx={{
+            '@keyframes float': {
+              '0%, 100%': { transform: 'translate(-50%, -50%) scale(0.6)' },
+              '50%': { transform: 'translate(-50%, -52%) scale(0.6)' }
+            }
+          }}
+        />
+        <Box zIndex="2">
+          <ThinkingAnimation text="Preparing your journey" />
+        </Box>
       </Flex>
     );
   }
@@ -208,11 +258,12 @@ export default function Chat() {
       minH="100vh"
       direction="column"
       align="center"
-      justify={outputCode || loading || fullAnswer ? 'flex-start' : 'center'}
+      justify={outputCode || loading || fullAnswer || isTransitioning ? 'flex-start' : 'center'}
       position="relative"
       bg="white"
-      opacity={fadeOut ? 0 : 1}
-      transition="opacity 0.8s ease"
+      opacity={showMainUI ? 1 : 0}
+      transform={showMainUI ? 'translateY(0)' : 'translateY(20px)'}
+      transition="all 0.8s cubic-bezier(0.4, 0, 0.2, 1)"
     >
       {/* Header */}
       {/* <Flex justify="center" align="center" mt="20px" mb="30px" gap="12px">
@@ -234,7 +285,7 @@ export default function Chat() {
       </Flex> */}
 
       {/* ✈️ Background Plane */}
-      {!outputCode && !loading && !fullAnswer && (
+      {!outputCode && !loading && !fullAnswer && !isTransitioning && (
         <Img
           src={Bg.src}
           position="absolute"
@@ -242,9 +293,10 @@ export default function Chat() {
           left="50%"
           top="48%"
           transform="translate(-50%, -50%)"
-          opacity="0.9"
+          opacity={showMainUI ? "0.9" : "0"}
           zIndex={0}
           pointerEvents="none"
+          transition="opacity 1.2s ease 0.3s"
         />
       )}
 
@@ -290,58 +342,59 @@ export default function Chat() {
       </Flex> */}
 
       {/* Output */}
-      {(outputCode || loading || fullAnswer) && (
-        <Flex
-          direction="column"
-          w="100%"
-          maxW="880px"
-          bg="whiteAlpha.70"
-          border="1px solid"
-          borderColor={borderColor}
-          borderRadius="18px"
-          p="24px"
+      {(outputCode || loading || fullAnswer || isTransitioning) && (
+        <Box
           mt="20px"
-          boxShadow="sm"
           zIndex={1}
+          opacity={showMainUI ? 1 : 0}
+          transform={showMainUI ? 'translateY(0)' : 'translateY(30px)'}
+          transition="all 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.4s"
         >
-          {showTypewriter ? (
-            <TypewriterText
-              text={fullAnswer}
-              speed={5}
-              showCursor={true}
-              onComplete={() => {
-                setIsTyping(false);
-                setOutputCode(fullAnswer); // Set the final output when complete
-                console.log('Typewriter animation completed');
-              }}
-            />
-          ) : outputCode && !loading ? (
-            <Text color={textColor} whiteSpace="pre-wrap" fontSize="md" fontWeight="500">
-              {outputCode}
-            </Text>
-          ) : (
-            <>
-              {loading && <ThinkingAnimation />}
-            </>
-          )}
-        </Flex>
+          <AnswerContainer
+            content={outputCode || ''}
+            isThinking={loading || isTransitioning}
+          >
+            {showTypewriter ? (
+              <TypewriterText
+                text={fullAnswer}
+                speed={5}
+                showCursor={true}
+                useFormatting={true}
+                onComplete={() => {
+                  setIsTyping(false);
+                  setOutputCode(fullAnswer); // Set the final output when complete
+                  console.log('Typewriter animation completed');
+                }}
+              />
+            ) : outputCode && !loading ? (
+              <FormattedAnswer content={outputCode} />
+            ) : (
+              <>
+                {(loading || isTransitioning) && <ThinkingAnimation isTransitioning={isTransitioning} />}
+              </>
+            )}
+          </AnswerContainer>
+        </Box>
       )}
 
       {/* Input */}
       <Flex
-        mt={outputCode || loading || fullAnswer ? '40px' : '60px'}
+        mt={outputCode || loading || fullAnswer || isTransitioning ? '40px' : '60px'}
         w="100%"
         maxW="880px"
         justify="center"
         align="center"
         zIndex={1}
         gap="10px"
+        opacity={showMainUI ? 1 : 0}
+        transform={showMainUI ? 'translateY(0)' : 'translateY(40px)'}
+        transition="all 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.6s"
       >
         <Input
           minH="54px"
           flex="1"
           border="1px solid"
-          borderColor="gray.300"
+          borderColor={isTransitioning ? "gray.400" : "gray.300"}
           borderRadius="45px"
           p="15px 20px"
           fontSize="sm"
@@ -353,6 +406,8 @@ export default function Chat() {
           onKeyDown={handleKeyPress}
           _focus={{ borderColor: 'gray.700', boxShadow: '0 0 0 1px gray.700' }}
           _hover={{ borderColor: 'gray.500' }}
+          transition="all 0.3s ease"
+          transform={isTransitioning ? 'scale(0.98)' : 'scale(1)'}
         />
         <Button
           py="20px"
@@ -386,7 +441,16 @@ export default function Chat() {
       </Flex>
 
       {/* Footer */}
-      <Text mt="30px" fontSize="xs" textAlign="center" color={gray} zIndex={1}>
+      <Text 
+        mt="30px" 
+        fontSize="xs" 
+        textAlign="center" 
+        color={gray} 
+        zIndex={1}
+        opacity={showMainUI ? 1 : 0}
+        transform={showMainUI ? 'translateY(0)' : 'translateY(20px)'}
+        transition="all 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.8s"
+      >
         Fermat — helping you simplify your travel anywhere, anytime :)
       </Text>
     </Flex>
