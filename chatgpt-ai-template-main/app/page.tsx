@@ -3,6 +3,8 @@
 
 import Link from '@/components/link/Link';
 import MessageBoxChat from '@/components/MessageBox';
+import TypewriterText from '../src/components/TypewriterText';
+import ThinkingAnimation from '../src/components/ThinkingAnimation';
 import { ChatBody, OpenAIModel } from '@/types/types';
 import {
   Box,
@@ -22,9 +24,12 @@ import { useAuth } from '../src/contexts/AuthContext';
 export default function Chat() {
   const [inputCode, setInputCode] = useState('');
   const [outputCode, setOutputCode] = useState('');
+  const [fullAnswer, setFullAnswer] = useState(''); // Store the complete answer for typewriter
   const [model, setModel] = useState<OpenAIModel>('reddit-rag');
   const [loading, setLoading] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
+  const [showTypewriter, setShowTypewriter] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   
   // Use Firebase auth
   const { user, loading: authLoading, signInWithGoogle, logOut } = useAuth();
@@ -72,13 +77,27 @@ export default function Chat() {
   const handleKeyPress = (e: any) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      handleTranslate();
+      if (isTyping) {
+        handleStopTyping();
+      } else {
+        handleTranslate();
+      }
     }
+  };
+
+  const handleStopTyping = () => {
+    setIsTyping(false);
+    setShowTypewriter(false);
+    // Show the full answer immediately
+    setOutputCode(fullAnswer);
   };
 
   const handleTranslate = async () => {
     if (!inputCode) return alert('Please enter your message.');
     setOutputCode('');
+    setFullAnswer('');
+    setShowTypewriter(false);
+    setIsTyping(false);
     setLoading(true);
     try {
       const response = await fetch(
@@ -87,7 +106,13 @@ export default function Chat() {
       );
       if (!response.ok) throw new Error(`API error: ${response.status}`);
       const data = await response.json();
-      setOutputCode(data.answer || 'No answer found.');
+      const answer = data.answer || 'No answer found.';
+      setFullAnswer(answer); // Store the complete answer
+      // Small delay before starting typewriter to show loading completed
+      setTimeout(() => {
+        setShowTypewriter(true);
+        setIsTyping(true);
+      }, 300);
     } catch (err) {
       console.error(err);
       alert('Backend connection failed.');
@@ -183,7 +208,7 @@ export default function Chat() {
       minH="100vh"
       direction="column"
       align="center"
-      justify={outputCode ? 'flex-start' : 'center'}
+      justify={outputCode || loading || fullAnswer ? 'flex-start' : 'center'}
       position="relative"
       bg="white"
       opacity={fadeOut ? 0 : 1}
@@ -209,7 +234,7 @@ export default function Chat() {
       </Flex> */}
 
       {/* ✈️ Background Plane */}
-      {!outputCode && (
+      {!outputCode && !loading && !fullAnswer && (
         <Img
           src={Bg.src}
           position="absolute"
@@ -265,7 +290,7 @@ export default function Chat() {
       </Flex> */}
 
       {/* Output */}
-      {outputCode && (
+      {(outputCode || loading || fullAnswer) && (
         <Flex
           direction="column"
           w="100%"
@@ -279,15 +304,32 @@ export default function Chat() {
           boxShadow="sm"
           zIndex={1}
         >
-          <Text color={textColor} whiteSpace="pre-wrap" fontSize="md" fontWeight="500">
-            {outputCode}
-          </Text>
+          {showTypewriter ? (
+            <TypewriterText
+              text={fullAnswer}
+              speed={5}
+              showCursor={true}
+              onComplete={() => {
+                setIsTyping(false);
+                setOutputCode(fullAnswer); // Set the final output when complete
+                console.log('Typewriter animation completed');
+              }}
+            />
+          ) : outputCode && !loading ? (
+            <Text color={textColor} whiteSpace="pre-wrap" fontSize="md" fontWeight="500">
+              {outputCode}
+            </Text>
+          ) : (
+            <>
+              {loading && <ThinkingAnimation />}
+            </>
+          )}
         </Flex>
       )}
 
       {/* Input */}
       <Flex
-        mt={outputCode ? '40px' : '60px'}
+        mt={outputCode || loading || fullAnswer ? '40px' : '60px'}
         w="100%"
         maxW="880px"
         justify="center"
@@ -320,19 +362,26 @@ export default function Chat() {
           borderRadius="45px"
           w={{ base: '120px', md: '160px' }}
           h="54px"
-          bgGradient="linear(to-r, gray.800, gray.700)"
+          bgGradient={
+            isTyping 
+              ? "linear(to-r, red.600, red.500)" 
+              : "linear(to-r, gray.800, gray.700)"
+          }
           color="white"
           transition="all 0.3s ease"
           boxShadow="0 4px 12px rgba(0, 0, 0, 0.25)"
           _hover={{
-            bgGradient: 'linear(to-r, gray.900, gray.700)',
+            bgGradient: isTyping 
+              ? "linear(to-r, red.700, red.600)" 
+              : "linear(to-r, gray.900, gray.700)",
             transform: 'translateY(-3px) scale(1.03)',
           }}
           _active={{ transform: 'scale(0.97)' }}
-          onClick={handleTranslate}
+          onClick={isTyping ? handleStopTyping : handleTranslate}
           isLoading={loading}
+          isDisabled={loading}
         >
-          Let's Go!
+          {isTyping ? 'Stop' : "Let's Go!"}
         </Button>
       </Flex>
 
