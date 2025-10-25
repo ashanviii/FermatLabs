@@ -15,7 +15,7 @@ import '../src/styles/Contact.css';
 import '../src/styles/Plugins.css';
 import '../src/styles/MiniCalendar.css';
 import AppWrappers from './AppWrappers';
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import { AuthProvider } from '../src/contexts/AuthContext';
 
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -30,17 +30,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     }
   }, [apiKey]);
 
-  // ✅ Use environment variable for safety
-  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-
-  if (!clientId) {
-    console.warn('⚠️ Google Client ID missing! Add NEXT_PUBLIC_GOOGLE_CLIENT_ID in .env.local');
-  }
-
   return (
     <html lang="en">
       <body id="root">
-        <GoogleOAuthProvider clientId={clientId || ''}>
+        <AuthProvider>
           <AppWrappers>
             <ChakraProvider theme={theme}>
               {pathname?.includes('register') || pathname?.includes('sign-in') ? (
@@ -93,7 +86,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               )}
             </ChakraProvider>
           </AppWrappers>
-        </GoogleOAuthProvider>
+        </AuthProvider>
       </body>
     </html>
   );

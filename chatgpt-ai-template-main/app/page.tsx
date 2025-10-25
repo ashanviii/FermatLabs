@@ -17,16 +17,17 @@ import {
 import { useEffect, useState } from 'react';
 import { MdAutoAwesome, MdBolt, MdPerson } from 'react-icons/md';
 import Bg from '../public/img/chat/back.gif';
-import { GoogleLogin, googleLogout } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode';
+import { useAuth } from '../src/contexts/AuthContext';
 
 export default function Chat() {
   const [inputCode, setInputCode] = useState('');
   const [outputCode, setOutputCode] = useState('');
   const [model, setModel] = useState<OpenAIModel>('gpt-4o');
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState<any>(null);
   const [fadeOut, setFadeOut] = useState(false);
+  
+  // Use Firebase auth
+  const { user, loading: authLoading, signInWithGoogle, logOut } = useAuth();
 
   const borderColor = useColorModeValue('gray.200', 'whiteAlpha.200');
   const iconColor = useColorModeValue('brand.500', 'white');
@@ -42,30 +43,29 @@ export default function Chat() {
   );
   const textColor = useColorModeValue('navy.700', 'white');
 
-  // ✅ Load user from localStorage
-  useEffect(() => {
-    const storedUser = localStorage.getItem('fermat_user');
-    if (storedUser) setUser(JSON.parse(storedUser));
-  }, []);
-
-  // ✅ Google Login success
-  const handleGoogleSuccess = (credentialResponse: any) => {
+  // Handle Firebase Google Sign In
+  const handleGoogleSignIn = async () => {
     try {
-      const decoded: any = jwtDecode(credentialResponse.credential);
-      if (!decoded?.email) return alert('Invalid Google token');
-      localStorage.setItem('fermat_user', JSON.stringify(decoded));
       setFadeOut(true);
+      await signInWithGoogle();
       setTimeout(() => {
-        setUser(decoded);
         setFadeOut(false);
       }, 600);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error('Google Sign In Error:', error);
       alert('Google Login Failed');
+      setFadeOut(false);
     }
   };
 
-  const handleGoogleError = () => alert('Google Login Failed');
+  // Handle Firebase Sign Out
+  const handleSignOut = async () => {
+    try {
+      await logOut();
+    } catch (error) {
+      console.error('Sign Out Error:', error);
+    }
+  };
 
   const handleChange = (e: any) => setInputCode(e.target.value);
 
@@ -97,7 +97,7 @@ export default function Chat() {
   };
 
   // 🚫 Login screen
-  if (!user) {
+  if (!user && !authLoading) {
     return (
       <Flex
         w="100%"
@@ -138,16 +138,44 @@ export default function Chat() {
             transition="all 0.3s ease"
             display="inline-block"
           >
-            <GoogleLogin onSuccess={handleGoogleSuccess} onError={handleGoogleError} />
+            <Button
+              onClick={handleGoogleSignIn}
+              colorScheme="gray"
+              variant="outline"
+              size="lg"
+              leftIcon={<Icon as={MdPerson} />}
+            >
+              Sign in with Google
+            </Button>
           </Box>
         </Box>
       </Flex>
     );
   }
 
+  // Show loading state while checking auth
+  if (authLoading) {
+    return (
+      <Flex
+        w="100%"
+        h="100dvh"
+        direction="column"
+        justify="center"
+        align="center"
+        bg="transparent"
+        color="black"
+        textAlign="center"
+      >
+        <Text fontSize="lg" fontWeight="500">
+          Loading...
+        </Text>
+      </Flex>
+    );
+  }
+
   // ✅ Logged in — main UI
-  const firstName = user?.name?.split?.(' ')?.[0] ?? 'Traveler';
-  const avatar = user?.picture ?? '';
+  const firstName = user?.displayName?.split?.(' ')?.[0] ?? 'Traveler';
+  const avatar = user?.photoURL ?? '';
 
   return (
     <Flex
@@ -174,11 +202,7 @@ export default function Chat() {
           variant="outline"
           colorScheme="red"
           borderRadius="full"
-          onClick={() => {
-            googleLogout();
-            localStorage.removeItem('fermat_user');
-            setUser(null);
-          }}
+          onClick={handleSignOut}
         >
           Logout
         </Button>
