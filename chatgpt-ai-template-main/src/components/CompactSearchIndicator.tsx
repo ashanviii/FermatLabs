@@ -76,7 +76,7 @@ const CompactSearchIndicator: React.FC<CompactSearchIndicatorProps> = ({
     >
       {/* Simple Search Circle */}
       <Circle
-        size="60px"
+        size="40px"
         bg="blue.500"
         color="white"
         boxShadow="0 4px 12px rgba(59, 130, 246, 0.4)"
@@ -89,7 +89,7 @@ const CompactSearchIndicator: React.FC<CompactSearchIndicatorProps> = ({
           }
         }}
       >
-        <SearchIcon boxSize={6} />
+        <SearchIcon boxSize={4} />
       </Circle>
       
       {/* Small status text below */}
