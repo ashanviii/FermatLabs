@@ -56,7 +56,7 @@ function APIModal(props: { setApiKey: any; sidebar?: boolean }) {
     <>
       {sidebar ? (
         <Text
-          color="white"
+          color={textColor}
           fontSize={'sm'}
           fontWeight="600"
           borderRadius={'45px'}
@@ -70,7 +70,7 @@ function APIModal(props: { setApiKey: any; sidebar?: boolean }) {
         </Text>
       ) : (
         <Text
-          color="white"
+          color={textColor}
           fontSize={'sm'}
           fontWeight="600"
           display="flex"
