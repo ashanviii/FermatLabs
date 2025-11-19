@@ -57,14 +57,14 @@ function SidebarContent(props: SidebarContent) {
     <Flex
       direction="column"
       height="100%"
-      pt="20px"
-      pb="26px"
+      pt={{ base: '24px', md: '28px' }}
+      pb={{ base: '24px', md: '28px' }}
       borderRadius="30px"
       maxW="285px"
-      px="20px"
+      px={{ base: '16px', md: '20px' }}
     >
       <Brand />
-      <Stack direction="column" mb="auto" mt="8px">
+      <Stack direction="column" mb="auto" mt={{ base: '12px', md: '16px' }}>
         <Box ps="0px" pe={{ md: '0px', '2xl': '0px' }}>
           <Links routes={routes} />
         </Box>

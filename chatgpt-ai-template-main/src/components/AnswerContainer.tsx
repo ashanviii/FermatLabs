@@ -17,7 +17,7 @@ export default function AnswerContainer({ content, isThinking = false, children 
   return (
     <Box
       w="100%"
-      maxW="880px"
+      maxW="960px"
       bg="white"
       border="1px solid"
       borderColor={borderColor}
@@ -38,21 +38,21 @@ export default function AnswerContainer({ content, isThinking = false, children 
       {/* Header */}
       <Flex
         align="center"
-        gap="10px"
-        px="32px"
-        py="16px"
+        gap={{ base: '8px', md: '12px' }}
+        px={{ base: '20px', md: '32px' }}
+        py={{ base: '14px', md: '18px' }}
         bg={headerBg}
         borderBottom="1px solid"
         borderColor={borderColor}
       >
-        <Icon as={MdAutoAwesome} color={iconColor} w="20px" h="20px" />
-        <Text fontSize="sm" fontWeight="600" color="gray.600">
+        <Icon as={MdAutoAwesome} color={iconColor} w={{ base: '18px', md: '20px' }} h={{ base: '18px', md: '20px' }} />
+        <Text fontSize={{ base: 'sm', md: 'md' }} fontWeight="600" color="gray.600">
           {isThinking ? 'Fermat is thinking...' : 'Fermat\'s Response'}
         </Text>
       </Flex>
 
       {/* Content */}
-      <Box p="32px">
+      <Box p={{ base: '24px', md: '36px', lg: '40px' }}>
         {children || <FormattedAnswer content={content} />}
       </Box>
     </Box>

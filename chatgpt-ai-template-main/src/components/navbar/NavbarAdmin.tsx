@@ -18,7 +18,6 @@ export default function AdminNavbar(props: {
   secondary: boolean;
   brandText: string;
   logoText: string;
-  onOpen: (...args: any[]) => any;
   setApiKey: any;
 }) {
   const [scrolled, setScrolled] = useState(false);

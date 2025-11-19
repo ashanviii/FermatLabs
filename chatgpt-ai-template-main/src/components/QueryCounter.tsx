@@ -22,16 +22,16 @@ export const QueryCounter: React.FC<QueryCounterProps> = ({ remaining, isPro, on
         border="1px solid"
         borderColor={borderColor}
         borderRadius="full"
-        px="16px"
-        py="8px"
+        px={{ base: '12px', md: '16px' }}
+        py={{ base: '6px', md: '8px' }}
         align="center"
-        gap="8px"
+        gap={{ base: '6px', md: '8px' }}
       >
         <MdStar color="gold" size="18px" />
-        <Text fontSize="sm" fontWeight="600" color={textColor}>
+        <Text fontSize={{ base: 'xs', md: 'sm' }} fontWeight="600" color={textColor}>
           Pro Member
         </Text>
-        <Badge colorScheme="purple" variant="subtle" borderRadius="full" px="8px">
+        <Badge colorScheme="purple" variant="subtle" borderRadius="full" px={{ base: '6px', md: '8px' }} fontSize={{ base: '10px', md: '11px' }}>
           Unlimited
         </Badge>
       </Flex>
@@ -44,16 +44,18 @@ export const QueryCounter: React.FC<QueryCounterProps> = ({ remaining, isPro, on
       border="1px solid"
       borderColor={borderColor}
       borderRadius="full"
-      px="16px"
-      py="8px"
+      px={{ base: '12px', md: '16px' }}
+      py={{ base: '6px', md: '8px' }}
       align="center"
-      gap="12px"
+      gap={{ base: '8px', md: '12px' }}
+      flexWrap="wrap"
+      justifyContent="center"
     >
-      <Flex align="center" gap="6px">
-        <Text fontSize="sm" fontWeight="600" color={textColor}>
+      <Flex align="center" gap={{ base: '4px', md: '6px' }}>
+        <Text fontSize={{ base: 'xs', md: 'sm' }} fontWeight="600" color={textColor}>
           Queries:
         </Text>
-        <Badge colorScheme={remaining <= 1 ? 'red' : remaining <= 2 ? 'orange' : 'green'} borderRadius="full" px="8px">
+        <Badge colorScheme={remaining <= 1 ? 'red' : remaining <= 2 ? 'orange' : 'green'} borderRadius="full" px={{ base: '6px', md: '8px' }} fontSize={{ base: '10px', md: '11px' }}>
           {remaining} / 5
         </Badge>
       </Flex>
@@ -66,9 +68,9 @@ export const QueryCounter: React.FC<QueryCounterProps> = ({ remaining, isPro, on
           borderRadius="full"
           leftIcon={<MdStar />}
           onClick={onUpgrade}
-          fontSize="xs"
-          px="12px"
-          h="28px"
+          fontSize={{ base: '10px', md: 'xs' }}
+          px={{ base: '10px', md: '12px' }}
+          h={{ base: '26px', md: '28px' }}
         >
           Upgrade to Pro
         </Button>
@@ -95,34 +97,34 @@ export const QueryLimitReachedBanner: React.FC<QueryLimitModalProps> = ({ isOpen
       border="2px solid"
       borderColor={borderColor}
       borderRadius="lg"
-      p="20px"
+      p={{ base: '16px', md: '20px', lg: '24px' }}
       maxW="600px"
       textAlign="center"
       boxShadow="lg"
     >
-      <Flex direction="column" align="center" gap="16px">
+      <Flex direction="column" align="center" gap={{ base: '12px', md: '16px' }}>
         <MdLock size="48px" color="currentColor" />
         <Box>
-          <Text fontSize="xl" fontWeight="700" color={textColor} mb="8px">
+          <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight="700" color={textColor} mb={{ base: '6px', md: '8px' }}>
             Query Limit Reached
           </Text>
-          <Text fontSize="sm" color={textColor} mb="16px">
+          <Text fontSize={{ base: 'sm', md: 'md' }} color={textColor} mb={{ base: '12px', md: '16px' }} px={{ base: '2', md: '0' }}>
             You've used all 5 free queries. Upgrade to Pro for unlimited access!
           </Text>
         </Box>
         <Button
-          size="lg"
+          size={{ base: 'md', md: 'lg' }}
           colorScheme="purple"
           variant="solid"
           borderRadius="full"
           leftIcon={<MdStar />}
           onClick={onUpgrade}
           w="full"
-          maxW="300px"
+          maxW={{ base: '280px', md: '320px' }}
         >
           Upgrade to Pro - Unlimited Queries
         </Button>
-        <Text fontSize="xs" color={textColor} opacity={0.7}>
+        <Text fontSize={{ base: '2xs', md: 'xs' }} color={textColor} opacity={0.7} px={{ base: '4', md: '0' }}>
           Supporting our backend costs helps keep this service running! 💜
         </Text>
       </Flex>

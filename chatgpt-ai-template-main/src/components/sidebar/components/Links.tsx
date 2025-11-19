@@ -49,13 +49,13 @@ export function SidebarLinks(props: SidebarLinksProps) {
         return (
           <Fragment key={key}>
             <Accordion defaultIndex={0} allowToggle>
-              <AccordionItem border="none" mb="6px">
+              <AccordionItem border="none" mb={{ base: '4px', md: '6px' }}>
                 <AccordionButton
                   display="flex"
                   alignItems="center"
                   justifyContent="space-between"
-                  px="14px"
-                  py="8px"
+                  px={{ base: '12px', md: '14px' }}
+                  py={{ base: '10px', md: '12px' }}
                   borderRadius="md"
                   _hover={{ bg: 'whiteAlpha.100' }}
                 >
@@ -65,7 +65,7 @@ export function SidebarLinks(props: SidebarLinksProps) {
                       display="flex"
                       alignItems="center"
                       justifyContent="center"
-                      me="10px"
+                      me={{ base: '8px', md: '10px' }}
                       color={
                         activeRoute(route.path.toLowerCase())
                           ? activeIcon
@@ -81,7 +81,7 @@ export function SidebarLinks(props: SidebarLinksProps) {
                           : 'gray.200'
                       }
                       fontWeight="600"
-                      fontSize="sm"
+                      fontSize={{ base: 'sm', md: 'sm' }}
                     >
                       {route.name}
                     </Text>
@@ -89,7 +89,7 @@ export function SidebarLinks(props: SidebarLinksProps) {
 
                   {/* Right side: PRO + arrow */}
                   <Flex align="center" gap="6px">
-                    <Link isExternal href="https://striv11.github.io/">
+                    {/* <Link isExternal href="https://striv11.github.io/">
                       <Badge
                         fontSize="10px"
                         py="2px"
@@ -100,7 +100,7 @@ export function SidebarLinks(props: SidebarLinksProps) {
                       >
                         PRO
                       </Badge>
-                    </Link>
+                    </Link> */}
                     <AccordionIcon />
                   </Flex>
                 </AccordionButton>
@@ -114,14 +114,14 @@ export function SidebarLinks(props: SidebarLinksProps) {
                           <Flex
                             align="center"
                             justifyContent="flex-start"
-                            pl="40px"
-                            py="6px"
+                            pl={{ base: '36px', md: '40px' }}
+                            py={{ base: '8px', md: '10px' }}
                             _hover={{ bg: 'whiteAlpha.100', borderRadius: 'md' }}
                           >
                             <Icon
-                              w="5px"
-                              h="5px"
-                              me="8px"
+                              w={{ base: '4px', md: '5px' }}
+                              h={{ base: '4px', md: '5px' }}
+                              me={{ base: '6px', md: '8px' }}
                               as={FaCircle}
                               color={
                                 activeRoute(item.path.toLowerCase())
@@ -135,7 +135,7 @@ export function SidebarLinks(props: SidebarLinksProps) {
                                   ? activeColor
                                   : 'gray.300'
                               }
-                              fontSize="xs"
+                              fontSize={{ base: 'xs', md: 'xs' }}
                             >
                               {item.name}
                             </Text>
@@ -149,7 +149,7 @@ export function SidebarLinks(props: SidebarLinksProps) {
 
             {/* Divider after User Access only */}
             {route.name === 'User Access' && (
-              <Divider my="8px" mx="12px" borderColor="whiteAlpha.200" />
+              <Divider my={{ base: '10px', md: '12px' }} mx="12px" borderColor="whiteAlpha.200" />
             )}
           </Fragment>
         );
@@ -162,9 +162,9 @@ export function SidebarLinks(props: SidebarLinksProps) {
             key={key}
             align="center"
             justifyContent="space-between"
-            px="14px"
-            py="8px"
-            mb="2px"
+            px={{ base: '12px', md: '14px' }}
+            py={{ base: '10px', md: '12px' }}
+            mb={{ base: '4px', md: '6px' }}
             borderRadius="md"
             _hover={{ bg: 'whiteAlpha.100' }}
           >
@@ -174,7 +174,7 @@ export function SidebarLinks(props: SidebarLinksProps) {
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
-                me="10px"
+                me={{ base: '8px', md: '10px' }}
                 color={
                   activeRoute(route.path.toLowerCase())
                     ? activeIcon
@@ -190,14 +190,14 @@ export function SidebarLinks(props: SidebarLinksProps) {
                     : 'gray.200'
                 }
                 fontWeight="600"
-                fontSize="sm"
+                fontSize={{ base: 'sm', md: 'sm' }}
               >
                 {route.name}
               </Text>
             </Flex>
 
             {/* PRO badge (skip Chat UI) */}
-            {route.name !== 'Chat UI' && (
+            {/* {route.name !== 'Chat UI' && (
               <Link isExternal href="https://striv11.github.io/">
                 <Badge
                   fontSize="10px"
@@ -210,7 +210,7 @@ export function SidebarLinks(props: SidebarLinksProps) {
                   PRO
                 </Badge>
               </Link>
-            )}
+            )} */}
           </Flex>
         );
       }

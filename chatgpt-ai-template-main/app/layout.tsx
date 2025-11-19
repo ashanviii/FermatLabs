@@ -1,7 +1,7 @@
 'use client';
 import React, { ReactNode } from 'react';
 import type { AppProps } from 'next/app';
-import { ChakraProvider, Box, Portal, useDisclosure } from '@chakra-ui/react';
+import { ChakraProvider, Box, Portal } from '@chakra-ui/react';
 import theme from '../src/theme/theme';
 import routes from '../src/routes';
 import Sidebar from '../src/components/sidebar/Sidebar';
@@ -22,7 +22,6 @@ import { UserContextProvider } from '../src/contexts/UserContextContext';
 export default function RootLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [apiKey, setApiKey] = useState('');
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     const initialKey = localStorage.getItem('apiKey');
@@ -62,7 +61,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                         <Box>
                           <Navbar
                             setApiKey={setApiKey}
-                            onOpen={onOpen}
                             logoText={'Fermat AI Travel'}
                             brandText={getActiveRoute(routes, pathname)}
                             secondary={getActiveNavbar(routes, pathname)}

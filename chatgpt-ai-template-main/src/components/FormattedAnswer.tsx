@@ -18,17 +18,17 @@ export default function FormattedAnswer({ content }: FormattedAnswerProps) {
   const components = {
     // Headings
     h1: ({ children }: any) => (
-      <Text fontSize="2xl" fontWeight="bold" color={headingColor} mb={4} mt={6}>
+      <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight="bold" color={headingColor} mb={{ base: 3, md: 4 }} mt={{ base: 5, md: 6 }}>
         {children}
       </Text>
     ),
     h2: ({ children }: any) => (
-      <Text fontSize="xl" fontWeight="bold" color={headingColor} mb={3} mt={5}>
+      <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight="bold" color={headingColor} mb={{ base: 2, md: 3 }} mt={{ base: 4, md: 5 }}>
         {children}
       </Text>
     ),
     h3: ({ children }: any) => (
-      <Text fontSize="lg" fontWeight="semibold" color={headingColor} mb={2} mt={4}>
+      <Text fontSize={{ base: 'md', md: 'lg' }} fontWeight="semibold" color={headingColor} mb={2} mt={{ base: 3, md: 4 }}>
         {children}
       </Text>
     ),
@@ -36,11 +36,10 @@ export default function FormattedAnswer({ content }: FormattedAnswerProps) {
     // Paragraphs
     p: ({ children }: any) => (
       <Text 
-        fontSize="md" 
-        lineHeight="1.7" 
+        fontSize={{ base: 'sm', md: 'md' }}
+        lineHeight={{ base: '1.65', md: '1.75' }}
         color={textColor} 
-        mb={4}
-        textAlign="justify"
+        mb={{ base: 3, md: 4 }}
       >
         {children}
       </Text>
@@ -48,19 +47,19 @@ export default function FormattedAnswer({ content }: FormattedAnswerProps) {
     
     // Lists
     ul: ({ children }: any) => (
-      <VStack align="stretch" spacing={2} mb={4} pl={4}>
+      <VStack align="stretch" spacing={{ base: 1.5, md: 2 }} mb={{ base: 3, md: 4 }} pl={{ base: 3, md: 4 }}>
         {children}
       </VStack>
     ),
     ol: ({ children }: any) => (
-      <VStack align="stretch" spacing={2} mb={4} pl={4}>
+      <VStack align="stretch" spacing={{ base: 1.5, md: 2 }} mb={{ base: 3, md: 4 }} pl={{ base: 3, md: 4 }}>
         {children}
       </VStack>
     ),
     li: ({ children }: any) => (
       <Box display="flex" alignItems="flex-start">
         <Text color={listItemColor} mr={2} mt={0.5}>•</Text>
-        <Text fontSize="md" lineHeight="1.6" color={textColor}>
+        <Text fontSize={{ base: 'sm', md: 'md' }} lineHeight={{ base: '1.6', md: '1.65' }} color={textColor}>
           {children}
         </Text>
       </Box>
@@ -78,7 +77,7 @@ export default function FormattedAnswer({ content }: FormattedAnswerProps) {
             px={2}
             py={1}
             borderRadius="md"
-            fontSize="sm"
+            fontSize={{ base: 'xs', md: 'sm' }}
             fontFamily="mono"
             color={textColor}
           >
@@ -90,14 +89,14 @@ export default function FormattedAnswer({ content }: FormattedAnswerProps) {
       return (
         <Box
           bg={codeBackgroundColor}
-          p={4}
+          p={{ base: 3, md: 4 }}
           borderRadius="lg"
-          mb={4}
+          mb={{ base: 3, md: 4 }}
           overflow="auto"
         >
           <Text
             fontFamily="mono"
-            fontSize="sm"
+            fontSize={{ base: 'xs', md: 'sm' }}
             color={textColor}
             whiteSpace="pre-wrap"
           >

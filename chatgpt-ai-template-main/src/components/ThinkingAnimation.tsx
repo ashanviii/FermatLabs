@@ -27,22 +27,22 @@ export default function ThinkingAnimation({ text = 'Thinking', isTransitioning =
   return (
     <Flex
       alignItems="center"
-      gap="8px"
+      gap={{ base: '6px', md: '8px' }}
       opacity={isVisible ? 1 : 0}
       transform={isVisible ? 'translateY(0)' : 'translateY(10px)'}
       transition="all 0.5s cubic-bezier(0.4, 0, 0.2, 1)"
     >
-      <Text color={textColor} fontSize="md" fontWeight="500">
+      <Text color={textColor} fontSize={{ base: 'sm', md: 'md' }} fontWeight="500">
         {text}
       </Text>
 
-      <Flex gap="2px" minW="20px" alignItems="center" height="20px">
+      <Flex gap={{ base: '1px', md: '2px' }} minW="20px" alignItems="center" height="20px">
         {[0, 1, 2].map(index => (
           <Text
             key={index}
             as="span"
             color={textColor}
-            fontSize="lg"
+            fontSize={{ base: 'md', md: 'lg' }}
             fontWeight="bold"
             animation={isVisible ? `bounce 1.4s ease-in-out ${index * 0.2}s infinite` : 'none'}
             sx={{

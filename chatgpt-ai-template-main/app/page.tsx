@@ -8,6 +8,7 @@ import ThinkingAnimation from '../src/components/ThinkingAnimation';
 import FormattedAnswer from '../src/components/FormattedAnswer';
 import AnswerContainer from '../src/components/AnswerContainer';
 import { QueryCounter, QueryLimitReachedBanner } from '../src/components/QueryCounter';
+import RotatingPlaceholder from '../src/components/RotatingPlaceholder';
 import { ChatBody, OpenAIModel } from '@/types/types';
 import {
   Box,
@@ -38,6 +39,7 @@ export default function Chat() {
   const [isTyping, setIsTyping] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showLimitReached, setShowLimitReached] = useState(false);
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
   
   // Use Firebase auth
   const { user, loading: authLoading, signInWithGoogle, logOut } = useAuth();
@@ -46,6 +48,29 @@ export default function Chat() {
   const { queriesRemaining, isPro, canQuery, makeQuery, upgradeUser } = useUserContext();
   
   const toast = useToast();
+
+  // Animated placeholder text
+  const placeholderTexts = [
+    "Do I need a visa to visit Japan from the US?",
+    "What documents are required for a UK tourist visa?",
+    "How long does a Schengen visa application take?",
+    "Can I get a visa on arrival in Thailand?",
+    "What are the requirements for an Australian visa?",
+    "Do I need a visa for a layover in Dubai?",
+    "How to apply for a Canadian tourist visa?",
+    "Is my country eligible for visa-free travel to Europe?",
+  ];
+
+  // Cycle through placeholders
+  useEffect(() => {
+    if (inputCode) return; // Don't animate if user is typing
+    
+    const interval = setInterval(() => {
+      setPlaceholderIndex((prev) => (prev + 1) % placeholderTexts.length);
+    }, 3000); // Change every 3 seconds
+    
+    return () => clearInterval(interval);
+  }, [inputCode]);
 
   // Debug logging for query tracking
   useEffect(() => {
@@ -225,24 +250,25 @@ export default function Chat() {
         textAlign="center"
         opacity={fadeOut ? 0 : 1}
         transition="opacity 0.6s ease"
+        px={{ base: '24px', md: '32px' }}
       >
         <Img
           src={Bg.src}
           alt="background"
           position="absolute"
-          top="46%"
+          top="44%"
           left="50%"
           transform="translate(-50%, -50%) scale(0.75)"
-          w="260px"
+          w={{ base: '240px', md: '280px', lg: '320px' }}
           opacity={0.3}
           zIndex="0"
           pointerEvents="none"
         />
-        <Box zIndex="2" textAlign="center">
-          <Text fontSize="3xl" fontWeight="700" color="black" mb="3">
+        <Box zIndex="2" textAlign="center" maxW="560px">
+          <Text fontSize={{ base: '2xl', md: '3xl', lg: '4xl' }} fontWeight="700" color="black" mb={{ base: '3', md: '4' }}>
             Welcome to <Text as="span" color="gray.800">Fermat</Text>
           </Text>
-          <Text fontSize="md" color="gray.600" mb="8" fontWeight="500">
+          <Text fontSize={{ base: 'sm', md: 'md', lg: 'lg' }} color="gray.600" mb={{ base: '8', md: '10' }} fontWeight="500" px={{ base: '0', md: '4' }}>
             Your personal AI travel assistant ✈️
           </Text>
           <Box
@@ -257,7 +283,7 @@ export default function Chat() {
               onClick={handleGoogleSignIn}
               colorScheme="gray"
               variant="outline"
-              size="lg"
+              size={{ base: 'md', md: 'lg' }}
               leftIcon={<Icon as={MdPerson} />}
             >
               Sign in with Google
@@ -324,6 +350,7 @@ export default function Chat() {
       opacity={showMainUI ? 1 : 0}
       transform={showMainUI ? 'translateY(0)' : 'translateY(20px)'}
       transition="all 0.8s cubic-bezier(0.4, 0, 0.2, 1)"
+      px={{ base: '16px', md: '24px', lg: '32px' }}
     >
       {/* Header */}
       {/* <Flex justify="center" align="center" mt="20px" mb="30px" gap="12px">
@@ -347,8 +374,8 @@ export default function Chat() {
       {/* Query Counter - Fixed at top */}
       <Flex 
         position="fixed" 
-        top="20px" 
-        right="20px" 
+        top={{ base: '24px', md: '32px' }}
+        right={{ base: '16px', md: '24px', lg: '32px' }}
         zIndex={999}
         opacity={showMainUI ? 1 : 0}
         transition="opacity 0.6s ease 0.4s"
@@ -365,11 +392,11 @@ export default function Chat() {
         <Img
           src={Bg.src}
           position="absolute"
-          w={{ base: '260px', md: '340px' }}
+          w={{ base: '280px', md: '380px', lg: '420px' }}
           left="50%"
-          top="48%"
+          top="46%"
           transform="translate(-50%, -50%)"
-          opacity={showMainUI ? "0.9" : "0"}
+          opacity={showMainUI ? "0.85" : "0"}
           zIndex={0}
           pointerEvents="none"
           transition="opacity 1.2s ease 0.3s"
@@ -420,7 +447,10 @@ export default function Chat() {
       {/* Output */}
       {(outputCode || loading || fullAnswer || isTransitioning) && (
         <Box
-          mt="20px"
+          mt={{ base: '80px', md: '100px' }}
+          mb={{ base: '24px', md: '32px' }}
+          w="100%"
+          maxW="960px"
           zIndex={1}
           opacity={showMainUI ? 1 : 0}
           transform={showMainUI ? 'translateY(0)' : 'translateY(30px)'}
@@ -456,7 +486,9 @@ export default function Chat() {
       {/* Query Limit Reached Banner */}
       {(showLimitReached || (!canQuery && !outputCode && !loading && !fullAnswer)) && (
         <Box
-          mt="40px"
+          mt={{ base: '32px', md: '48px' }}
+          w="100%"
+          maxW="720px"
           zIndex={10}
           opacity={showMainUI ? 1 : 0}
           transition="opacity 0.6s ease"
@@ -470,46 +502,68 @@ export default function Chat() {
 
       {/* Input */}
       <Flex
-        mt={outputCode || loading || fullAnswer || isTransitioning ? '40px' : '60px'}
+        mt={outputCode || loading || fullAnswer || isTransitioning ? { base: '24px', md: '32px' } : { base: '48px', md: '64px' }}
+        mb={{ base: '24px', md: '32px' }}
         w="100%"
-        maxW="880px"
+        maxW="920px"
         justify="center"
         align="center"
         zIndex={1}
-        gap="10px"
+        gap={{ base: '8px', md: '12px' }}
         opacity={showMainUI ? 1 : 0}
         transform={showMainUI ? 'translateY(0)' : 'translateY(40px)'}
         transition="all 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.6s"
       >
-        <Input
-          minH="54px"
-          flex="1"
-          border="1px solid"
-          borderColor={isTransitioning ? "gray.400" : "gray.300"}
-          borderRadius="45px"
-          p="15px 20px"
-          fontSize="sm"
-          fontWeight="500"
-          bg="white"
-          color="gray.800"
-          placeholder={!canQuery ? "Query limit reached - Upgrade to Pro for unlimited access" : "Ask Fermat to do something for you..."}
-          onChange={handleChange}
-          onKeyDown={handleKeyPress}
-          _focus={{ borderColor: 'gray.700', boxShadow: '0 0 0 1px gray.700' }}
-          _hover={{ borderColor: 'gray.500' }}
-          transition="all 0.3s ease"
-          transform={isTransitioning ? 'scale(0.98)' : 'scale(1)'}
-          isDisabled={!canQuery}
-          opacity={!canQuery ? 0.6 : 1}
-        />
+        <Box position="relative" flex="1">
+          <Input
+            minH={{ base: '56px', md: '60px' }}
+            w="100%"
+            border="1px solid"
+            borderColor={isTransitioning ? "gray.400" : "gray.300"}
+            borderRadius="45px"
+            p={{ base: '16px 20px', md: '18px 24px' }}
+            fontSize={{ base: 'md', md: 'md' }}
+            fontWeight="500"
+            bg="white"
+            color="gray.800"
+            value={inputCode}
+            placeholder={!canQuery ? "Query limit reached - Upgrade to Pro for unlimited access" : ""}
+            onChange={handleChange}
+            onKeyDown={handleKeyPress}
+            _focus={{ borderColor: 'gray.700', boxShadow: '0 0 0 1px gray.700' }}
+            _hover={{ borderColor: 'gray.500' }}
+            _placeholder={{
+              color: 'gray.400',
+              transition: 'opacity 0.5s ease',
+            }}
+            transition="all 0.3s ease"
+            transform={isTransitioning ? 'scale(0.98)' : 'scale(1)'}
+            isDisabled={!canQuery}
+            opacity={!canQuery ? 0.6 : 1}
+          />
+          {/* Rotating placeholder overlay */}
+          {!inputCode && canQuery && (
+            <Box
+              position="absolute"
+              left={{ base: '20px', md: '24px' }}
+              top="50%"
+              transform="translateY(-50%)"
+              pointerEvents="none"
+              fontSize={{ base: 'md', md: 'md' }}
+              fontWeight="500"
+            >
+              <RotatingPlaceholder />
+            </Box>
+          )}
+        </Box>
         <Button
           py="20px"
-          px="16px"
-          fontSize="sm"
+          px={{ base: '16px', md: '20px' }}
+          fontSize={{ base: 'sm', md: 'md' }}
           fontWeight="600"
           borderRadius="45px"
-          w={{ base: '120px', md: '160px' }}
-          h="54px"
+          w={{ base: '110px', md: '140px' }}
+          h={{ base: '56px', md: '60px' }}
           bgGradient={
             !canQuery
               ? "linear(to-r, purple.600, purple.500)"
@@ -533,20 +587,23 @@ export default function Chat() {
           isLoading={loading}
           isDisabled={loading}
         >
-          {!canQuery ? 'Upgrade to Pro' : (isTyping ? 'Stop' : "Let's Go!")}
+          {!canQuery ? 'Upgrade' : (isTyping ? 'Stop' : "Let's Go!")}
         </Button>
       </Flex>
 
       {/* Footer */}
       <Text 
-        mt="30px" 
-        fontSize="xs" 
+        mt={{ base: '24px', md: '32px' }}
+        mb={{ base: '32px', md: '40px' }}
+        fontSize={{ base: 'xs', md: 'sm' }}
         textAlign="center" 
         color={gray} 
         zIndex={1}
         opacity={showMainUI ? 1 : 0}
         transform={showMainUI ? 'translateY(0)' : 'translateY(20px)'}
         transition="all 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.8s"
+        px={{ base: '24px', md: '0' }}
+        maxW="600px"
       >
         Fermat — helping you simplify your travel anywhere, anytime :)
       </Text>
