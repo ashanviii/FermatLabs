@@ -50,7 +50,7 @@ function APIModal(props: { setApiKey: any; sidebar?: boolean }) {
   const handleApiKeyChange = (value: string) => {
     setApiKey(value);
 
-    localStorage.setItem('apiKey', value);
+    localStorage.setItem('apiKey', value); 
   };
   return (
     <>
