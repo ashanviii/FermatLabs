@@ -166,7 +166,11 @@ export function SidebarLinks(props: SidebarLinksProps) {
             py={{ base: '10px', md: '12px' }}
             mb={{ base: '4px', md: '6px' }}
             borderRadius="md"
-            _hover={{ bg: 'whiteAlpha.100' }}
+            _hover={{ bg: route.disabled ? 'transparent' : 'whiteAlpha.100' }}
+            opacity={route.disabled ? 0.5 : 1}
+            cursor={route.disabled ? 'not-allowed' : 'pointer'}
+            position="relative"
+            role="group"
           >
             {/* Icon + label */}
             <Flex align="center">
@@ -176,7 +180,9 @@ export function SidebarLinks(props: SidebarLinksProps) {
                 justifyContent="center"
                 me={{ base: '8px', md: '10px' }}
                 color={
-                  activeRoute(route.path.toLowerCase())
+                  route.disabled 
+                    ? 'gray.500'
+                    : activeRoute(route.path.toLowerCase())
                     ? activeIcon
                     : inactiveColor
                 }
@@ -185,7 +191,9 @@ export function SidebarLinks(props: SidebarLinksProps) {
               </Box>
               <Text
                 color={
-                  activeRoute(route.path.toLowerCase())
+                  route.disabled
+                    ? 'gray.500'
+                    : activeRoute(route.path.toLowerCase())
                     ? activeColor
                     : 'gray.200'
                 }
@@ -196,21 +204,46 @@ export function SidebarLinks(props: SidebarLinksProps) {
               </Text>
             </Flex>
 
-            {/* PRO badge (skip Chat UI) */}
-            {/* {route.name !== 'Chat UI' && (
-              <Link isExternal href="https://striv11.github.io/">
-                <Badge
-                  fontSize="10px"
-                  py="2px"
-                  px="6px"
-                  borderRadius="full"
-                  colorScheme="purple"
-                  variant="subtle"
-                >
-                  PRO
-                </Badge>
-              </Link>
-            )} */}
+            {/* PRO badge for disabled items */}
+            {route.disabled && (
+              <Badge
+                fontSize="10px"
+                py="2px"
+                px="6px"
+                borderRadius="full"
+                colorScheme="purple"
+                variant="solid"
+                bg="purple.500"
+                color="white"
+              >
+                PRO
+              </Badge>
+            )}
+
+            {/* Tooltip on hover for locked items */}
+            {route.disabled && (
+              <Box
+                position="absolute"
+                top="50%"
+                left="110%"
+                transform="translateY(-50%)"
+                bg="purple.600"
+                color="white"
+                px="12px"
+                py="6px"
+                borderRadius="md"
+                fontSize="xs"
+                whiteSpace="nowrap"
+                opacity="0"
+                pointerEvents="none"
+                transition="opacity 0.2s"
+                _groupHover={{ opacity: 1 }}
+                zIndex="tooltip"
+                boxShadow="lg"
+              >
+                Upgrade to Pro to unlock
+              </Box>
+            )}
           </Flex>
         );
       }
