@@ -72,7 +72,8 @@ export const getUserData = async (uid: string): Promise<UserData | null> => {
     }
     return null;
   } catch (error) {
-    console.error('Error getting user data:', error);
+    console.error('[Firebase] Error getting user data:', error);
+    console.warn('[Firebase] Firestore may not be enabled. Please enable Firestore in Firebase Console.');
     return null;
   }
 };
@@ -83,6 +84,7 @@ export const createUserDocument = async (user: User): Promise<void> => {
     const userDoc = await getDoc(userRef);
     
     if (!userDoc.exists()) {
+      console.log('[Firebase] Creating new user document for:', user.uid);
       await setDoc(userRef, {
         email: user.email,
         displayName: user.displayName,
@@ -92,22 +94,27 @@ export const createUserDocument = async (user: User): Promise<void> => {
         createdAt: serverTimestamp(),
         lastQueryAt: null,
       });
+      console.log('[Firebase] User document created successfully');
+    } else {
+      console.log('[Firebase] User document already exists for:', user.uid);
     }
   } catch (error) {
-    console.error('Error creating user document:', error);
+    console.error('[Firebase] Error creating user document:', error);
     throw error;
   }
 };
 
 export const incrementQueryCount = async (uid: string): Promise<void> => {
   try {
+    console.log('[Firebase] Incrementing query count for user:', uid);
     const userRef = doc(db, 'users', uid);
     await updateDoc(userRef, {
       queryCount: increment(1),
       lastQueryAt: serverTimestamp(),
     });
+    console.log('[Firebase] Query count incremented successfully');
   } catch (error) {
-    console.error('Error incrementing query count:', error);
+    console.error('[Firebase] Error incrementing query count:', error);
     throw error;
   }
 };

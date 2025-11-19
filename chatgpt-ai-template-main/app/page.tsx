@@ -47,6 +47,11 @@ export default function Chat() {
   
   const toast = useToast();
 
+  // Debug logging for query tracking
+  useEffect(() => {
+    console.log('Query Stats:', { queriesRemaining, isPro, canQuery });
+  }, [queriesRemaining, isPro, canQuery]);
+
   // Handle showing main UI after authentication
   useEffect(() => {
     if (user && !authLoading && !showMainUI) {
@@ -143,6 +148,8 @@ export default function Chat() {
   const handleTranslate = async () => {
     if (!inputCode) return alert('Please enter your message.');
     
+    console.log('Attempting query. Can query?', canQuery, 'Queries remaining:', queriesRemaining);
+    
     // Check if user can make a query
     if (!canQuery) {
       setShowLimitReached(true);
@@ -183,7 +190,9 @@ export default function Chat() {
       setFullAnswer(answer); // Store the complete answer
       
       // Increment query count AFTER successful query
-      await makeQuery();
+      console.log('Query successful, incrementing count...');
+      const querySuccess = await makeQuery();
+      console.log('Query count incremented:', querySuccess);
       
       // Smooth transition from loading to typewriter
       setTimeout(() => {
@@ -445,15 +454,15 @@ export default function Chat() {
       )}
 
       {/* Query Limit Reached Banner */}
-      {showLimitReached && (
+      {(showLimitReached || (!canQuery && !outputCode && !loading && !fullAnswer)) && (
         <Box
           mt="40px"
-          zIndex={1}
+          zIndex={10}
           opacity={showMainUI ? 1 : 0}
           transition="opacity 0.6s ease"
         >
           <QueryLimitReachedBanner 
-            isOpen={showLimitReached} 
+            isOpen={true} 
             onUpgrade={handleUpgrade}
           />
         </Box>
@@ -483,13 +492,15 @@ export default function Chat() {
           fontWeight="500"
           bg="white"
           color="gray.800"
-          placeholder="Ask Fermat to do something for you..."
+          placeholder={!canQuery ? "Query limit reached - Upgrade to Pro for unlimited access" : "Ask Fermat to do something for you..."}
           onChange={handleChange}
           onKeyDown={handleKeyPress}
           _focus={{ borderColor: 'gray.700', boxShadow: '0 0 0 1px gray.700' }}
           _hover={{ borderColor: 'gray.500' }}
           transition="all 0.3s ease"
           transform={isTransitioning ? 'scale(0.98)' : 'scale(1)'}
+          isDisabled={!canQuery}
+          opacity={!canQuery ? 0.6 : 1}
         />
         <Button
           py="20px"
@@ -500,7 +511,9 @@ export default function Chat() {
           w={{ base: '120px', md: '160px' }}
           h="54px"
           bgGradient={
-            isTyping 
+            !canQuery
+              ? "linear(to-r, purple.600, purple.500)"
+              : isTyping 
               ? "linear(to-r, red.600, red.500)" 
               : "linear(to-r, gray.800, gray.700)"
           }
@@ -508,17 +521,19 @@ export default function Chat() {
           transition="all 0.3s ease"
           boxShadow="0 4px 12px rgba(0, 0, 0, 0.25)"
           _hover={{
-            bgGradient: isTyping 
+            bgGradient: !canQuery
+              ? "linear(to-r, purple.700, purple.600)"
+              : isTyping 
               ? "linear(to-r, red.700, red.600)" 
               : "linear(to-r, gray.900, gray.700)",
             transform: 'translateY(-3px) scale(1.03)',
           }}
           _active={{ transform: 'scale(0.97)' }}
-          onClick={isTyping ? handleStopTyping : handleTranslate}
+          onClick={!canQuery ? handleUpgrade : (isTyping ? handleStopTyping : handleTranslate)}
           isLoading={loading}
           isDisabled={loading}
         >
-          {isTyping ? 'Stop' : "Let's Go!"}
+          {!canQuery ? 'Upgrade to Pro' : (isTyping ? 'Stop' : "Let's Go!")}
         </Button>
       </Flex>
 
