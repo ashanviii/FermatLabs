@@ -216,8 +216,9 @@ export default function FlightResults({ flights, isLoading = false, onSelectFlig
               </Flex>
 
               <Divider 
-                orientation={{ base: 'horizontal', md: 'vertical' }} 
+                orientation="vertical"
                 borderColor="gray.200"
+                display={{ base: 'none', md: 'block' }}
               />
 
               {/* Price & Action */}

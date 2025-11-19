@@ -101,12 +101,13 @@ export default function LiveAgentAnimation({
       py={6}
       px={5}
       borderRadius="2xl"
-      bg="linear-gradient(135deg, rgba(128, 90, 213, 0.08) 0%, rgba(200, 100, 255, 0.08) 100%)"
+      bg="rgba(0, 0, 0, 0.6)"
+      backdropFilter="blur(20px)"
       border="1px solid"
-      borderColor="purple.300"
+      borderColor="purple.400"
       position="relative"
       overflow="hidden"
-      animation={`${glowAnimation} 3s ease-in-out infinite`}
+      boxShadow="0 8px 32px rgba(128, 90, 213, 0.3)"
       _before={{
         content: '""',
         position: 'absolute',
@@ -114,7 +115,7 @@ export default function LiveAgentAnimation({
         left: '-100%',
         width: '100%',
         height: '100%',
-        background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
+        background: 'linear-gradient(90deg, transparent, rgba(128, 90, 213, 0.2), transparent)',
         animation: `${shimmerAnimation} 3s linear infinite`,
       }}
     >
@@ -134,7 +135,7 @@ export default function LiveAgentAnimation({
               <Text 
                 fontSize="sm" 
                 fontWeight="700" 
-                color="purple.300" 
+                color="white"
                 letterSpacing="wide"
               >
                 AI AGENT WORKING
@@ -145,7 +146,7 @@ export default function LiveAgentAnimation({
                   <Text
                     key={index}
                     as="span"
-                    color="purple.400"
+                    color="purple.300"
                     fontSize="lg"
                     fontWeight="bold"
                     animation={`${bounceAnimation} 1.4s ease-in-out ${index * 0.2}s infinite`}
@@ -155,7 +156,7 @@ export default function LiveAgentAnimation({
                 ))}
               </Flex>
             </HStack>
-            <Text fontSize="xs" color="gray.500" fontWeight="600">
+            <Text fontSize="xs" color="gray.300" fontWeight="600">
               Step {currentStep + 1} of {steps.length}
             </Text>
           </VStack>
@@ -167,11 +168,12 @@ export default function LiveAgentAnimation({
         w="full"
         p={4}
         borderRadius="xl"
-        bg="whiteAlpha.50"
+        bg="rgba(0, 0, 0, 0.3)"
         border="1px solid"
         borderColor="purple.400"
         position="relative"
         overflow="hidden"
+        backdropFilter="blur(10px)"
         _before={{
           content: '""',
           position: 'absolute',
@@ -194,7 +196,7 @@ export default function LiveAgentAnimation({
           </Text>
           <Text
             fontSize="sm"
-            color="gray.300"
+            color="gray.200"
             lineHeight="1.5"
           >
             {activeStep.description}
