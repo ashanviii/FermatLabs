@@ -5,6 +5,8 @@ import '../src/styles/Contact.css';
 import '../src/styles/Plugins.css';
 import '../src/styles/MiniCalendar.css';
 import { ChakraProvider } from '@chakra-ui/react';
+import { AuthProvider } from '../src/contexts/AuthContext';
+import { UserContextProvider } from '../src/contexts/UserContextContext';
 
 // import dynamic from 'next/dynamic';
 import theme from '../src/theme/theme';
@@ -20,7 +22,13 @@ const _NoSSR = ({ children }: any) => (
 export default function AppWrappers({ children }: { children: ReactNode }) {
   return (
     // <NoSSR>
-    <ChakraProvider theme={theme}>{children}</ChakraProvider>
+    <ChakraProvider theme={theme}>
+      <AuthProvider>
+        <UserContextProvider>
+          {children}
+        </UserContextProvider>
+      </AuthProvider>
+    </ChakraProvider>
     // </NoSSR>
   );
 }

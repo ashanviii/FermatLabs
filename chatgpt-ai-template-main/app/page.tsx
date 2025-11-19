@@ -7,6 +7,7 @@ import TypewriterText from '../src/components/TypewriterText';
 import ThinkingAnimation from '../src/components/ThinkingAnimation';
 import FormattedAnswer from '../src/components/FormattedAnswer';
 import AnswerContainer from '../src/components/AnswerContainer';
+import { QueryCounter, QueryLimitReachedBanner } from '../src/components/QueryCounter';
 import { ChatBody, OpenAIModel } from '@/types/types';
 import {
   Box,
@@ -17,11 +18,13 @@ import {
   Input,
   Text,
   useColorModeValue,
+  useToast,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { MdAutoAwesome, MdBolt, MdPerson } from 'react-icons/md';
 import Bg from '../public/img/chat/back.gif';
 import { useAuth } from '../src/contexts/AuthContext';
+import { useUserContext } from '../src/contexts/UserContextContext';
 
 export default function Chat() {
   const [inputCode, setInputCode] = useState('');
@@ -34,9 +37,15 @@ export default function Chat() {
   const [showTypewriter, setShowTypewriter] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showLimitReached, setShowLimitReached] = useState(false);
   
   // Use Firebase auth
   const { user, loading: authLoading, signInWithGoogle, logOut } = useAuth();
+  
+  // Use User Context for query tracking
+  const { queriesRemaining, isPro, canQuery, makeQuery, upgradeUser } = useUserContext();
+  
+  const toast = useToast();
 
   // Handle showing main UI after authentication
   useEffect(() => {
@@ -107,8 +116,46 @@ export default function Chat() {
     setOutputCode(fullAnswer);
   };
 
+  const handleUpgrade = async () => {
+    // In a real app, this would integrate with a payment processor
+    // For now, we'll just show a toast and provide instructions
+    toast({
+      title: 'Upgrade to Pro',
+      description: 'Contact support or visit our website to upgrade your account.',
+      status: 'info',
+      duration: 7000,
+      isClosable: true,
+      position: 'top',
+    });
+    
+    // For demo purposes, you could uncomment this to instantly upgrade:
+    // await upgradeUser();
+    // toast({
+    //   title: 'Welcome to Pro!',
+    //   description: 'You now have unlimited queries!',
+    //   status: 'success',
+    //   duration: 5000,
+    //   isClosable: true,
+    //   position: 'top',
+    // });
+  };
+
   const handleTranslate = async () => {
     if (!inputCode) return alert('Please enter your message.');
+    
+    // Check if user can make a query
+    if (!canQuery) {
+      setShowLimitReached(true);
+      toast({
+        title: 'Query limit reached',
+        description: 'You\'ve used all 5 free queries. Upgrade to Pro for unlimited access!',
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+        position: 'top',
+      });
+      return;
+    }
     
     // Start transition immediately
     setIsTransitioning(true);
@@ -118,6 +165,7 @@ export default function Chat() {
     setFullAnswer('');
     setShowTypewriter(false);
     setIsTyping(false);
+    setShowLimitReached(false);
     
     // Small delay to show the transition effect before loading
     setTimeout(() => {
@@ -133,6 +181,9 @@ export default function Chat() {
       const data = await response.json();
       const answer = data.answer || 'No answer found.';
       setFullAnswer(answer); // Store the complete answer
+      
+      // Increment query count AFTER successful query
+      await makeQuery();
       
       // Smooth transition from loading to typewriter
       setTimeout(() => {
@@ -284,6 +335,22 @@ export default function Chat() {
         </Button>
       </Flex> */}
 
+      {/* Query Counter - Fixed at top */}
+      <Flex 
+        position="fixed" 
+        top="20px" 
+        right="20px" 
+        zIndex={999}
+        opacity={showMainUI ? 1 : 0}
+        transition="opacity 0.6s ease 0.4s"
+      >
+        <QueryCounter 
+          remaining={queriesRemaining} 
+          isPro={isPro} 
+          onUpgrade={handleUpgrade}
+        />
+      </Flex>
+
       {/* ✈️ Background Plane */}
       {!outputCode && !loading && !fullAnswer && !isTransitioning && (
         <Img
@@ -374,6 +441,21 @@ export default function Chat() {
               </>
             )}
           </AnswerContainer>
+        </Box>
+      )}
+
+      {/* Query Limit Reached Banner */}
+      {showLimitReached && (
+        <Box
+          mt="40px"
+          zIndex={1}
+          opacity={showMainUI ? 1 : 0}
+          transition="opacity 0.6s ease"
+        >
+          <QueryLimitReachedBanner 
+            isOpen={showLimitReached} 
+            onUpgrade={handleUpgrade}
+          />
         </Box>
       )}
 

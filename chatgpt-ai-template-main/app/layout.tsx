@@ -16,6 +16,7 @@ import '../src/styles/Plugins.css';
 import '../src/styles/MiniCalendar.css';
 import AppWrappers from './AppWrappers';
 import { AuthProvider } from '../src/contexts/AuthContext';
+import { UserContextProvider } from '../src/contexts/UserContextContext';
 
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -34,58 +35,60 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body id="root">
         <AuthProvider>
-          <AppWrappers>
-            <ChakraProvider theme={theme}>
-              {pathname?.includes('register') || pathname?.includes('sign-in') ? (
-                children
-              ) : (
-                <Box>
-                  <Sidebar setApiKey={setApiKey} routes={routes} />
-                  <Box
-                    pt={{ base: '60px', md: '100px' }}
-                    float="right"
-                    minHeight="100vh"
-                    height="100%"
-                    overflow="auto"
-                    position="relative"
-                    maxHeight="100%"
-                    w={{ base: '100%', xl: 'calc(100% - 290px)' }}
-                    maxWidth={{ base: '100%', xl: 'calc(100% - 290px)' }}
-                    transition="all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1)"
-                    transitionDuration=".2s, .2s, .35s"
-                    transitionProperty="top, bottom, width"
-                    transitionTimingFunction="linear, linear, ease"
-                  >
-                    <Portal>
-                      <Box>
-                        <Navbar
-                          setApiKey={setApiKey}
-                          onOpen={onOpen}
-                          logoText={'Fermat AI Travel'}
-                          brandText={getActiveRoute(routes, pathname)}
-                          secondary={getActiveNavbar(routes, pathname)}
-                        />
-                      </Box>
-                    </Portal>
-
+          <UserContextProvider>
+            <AppWrappers>
+              <ChakraProvider theme={theme}>
+                {pathname?.includes('register') || pathname?.includes('sign-in') ? (
+                  children
+                ) : (
+                  <Box>
+                    <Sidebar setApiKey={setApiKey} routes={routes} />
                     <Box
-                      mx="auto"
-                      p={{ base: '20px', md: '30px' }}
-                      pe="20px"
-                      minH="100vh"
-                      pt="50px"
+                      pt={{ base: '60px', md: '100px' }}
+                      float="right"
+                      minHeight="100vh"
+                      height="100%"
+                      overflow="auto"
+                      position="relative"
+                      maxHeight="100%"
+                      w={{ base: '100%', xl: 'calc(100% - 290px)' }}
+                      maxWidth={{ base: '100%', xl: 'calc(100% - 290px)' }}
+                      transition="all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1)"
+                      transitionDuration=".2s, .2s, .35s"
+                      transitionProperty="top, bottom, width"
+                      transitionTimingFunction="linear, linear, ease"
                     >
-                      {children}
-                    </Box>
+                      <Portal>
+                        <Box>
+                          <Navbar
+                            setApiKey={setApiKey}
+                            onOpen={onOpen}
+                            logoText={'Fermat AI Travel'}
+                            brandText={getActiveRoute(routes, pathname)}
+                            secondary={getActiveNavbar(routes, pathname)}
+                          />
+                        </Box>
+                      </Portal>
 
-                    <Box>
-                      <Footer />
+                      <Box
+                        mx="auto"
+                        p={{ base: '20px', md: '30px' }}
+                        pe="20px"
+                        minH="100vh"
+                        pt="50px"
+                      >
+                        {children}
+                      </Box>
+
+                      <Box>
+                        <Footer />
+                      </Box>
                     </Box>
                   </Box>
-                </Box>
-              )}
-            </ChakraProvider>
-          </AppWrappers>
+                )}
+              </ChakraProvider>
+            </AppWrappers>
+          </UserContextProvider>
         </AuthProvider>
       </body>
     </html>
