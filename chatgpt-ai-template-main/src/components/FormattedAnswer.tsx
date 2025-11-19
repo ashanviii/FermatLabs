@@ -37,9 +37,10 @@ export default function FormattedAnswer({ content }: FormattedAnswerProps) {
     p: ({ children }: any) => (
       <Text 
         fontSize={{ base: 'sm', md: 'md' }}
-        lineHeight={{ base: '1.65', md: '1.75' }}
+        lineHeight={{ base: '1.7', md: '1.8' }}
         color={textColor} 
         mb={{ base: 3, md: 4 }}
+        letterSpacing="0.01em"
       >
         {children}
       </Text>

@@ -22,9 +22,14 @@ export default function AnswerContainer({ content, isThinking = false, children 
       border="1px solid"
       borderColor={borderColor}
       borderRadius="24px"
-      boxShadow="lg"
+      boxShadow="0 4px 24px rgba(0, 0, 0, 0.08)"
       overflow="hidden"
       position="relative"
+      transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+      _hover={{
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12)",
+        transform: "translateY(-2px)"
+      }}
       _before={{
         content: '""',
         position: 'absolute',
@@ -32,7 +37,15 @@ export default function AnswerContainer({ content, isThinking = false, children 
         left: 0,
         right: 0,
         height: '4px',
-        bg: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+        bgGradient: 'linear(to-r, purple.500, pink.500, orange.400)',
+        backgroundSize: '200% 100%',
+        animation: isThinking ? 'shimmer 2s linear infinite' : 'none'
+      }}
+      sx={{
+        '@keyframes shimmer': {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' }
+        }
       }}
     >
       {/* Header */}
@@ -45,7 +58,19 @@ export default function AnswerContainer({ content, isThinking = false, children 
         borderBottom="1px solid"
         borderColor={borderColor}
       >
-        <Icon as={MdAutoAwesome} color={iconColor} w={{ base: '18px', md: '20px' }} h={{ base: '18px', md: '20px' }} />
+        <Icon 
+          as={MdAutoAwesome} 
+          color={iconColor} 
+          w={{ base: '18px', md: '20px' }} 
+          h={{ base: '18px', md: '20px' }}
+          animation={isThinking ? "spin 2s linear infinite" : "none"}
+          sx={{
+            '@keyframes spin': {
+              '0%': { transform: 'rotate(0deg)' },
+              '100%': { transform: 'rotate(360deg)' }
+            }
+          }}
+        />
         <Text fontSize={{ base: 'sm', md: 'md' }} fontWeight="600" color="gray.600">
           {isThinking ? 'Fermat is thinking...' : 'Fermat\'s Response'}
         </Text>

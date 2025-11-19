@@ -34,17 +34,17 @@ export interface SidebarProps extends PropsWithChildren {
 function Sidebar(props: SidebarProps) {
   const { routes, setApiKey } = props;
   // Sidebar styling
-  let variantChange = '0.2s linear';
-  let shadow = '0px 0px 20px rgba(0, 0, 0, 0.6)'; // subtle dark shadow
-  let sidebarBg = 'black'; // force black bg
-  let sidebarRadius = '14px';
+  let variantChange = '0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+  let shadow = '0 8px 32px rgba(0, 0, 0, 0.12)';
+  let sidebarBg = 'rgba(0, 0, 0, 0.92)';
+  let sidebarRadius = '20px';
   let sidebarMargins = '0px';
 
   return (
     <Box display={{ base: 'none', xl: 'block' }} position="fixed" minH="100%">
       <Box
         bg={sidebarBg}
-        color="white" // ensure all text/icons are white
+        color="white"
         transition={variantChange}
         w="285px"
         ms={{ sm: '16px' }}
@@ -55,6 +55,12 @@ function Sidebar(props: SidebarProps) {
         minH="100%"
         overflowX="hidden"
         boxShadow={shadow}
+        backdropFilter="saturate(180%) blur(20px)"
+        border="1px solid"
+        borderColor="rgba(255, 255, 255, 0.1)"
+        _hover={{
+          boxShadow: "0 12px 40px rgba(0, 0, 0, 0.15)"
+        }}
       >
         <Scrollbars
           universal={true}

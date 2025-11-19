@@ -58,26 +58,30 @@ export default function AdminNavbar(props: {
     <Box
       zIndex="100"
       position={navbarPosition}
-      boxShadow={navbarShadow}
-      bg={navbarBg}
-      borderColor={navbarBorder}
+      boxShadow="0 8px 32px rgba(0, 0, 0, 0.08)"
+      bg="rgba(255, 255, 255, 0.85)"
+      borderColor="rgba(255, 255, 255, 0.18)"
       filter={navbarFilter}
-      backdropFilter={navbarBackdrop}
+      backdropFilter="saturate(180%) blur(20px)"
       backgroundPosition="center"
       backgroundSize="cover"
-      borderRadius="16px"
-      borderWidth="1.5px"
+      borderRadius="18px"
+      borderWidth="1px"
       borderStyle="solid"
       transitionDelay="0s, 0s, 0s, 0s"
-      transitionDuration=" 0.25s, 0.25s, 0.25s, 0s"
-      transition-property="box-shadow, background-color, filter, border"
-      transitionTimingFunction="linear, linear, linear, linear"
+      transitionDuration=" 0.3s, 0.3s, 0.3s, 0s"
+      transition-property="box-shadow, background-color, filter, border, transform"
+      transitionTimingFunction="cubic-bezier(0.4, 0, 0.2, 1)"
       alignItems={{ xl: 'center' }}
       display={secondary ? 'block' : 'flex'}
       minH="75px"
       justifyContent={{ xl: 'center' }}
       lineHeight="25.6px"
       mx="auto"
+      _hover={{
+        boxShadow: "0 12px 40px rgba(0, 0, 0, 0.12)",
+        transform: "translateY(-1px)"
+      }}
       mt={secondaryMargin}
       pb="8px"
       right={{ base: '12px', md: '30px', lg: '30px', xl: '30px' }}

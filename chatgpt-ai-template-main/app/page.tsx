@@ -9,6 +9,7 @@ import FormattedAnswer from '../src/components/FormattedAnswer';
 import AnswerContainer from '../src/components/AnswerContainer';
 import { QueryCounter, QueryLimitReachedBanner } from '../src/components/QueryCounter';
 import RotatingPlaceholder from '../src/components/RotatingPlaceholder';
+import SkeletonLoader from '../src/components/SkeletonLoader';
 import { ChatBody, OpenAIModel } from '@/types/types';
 import {
   Box,
@@ -179,15 +180,27 @@ export default function Chat() {
     if (!canQuery) {
       setShowLimitReached(true);
       toast({
-        title: 'Query limit reached',
+        title: '⚠️ Query limit reached',
         description: 'You\'ve used all 5 free queries. Upgrade to Pro for unlimited access!',
         status: 'warning',
         duration: 5000,
         isClosable: true,
         position: 'top',
+        variant: 'subtle',
       });
       return;
     }
+    
+    // Show processing toast
+    toast({
+      title: '🚀 Processing your query...',
+      description: 'Fermat AI is working on your request',
+      status: 'info',
+      duration: 2000,
+      isClosable: true,
+      position: 'bottom-right',
+      variant: 'subtle',
+    });
     
     // Start transition immediately
     setIsTransitioning(true);
@@ -226,11 +239,30 @@ export default function Chat() {
           setShowTypewriter(true);
           setIsTyping(true);
           setIsTransitioning(false);
+          
+          // Success toast
+          toast({
+            title: '✅ Response ready!',
+            description: 'Your answer is being displayed',
+            status: 'success',
+            duration: 2000,
+            isClosable: true,
+            position: 'bottom-right',
+            variant: 'subtle',
+          });
         }, 400);
       }, 300);
     } catch (err) {
       console.error(err);
-      alert('Backend connection failed.');
+      toast({
+        title: '❌ Connection failed',
+        description: 'Unable to reach the backend. Please try again.',
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+        position: 'top',
+        variant: 'subtle',
+      });
       setLoading(false);
       setIsTransitioning(false);
     }
@@ -446,41 +478,66 @@ export default function Chat() {
 
       {/* Output */}
       {(outputCode || loading || fullAnswer || isTransitioning) && (
-        <Box
-          mt={{ base: '80px', md: '100px' }}
-          mb={{ base: '24px', md: '32px' }}
-          w="100%"
-          maxW="960px"
-          zIndex={1}
-          opacity={showMainUI ? 1 : 0}
-          transform={showMainUI ? 'translateY(0)' : 'translateY(30px)'}
-          transition="all 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.4s"
-        >
-          <AnswerContainer
-            content={outputCode || ''}
-            isThinking={loading || isTransitioning}
+        loading ? (
+          <Box
+            mt={{ base: '80px', md: '100px' }}
+            mb={{ base: '24px', md: '32px' }}
+            w="100%"
+            maxW="960px"
+            zIndex={1}
+            opacity={showMainUI ? 1 : 0}
+            transform={showMainUI ? 'translateY(0)' : 'translateY(30px)'}
+            transition="all 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.4s"
           >
-            {showTypewriter ? (
-              <TypewriterText
-                text={fullAnswer}
-                speed={5}
-                showCursor={true}
-                useFormatting={true}
-                onComplete={() => {
-                  setIsTyping(false);
-                  setOutputCode(fullAnswer); // Set the final output when complete
-                  console.log('Typewriter animation completed');
-                }}
-              />
-            ) : outputCode && !loading ? (
-              <FormattedAnswer content={outputCode} />
-            ) : (
-              <>
-                {(loading || isTransitioning) && <ThinkingAnimation isTransitioning={isTransitioning} />}
-              </>
-            )}
-          </AnswerContainer>
-        </Box>
+            <Box position="relative">
+              <SkeletonLoader />
+              {/* Thinking text overlay on skeleton */}
+              <Box
+                position="absolute"
+                top="50%"
+                left="50%"
+                transform="translate(-50%, -50%)"
+                zIndex={2}
+              >
+                <ThinkingAnimation text="Thinking" isTransitioning={false} />
+              </Box>
+            </Box>
+          </Box>
+        ) : (
+          <Box
+            mt={{ base: '80px', md: '100px' }}
+            mb={{ base: '24px', md: '32px' }}
+            w="100%"
+            maxW="960px"
+            zIndex={1}
+            opacity={showMainUI ? 1 : 0}
+            transform={showMainUI ? 'translateY(0)' : 'translateY(30px)'}
+            transition="all 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.4s"
+          >
+            <AnswerContainer
+              content={outputCode || ''}
+              isThinking={isTransitioning}
+            >
+              {showTypewriter ? (
+                <TypewriterText
+                  text={fullAnswer}
+                  speed={5}
+                  showCursor={true}
+                  useFormatting={true}
+                  onComplete={() => {
+                    setIsTyping(false);
+                    setOutputCode(fullAnswer);
+                    console.log('Typewriter animation completed');
+                  }}
+                />
+              ) : outputCode ? (
+                <FormattedAnswer content={outputCode} />
+              ) : (
+                <>{isTransitioning && <ThinkingAnimation isTransitioning={isTransitioning} />}</>
+              )}
+            </AnswerContainer>
+          </Box>
+        )
       )}
 
       {/* Query Limit Reached Banner */}
@@ -518,7 +575,7 @@ export default function Chat() {
           <Input
             minH={{ base: '56px', md: '60px' }}
             w="100%"
-            border="1px solid"
+            border="2px solid"
             borderColor={isTransitioning ? "gray.400" : "gray.300"}
             borderRadius="45px"
             p={{ base: '16px 20px', md: '18px 24px' }}
@@ -530,16 +587,25 @@ export default function Chat() {
             placeholder={!canQuery ? "Query limit reached - Upgrade to Pro for unlimited access" : ""}
             onChange={handleChange}
             onKeyDown={handleKeyPress}
-            _focus={{ borderColor: 'gray.700', boxShadow: '0 0 0 1px gray.700' }}
-            _hover={{ borderColor: 'gray.500' }}
+            _focus={{ 
+              borderColor: 'purple.500',
+              boxShadow: '0 0 0 3px rgba(139, 92, 246, 0.1), 0 4px 12px rgba(139, 92, 246, 0.15)',
+              transform: 'translateY(-2px)'
+            }}
+            _hover={{ 
+              borderColor: 'gray.400',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+              transform: !canQuery ? 'none' : 'translateY(-1px)'
+            }}
             _placeholder={{
               color: 'gray.400',
               transition: 'opacity 0.5s ease',
             }}
-            transition="all 0.3s ease"
+            transition="all 0.25s cubic-bezier(0.4, 0, 0.2, 1)"
             transform={isTransitioning ? 'scale(0.98)' : 'scale(1)'}
             isDisabled={!canQuery}
             opacity={!canQuery ? 0.6 : 1}
+            boxShadow="0 1px 3px rgba(0, 0, 0, 0.05)"
           />
           {/* Rotating placeholder overlay */}
           {!inputCode && canQuery && (
@@ -572,17 +638,39 @@ export default function Chat() {
               : "linear(to-r, gray.800, gray.700)"
           }
           color="white"
-          transition="all 0.3s ease"
-          boxShadow="0 4px 12px rgba(0, 0, 0, 0.25)"
+          transition="all 0.25s cubic-bezier(0.4, 0, 0.2, 1)"
+          boxShadow="0 4px 14px rgba(0, 0, 0, 0.25)"
+          position="relative"
+          overflow="hidden"
+          _before={inputCode && canQuery ? {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%)',
+            opacity: 0,
+            animation: 'pulse 2s ease-in-out infinite'
+          } : {}}
+          sx={{
+            '@keyframes pulse': {
+              '0%, 100%': { opacity: 0 },
+              '50%': { opacity: 0.4 }
+            }
+          }}
           _hover={{
+            transform: !canQuery ? 'none' : 'translateY(-2px) scale(1.02)',
+            boxShadow: !canQuery ? 'none' : '0 8px 24px rgba(0, 0, 0, 0.3)',
             bgGradient: !canQuery
               ? "linear(to-r, purple.700, purple.600)"
               : isTyping 
               ? "linear(to-r, red.700, red.600)" 
-              : "linear(to-r, gray.900, gray.700)",
-            transform: 'translateY(-3px) scale(1.03)',
+              : "linear(to-r, gray.900, gray.800)"
           }}
-          _active={{ transform: 'scale(0.97)' }}
+          _active={{
+            transform: !canQuery ? 'none' : 'scale(0.98)',
+          }}
           onClick={!canQuery ? handleUpgrade : (isTyping ? handleStopTyping : handleTranslate)}
           isLoading={loading}
           isDisabled={loading}
