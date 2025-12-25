@@ -25,7 +25,15 @@ export async function GET(req: Request): Promise<Response> {
 
 export async function POST(req: Request): Promise<Response> {
   try {
-    const { inputCode, model, apiKey } = (await req.json()) as ChatBody;
+    const { inputCode, model, apiKey, userId } = (await req.json()) as ChatBody & { userId?: string };
+
+    // Validate user is logged in
+    if (!userId) {
+      return new Response(JSON.stringify({ error: 'Unauthorized: Please log in to use this service' }), { 
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
 
     let apiKeyFinal;
     if (apiKey) {
