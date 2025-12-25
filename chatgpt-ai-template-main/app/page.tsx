@@ -127,10 +127,30 @@ export default function Chat() {
         setShowMainUI(true);
         setFadeOut(false);
       }, 800);
-    } catch (error) {
+      
+      toast({
+        title: '✅ Login Successful',
+        description: 'Welcome to Fermat AI!',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+        position: 'top',
+      });
+    } catch (error: any) {
       console.error('Google Sign In Error:', error);
-      alert('Google Login Failed');
       setFadeOut(false);
+      
+      // Show user-friendly error message
+      const errorMessage = error.message || 'Unable to sign in with Google. Please try again.';
+      
+      toast({
+        title: '❌ Login Failed',
+        description: errorMessage,
+        status: 'error',
+        duration: 8000,
+        isClosable: true,
+        position: 'top',
+      });
     }
   };
 
@@ -624,11 +644,11 @@ export default function Chat() {
       if (useWebSearch) {
         // Call both Reddit RAG and Web Search in parallel for comprehensive results
         const [redditResponse, webSearchResponse] = await Promise.all([
-          fetch(`/api/redditRAG?query=${encodeURIComponent(inputCode)}`, {
+          fetch(`/api/redditRAG?query=${encodeURIComponent(inputCode)}&userId=${user?.uid}`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
           }),
-          fetch(`/api/webSearch?query=${encodeURIComponent(inputCode)}`, {
+          fetch(`/api/webSearch?query=${encodeURIComponent(inputCode)}&userId=${user?.uid}`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
           })
@@ -648,7 +668,7 @@ export default function Chat() {
       } else {
         // Use only Reddit RAG for community-focused queries
         const redditResponse = await fetch(
-          `/api/redditRAG?query=${encodeURIComponent(inputCode)}`,
+          `/api/redditRAG?query=${encodeURIComponent(inputCode)}&userId=${user?.uid}`,
           { method: 'GET', headers: { 'Content-Type': 'application/json' } }
         );
         
