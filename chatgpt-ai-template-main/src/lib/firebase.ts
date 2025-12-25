@@ -30,10 +30,30 @@ export const db = getFirestore(app);
 // Auth functions
 export const signInWithGoogle = async () => {
   try {
+    // Add additional scopes for better user experience
+    googleProvider.setCustomParameters({
+      prompt: 'select_account'
+    });
+    
     const result = await signInWithPopup(auth, googleProvider);
+    console.log('[Firebase] Sign in successful:', result.user.email);
     return result.user;
-  } catch (error) {
-    console.error("Error signing in with Google:", error);
+  } catch (error: any) {
+    console.error("[Firebase] Error signing in with Google:", error);
+    console.error("[Firebase] Error code:", error.code);
+    console.error("[Firebase] Error message:", error.message);
+    
+    // Provide more specific error messages
+    if (error.code === 'auth/popup-closed-by-user') {
+      throw new Error('Sign-in cancelled. Please try again.');
+    } else if (error.code === 'auth/popup-blocked') {
+      throw new Error('Pop-up blocked by browser. Please allow pop-ups for this site.');
+    } else if (error.code === 'auth/unauthorized-domain') {
+      throw new Error('This domain is not authorized. Please add it in Firebase Console > Authentication > Settings > Authorized domains.');
+    } else if (error.code === 'auth/operation-not-allowed') {
+      throw new Error('Google Sign-In is not enabled. Please enable it in Firebase Console > Authentication > Sign-in method.');
+    }
+    
     throw error;
   }
 };
@@ -60,9 +80,16 @@ export interface UserData {
   isPro: boolean;
   createdAt: any;
   lastQueryAt: any;
+  lastResetDate: string; // Store date as YYYY-MM-DD string
 }
 
 const FREE_QUERY_LIMIT = 5;
+
+// Helper function to get today's date as YYYY-MM-DD
+const getTodayDateString = (): string => {
+  const today = new Date();
+  return today.toISOString().split('T')[0];
+};
 
 export const getUserData = async (uid: string): Promise<UserData | null> => {
   try {
@@ -93,6 +120,7 @@ export const createUserDocument = async (user: User): Promise<void> => {
         isPro: false,
         createdAt: serverTimestamp(),
         lastQueryAt: null,
+        lastResetDate: getTodayDateString(),
       });
       console.log('[Firebase] User document created successfully');
     } else {
@@ -108,10 +136,24 @@ export const incrementQueryCount = async (uid: string): Promise<void> => {
   try {
     console.log('[Firebase] Incrementing query count for user:', uid);
     const userRef = doc(db, 'users', uid);
-    await updateDoc(userRef, {
-      queryCount: increment(1),
-      lastQueryAt: serverTimestamp(),
-    });
+    
+    // Check if we need to reset for a new day
+    const userData = await getUserData(uid);
+    const today = getTodayDateString();
+    
+    if (userData && userData.lastResetDate !== today) {
+      console.log('[Firebase] New day detected, resetting query count');
+      await updateDoc(userRef, {
+        queryCount: 1,
+        lastQueryAt: serverTimestamp(),
+        lastResetDate: today,
+      });
+    } else {
+      await updateDoc(userRef, {
+        queryCount: increment(1),
+        lastQueryAt: serverTimestamp(),
+      });
+    }
     console.log('[Firebase] Query count incremented successfully');
   } catch (error) {
     console.error('[Firebase] Error incrementing query count:', error);
@@ -131,7 +173,21 @@ export const canMakeQuery = async (uid: string): Promise<{ canQuery: boolean; re
       return { canQuery: true, remaining: -1, isPro: true }; // -1 means unlimited
     }
     
-    const remaining = FREE_QUERY_LIMIT - userData.queryCount;
+    // Check if it's a new day - if so, reset the count
+    const today = getTodayDateString();
+    let currentQueryCount = userData.queryCount;
+    
+    if (userData.lastResetDate !== today) {
+      console.log('[Firebase] New day detected in canMakeQuery, resetting count');
+      const userRef = doc(db, 'users', uid);
+      await updateDoc(userRef, {
+        queryCount: 0,
+        lastResetDate: today,
+      });
+      currentQueryCount = 0;
+    }
+    
+    const remaining = FREE_QUERY_LIMIT - currentQueryCount;
     const canQuery = remaining > 0;
     
     return { canQuery, remaining, isPro: false };
