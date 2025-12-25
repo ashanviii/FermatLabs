@@ -7,24 +7,50 @@ const STORAGE_KEY = 'fermat_query_tracking';
 interface LocalUserData {
   queryCount: number;
   isPro: boolean;
-  lastReset: string;
+  lastReset: string; // ISO date string
 }
+
+// Helper function to get today's date as YYYY-MM-DD
+const getTodayDateString = (): string => {
+  const today = new Date();
+  return today.toISOString().split('T')[0];
+};
+
+// Helper function to check if reset is needed
+const needsDailyReset = (lastReset: string): boolean => {
+  const today = getTodayDateString();
+  return lastReset !== today;
+};
 
 export const getLocalUserData = (userId: string): LocalUserData => {
   if (typeof window === 'undefined') {
-    return { queryCount: 0, isPro: false, lastReset: new Date().toISOString() };
+    return { queryCount: 0, isPro: false, lastReset: getTodayDateString() };
   }
 
   try {
     const stored = localStorage.getItem(`${STORAGE_KEY}_${userId}`);
     if (stored) {
-      return JSON.parse(stored);
+      const data = JSON.parse(stored);
+      
+      // Check if we need to reset for a new day
+      if (needsDailyReset(data.lastReset)) {
+        console.log('[LocalStorage] New day detected, resetting query count');
+        const resetData = {
+          ...data,
+          queryCount: 0,
+          lastReset: getTodayDateString(),
+        };
+        setLocalUserData(userId, resetData);
+        return resetData;
+      }
+      
+      return data;
     }
   } catch (error) {
     console.error('[LocalStorage] Error reading data:', error);
   }
 
-  return { queryCount: 0, isPro: false, lastReset: new Date().toISOString() };
+  return { queryCount: 0, isPro: false, lastReset: getTodayDateString() };
 };
 
 export const setLocalUserData = (userId: string, data: LocalUserData): void => {
@@ -68,7 +94,7 @@ export const upgradeLocalToPro = (userId: string): void => {
 export const resetLocalQueryCount = (userId: string): void => {
   const data = getLocalUserData(userId);
   data.queryCount = 0;
-  data.lastReset = new Date().toISOString();
+  data.lastReset = getTodayDateString();
   setLocalUserData(userId, data);
   console.log('[LocalStorage] Query count reset');
 };
