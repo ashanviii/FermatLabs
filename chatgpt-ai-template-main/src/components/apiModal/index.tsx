@@ -66,7 +66,7 @@ function APIModal(props: { setApiKey: any; sidebar?: boolean }) {
           alignItems="center"
           px="16px"
         >
-          {user?.displayName || 'User'}
+          {user?.displayName || 'Guest'}
         </Text>
       ) : (
         <Text
@@ -77,7 +77,7 @@ function APIModal(props: { setApiKey: any; sidebar?: boolean }) {
           alignItems="center"
           px="10px"
         >
-          {user?.displayName || 'User'}
+          {user?.displayName || 'Guest'}
         </Text>
       )}
 
