@@ -58,30 +58,14 @@ export default function AdminNavbar(props: {
     <Box
       zIndex="100"
       position={navbarPosition}
-      boxShadow="0 8px 32px rgba(0, 0, 0, 0.08)"
-      bg="rgba(255, 255, 255, 0.85)"
-      borderColor="rgba(255, 255, 255, 0.18)"
+      bg="transparent"
       filter={navbarFilter}
-      backdropFilter="saturate(180%) blur(20px)"
-      backgroundPosition="center"
-      backgroundSize="cover"
-      borderRadius="18px"
-      borderWidth="1px"
-      borderStyle="solid"
-      transitionDelay="0s, 0s, 0s, 0s"
-      transitionDuration=" 0.3s, 0.3s, 0.3s, 0s"
-      transition-property="box-shadow, background-color, filter, border, transform"
-      transitionTimingFunction="cubic-bezier(0.4, 0, 0.2, 1)"
       alignItems={{ xl: 'center' }}
       display={secondary ? 'block' : 'flex'}
       minH="75px"
       justifyContent={{ xl: 'center' }}
       lineHeight="25.6px"
       mx="auto"
-      _hover={{
-        boxShadow: "0 12px 40px rgba(0, 0, 0, 0.12)",
-        transform: "translateY(-1px)"
-      }}
       mt={secondaryMargin}
       pb="8px"
       right={{ base: '12px', md: '30px', lg: '30px', xl: '30px' }}
@@ -95,13 +79,7 @@ export default function AdminNavbar(props: {
       }}
       pt="8px"
       top={{ base: '12px', md: '16px', xl: '18px' }}
-      w={{
-        base: 'calc(100vw - 8%)',
-        md: 'calc(100vw - 8%)',
-        lg: 'calc(100vw - 6%)',
-        xl: 'calc(100vw - 350px)',
-        '2xl': 'calc(100vw - 365px)',
-      }}
+      w="auto"
     >
       <Flex
         w="100%"
