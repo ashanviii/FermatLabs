@@ -99,7 +99,7 @@ export default function HeaderLinks(props: {
             w="40px"
             h="40px"
             src={user?.photoURL || undefined}
-            name={user?.displayName || 'User'}
+            name={user?.displayName || 'Guest'}
           />
         </MenuButton>
         <MenuList
@@ -117,57 +117,59 @@ export default function HeaderLinks(props: {
               pt="16px"
               pb="10px"
               w="100%"
-              borderBottom="1px solid"
-              borderColor={borderColor}
               fontSize="sm"
               fontWeight="700"
               color={textColor}
             >
-              👋&nbsp; Hey, {user?.displayName || 'User'}
+              👋&nbsp; Hey, {user?.displayName || 'Guest'}
             </Text>
           </Flex>
           <Flex flexDirection="column" p="10px">
-            <NavLink href="/settings">
-              <MenuItem
-                _hover={{ bg: 'gray.50', _dark: { bg: 'gray.800' } }}
-                color={textColor}
-                borderRadius="8px"
-                px="14px"
-              >
-                <Text fontWeight="500" fontSize="sm">
-                  Profile Settings
-                </Text>
-              </MenuItem>
-            </NavLink>
-            {/* Newsletter Settings Commented Out
-            <MenuItem
-              _hover={{ bg: 'gray.50', _dark: { bg: 'gray.800' } }}
-              color={textColor}
-              borderRadius="8px"
-              px="14px"
-            >
-              <Text fontWeight="500" fontSize="sm">
-                Newsletter Settings
-              </Text>
-            </MenuItem>
-            */}
-            <MenuItem
-              _hover={{ bg: 'gray.50', _dark: { bg: 'gray.800' } }}
-              color="red.400"
-              borderRadius="8px"
-              px="14px"
-              onClick={async () => {
-                try {
-                  await logOut();
-                } catch (error) {
-                  console.error('Error logging out:', error);
-                }
-              }}
-            >
-              <Text fontWeight="500" fontSize="sm">
-                Log out
-              </Text>
-            </MenuItem>
+            {user ? (
+              <>
+                <NavLink href="/settings">
+                  <MenuItem
+                    _hover={{ bg: 'gray.50', _dark: { bg: 'gray.800' } }}
+                    color={textColor}
+                    borderRadius="8px"
+                    px="14px"
+                  >
+                    <Text fontWeight="500" fontSize="sm">
+                      Profile Settings
+                    </Text>
+                  </MenuItem>
+                </NavLink>
+                {/* Newsletter Settings Commented Out
+                <MenuItem
+                  _hover={{ bg: 'gray.50', _dark: { bg: 'gray.800' } }}
+                  color={textColor}
+                  borderRadius="8px"
+                  px="14px"
+                >
+                  <Text fontWeight="500" fontSize="sm">
+                    Newsletter Settings
+                  </Text>
+                </MenuItem>
+                */}
+                <MenuItem
+                  _hover={{ bg: 'gray.50', _dark: { bg: 'gray.800' } }}
+                  color="red.400"
+                  borderRadius="8px"
+                  px="14px"
+                  onClick={async () => {
+                    try {
+                      await logOut();
+                    } catch (error) {
+                      console.error('Error logging out:', error);
+                    }
+                  }}
+                >
+                  <Text fontWeight="500" fontSize="sm">
+                    Log out
+                  </Text>
+                </MenuItem>
+              </>
+            ) : null}
           </Flex>
         </MenuList>
       </Menu>
