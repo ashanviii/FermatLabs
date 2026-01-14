@@ -189,52 +189,59 @@ const Counter = ({ value, suffix, label, isVisible }: { value: number; suffix: s
 };
 
 // Video modal
-const VideoModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => (
-  <AnimatePresence>
-    {isOpen && (
-      <MotionBox
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        position="fixed"
-        inset={0}
-        bg="rgba(0, 0, 0, 0.95)"
-        zIndex={9999}
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        onClick={onClose}
-      >
+const VideoModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+  const AnimatePresenceAny = AnimatePresence as any;
+  return (
+    <AnimatePresenceAny>
+      {isOpen && (
         <MotionBox
-          initial={{ scale: 0.8 }}
-          animate={{ scale: 1 }}
-          exit={{ scale: 0.8 }}
-          w="90%"
-          maxW="900px"
-          h="0"
-          pb="56.25%"
-          bg="linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 193, 7, 0.2))"
-          borderRadius="24px"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          position="relative"
-          onClick={(e: React.MouseEvent) => e.stopPropagation()}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.95)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onClick={onClose}
         >
-          <Button position="absolute" top={4} right={4} variant="ghost" color="white" onClick={onClose} zIndex={1}>
-            <Icon as={MdClose} w={8} h={8} />
-          </Button>
-          <Flex position="absolute" inset={0} align="center" justify="center">
-            <VStack>
-              <Icon as={MdPlayArrow} w={20} h={20} color="whiteAlpha.800" />
-              <Text color="whiteAlpha.600">Demo Video</Text>
-            </VStack>
-          </Flex>
+          <MotionBox
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0.8 }}
+            style={{
+              width: '90%',
+              maxWidth: '900px',
+              height: 0,
+              paddingBottom: '56.25%',
+              background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 193, 7, 0.2))',
+              borderRadius: '24px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'relative',
+            }}
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+          >
+            <Button position="absolute" top={4} right={4} variant="ghost" color="white" onClick={onClose} zIndex={1}>
+              <Icon as={MdClose} w={8} h={8} />
+            </Button>
+            <Flex position="absolute" inset={0} align="center" justify="center">
+              <VStack>
+                <Icon as={MdPlayArrow} w={20} h={20} color="whiteAlpha.800" />
+                <Text color="whiteAlpha.600">Demo Video</Text>
+              </VStack>
+            </Flex>
+          </MotionBox>
         </MotionBox>
-      </MotionBox>
-    )}
-  </AnimatePresence>
-);
+      )}
+    </AnimatePresenceAny>
+  );
+};
 
 // Scroll indicator
 const ScrollIndicator = ({ onClick }: { onClick: () => void }) => (
