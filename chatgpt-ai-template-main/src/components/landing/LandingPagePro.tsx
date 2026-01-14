@@ -110,7 +110,7 @@ const FeatureCard = ({ icon, title, description, gradient, index, isVisible }: a
     <MotionBox
       initial={{ opacity: 0, y: 60 }}
       animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
-      transition={{ duration: 0.6, delay: index * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+      transition={{ duration: 0.6, delay: index * 0.1, ease: [0.25, 0.46, 0.45, 0.94] as any }}
       bg="rgba(255, 255, 255, 0.03)"
       backdropFilter="blur(20px)"
       border="1px solid rgba(255, 255, 255, 0.08)"
@@ -122,7 +122,7 @@ const FeatureCard = ({ icon, title, description, gradient, index, isVisible }: a
         transform: 'translateY(-8px)',
         bg: 'rgba(255, 255, 255, 0.05)',
       }}
-      transition="all 0.3s ease"
+      whileHover={{ y: -8 }}
     >
       <VStack align="start" spacing={4}>
         <Flex
