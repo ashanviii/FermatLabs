@@ -1029,17 +1029,14 @@ export default function LandingPagePro() {
                     initial={{ opacity: 0, y: 50 }}
                     animate={activeSection === 5 ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
                     transition={{ duration: 0.6, delay: index * 0.15 }}
-                    bg="rgba(255, 255, 255, 0.03)"
-                    border="1px solid rgba(255, 255, 255, 0.08)"
-                    borderRadius={{ base: '16px', md: '24px' }}
-                    p={{ base: 3, md: 6 }}
-                    textAlign="center"
-                    w={{ base: '45%', sm: '45%', md: '220px' }}
-                    _hover={{ 
-                      border: '1px solid rgba(255, 215, 0, 0.3)',
-                      transform: 'translateY(-5px)'
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.03)',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      borderRadius: '24px',
+                      padding: '1.5rem',
+                      textAlign: 'center',
                     }}
-                    transition="all 0.3s ease"
+                    whileHover={{ y: -5, borderColor: 'rgba(255, 215, 0, 0.3)' }}
                   >
                     <VStack spacing={{ base: 2, md: 4 }}>
                       <Box
