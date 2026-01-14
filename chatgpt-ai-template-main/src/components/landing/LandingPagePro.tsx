@@ -18,9 +18,9 @@ import { FaPassport, FaRobot, FaGlobeAmericas, FaStar, FaQuoteLeft } from 'react
 import { HiSparkles } from 'react-icons/hi';
 import { useRouter } from 'next/navigation';
 
-const MotionBox = motion(Box as any);
-const MotionText = motion(Text as any);
-const MotionFlex = motion(Flex as any);
+const MotionBox = motion.div as any;
+const MotionText = motion.span as any;
+const MotionFlex = motion.div as any;
 
 // Keyframe animations
 const float = keyframes`
