@@ -581,7 +581,7 @@ export default function LandingPagePro() {
                     />
                   </Box>
                   <Text color="whiteAlpha.900" fontSize="sm" fontWeight="600">
-                    Powered by GPT-4
+                    Powered by GPT-5.2
                   </Text>
                 </Flex>
               </MotionBox>
