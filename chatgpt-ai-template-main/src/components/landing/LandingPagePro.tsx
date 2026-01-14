@@ -76,26 +76,30 @@ const AnimatedHeadline = ({ text, delay = 0, isVisible }: { text: string; delay?
   
   return (
     <Flex flexWrap="wrap" justify="center">
-      {letters.map((letter, index) => (
-        <MotionBox
-          key={index}
-          as={Text}
-          initial={{ opacity: 0, y: 50 }}
-          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-          transition={{
-            duration: 0.5,
-            delay: delay + index * 0.03,
-            ease: [0.25, 0.46, 0.45, 0.94]
-          }}
-          display="inline-block"
-          fontSize={{ base: '3xl', md: '5xl', lg: '7xl' }}
-          fontWeight="900"
-          color="white"
-          letterSpacing="-0.02em"
-        >
-          {letter === ' ' ? '\u00A0' : letter}
-        </MotionBox>
-      ))}
+      {letters.map((letter, index) => {
+        const MotionSpan = motion.span as any;
+        return (
+          <MotionSpan
+            key={index}
+            initial={{ opacity: 0, y: 50 }}
+            animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+            transition={{
+              duration: 0.5,
+              delay: delay + index * 0.03,
+              ease: [0.25, 0.46, 0.45, 0.94]
+            }}
+            style={{
+              display: 'inline-block',
+              fontSize: 'clamp(1.875rem, 5vw, 4.5rem)',
+              fontWeight: 900,
+              color: 'white',
+              letterSpacing: '-0.02em'
+            }}
+          >
+            {letter === ' ' ? '\u00A0' : letter}
+          </MotionSpan>
+        );
+      })}
     </Flex>
   );
 };
