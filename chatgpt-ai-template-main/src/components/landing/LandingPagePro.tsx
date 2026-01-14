@@ -867,15 +867,16 @@ export default function LandingPagePro() {
                     initial={{ opacity: 0, y: 50 }}
                     animate={activeSection === 3 ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
                     transition={{ duration: 0.6, delay: index * 0.15 }}
-                    flex={1}
-                    p={8}
-                    borderRadius="24px"
-                    bg="rgba(255, 255, 255, 0.03)"
-                    border="1px solid rgba(255, 255, 255, 0.08)"
-                    position="relative"
-                    overflow="hidden"
-                    _hover={{ border: '1px solid rgba(255, 215, 0, 0.3)' }}
-                    transition="all 0.3s ease"
+                    style={{
+                      flex: 1,
+                      padding: '2rem',
+                      borderRadius: '24px',
+                      background: 'rgba(255, 255, 255, 0.03)',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      position: 'relative',
+                      overflow: 'hidden',
+                    }}
+                    whileHover={{ borderColor: 'rgba(255, 215, 0, 0.3)' }}
                   >
                     <Text
                       position="absolute"
