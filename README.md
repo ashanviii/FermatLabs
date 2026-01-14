@@ -1,6 +1,6 @@
 # Reddit RAG Systems 🤖
 
-A comprehensive Retrieval-Augmented Generation (RAG) system that scrape Reddit posts and provides AI-powered Q&A using OpenAI's GPT models and semantic search.
+A comprehensive  Retrieval-Augmented Generation (RAG) system that scrape Reddit posts and provides AI-powered Q&A using OpenAI's GPT models and semantic search.
 
 ## 🚀 Feature
 
