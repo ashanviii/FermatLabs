@@ -77,8 +77,9 @@ const AnimatedHeadline = ({ text, delay = 0, isVisible }: { text: string; delay?
   return (
     <Flex flexWrap="wrap" justify="center">
       {letters.map((letter, index) => (
-        <MotionText
+        <MotionBox
           key={index}
+          as={Text}
           initial={{ opacity: 0, y: 50 }}
           animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
           transition={{
@@ -93,7 +94,7 @@ const AnimatedHeadline = ({ text, delay = 0, isVisible }: { text: string; delay?
           letterSpacing="-0.02em"
         >
           {letter === ' ' ? '\u00A0' : letter}
-        </MotionText>
+        </MotionBox>
       ))}
     </Flex>
   );
