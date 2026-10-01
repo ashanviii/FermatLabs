@@ -1,22 +1,12 @@
-'use client';
-
 import React, { ReactNode } from 'react';
-import { ChakraProvider, Box } from '@chakra-ui/react';
-import theme from '../../src/theme/theme';
-import '../../src/styles/App.css';
-import '../../src/styles/Landing.css';
+import { Inter } from 'next/font/google';
+import { Box } from '@/lib/chakra';
+import './landing.css';
 
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
+
+// Rendered as a Chakra Box: the root ChakraProvider emits Emotion <style> tags during SSR,
+// and a plain element as its first child fails hydration.
 export default function LandingLayout({ children }: { children: ReactNode }) {
-  return (
-    <ChakraProvider theme={theme}>
-      <Box
-        minH="100vh"
-        w="100%"
-        bg="#0a0a0f"
-        overflowX="hidden"
-      >
-        {children}
-      </Box>
-    </ChakraProvider>
-  );
+  return <Box className={`landing ${inter.variable}`}>{children}</Box>;
 }

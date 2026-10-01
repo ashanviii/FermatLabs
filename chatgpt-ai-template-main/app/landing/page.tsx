@@ -1,9 +1,5 @@
-'use client';
-
-import React from 'react';
-import LandingPagePro from '../../src/components/landing/LandingPagePro';
-import '../../src/styles/Landing.css';
+import LandingPage from '../../src/components/landing/LandingPage';
 
 export default function Landing() {
-  return <LandingPagePro />;
+  return <LandingPage />;
 }

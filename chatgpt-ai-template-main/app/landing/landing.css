@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .landing {
+    /* Brand: black mark on lime (#C8FF0A), softened to pastel for surfaces. */
+    --background: 72 45% 98.5%;
+    --foreground: 80 12% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 80 12% 8%;
+    --primary: 74 92% 72%;
+    --primary-foreground: 80 12% 8%;
+    --secondary: 72 75% 93%;
+    --secondary-foreground: 80 20% 14%;
+    --muted: 72 25% 95%;
+    --muted-foreground: 80 6% 38%;
+    --accent: 72 75% 93%;
+    --accent-foreground: 80 20% 12%;
+    --border: 72 22% 88%;
+    --input: 72 22% 88%;
+    --ring: 76 85% 40%;
+    --radius: 1rem;
+
+    min-height: 100vh;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  .landing *,
+  .landing ::before,
+  .landing ::after {
+    border-color: hsl(var(--border));
+  }
+
+  .landing ::selection {
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+
+  html:has(.landing) {
+    scroll-behavior: smooth;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:has(.landing) {
+    scroll-behavior: auto;
+  }
+
+  .landing *,
+  .landing ::before,
+  .landing ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .landing [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
