@@ -1,7 +1,18 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, type User } from "firebase/auth";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut,
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  updateProfile,
+  type User,
+} from "firebase/auth";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, serverTimestamp } from "firebase/firestore";
 
 // Your web app's Firebase configuration
@@ -55,6 +66,61 @@ export const signInWithGoogle = async () => {
     }
     
     throw error;
+  }
+};
+
+// Maps Firebase email/password error codes to messages a user can act on.
+const emailAuthError = (error: any): Error => {
+  console.error("[Firebase] Email auth error:", error.code, error.message);
+  switch (error.code) {
+    case 'auth/invalid-email':
+      return new Error("That email address doesn't look right.");
+    case 'auth/missing-password':
+      return new Error('Please enter your password.');
+    case 'auth/weak-password':
+      return new Error('Use at least 6 characters for your password.');
+    case 'auth/email-already-in-use':
+      return new Error('An account with this email already exists. Try logging in instead.');
+    case 'auth/invalid-credential':
+    case 'auth/wrong-password':
+    case 'auth/user-not-found':
+      return new Error('Incorrect email or password.');
+    case 'auth/too-many-requests':
+      return new Error('Too many attempts. Please wait a moment and try again.');
+    case 'auth/operation-not-allowed':
+      return new Error('Email sign-in is not enabled. Please enable it in Firebase Console > Authentication > Sign-in method.');
+    default:
+      return new Error(error.message || 'Something went wrong. Please try again.');
+  }
+};
+
+export const signUpWithEmail = async (name: string, email: string, password: string) => {
+  try {
+    const { user } = await createUserWithEmailAndPassword(auth, email, password);
+    await updateProfile(user, { displayName: name });
+    // The user document is created on the auth state change, usually before the name is set; fill it in.
+    // updateDoc (not a merge) so this never creates a partial document ahead of createUserDocument.
+    await updateDoc(doc(db, 'users', user.uid), { displayName: name }).catch(() => {});
+    return user;
+  } catch (error: any) {
+    throw emailAuthError(error);
+  }
+};
+
+export const signInWithEmail = async (email: string, password: string) => {
+  try {
+    const { user } = await signInWithEmailAndPassword(auth, email, password);
+    return user;
+  } catch (error: any) {
+    throw emailAuthError(error);
+  }
+};
+
+export const resetPassword = async (email: string) => {
+  try {
+    await sendPasswordResetEmail(auth, email);
+  } catch (error: any) {
+    throw emailAuthError(error);
   }
 };
 

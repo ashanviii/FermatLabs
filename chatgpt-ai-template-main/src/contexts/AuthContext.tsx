@@ -1,12 +1,22 @@
 'use client';
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User } from 'firebase/auth';
-import { onAuthStateChange, signInWithGoogle, logOut } from '../lib/firebase';
+import {
+  onAuthStateChange,
+  signInWithGoogle,
+  signInWithEmail,
+  signUpWithEmail,
+  resetPassword,
+  logOut,
+} from '../lib/firebase';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
+  signInWithEmail: (email: string, password: string) => Promise<void>;
+  signUpWithEmail: (name: string, email: string, password: string) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
   logOut: () => Promise<void>;
 }
 
@@ -59,6 +69,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const handleSignInWithEmail = async (email: string, password: string) => {
+    await signInWithEmail(email, password);
+  };
+
+  const handleSignUpWithEmail = async (name: string, email: string, password: string) => {
+    const newUser = await signUpWithEmail(name, email, password);
+    // The auth state listener stored the user before the name was set.
+    localStorage.setItem(
+      'fermat_user',
+      JSON.stringify({ name, email: newUser.email, picture: newUser.photoURL, uid: newUser.uid })
+    );
+  };
+
   const handleLogOut = async () => {
     try {
       await logOut();
@@ -72,6 +95,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     user,
     loading,
     signInWithGoogle: handleSignInWithGoogle,
+    signInWithEmail: handleSignInWithEmail,
+    signUpWithEmail: handleSignUpWithEmail,
+    resetPassword,
     logOut: handleLogOut,
   };
 

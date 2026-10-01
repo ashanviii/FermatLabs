@@ -13,6 +13,7 @@ import RotatingPlaceholder from '../../src/components/RotatingPlaceholder';
 import SkeletonLoader from '../../src/components/SkeletonLoader';
 import AgentWorkflow, { AgentStep } from '../../src/components/AgentWorkflow';
 import WelcomeGuide from '../../src/components/WelcomeGuide';
+import LoginScreen from '../../src/components/auth/LoginScreen';
 import { ChatBody, OpenAIModel } from '@/types/types';
 import {
   Box,
@@ -734,60 +735,7 @@ export default function Chat() {
 
   // 🚫 Login screen
   if (!user && !authLoading) {
-    return (
-      <Flex
-        w="100%"
-        h="100dvh"
-        direction="column"
-        justify="center"
-        align="center"
-        bg="transparent"
-        color="black"
-        textAlign="center"
-        opacity={fadeOut ? 0 : 1}
-        transition="opacity 0.6s ease"
-        px={{ base: '24px', md: '32px' }}
-      >
-        <Img
-          src={Bg.src}
-          alt="background"
-          position="absolute"
-          top="44%"
-          left="50%"
-          transform="translate(-50%, -50%) scale(0.75)"
-          w={{ base: '240px', md: '280px', lg: '320px' }}
-          opacity={0.3}
-          zIndex="0"
-          pointerEvents="none"
-        />
-        <Box zIndex="2" textAlign="center" maxW="560px">
-          <Text fontSize={{ base: '2xl', md: '3xl', lg: '4xl' }} fontWeight="700" color="black" mb={{ base: '3', md: '4' }}>
-            Welcome to <Text as="span" color="gray.800">Fermat</Text>
-          </Text>
-          <Text fontSize={{ base: 'sm', md: 'md', lg: 'lg' }} color="gray.600" mb={{ base: '8', md: '10' }} fontWeight="500" px={{ base: '0', md: '4' }}>
-            Your personal AI travel assistant ✈️
-          </Text>
-          <Box
-            bg="white"
-            borderRadius="lg"
-            p="2"
-            _hover={{ transform: 'scale(1.05)' }}
-            transition="all 0.3s ease"
-            display="inline-block"
-          >
-            <Button
-              onClick={handleGoogleSignIn}
-              colorScheme="gray"
-              variant="outline"
-              size={{ base: 'md', md: 'lg' }}
-              leftIcon={<Icon as={MdPerson} />}
-            >
-              Sign in with Google
-            </Button>
-          </Box>
-        </Box>
-      </Flex>
-    );
+    return <LoginScreen onGoogleSignIn={handleGoogleSignIn} />;
   }
 
   // Show loading state while checking auth

@@ -3,6 +3,7 @@ module.exports = {
   content: [
     './app/(marketing)/**/*.{ts,tsx}',
     './src/components/landing/**/*.{ts,tsx}',
+    './src/components/auth/**/*.{ts,tsx}',
     './src/components/ui/**/*.{ts,tsx}',
   ],
   // Chakra's CSSReset already normalizes the page; Tailwind's preflight would restyle the dashboard.
