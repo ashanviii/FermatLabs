@@ -12,7 +12,6 @@ import {
   Plane,
   Search,
   Stamp,
-  Star,
   UtensilsCrossed,
   Wand2,
 } from 'lucide-react';
@@ -22,7 +21,10 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import ChatDemo from './ChatDemo';
+import ClosingCta from './ClosingCta';
 import FermatMark from './FermatMark';
+import TrustedBy from './TrustedBy';
+import WhyFermat from './WhyFermat';
 
 const destinations = [
   'Tokyo',
@@ -47,10 +49,29 @@ const checklist = [
 ];
 
 const smallFeatures = [
-  { icon: Hotel, title: 'Hotel matching', description: 'Stays shortlisted for your style, neighbourhood and budget.' },
-  { icon: UtensilsCrossed, title: 'Dining discovery', description: 'Local favourites, picked for what you actually like to eat.' },
-  { icon: Car, title: 'Car rentals', description: 'Transparent comparisons with no surprise fees at the counter.' },
+  {
+    icon: Hotel,
+    title: 'Hotel matching',
+    description: 'Stays shortlisted for your style, neighbourhood and budget.',
+    tile: 'bg-[#EEF6F0] text-[#1F5A3F]',
+  },
+  {
+    icon: UtensilsCrossed,
+    title: 'Dining discovery',
+    description: 'Local favourites, picked for what you actually like to eat.',
+    tile: 'bg-[#E4F4EA] text-[#1F5A3F]',
+  },
+  {
+    icon: Car,
+    title: 'Car rentals',
+    description: 'Transparent comparisons with no surprise fees at the counter.',
+    tile: 'bg-[#E4F4EA] text-[#1F5A3F]',
+  },
 ];
+
+const tickerStars = ['text-[#5DBB84]', 'text-[#F8E6A0]', 'text-[#5DBB84]', 'text-[#F8E6A0]'];
+const stepColors = ['text-[#5DBB84]', 'text-[#5DBB84]', 'text-[#F8E6A0]'];
+const roleColors = ['bg-[#E4F4EA] text-[#285F43]', 'bg-[#EEF6F0] text-[#1F5A3F]', 'bg-[#E4F4EA] text-[#1F5A3F]'];
 
 const itinerary = [
   { day: 'Day 1', plan: 'Land, check in, ramen in Shinjuku' },
@@ -71,18 +92,6 @@ const stats = [
   { value: '90%', label: 'Accuracy' },
 ];
 
-const testimonials = [
-  { quote: 'Fermat saved me hours of research. Got my Dubai visa sorted in minutes.', author: 'Nikhil Issar', role: 'USA' },
-  { quote: 'The flight recommendations are incredibly smart. Found $400 in savings.', author: 'Jaya Aggarwal', role: 'Germany' },
-  { quote: 'Finally, an AI that actually understands travel. This is the future.', author: 'Zainab', role: 'France' },
-];
-
-const testimonialStyles = [
-  'bg-card',
-  'border-transparent bg-foreground text-background',
-  'border-transparent bg-primary text-primary-foreground',
-];
-
 const founders = [
   {
     name: 'Srijan',
@@ -98,19 +107,15 @@ const founders = [
     fun: "Teaches the agents to think so you don't have to. Measures every itinerary in milliseconds.",
     image: '/img/founders/shubham.jpg',
   },
-  {
-    name: 'Ashanvi',
-    role: 'CDO',
-    description: 'Design · Ex Adobe, 5x startups',
-    fun: 'Makes every screen feel like a window seat. No booking flow should take more than one coffee.',
-    image: '/img/founders/ashanvi.jpg',
-  },
 ];
 
+// Founder photos are 316×371 with a caption baked in from y=287; show the 230px square at (43, 25) so the face is centered.
+const photoCrop: React.CSSProperties = { width: '137.39%', left: '-18.7%', top: '-10.87%' };
+
 const floatingCards = [
-  { icon: Plane, title: 'Fares tracked', sub: 'DEL → NRT', className: '-left-56 top-6', delay: '0s' },
-  { icon: Stamp, title: 'Checklist ready', sub: '4 of 4 documents', className: '-right-56 top-28', delay: '-2s' },
-  { icon: Hotel, title: 'Stays shortlisted', sub: 'Shinjuku · 3 options', className: '-left-48 bottom-10', delay: '-4s' },
+  { icon: Plane, title: 'Fares tracked', sub: 'DEL → NRT', className: '-left-56 top-6', delay: '0s', tile: 'bg-[#141611] text-[#5DBB84]' },
+  { icon: Stamp, title: 'Checklist ready', sub: '4 of 4 documents', className: '-right-56 top-28', delay: '-2s', tile: 'bg-[#5DBB84] text-foreground' },
+  { icon: Hotel, title: 'Stays shortlisted', sub: 'Shinjuku · 3 options', className: '-left-48 bottom-10', delay: '-4s', tile: 'bg-[#F8E6A0] text-[#141611]' },
 ];
 
 function Reveal({ children, delay = 0, className }: { children: React.ReactNode; delay?: number; className?: string }) {
@@ -186,6 +191,7 @@ function Nav() {
         <div className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
           {[
             ['Features', '#features'],
+            ['Why Fermat', '#why'],
             ['How it works', '#how-it-works'],
             ['Team', '#team'],
           ].map(([label, href]) => (
@@ -194,7 +200,7 @@ function Nav() {
             </a>
           ))}
         </div>
-        <Button asChild size="sm">
+        <Button asChild size="sm" className="bg-foreground text-background hover:bg-foreground/90">
           <Link href="/">Get started</Link>
         </Button>
       </nav>
@@ -206,11 +212,15 @@ function Hero() {
   return (
     <section className="relative overflow-hidden pb-16 pt-32 md:pb-20 md:pt-40">
       <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-x-0 top-0 h-[75%] bg-gradient-to-b from-[#c8ff0a]/45 via-primary/25 to-transparent" />
-        <div className="absolute -left-32 top-24 size-[28rem] animate-drift rounded-full bg-[#c8ff0a]/40 blur-3xl" />
+        <div className="absolute inset-x-0 top-0 h-[75%] bg-gradient-to-b from-[#5DBB84]/15 via-[#5DBB84]/[0.06] to-transparent" />
+        <div className="absolute -left-32 top-24 size-[28rem] animate-drift rounded-full bg-[#5DBB84]/25 blur-3xl" />
         <div
-          className="absolute -right-24 top-64 size-[24rem] animate-drift rounded-full bg-primary/50 blur-3xl"
+          className="absolute -right-24 top-64 size-[24rem] animate-drift rounded-full bg-[#5DBB84]/20 blur-3xl"
           style={{ animationDelay: '-9s' }}
+        />
+        <div
+          className="absolute bottom-0 left-1/3 size-72 animate-drift rounded-full bg-[#F8E6A0]/45 blur-3xl"
+          style={{ animationDelay: '-5s' }}
         />
         <div className="absolute inset-0 bg-[radial-gradient(hsl(var(--foreground)/0.08)_1px,transparent_1px)] [background-size:22px_22px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]" />
       </div>
@@ -219,8 +229,8 @@ function Hero() {
         <div className="animate-fade-up">
           <Badge variant="outline" className="border-foreground/10 bg-background/80 backdrop-blur">
             <span className="relative flex size-2">
-              <span className="absolute inline-flex size-full animate-ping rounded-full bg-lime-500 opacity-60" />
-              <span className="relative inline-flex size-2 rounded-full bg-lime-600" />
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-[#4AA872] opacity-60" />
+              <span className="relative inline-flex size-2 rounded-full bg-[#3D9163]" />
             </span>
             Powered by GPT-5.2
           </Badge>
@@ -235,7 +245,7 @@ function Hero() {
             smarter
             <span
               aria-hidden
-              className="absolute inset-x-0 bottom-1 -z-10 h-4 origin-left animate-grow-x rounded-full bg-[#c8ff0a] md:bottom-2 md:h-5"
+              className="absolute inset-x-0 bottom-1 -z-10 h-4 origin-left animate-grow-x rounded-full bg-[#F8E6A0] md:bottom-2 md:h-5"
             />
           </span>
           , with one conversation.
@@ -264,17 +274,17 @@ function Hero() {
         </div>
 
         <div className="relative mx-auto mt-14 max-w-xl animate-fade-up" style={{ animationDelay: '450ms' }}>
-          {floatingCards.map(({ icon: Icon, title, sub, className, delay }) => (
+          {floatingCards.map(({ icon: Icon, title, sub, className, delay, tile }) => (
             <div
               key={title}
               aria-hidden
               className={cn(
-                'absolute z-10 hidden w-48 animate-float items-center gap-3 rounded-2xl border bg-card/90 p-3 text-left shadow-[0_18px_40px_-20px_hsl(80_40%_20%/0.35)] backdrop-blur xl:flex',
+                'absolute z-10 hidden w-48 animate-float items-center gap-3 rounded-2xl border bg-card/90 p-3 text-left shadow-[0_18px_40px_-20px_hsl(160_40%_20%/0.35)] backdrop-blur xl:flex',
                 className,
               )}
               style={{ animationDelay: delay }}
             >
-              <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground">
+              <span className={cn('grid size-9 shrink-0 place-items-center rounded-xl', tile)}>
                 <Icon className="size-4" />
               </span>
               <span className="min-w-0">
@@ -298,7 +308,7 @@ function DestinationTicker() {
         {items.map((d, i) => (
           <span key={i} className="flex items-center gap-6 pr-6 text-sm font-medium tracking-wide md:text-base">
             {d}
-            <span className="text-[#c8ff0a]">✦</span>
+            <span className={tickerStars[i % tickerStars.length]}>✦</span>
           </span>
         ))}
       </div>
@@ -308,7 +318,7 @@ function DestinationTicker() {
 
 function Features() {
   return (
-    <section id="features" className="scroll-mt-20 py-16 md:py-24">
+    <section id="features" className="scroll-mt-20 pb-16 pt-16 md:pb-20 md:pt-24">
       <div className="container">
         <SectionHeading
           eyebrow="Everything you need"
@@ -321,11 +331,11 @@ function Features() {
             <Card className="relative h-full overflow-hidden border-transparent bg-foreground p-7 text-background">
               <div
                 aria-hidden
-                className="absolute -right-16 -top-16 size-64 rounded-full bg-[#c8ff0a]/20 blur-3xl"
+                className="absolute -right-16 -top-16 size-64 rounded-full bg-[#5DBB84]/20 blur-3xl"
               />
               <div className="relative grid gap-8 md:grid-cols-2 md:items-center">
                 <div>
-                  <span className="grid size-11 place-items-center rounded-xl bg-[#c8ff0a] text-foreground">
+                  <span className="grid size-11 place-items-center rounded-xl bg-[#5DBB84] text-foreground">
                     <Stamp className="size-5" />
                   </span>
                   <h3 className="mt-5 text-xl font-semibold">Visa intelligence</h3>
@@ -340,7 +350,7 @@ function Features() {
                     <span>3 of 4 ready</span>
                   </div>
                   <div className="mb-4 h-1.5 overflow-hidden rounded-full bg-background/10">
-                    <div className="h-full w-0 rounded-full bg-[#c8ff0a] transition-[width] delay-300 duration-1000 ease-out group-data-[visible=true]/rv:w-3/4" />
+                    <div className="h-full w-0 rounded-full bg-[#5DBB84] transition-[width] delay-300 duration-1000 ease-out group-data-[visible=true]/rv:w-3/4" />
                   </div>
                   <ul className="space-y-2.5 text-sm">
                     {checklist.map((item) => (
@@ -348,7 +358,7 @@ function Features() {
                         <span
                           className={cn(
                             'grid size-5 place-items-center rounded-full',
-                            item.done ? 'bg-[#c8ff0a] text-foreground' : 'border border-background/30',
+                            item.done ? 'bg-[#5DBB84] text-foreground' : 'border border-background/30',
                           )}
                         >
                           {item.done && <Check className="size-3" strokeWidth={3} />}
@@ -363,18 +373,19 @@ function Features() {
           </Reveal>
 
           <Reveal delay={80}>
-            <Card className="flex h-full flex-col border-transparent bg-[linear-gradient(160deg,#c8ff0a_0%,hsl(var(--primary))_100%)] p-7 text-primary-foreground">
-              <span className="grid size-11 place-items-center rounded-xl bg-foreground text-[#c8ff0a]">
+            <Card className="relative flex h-full flex-col overflow-hidden border-transparent bg-[linear-gradient(160deg,#EEF6F0_0%,#E4F4EA_100%)] p-7 text-foreground">
+              <div aria-hidden className="absolute -bottom-20 -right-10 size-56 rounded-full bg-white/60 blur-2xl" />
+              <span className="relative grid size-11 place-items-center rounded-xl bg-[#13392A] text-white">
                 <Plane className="size-5" />
               </span>
-              <h3 className="mt-5 text-xl font-semibold">Smart flights</h3>
-              <p className="mt-2 leading-relaxed text-primary-foreground/70">
+              <h3 className="relative mt-5 text-xl font-semibold">Smart flights</h3>
+              <p className="relative mt-2 leading-relaxed text-foreground/65">
                 Compare 500+ airlines and surface the routes and fares worth booking.
               </p>
-              <div className="mt-auto pt-8">
+              <div className="relative mt-auto pt-8">
                 <div className="flex items-center gap-3 text-sm font-semibold">
                   <span>DEL</span>
-                  <span className="relative h-px flex-1 border-t-2 border-dashed border-foreground/30">
+                  <span className="relative h-px flex-1 border-t-2 border-dashed border-[#13392A]/30">
                     <Plane className="absolute -top-2.5 size-4 animate-fly" />
                   </span>
                   <span>NRT</span>
@@ -383,10 +394,15 @@ function Features() {
             </Card>
           </Reveal>
 
-          {smallFeatures.map(({ icon: Icon, title, description }, i) => (
+          {smallFeatures.map(({ icon: Icon, title, description, tile }, i) => (
             <Reveal key={title} delay={i * 80}>
-              <Card className="group h-full p-7 transition-all duration-300 hover:-translate-y-1 hover:border-lime-300 hover:shadow-[0_16px_40px_-20px_hsl(80_40%_25%/0.3)]">
-                <span className="grid size-11 place-items-center rounded-xl bg-secondary text-lime-800 transition-all duration-300 group-hover:scale-110 group-hover:bg-[#c8ff0a] group-hover:text-foreground">
+              <Card className="group h-full p-7 transition-all duration-300 hover:-translate-y-1 hover:border-[#5DBB84] hover:shadow-[0_16px_40px_-20px_hsl(160_40%_25%/0.3)]">
+                <span
+                  className={cn(
+                    'grid size-11 place-items-center rounded-xl transition-all duration-300 group-hover:-rotate-6 group-hover:scale-110',
+                    tile,
+                  )}
+                >
                   <Icon className="size-5" />
                 </span>
                 <h3 className="mt-5 font-semibold">{title}</h3>
@@ -396,9 +412,9 @@ function Features() {
           ))}
 
           <Reveal className="md:col-span-3">
-            <Card className="grid gap-6 border-transparent bg-secondary p-7 md:grid-cols-[1fr_2fr] md:items-center">
+            <Card className="grid gap-6 border-transparent bg-[#FCF3D2] p-7 md:grid-cols-[1fr_2fr] md:items-center">
               <div>
-                <span className="grid size-11 place-items-center rounded-xl bg-foreground text-[#c8ff0a]">
+                <span className="grid size-11 place-items-center rounded-xl bg-foreground text-[#5DBB84]">
                   <Compass className="size-5" />
                 </span>
                 <h3 className="mt-5 text-xl font-semibold">Tour planning</h3>
@@ -413,7 +429,7 @@ function Features() {
                     style={{ transitionDelay: `${200 + i * 150}ms` }}
                     className="translate-y-3 rounded-2xl bg-card p-4 opacity-0 shadow-sm transition-all duration-500 group-data-[visible=true]/rv:translate-y-0 group-data-[visible=true]/rv:opacity-100"
                   >
-                    <span className="inline-block rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold">
+                    <span className="inline-block rounded-full bg-[#E9C46A] px-2.5 py-0.5 text-xs font-semibold text-[#3D2F08]">
                       {d.day}
                     </span>
                     <p className="mt-2.5 text-sm">{d.plan}</p>
@@ -428,19 +444,33 @@ function Features() {
   );
 }
 
+function Why() {
+  return (
+    <section id="why" className="scroll-mt-16">
+      <div className="container">
+        <SectionHeading
+          eyebrow="Why Fermat"
+          title="Not another chatbot. A travel specialist."
+          description="What you get here that a search bar or a general AI assistant won't give you."
+        />
+      </div>
+      <WhyFermat />
+    </section>
+  );
+}
+
 function Stats() {
   return (
     <section className="container">
       <Reveal>
-        <div className="relative overflow-hidden rounded-3xl bg-[linear-gradient(120deg,#c8ff0a_0%,hsl(var(--primary))_55%,hsl(var(--secondary))_100%)] px-6 py-12 md:px-12">
-          <FermatMark
-            className="pointer-events-none absolute -bottom-10 -right-6 h-56 text-foreground/[0.06]"
-          />
+        <div className="relative overflow-hidden rounded-3xl bg-[#13392A] px-6 py-12 text-white md:px-12">
+          <div aria-hidden className="absolute -left-16 -top-24 size-72 rounded-full bg-[#5DBB84]/25 blur-3xl" />
+          <FermatMark className="pointer-events-none absolute -bottom-10 -right-6 h-56 text-[#F8E6A0]/[0.08]" />
           <dl className="relative grid grid-cols-2 gap-8 md:grid-cols-4">
             {stats.map((s) => (
-              <div key={s.label}>
-                <dd className="text-4xl font-semibold tracking-tight md:text-5xl">{s.value}</dd>
-                <dt className="mt-1 text-sm font-medium text-foreground/60">{s.label}</dt>
+              <div key={s.label} className="md:border-l md:border-white/10 md:pl-6 md:first:border-l-0 md:first:pl-0">
+                <dd className="text-4xl font-semibold tracking-tight text-[#F8E6A0] md:text-5xl">{s.value}</dd>
+                <dt className="mt-1 text-sm font-medium text-white/60">{s.label}</dt>
               </div>
             ))}
           </dl>
@@ -458,63 +488,15 @@ function HowItWorks() {
         <div className="grid gap-4 md:grid-cols-3">
           {steps.map(({ icon: Icon, title, description }, i) => (
             <Reveal key={title} delay={i * 120}>
-              <Card className="group relative h-full overflow-hidden p-7 transition-all duration-300 hover:border-lime-300">
+              <Card className="group relative h-full overflow-hidden p-7 transition-all duration-300 hover:border-[#5DBB84]">
                 <span className="absolute -right-2 -top-6 text-[7rem] font-bold leading-none text-secondary transition-colors duration-300 group-hover:text-primary/60">
                   {i + 1}
                 </span>
-                <span className="relative grid size-12 place-items-center rounded-full bg-foreground text-[#c8ff0a]">
+                <span className={cn('relative grid size-12 place-items-center rounded-full bg-foreground', stepColors[i])}>
                   <Icon className="size-5" />
                 </span>
                 <h3 className="relative mt-6 text-lg font-semibold">{title}</h3>
                 <p className="relative mt-2 text-sm text-muted-foreground">{description}</p>
-              </Card>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Testimonials() {
-  return (
-    <section className="bg-secondary/50 py-16 md:py-24">
-      <div className="container">
-        <SectionHeading eyebrow="Loved by travellers" title="What people are saying" />
-        <div className="grid gap-4 md:grid-cols-3">
-          {testimonials.map((t, i) => (
-            <Reveal key={t.author} delay={i * 100}>
-              <Card
-                className={cn(
-                  'flex h-full flex-col justify-between p-7 transition-transform duration-300 hover:-translate-y-1',
-                  testimonialStyles[i],
-                )}
-              >
-                <div>
-                  <div className="mb-4 flex gap-0.5">
-                    {[...Array(5)].map((_, k) => (
-                      <Star
-                        key={k}
-                        className={cn('size-4', i === 1 ? 'fill-[#c8ff0a] text-[#c8ff0a]' : 'fill-foreground text-foreground')}
-                      />
-                    ))}
-                  </div>
-                  <p className="text-lg leading-relaxed">&ldquo;{t.quote}&rdquo;</p>
-                </div>
-                <div className="mt-8 flex items-center gap-3">
-                  <span
-                    className={cn(
-                      'grid size-10 place-items-center rounded-full text-sm font-semibold',
-                      i === 1 ? 'bg-[#c8ff0a] text-foreground' : i === 2 ? 'bg-foreground text-[#c8ff0a]' : 'bg-primary',
-                    )}
-                  >
-                    {t.author[0]}
-                  </span>
-                  <div>
-                    <p className="text-sm font-medium">{t.author}</p>
-                    <p className="text-xs opacity-60">{t.role}</p>
-                  </div>
-                </div>
               </Card>
             </Reveal>
           ))}
@@ -529,22 +511,22 @@ function Team() {
     <section id="team" className="scroll-mt-20 py-16 md:py-24">
       <div className="container">
         <SectionHeading eyebrow="Meet the team" title="The minds behind Fermat" />
-        <div className="mx-auto grid max-w-5xl gap-4 sm:grid-cols-3">
+        <div className="mx-auto grid max-w-3xl gap-4 sm:grid-cols-2">
           {founders.map((f, i) => (
             <Reveal key={f.name} delay={i * 100}>
-              <Card className="group h-full p-6 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-lime-300 hover:shadow-[0_12px_30px_-18px_hsl(80_40%_20%/0.35)]">
+              <Card className="group h-full p-6 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-[#5DBB84] hover:shadow-[0_12px_30px_-18px_hsl(160_40%_20%/0.35)]">
                 <div className="flex items-center gap-4">
-                  <div className="size-20 shrink-0 overflow-hidden rounded-2xl bg-primary ring-1 ring-border transition-all duration-300 group-hover:ring-2 group-hover:ring-[#c8ff0a]">
-                    {/* Source photos have a caption baked into the bottom; oversize and anchor to crop it out. */}
+                  <div className="relative size-20 shrink-0 overflow-hidden rounded-2xl bg-muted ring-1 ring-border transition-all duration-300 group-hover:ring-2 group-hover:ring-[#5DBB84]">
                     <img
                       src={f.image}
                       alt={f.name}
-                      className="h-[140%] w-[140%] max-w-none object-cover object-[left_20%] grayscale transition-[filter,transform] duration-500 group-hover:scale-[1.03] group-hover:grayscale-0"
+                      style={photoCrop}
+                      className="absolute h-auto max-w-none grayscale transition-[filter] duration-500 group-hover:grayscale-0"
                     />
                   </div>
                   <div>
                     <h3 className="font-semibold">{f.name}</h3>
-                    <span className="mt-1 inline-block rounded-full bg-secondary px-2.5 py-0.5 text-xs font-semibold transition-colors duration-300 group-hover:bg-[#c8ff0a]">
+                    <span className={cn('mt-1 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold', roleColors[i])}>
                       {f.role}
                     </span>
                   </div>
@@ -560,41 +542,6 @@ function Team() {
   );
 }
 
-function CallToAction() {
-  return (
-    <section className="pb-16 md:pb-24">
-      <div className="container">
-        <Reveal>
-          <div className="relative overflow-hidden rounded-3xl bg-foreground px-6 py-16 text-center text-background md:py-20">
-            <div
-              aria-hidden
-              className="absolute left-1/2 top-0 size-[36rem] -translate-x-1/2 -translate-y-1/2 animate-drift rounded-full bg-[#c8ff0a]/25 blur-3xl"
-            />
-            <FermatMark className="pointer-events-none absolute -bottom-12 -left-8 h-64 text-[#c8ff0a]/10" />
-            <FermatMark className="relative mx-auto h-12 text-[#c8ff0a]" />
-            <h2 className="relative mx-auto mt-6 max-w-xl text-3xl font-semibold tracking-tight md:text-5xl">
-              Ready to plan your next trip?
-            </h2>
-            <p className="relative mx-auto mt-4 max-w-md text-background/65">
-              Join thousands of travellers exploring the world smarter.
-            </p>
-            <Button
-              asChild
-              size="lg"
-              className="group relative mt-8 bg-[#c8ff0a] text-foreground hover:bg-[#c8ff0a]/90"
-            >
-              <Link href="/">
-                Start your journey
-                <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
-              </Link>
-            </Button>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
 export default function LandingPage() {
   return (
     <>
@@ -603,29 +550,13 @@ export default function LandingPage() {
         <Hero />
         <DestinationTicker />
         <Features />
-        <Stats />
+        <Why />
+        {/* Stats band hidden for now; re-enable by restoring <Stats /> here. */}
         <HowItWorks />
-        <Testimonials />
+        <TrustedBy />
         <Team />
-        <CallToAction />
       </main>
-
-      <footer className="border-t py-8">
-        <div className="container flex flex-col items-center justify-between gap-4 text-sm text-muted-foreground md:flex-row">
-          <span className="flex items-center gap-2 font-medium text-foreground">
-            <FermatMark className="h-5" />
-            Fermat
-          </span>
-          <span>© {new Date().getFullYear()} Fermat AI. All rights reserved.</span>
-          <div className="flex gap-6">
-            {['Privacy', 'Terms', 'Contact'].map((item) => (
-              <span key={item} className="cursor-pointer transition-colors hover:text-foreground">
-                {item}
-              </span>
-            ))}
-          </div>
-        </div>
-      </footer>
+      <ClosingCta />
     </>
   );
 }

@@ -88,6 +88,7 @@ module.exports = {
         marquee: 'marquee 40s linear infinite',
         float: 'float 6s ease-in-out infinite',
         fly: 'fly 3.2s ease-in-out infinite',
+        'spin-slow': 'spin 14s linear infinite',
       },
     },
   },

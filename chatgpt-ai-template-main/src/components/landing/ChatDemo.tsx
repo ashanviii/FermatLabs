@@ -133,9 +133,9 @@ export default function ChatDemo() {
 
   return (
     <div ref={rootRef} className="relative mx-auto w-full max-w-xl text-left">
-      <div aria-hidden className="absolute -inset-6 -z-10 rounded-[2.5rem] bg-primary/40 blur-3xl" />
+      <div aria-hidden className="absolute -inset-6 -z-10 rounded-[2.5rem] bg-primary/20 blur-3xl" />
 
-      <div className="overflow-hidden rounded-3xl border bg-card shadow-[0_1px_0_hsl(0_0%_100%)_inset,0_30px_80px_-30px_hsl(80_45%_20%/0.35)]">
+      <div className="overflow-hidden rounded-3xl border bg-card shadow-[0_1px_0_hsl(0_0%_100%)_inset,0_30px_80px_-30px_hsl(160_40%_20%/0.35)]">
         <div className="flex items-center justify-between border-b px-5 py-3.5">
           <div className="flex items-center gap-3">
             <span className="grid size-9 place-items-center rounded-full bg-primary text-primary-foreground">
@@ -144,7 +144,7 @@ export default function ChatDemo() {
             <div className="leading-tight">
               <p className="text-sm font-semibold">Fermat</p>
               <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <span className="size-1.5 rounded-full bg-lime-500" />
+                <span className="size-1.5 rounded-full bg-[#4AA872]" />
                 {thinking ? 'Researching…' : streaming ? 'Typing…' : 'Online'}
               </p>
             </div>
@@ -155,7 +155,7 @@ export default function ChatDemo() {
                 key={k}
                 className={cn(
                   'h-1.5 rounded-full transition-all duration-500',
-                  k === index ? 'w-6 bg-lime-500' : 'w-1.5 bg-border',
+                  k === index ? 'w-6 bg-[#4AA872]' : 'w-1.5 bg-border',
                 )}
               />
             ))}
@@ -164,7 +164,7 @@ export default function ChatDemo() {
 
         <div
           className={cn(
-            'flex h-[340px] flex-col justify-end gap-4 overflow-hidden px-5 py-5 text-sm transition-opacity duration-500 sm:h-[300px]',
+            'flex h-[340px] flex-col justify-end gap-4 overflow-hidden px-5 pb-5 pt-4 text-sm transition-opacity duration-500 sm:h-[236px]',
             fading && 'opacity-0',
           )}
         >
@@ -191,7 +191,7 @@ export default function ChatDemo() {
                               <Check className="size-2.5" strokeWidth={3} />
                             </span>
                           ) : (
-                            <Loader2 className="size-4 animate-spin text-lime-600" />
+                            <Loader2 className="size-4 animate-spin text-[#3D9163]" />
                           )}
                           <span
                             className={cn(
@@ -208,7 +208,7 @@ export default function ChatDemo() {
                   </ul>
                 ) : (
                   <p className="flex animate-in fade-in items-center gap-1.5 text-xs text-muted-foreground duration-300">
-                    <Check className="size-3.5 text-lime-600" />
+                    <Check className="size-3.5 text-[#3D9163]" />
                     Researched with {s.steps.length} agents
                   </p>
                 )}
@@ -217,7 +217,7 @@ export default function ChatDemo() {
                   <div className="rounded-2xl rounded-tl-md border bg-background px-4 py-2.5 leading-relaxed">
                     {replyWords.slice(0, words).join(' ')}
                     {streaming && (
-                      <span className="ml-0.5 inline-block h-4 w-[2px] translate-y-0.5 animate-pulse bg-lime-600" />
+                      <span className="ml-0.5 inline-block h-4 w-[2px] translate-y-0.5 animate-pulse bg-[#3D9163]" />
                     )}
                   </div>
                 )}
@@ -230,7 +230,7 @@ export default function ChatDemo() {
                         style={{ animationDelay: `${k * 90}ms` }}
                         className="inline-flex animate-in fade-in zoom-in-90 slide-in-from-bottom-1 items-center gap-1.5 rounded-full border bg-secondary/60 px-3 py-1.5 text-xs font-medium text-secondary-foreground duration-300 fill-mode-both"
                       >
-                        <Icon className="size-3.5 text-lime-700" />
+                        <Icon className="size-3.5 text-[#2F7650]" />
                         {label}
                       </span>
                     ))}

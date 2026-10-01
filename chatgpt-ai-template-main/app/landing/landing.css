@@ -4,22 +4,23 @@
 
 @layer base {
   .landing {
-    /* Brand: black mark on lime (#C8FF0A), softened to pastel for surfaces. */
-    --background: 72 45% 98.5%;
-    --foreground: 80 12% 8%;
+    /* Palette: leaf green (#5DBB84) + deep forest (#13392A), butter yellow (#F8E6A0) as the one highlight,
+       ink (#141611) and off-white. Large surfaces use tints; strong color stays in accents. */
+    --background: 100 20% 98.5%;
+    --foreground: 160 25% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 80 12% 8%;
-    --primary: 74 92% 72%;
-    --primary-foreground: 80 12% 8%;
-    --secondary: 72 75% 93%;
-    --secondary-foreground: 80 20% 14%;
-    --muted: 72 25% 95%;
-    --muted-foreground: 80 6% 38%;
-    --accent: 72 75% 93%;
-    --accent-foreground: 80 20% 12%;
-    --border: 72 22% 88%;
-    --input: 72 22% 88%;
-    --ring: 76 85% 40%;
+    --card-foreground: 160 25% 10%;
+    --primary: 145 40% 55%;
+    --primary-foreground: 150 40% 10%;
+    --secondary: 142 35% 94%;
+    --secondary-foreground: 150 30% 16%;
+    --muted: 120 12% 95%;
+    --muted-foreground: 160 6% 40%;
+    --accent: 142 35% 93%;
+    --accent-foreground: 150 35% 18%;
+    --border: 140 12% 88%;
+    --input: 140 12% 88%;
+    --ring: 145 40% 40%;
     --radius: 1rem;
 
     min-height: 100vh;
@@ -28,7 +29,8 @@
     font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
+    /* clip, not hidden: hidden would make this a scroll container and break position: sticky. */
+    overflow-x: clip;
   }
 
   .landing *,
