@@ -142,7 +142,7 @@ export default function ClosingCta() {
               Tell Fermat where you want to go and get visas, flights and stays sorted in one conversation.
             </p>
             <Link
-              href="/"
+              href="/landing"
               className="group mt-7 inline-flex h-12 items-center gap-2 rounded-full bg-[#141611] px-7 font-semibold text-white shadow-[0_10px_24px_-10px_rgba(20,22,17,0.35)] transition-all hover:-translate-y-0.5 hover:bg-[#2A2D27]"
             >
               Start planning

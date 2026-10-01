@@ -79,7 +79,7 @@ function CardBody({ card }: { card: CardData }) {
         <div>
           <p className="text-2xl font-semibold leading-tight">Your trip could be the next story.</p>
           <Link
-            href="/"
+            href="/landing"
             className="mt-5 inline-flex items-center gap-1.5 rounded-full bg-[#5DBB84] px-4 py-2 text-sm font-semibold text-[#141611] transition-transform hover:translate-x-0.5"
           >
             Start planning <ArrowRight className="size-4" />

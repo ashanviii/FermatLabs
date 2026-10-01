@@ -15,7 +15,7 @@ import { IRoute } from './types/navigation';
 const routes: IRoute[] = [
   {
     name: 'Home', // 👈 untouched
-    path: '/',
+    path: '/landing',
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
     collapse: false,
   },

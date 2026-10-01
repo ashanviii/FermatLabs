@@ -184,7 +184,7 @@ function Nav() {
       )}
     >
       <nav className="container flex h-16 items-center justify-between">
-        <Link href="/landing" className="flex items-center gap-2 font-semibold tracking-tight">
+        <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
           <FermatMark className="h-7" />
           Fermat
         </Link>
@@ -201,7 +201,7 @@ function Nav() {
           ))}
         </div>
         <Button asChild size="sm" className="bg-foreground text-background hover:bg-foreground/90">
-          <Link href="/">Get started</Link>
+          <Link href="/landing">Get started</Link>
         </Button>
       </nav>
     </header>
@@ -263,7 +263,7 @@ function Hero() {
           style={{ animationDelay: '300ms' }}
         >
           <Button asChild size="lg" className="group bg-foreground text-background hover:bg-foreground/90">
-            <Link href="/">
+            <Link href="/landing">
               Start free
               <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
             </Link>

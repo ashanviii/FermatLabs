@@ -37,7 +37,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <UserContextProvider>
             <AppWrappers>
               <ChakraProvider theme={theme}>
-                {pathname?.includes('register') || pathname?.includes('sign-in') || pathname?.includes('landing') ? (
+                {pathname === '/' || pathname?.includes('register') || pathname?.includes('sign-in') ? (
                   children
                 ) : (
                   <Box>
