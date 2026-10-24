@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:group-trip": "node --test src/lib/groupTrip.test.cjs"
   },
   "dependencies": {
     "@babel/traverse": "^7.24.6",
