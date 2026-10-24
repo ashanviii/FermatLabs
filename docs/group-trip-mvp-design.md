@@ -20,7 +20,7 @@ Executable gates are the domain/storage unit tests and the production build. A r
 
 Build the first proof as a local-first organizer workflow with deterministic seeded data. The UI moves through trip basics, a compact traveller grid, a three-destination comparison, and a selected-destination readiness dashboard. Ranking is a pure function with published components and a stable tie break, so identical input always produces identical output.
 
-The recommendation engine separates feasibility from fit. Passport and minimum-budget failures are hard blockers and sort behind destinations without those blockers. The remaining score explains budget comfort, passport readiness, existing visa readiness, and seasonal fit. Unknown information produces an explicit warning and never silently becomes `Ready`.
+The recommendation engine separates feasibility from fit. Passport and minimum-budget failures are hard blockers and sort behind destinations without those blockers. A missing destination visa is an action, not a hard blocker, because the traveller may still apply; it affects fit and readiness but does not make the destination impossible by itself. The remaining score explains budget comfort, passport readiness, existing visa readiness, and seasonal fit. Unknown information produces an explicit warning and never silently becomes `Ready`.
 
 The browser stores only nicknames and planning statuses. It does not store identity-document numbers or files. The UI says that local storage is not encrypted and offers a confirmed one-click deletion.
 

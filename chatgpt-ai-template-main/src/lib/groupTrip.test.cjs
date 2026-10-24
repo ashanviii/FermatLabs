@@ -74,9 +74,10 @@ test('explains budget, passport, and visa blockers for every affected traveller'
   assert.equal(paris.fitScore < 50, true);
   assert.deepEqual(
     paris.blockers.map((blocker) => blocker.kind).sort(),
-    ['budget', 'passport', 'visa'],
+    ['budget', 'passport'],
   );
-  assert.ok(paris.summary.includes('3 things to resolve'));
+  assert.deepEqual(paris.actions.map((action) => action.kind), ['visa']);
+  assert.ok(paris.summary.includes('2 blockers'));
 });
 
 test('builds a readiness dashboard without exposing another traveller\'s budget', () => {
