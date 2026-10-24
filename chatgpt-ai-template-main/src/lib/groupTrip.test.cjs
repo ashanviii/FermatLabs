@@ -26,12 +26,12 @@ const readyGroup = {
   tripName: 'December escape',
   durationDays: 6,
   travelMonth: '2026-12',
+  budgetPerPerson: 100000,
   travellers: [
     {
       id: 'shubham',
       name: 'Shubham',
       departureCity: 'Delhi',
-      budget: 100000,
       passportExpiry: '2028-06',
       visas: [],
     },
@@ -39,7 +39,6 @@ const readyGroup = {
       id: 'riya',
       name: 'Riya',
       departureCity: 'Mumbai',
-      budget: 90000,
       passportExpiry: '2028-01',
       visas: [],
     },
@@ -58,12 +57,12 @@ test('recommends the feasible trip before a more expensive, visa-heavy option', 
 test('explains budget, passport, and visa blockers for every affected traveller', () => {
   const constrainedGroup = {
     ...readyGroup,
+    budgetPerPerson: 80000,
     travellers: [
       {
         id: 'aman',
         name: 'Aman',
         departureCity: 'Delhi',
-        budget: 80000,
         passportExpiry: '2026-12',
         visas: [],
       },
@@ -87,6 +86,7 @@ test('builds a readiness dashboard without repeating the shared numeric budget i
   assert.equal(rows.length, 2);
   assert.equal(rows[0].travellerName, 'Shubham');
   assert.equal(rows[0].budget, undefined);
+  assert.equal(JSON.stringify(rows[0]).includes('100000'), false);
   assert.equal(rows[0].passport.status, 'ready');
   assert.equal(rows[0].visa.status, 'action');
   assert.match(rows[0].visa.detail, /Schengen/i);

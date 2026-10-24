@@ -201,7 +201,7 @@ function Nav() {
           ))}
         </div>
         <Button asChild size="sm" className="bg-foreground text-background hover:bg-foreground/90">
-          <Link href="/landing">Get started</Link>
+          <Link href="/plan">Plan a group trip</Link>
         </Button>
       </nav>
     </header>
@@ -240,22 +240,22 @@ function Hero() {
           className="mx-auto mt-7 max-w-3xl animate-fade-up text-4xl font-semibold tracking-tight sm:text-5xl md:text-7xl"
           style={{ animationDelay: '100ms' }}
         >
-          Travel{' '}
+          Plan the group trip that{' '}
           <span className="relative isolate inline-block">
-            smarter
+            actually happens
             <span
               aria-hidden
               className="absolute inset-x-0 bottom-1 -z-10 h-4 origin-left animate-grow-x rounded-full bg-[#F8E6A0] md:bottom-2 md:h-5"
             />
           </span>
-          , with one conversation.
+          .
         </h1>
 
         <p
           className="mx-auto mt-6 max-w-xl animate-fade-up text-lg text-muted-foreground"
           style={{ animationDelay: '200ms' }}
         >
-          Your AI companion for visas, flights, hotels and experiences. Plan the whole journey in one place.
+          Combine everyone’s dates, budget and passport readiness. Fermat finds realistic options, explains the trade-offs and shows who needs to act.
         </p>
 
         <div
@@ -263,8 +263,8 @@ function Hero() {
           style={{ animationDelay: '300ms' }}
         >
           <Button asChild size="lg" className="group bg-foreground text-background hover:bg-foreground/90">
-            <Link href="/landing">
-              Start free
+            <Link href="/plan">
+              Start a group plan
               <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           </Button>
