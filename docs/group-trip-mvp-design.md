@@ -20,21 +20,21 @@ Executable gates are the domain/storage unit tests and the production build. A r
 
 Build the first proof as a local-first organizer workflow with deterministic seeded data. The UI moves through trip basics, a compact traveller grid, a three-destination comparison, and a selected-destination readiness dashboard.
 
-Ranking is a pure function. Each destination receives 40 budget points, 20 passport points, 20 visa points, and 20 seasonal-fit points. If budget is `b`, the estimate floor is `min`, and the ceiling is `max`, budget points are `40` when `b >= max`, `25 + 15 × (b - min) / (max - min)` when `min <= b < max`, and `20 × b / min` when `b < min`, clamped at zero. Each traveller contributes an equal share of the passport and visa components: a passport valid through the trip end plus the destination's required validity earns its share, unknown earns 40% of its share, and a failure earns zero; the matching controlled held-visa key earns 60% of its share pending validity verification, no matching key earns 25%, and a destination with no seeded visa key earns 80% pending an official-rules check. A preferred travel month earns 20 seasonal points and another month earns 10. The four components are summed and the total is rounded to the nearest whole number.
+Ranking is a pure function. Each destination receives 40 budget points, 20 passport points, 20 visa points, and 20 seasonal-fit points. Seeded estimates are for six days; for a duration `d`, both range bounds are multiplied by `0.5 + 0.5 × d / 6` before scoring. If budget is `b`, the adjusted estimate floor is `min`, and the adjusted ceiling is `max`, budget points are `40` when `b >= max`, `25 + 15 × (b - min) / (max - min)` when `min <= b < max`, and `20 × b / min` when `b < min`, clamped at zero. Each traveller contributes an equal share of the passport and visa components: a passport valid through the trip end plus the destination's required validity earns its share, unknown earns 40% of its share, and a failure earns zero; the matching controlled held-visa key earns 60% of its share pending validity verification, no matching key earns 25%, and a destination with no seeded visa key earns 80% pending an official-rules check. A preferred travel month earns 20 seasonal points and another month earns 10. The four components are summed and rounded with JavaScript `Math.round` semantics, so an exact positive half point rounds upward.
 
-For date arithmetic, travel starts on the first day of the selected month and ends `durationDays - 1` days later. A passport expiry entered as a month is treated as the last day of that month. Required validity months are added to the computed trip end before comparison.
+For date arithmetic, travel starts on the first day of the selected month and ends `durationDays - 1` days later. A passport expiry entered as a month is treated as the last day of that month. To add required validity months, advance the trip end's calendar year/month by the requirement and preserve its day-of-month, clamping that day to the target month's final day.
 
 The fixed seed data is:
 
-| Seed | Destination | Estimate/person | Preferred months | Passport validity after trip | Visa key | Review/provenance |
-|---|---|---:|---|---:|---|---|
-| 1 | Bangkok, Thailand | ₹65k–₹85k | Nov–Feb | 6 months | none; official entry check required | 2026-10-24; illustrative Fermat demo assumption |
-| 2 | Dubai, UAE | ₹80k–₹110k | Nov–Mar | 6 months | `uae` | 2026-10-24; illustrative Fermat demo assumption |
-| 3 | Paris, France | ₹130k–₹175k | Apr–Jun, Sep–Oct | 3 months | `schengen` | 2026-10-24; illustrative Fermat demo assumption |
+| Seed | Destination | Six-day estimate/person | Preferred months | Passport validity after trip | Visa key | Official verification | Review/provenance |
+|---|---|---:|---|---:|---|---|---|
+| 1 | Bangkok, Thailand | ₹65k–₹85k | Nov–Feb | 6 months | none; official entry check required | `https://www.thaievisa.go.th/` | 2026-10-24; illustrative Fermat demo assumption |
+| 2 | Dubai, UAE | ₹80k–₹110k | Nov–Mar | 6 months | `uae` | `https://u.ae/en/information-and-services/visa-and-emirates-id/tourist-visas` | 2026-10-24; illustrative Fermat demo assumption |
+| 3 | Paris, France | ₹130k–₹175k | Apr–Jun, Sep–Oct | 3 months | `schengen` | `https://france-visas.gouv.fr/en/` | 2026-10-24; illustrative Fermat demo assumption |
 
 These values are intentionally static and not represented as government, airline, or live fare data. Each result links users to an official-rules verification step before booking.
 
-Destinations sort first by ascending hard-blocker count, then descending score, then by the fixed seed order `Bangkok`, `Dubai`, `Paris`. A hard blocker is recorded once per affected traveller for a passport-validity failure or when the shared budget is below the destination's minimum estimate. These published components, thresholds, and tie break ensure identical input produces identical output.
+Destinations sort first by ascending hard-blocker count, then descending score, then by the fixed seed order `Bangkok`, `Dubai`, `Paris`. Each traveller with a passport-validity failure contributes one hard blocker. A shared-budget shortfall below the duration-adjusted minimum contributes exactly one group-level hard blocker, regardless of group size. These published components, thresholds, and tie break ensure identical input produces identical output.
 
 The recommendation engine separates feasibility from fit. Passport and minimum-budget failures are hard blockers and sort behind destinations without those blockers. A missing destination visa is an action, not a hard blocker, because the traveller may still apply; it affects fit and readiness but does not make the destination impossible by itself. The remaining score explains budget comfort, passport readiness, existing visa readiness, and seasonal fit. Unknown information produces an explicit warning and never silently becomes `Ready`.
 
