@@ -1,0 +1,7 @@
+# Group trip MVP implementation plan
+
+1. **Domain and persistence contract** — implement the seeded destination model, deterministic recommendation scoring, readiness rows, and guarded browser-storage adapter. Runnable check: `npm run test:group-trip` passes the previously red tests plus boundary cases.
+2. **Organizer flow** — implement `/plan` with trip basics, a 4–10-person traveller grid, three ranked recommendation cards, selection, and the readiness dashboard. Runnable check: a production build renders the route without type or bundling failures.
+3. **Product entry and documentation** — point the landing-page primary calls to action to `/plan`, align the hero message with group-trip positioning, and replace the stale repository README with current setup, privacy, and dry-run documentation. Runnable check: repository-wide searches find no primary landing CTA still targeting the legacy chat route.
+4. **Dry run and responsive verification** — run the production app and record the acceptance flow at 390px and 1440px, including keyboard-labelled progression, text statuses, reload, edit/recalculation, cancel reset, and confirmed reset. Runnable check: the recorded checklist has one observed result for every acceptance item.
+5. **Final review and delivery** — review the complete branch diff, rerun unit tests and the production build on the final head, push the branch, open one PR using the repository template if present, and record its delivery disposition. Runnable check: exact PR URL, head SHA, base SHA, checks, and review result are read back.
