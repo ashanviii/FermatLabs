@@ -7,6 +7,7 @@ const {
   createDefaultDraft,
   loadTripDraft,
   recommendDestinations,
+  resetTripDraft,
   saveTripDraft,
   STORAGE_KEY,
 } = require('./groupTrip');
@@ -80,7 +81,7 @@ test('explains budget, passport, and visa blockers for every affected traveller'
   assert.ok(paris.summary.includes('2 blockers'));
 });
 
-test('builds a readiness dashboard without exposing another traveller\'s budget', () => {
+test('builds a readiness dashboard without repeating the shared numeric budget in every row', () => {
   const rows = buildReadinessRows(readyGroup, 'paris');
 
   assert.equal(rows.length, 2);
@@ -149,18 +150,49 @@ test('uses last-write-wins for repeated saves', () => {
 test('recovers from corrupt and unsupported records', () => {
   for (const saved of ['not-json', JSON.stringify({ version: 99, tripName: 'future' })]) {
     const storage = memoryStorage({ [STORAGE_KEY]: saved, unrelated: 'keep me' });
+    const warnings = [];
 
-    assert.deepEqual(loadTripDraft(storage), createDefaultDraft());
-    assert.equal(storage.getItem(STORAGE_KEY), null);
+    assert.deepEqual(loadTripDraft(storage, (warning) => warnings.push(warning)), createDefaultDraft());
+    assert.equal(storage.getItem(STORAGE_KEY), saved);
     assert.equal(storage.getItem('unrelated'), 'keep me');
+    assert.equal(warnings.length, 1);
   }
 });
 
-test('reset deletes only the group-trip record', () => {
+test('confirmed reset deletes only the group-trip record', () => {
   const storage = memoryStorage({ [STORAGE_KEY]: '{}', unrelated: 'keep me' });
 
-  clearTripDraft(storage);
+  assert.equal(resetTripDraft(storage, true), true);
 
   assert.equal(storage.getItem(STORAGE_KEY), null);
   assert.equal(storage.getItem('unrelated'), 'keep me');
+});
+
+test('cancelled reset preserves the draft and storage', () => {
+  const storage = memoryStorage({ [STORAGE_KEY]: '{"version":1}' });
+
+  assert.equal(resetTripDraft(storage, false), false);
+  assert.equal(storage.getItem(STORAGE_KEY), '{"version":1}');
+});
+
+test('reports unavailable storage without losing the in-memory draft', () => {
+  const warnings = [];
+  const blockedStorage = {
+    getItem: () => {
+      throw new Error('blocked');
+    },
+    setItem: () => {
+      throw new Error('full');
+    },
+    removeItem: () => {
+      throw new Error('blocked');
+    },
+  };
+  const draft = { ...createDefaultDraft(), tripName: 'Still in memory' };
+
+  assert.deepEqual(loadTripDraft(blockedStorage, (warning) => warnings.push(warning)), createDefaultDraft());
+  assert.equal(saveTripDraft(blockedStorage, draft, (warning) => warnings.push(warning)), false);
+  assert.equal(clearTripDraft(blockedStorage, (warning) => warnings.push(warning)), false);
+  assert.equal(draft.tripName, 'Still in memory');
+  assert.equal(warnings.length, 3);
 });
