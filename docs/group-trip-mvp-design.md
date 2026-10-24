@@ -2,15 +2,15 @@
 
 ## Outcome and acceptance criteria
 
-Fermat will provide an organizer-on-one-device dry run for a group of 4–10 Indian travellers. The experience is intentionally a decision and readiness prototype, not a booking or visa-submission product.
+Fermat will provide an organizer-on-one-device dry run for a group of 4–10 travellers who all hold Indian passports. The UI states that mixed-nationality groups are unsupported in this MVP. The experience is intentionally a decision and readiness prototype, not a booking or visa-submission product.
 
 The change is complete when:
 
 1. `/plan` collects a trip name, travel month, duration, and a clearly labelled per-traveller total budget in INR.
-2. The organizer can enter 4–10 traveller rows using nicknames, departure cities, passport expiry months, and relevant held-visa names. A claimed held visa remains `Unknown — verify validity` because the MVP does not collect expiry, entry count, or conditions. The app never asks for passport numbers, legal names, dates of birth, or documents.
+2. The organizer can enter 4–10 traveller rows using nicknames, departure cities, passport expiry months, and controlled held-visa options (`UAE` and `Schengen`). A claimed held visa remains `Unknown — verify validity` because the MVP does not collect expiry, entry count, or conditions. The app never asks for passport numbers, legal names, dates of birth, or documents.
 3. The app deterministically ranks exactly three seeded destinations. Feasibility takes precedence over preference score; every result exposes cost assumptions, hard blockers, actions, reasons, and the data review date.
 4. Selecting a destination shows a readiness dashboard with visible text statuses (`Ready`, `Action needed`, or `Unknown`) for the shared budget, passport, and visa for every traveller. Departure cities are shown as context but not scored because the seeded data has no route-level price or availability contract.
-5. When browser storage is available, the draft and selected destination survive reloads in a versioned, namespaced record. Editing inputs recomputes recommendations and readiness. Reset removes only Fermat's group-trip record after confirmation. If storage is unavailable, full, blocked, corrupt, unsupported, or cleared externally, the app continues in the current tab, shows a persistence warning, and does not claim that the draft was saved.
+5. When browser storage is available, the draft and selected destination survive reloads in a versioned, namespaced record. Editing inputs recomputes recommendations and readiness. Reset removes only Fermat's group-trip record after confirmation. If storage is unavailable, full, blocked, corrupt, or unsupported, the app continues in the current tab, shows a persistence warning, and does not claim that the draft was saved. If storage is cleared externally, the open tab receives no notification; the next reload starts clean.
 6. The flow works at mobile and desktop widths, is keyboard-labelled, never relies on colour alone, and clearly states that the seeded estimates are informational rather than legal advice.
 7. The landing-page primary calls to action open `/plan`, and the changed positioning is reflected in repository documentation.
 
@@ -20,7 +20,19 @@ Executable gates are the domain/storage unit tests and the production build. A r
 
 Build the first proof as a local-first organizer workflow with deterministic seeded data. The UI moves through trip basics, a compact traveller grid, a three-destination comparison, and a selected-destination readiness dashboard.
 
-Ranking is a pure function. Each destination receives 40 budget points, 20 passport points, 20 visa points, and 20 seasonal-fit points. Budget earns 40 at or above the estimate ceiling, 25–39 within the range, and 0–20 below the estimate floor. Each traveller contributes an equal share of the passport and visa components: a passport valid through the trip end plus the destination's required validity earns its share, unknown earns 40% of its share, and a failure earns zero; a self-reported held visa earns 60% of its share pending validity verification, no held visa earns 25%, and a destination with no seeded visa key earns 80% pending an official-rules check. A preferred travel month earns 20 seasonal points and another month earns 10. Scores are rounded to whole numbers.
+Ranking is a pure function. Each destination receives 40 budget points, 20 passport points, 20 visa points, and 20 seasonal-fit points. If budget is `b`, the estimate floor is `min`, and the ceiling is `max`, budget points are `40` when `b >= max`, `25 + 15 × (b - min) / (max - min)` when `min <= b < max`, and `20 × b / min` when `b < min`, clamped at zero. Each traveller contributes an equal share of the passport and visa components: a passport valid through the trip end plus the destination's required validity earns its share, unknown earns 40% of its share, and a failure earns zero; the matching controlled held-visa key earns 60% of its share pending validity verification, no matching key earns 25%, and a destination with no seeded visa key earns 80% pending an official-rules check. A preferred travel month earns 20 seasonal points and another month earns 10. The four components are summed and the total is rounded to the nearest whole number.
+
+For date arithmetic, travel starts on the first day of the selected month and ends `durationDays - 1` days later. A passport expiry entered as a month is treated as the last day of that month. Required validity months are added to the computed trip end before comparison.
+
+The fixed seed data is:
+
+| Seed | Destination | Estimate/person | Preferred months | Passport validity after trip | Visa key | Review/provenance |
+|---|---|---:|---|---:|---|---|
+| 1 | Bangkok, Thailand | ₹65k–₹85k | Nov–Feb | 6 months | none; official entry check required | 2026-10-24; illustrative Fermat demo assumption |
+| 2 | Dubai, UAE | ₹80k–₹110k | Nov–Mar | 6 months | `uae` | 2026-10-24; illustrative Fermat demo assumption |
+| 3 | Paris, France | ₹130k–₹175k | Apr–Jun, Sep–Oct | 3 months | `schengen` | 2026-10-24; illustrative Fermat demo assumption |
+
+These values are intentionally static and not represented as government, airline, or live fare data. Each result links users to an official-rules verification step before booking.
 
 Destinations sort first by ascending hard-blocker count, then descending score, then by the fixed seed order `Bangkok`, `Dubai`, `Paris`. A hard blocker is recorded once per affected traveller for a passport-validity failure or when the shared budget is below the destination's minimum estimate. These published components, thresholds, and tie break ensure identical input produces identical output.
 
