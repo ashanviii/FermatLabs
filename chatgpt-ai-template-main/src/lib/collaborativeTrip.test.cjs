@@ -58,6 +58,8 @@ test('four members can collect, vote, and atomically lock one budgeted plan', ()
   assert.equal(trip.activePlan.version, 1);
   assert.equal(validatePlan(trip.activePlan).length, 0);
   assert.equal(trip.activePlan.memberTotals.reduce((sum, member) => sum + member.total, 0), trip.activePlan.groupTotal);
+  const replayed = applyCommand(trip, { type: 'lock', uid: 'owner', round: trip.round, inputRevision: trip.inputRevision, idempotencyKey: 'lock-one' });
+  assert.deepEqual(replayed, trip);
 });
 
 test('integer allocation reconciles for every group size from four through ten', () => {
@@ -65,6 +67,9 @@ test('integer allocation reconciles for every group size from four through ten',
     const allocation = allocateInteger(100003, Array.from({ length: count }, (_, index) => `m${index + 1}`));
     assert.equal(Object.values(allocation).reduce((sum, value) => sum + value, 0), 100003);
     assert.ok(Math.max(...Object.values(allocation)) - Math.min(...Object.values(allocation)) <= 1);
+    const plan = generatePlan(readyTrip(count, 300000), 'bangkok');
+    assert.equal(validatePlan(plan).length, 0);
+    assert.equal(plan.memberTotals.reduce((sum, member) => sum + member.contingency, 0), plan.categories.contingency);
   }
 });
 
@@ -118,6 +123,39 @@ test('edits create a new plan revision and clear previous approvals', () => {
   });
   assert.equal(trip.activePlan.revision, 2);
   assert.deepEqual(trip.activePlan.approvals, {});
+});
+
+test('cost edits reconcile totals and schedule conflicts mark the revision for review', () => {
+  let trip = readyTrip(4, 300000);
+  trip = applyCommand(trip, { type: 'openVoting', uid: 'owner', expectedInputRevision: trip.inputRevision });
+  ids.forEach((uid) => { trip = applyCommand(trip, { type: 'vote', uid, destinationId: 'bangkok', round: trip.round, inputRevision: trip.inputRevision }); });
+  trip = applyCommand(trip, { type: 'lock', uid: 'owner', round: trip.round, inputRevision: trip.inputRevision, idempotencyKey: 'edit-lock' });
+  const item = trip.activePlan.itinerary[1].items[0];
+  const before = trip.activePlan.groupTotal;
+  trip = applyCommand(trip, { type: 'editPlanItem', uid: 'owner', planRevision: 1, itemId: item.id, patch: { estimatedCost: item.estimatedCost + 1003, time: '13:00' } });
+  assert.ok(trip.activePlan.groupTotal > before);
+  assert.equal(validatePlan(trip.activePlan).length, 0);
+  assert.equal(trip.activePlan.status, 'needsReview');
+});
+
+test('editing a ballot-round constraint invalidates every ballot and returns to collection', () => {
+  let trip = readyTrip();
+  trip = applyCommand(trip, { type: 'openVoting', uid: 'owner', expectedInputRevision: trip.inputRevision });
+  trip = applyCommand(trip, { type: 'vote', uid: 'owner', destinationId: 'bangkok', round: trip.round, inputRevision: trip.inputRevision });
+  trip = applyCommand(trip, { type: 'submitConstraints', uid: 'm2', expectedInputRevision: trip.inputRevision, constraints: { ...trip.constraints.m2, preferences: ['art'] } });
+  assert.equal(trip.phase, 'collecting');
+  assert.deepEqual(trip.ballots, {});
+});
+
+test('invalid calendar dates and unauthenticated projections fail closed', () => {
+  assert.throws(() => createTripState({ id: 'bad', ownerUid: 'owner', name: 'Bad', startDate: '2026-02-30', endDate: '2026-03-02', expectedSize: 4 }), /date/i);
+  assert.throws(() => buildTripProjection(readyTrip(), 'outsider'), /membership/i);
+});
+
+test('private inputs require a real passport month and an explicit preference', () => {
+  let trip = createTripState({ id: 'private-inputs', ownerUid: 'owner', name: 'Private inputs', startDate: '2026-12-10', endDate: '2026-12-15', expectedSize: 4 });
+  assert.throws(() => applyCommand(trip, { type: 'submitConstraints', uid: 'owner', expectedInputRevision: 0, constraints: { ...completeConstraint(0), passportExpiry: '2028-13' } }), /incomplete/i);
+  assert.throws(() => applyCommand(trip, { type: 'submitConstraints', uid: 'owner', expectedInputRevision: 0, constraints: { ...completeConstraint(0), preferences: [] } }), /incomplete/i);
 });
 
 test('capacity, stale revisions, absent ballots, and direct organizer override fail closed', () => {

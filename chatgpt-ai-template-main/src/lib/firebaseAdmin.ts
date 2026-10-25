@@ -11,6 +11,7 @@ function credential() {
 export function firebaseAdmin() {
   const projectId = process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
   if (!projectId) throw new Error('Shared planning is not configured: Firebase project ID is missing.');
-  const app = getApps()[0] || initializeApp({ credential: credential(), projectId });
+  const usingEmulators = Boolean(process.env.FIRESTORE_EMULATOR_HOST && process.env.FIREBASE_AUTH_EMULATOR_HOST);
+  const app = getApps()[0] || initializeApp(usingEmulators ? { projectId } : { credential: credential(), projectId });
   return { auth: getAuth(app), firestore: getFirestore(app) };
 }
