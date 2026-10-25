@@ -1,6 +1,5 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import {
   getAuth,
   GoogleAuthProvider,
@@ -11,6 +10,7 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   updateProfile,
+  signInAnonymously,
   type User,
 } from "firebase/auth";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, serverTimestamp } from "firebase/firestore";
@@ -29,11 +29,12 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
 
 // Initialize Firebase Auth
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
+
+export const signInAsGuest = async () => (await signInAnonymously(auth)).user;
 
 // Initialize Firestore
 export const db = getFirestore(app);
@@ -275,5 +276,4 @@ export const upgradeToPro = async (uid: string): Promise<void> => {
   }
 };
 
-export { analytics };
 export default app;

@@ -1,0 +1,49 @@
+{
+  "version": "2026.10.1",
+  "currency": "INR",
+  "departureCities": {
+    "Delhi": { "bangkok": 34000, "dubai": 30000, "paris": 72000 },
+    "Mumbai": { "bangkok": 36000, "dubai": 27000, "paris": 70000 },
+    "Bengaluru": { "bangkok": 32000, "dubai": 31000, "paris": 76000 },
+    "Hyderabad": { "bangkok": 35000, "dubai": 30000, "paris": 75000 },
+    "Chennai": { "bangkok": 31000, "dubai": 33000, "paris": 78000 },
+    "Kolkata": { "bangkok": 28000, "dubai": 35000, "paris": 80000 },
+    "Pune": { "bangkok": 39000, "dubai": 29000, "paris": 74000 },
+    "Ahmedabad": { "bangkok": 41000, "dubai": 26000, "paris": 73000 }
+  },
+  "destinations": [
+    {
+      "id": "bangkok", "name": "Bangkok", "country": "Thailand", "timeZone": "Asia/Bangkok",
+      "tags": ["food", "culture", "nightlife"], "passportMonths": 6, "visaKey": null,
+      "officialUrl": "https://www.thaievisa.go.th/", "reviewedAt": "2026-10-24",
+      "roomCapacity": 2, "roomNight": 5200, "vehicleCapacity": 4, "vehicleDay": 3800,
+      "foodDay": 1800, "insurance": 1800, "entryAllowance": 3500,
+      "activities": [
+        { "id": "old-town", "title": "Old Town and riverside walk", "tags": ["culture", "food"], "durationMinutes": 180, "location": "Rattanakosin", "costPerPerson": 1200 },
+        { "id": "market", "title": "Market food trail", "tags": ["food"], "durationMinutes": 150, "location": "Chinatown", "costPerPerson": 1000 }
+      ]
+    },
+    {
+      "id": "dubai", "name": "Dubai", "country": "United Arab Emirates", "timeZone": "Asia/Dubai",
+      "tags": ["food", "shopping", "nightlife"], "passportMonths": 6, "visaKey": "uae",
+      "officialUrl": "https://u.ae/en/information-and-services/visa-and-emirates-id/tourist-visas", "reviewedAt": "2026-10-24",
+      "roomCapacity": 2, "roomNight": 7800, "vehicleCapacity": 6, "vehicleDay": 5200,
+      "foodDay": 2400, "insurance": 1800, "entryAllowance": 7500,
+      "activities": [
+        { "id": "old-dubai", "title": "Old Dubai and creek walk", "tags": ["culture", "food"], "durationMinutes": 180, "location": "Al Fahidi", "costPerPerson": 1400 },
+        { "id": "marina", "title": "Marina evening", "tags": ["nightlife", "shopping"], "durationMinutes": 150, "location": "Dubai Marina", "costPerPerson": 1800 }
+      ]
+    },
+    {
+      "id": "paris", "name": "Paris", "country": "France", "timeZone": "Europe/Paris",
+      "tags": ["food", "culture", "art"], "passportMonths": 3, "visaKey": "schengen",
+      "officialUrl": "https://france-visas.gouv.fr/en/", "reviewedAt": "2026-10-24",
+      "roomCapacity": 2, "roomNight": 12500, "vehicleCapacity": 5, "vehicleDay": 7000,
+      "foodDay": 3800, "insurance": 2200, "entryAllowance": 10500,
+      "activities": [
+        { "id": "latin-quarter", "title": "Latin Quarter walk", "tags": ["culture", "food"], "durationMinutes": 180, "location": "Latin Quarter", "costPerPerson": 1600 },
+        { "id": "museum", "title": "Museum district visit", "tags": ["art", "culture"], "durationMinutes": 180, "location": "1st arrondissement", "costPerPerson": 2600 }
+      ]
+    }
+  ]
+}

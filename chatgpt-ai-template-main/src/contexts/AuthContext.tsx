@@ -8,6 +8,7 @@ import {
   signUpWithEmail,
   resetPassword,
   logOut,
+  signInAsGuest,
 } from '../lib/firebase';
 
 interface AuthContextType {
@@ -17,6 +18,7 @@ interface AuthContextType {
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signUpWithEmail: (name: string, email: string, password: string) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  signInAsGuest: () => Promise<void>;
   logOut: () => Promise<void>;
 }
 
@@ -91,6 +93,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const handleGuestSignIn = async () => {
+    await signInAsGuest();
+  };
+
   const value: AuthContextType = {
     user,
     loading,
@@ -98,6 +104,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     signInWithEmail: handleSignInWithEmail,
     signUpWithEmail: handleSignUpWithEmail,
     resetPassword,
+    signInAsGuest: handleGuestSignIn,
     logOut: handleLogOut,
   };
 

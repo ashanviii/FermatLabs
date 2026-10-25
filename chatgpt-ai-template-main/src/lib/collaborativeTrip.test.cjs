@@ -21,6 +21,8 @@ function completeConstraint(index, budget = 150000) {
     datesConfirmed: true,
     preferences: ['culture', 'food'],
     entryCheckAcknowledged: true,
+    isAdult: true,
+    hasIndianPassport: true,
   };
 }
 
@@ -86,6 +88,17 @@ test('shared projection never exposes raw private constraints or private ballots
   assert.equal(JSON.stringify(projection).includes('150000'), false);
 });
 
+test('pending member gets a safe waiting-room projection and owner can admit them', () => {
+  let trip = createTripState({ id: 'waiting', ownerUid: 'owner', name: 'Waiting', startDate: '2026-12-10', endDate: '2026-12-15', expectedSize: 4 });
+  trip = applyCommand(trip, { type: 'requestJoin', uid: 'm2', nickname: 'Member 2', now: 100 });
+  const waiting = buildTripProjection(trip, 'm2');
+  assert.equal(waiting.membershipStatus, 'pending');
+  assert.equal(waiting.activePlan, null);
+  assert.equal(buildTripProjection(trip, 'owner').pendingRequests[0].nickname, 'Member 2');
+  trip = applyCommand(trip, { type: 'admitMember', uid: 'owner', memberUid: 'm2', now: 101 });
+  assert.equal(buildTripProjection(trip, 'm2').membershipStatus, 'approved');
+});
+
 test('edits create a new plan revision and clear previous approvals', () => {
   let trip = readyTrip();
   trip = applyCommand(trip, { type: 'openVoting', uid: 'owner', expectedInputRevision: trip.inputRevision });
@@ -109,7 +122,9 @@ test('edits create a new plan revision and clear previous approvals', () => {
 
 test('capacity, stale revisions, absent ballots, and direct organizer override fail closed', () => {
   let trip = readyTrip(4);
-  assert.throws(() => applyCommand(trip, { type: 'requestJoin', uid: 'late', nickname: 'Late' }), /capacity/i);
+  trip = applyCommand(trip, { type: 'requestJoin', uid: 'late', nickname: 'Late' });
+  assert.equal(trip.pending.late.status, 'pending');
+  assert.throws(() => applyCommand(trip, { type: 'admitMember', uid: 'owner', memberUid: 'late' }), /capacity/i);
   assert.throws(() => applyCommand(trip, { type: 'submitConstraints', uid: 'owner', expectedInputRevision: trip.inputRevision - 1, constraints: completeConstraint(0) }), /stale/i);
   trip = applyCommand(trip, { type: 'openVoting', uid: 'owner', expectedInputRevision: trip.inputRevision });
   assert.throws(() => applyCommand(trip, { type: 'lock', uid: 'owner', round: trip.round, inputRevision: trip.inputRevision, destinationId: 'paris', idempotencyKey: 'bad' }), /ballot|override/i);
