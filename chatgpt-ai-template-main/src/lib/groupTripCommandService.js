@@ -1,14 +1,15 @@
 const { createHash, randomBytes, randomUUID } = require('node:crypto');
 const domain = require('./collaborativeTrip');
+const features = require('./features');
 
 const digest = (value) => createHash('sha256').update(value).digest('hex');
-const commandTypes = new Set(['admitMember', 'rejectMember', 'submitConstraints', 'openVoting', 'vote', 'lock', 'approvePlan', 'editPlanItem', 'reopen', 'rotateInvite', 'revokeInvite']);
+const commandTypes = new Set(['admitMember', 'rejectMember', 'submitConstraints', 'openVoting', 'vote', 'lock', 'approvePlan', 'editPlanItem', 'reopen', 'rotateInvite', 'revokeInvite', 'setPayee', 'markPaid', 'addDemoMembers', ...features.commandTypes]);
 
 async function createTrip({ firestore, uid, body, serverTimestamp, now = Date.now, makeId = randomUUID, makeSecret = () => randomBytes(24).toString('base64url') }) {
   const idempotencyKey = String(body.idempotencyKey || '');
   if (idempotencyKey.length < 8 || idempotencyKey.length > 200) throw new Error('Create idempotency key is required');
   const tripId = makeId(); const inviteSecret = makeSecret();
-  const state = domain.createTripState({ ...body.trip, id: tripId, ownerUid: uid });
+  const state = domain.createTripState({ ...body.trip, id: tripId, ownerUid: uid, createdAt: now() });
   const requestRef = firestore.doc(`groupTripCreateRequests/${digest(`${uid}\0${idempotencyKey}`)}`);
   const result = await firestore.runTransaction(async (transaction) => {
     const requestSnap = await transaction.get(requestRef);

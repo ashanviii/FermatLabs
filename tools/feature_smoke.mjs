@@ -1,0 +1,27 @@
+// Live smoke test of the 5 new features against the running app and real Firebase.
+const [apiKey, app] = process.argv.slice(2);
+const su = await (await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${apiKey}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email: `feat-${crypto.randomUUID()}@example.test`, password: `Pw-${crypto.randomUUID()}`, returnSecureToken: true }) })).json();
+const call = async (body) => { const r = await fetch(`${app}/api/group-trips`, { method: 'POST', headers: { authorization: `Bearer ${su.idToken}`, 'content-type': 'application/json' }, body: JSON.stringify(body) }); const j = await r.json(); if (!r.ok) throw new Error(`${body.command?.type || body.action}: ${j.error}`); return j.trip; };
+let t = await call({ action: 'create', idempotencyKey: `feat-${crypto.randomUUID()}`, trip: { name: 'Feature smoke', startDate: '2026-12-10', endDate: '2026-12-15', expectedSize: 4 } });
+const cmd = (command) => call({ action: 'command', tripId: t.id, command });
+t = await cmd({ type: 'addDemoMembers' });
+t = await cmd({ type: 'submitConstraints', expectedInputRevision: t.inputRevision, constraints: { departureCity: 'Delhi', budget: 400000, passportExpiry: '2031-12', visas: [], datesConfirmed: true, preferences: ['food'], entryCheckAcknowledged: true, isAdult: true, hasIndianPassport: true } });
+t = await cmd({ type: 'setPrivatePreferences', diet: 'vegetarian', alcohol: 'avoid', skipTags: [] });
+console.log('silentPrefs: mine =', JSON.stringify(t.features.silentPrefs.myPreferences));
+t = await cmd({ type: 'addTask', title: 'Book stays' });
+t = await cmd({ type: 'openVoting', expectedInputRevision: t.inputRevision });
+console.log('tasks:', t.features.tasks.tasks.length, 'task(s); waitingOn =', JSON.stringify(t.features.tasks.waitingOn));
+t = await cmd({ type: 'vote', destinationId: 'bangkok', round: t.round, inputRevision: t.inputRevision });
+t = await cmd({ type: 'lock', round: t.round, inputRevision: t.inputRevision, idempotencyKey: `lock-${crypto.randomUUID()}` });
+const items = t.activePlan.itinerary.flatMap((d) => d.items);
+console.log(`locked ${t.activePlan.destinationName}; inclusions: ${JSON.stringify(t.activePlan.inclusions || [])}; attendee lists hidden: ${items.every((i) => i.attendees === undefined)}`);
+const myShare = t.activePlan.memberTotals.find((m) => m.uid === su.localId).total;
+t = await cmd({ type: 'setPledge', minGoing: 2, maxShare: myShare + 10000 });
+console.log('pledges:', JSON.stringify({ pledged: t.features.pledges.pledgedCount, firm: t.features.pledges.firmlyInCount, iAmFirm: t.features.pledges.iAmFirmlyIn }));
+const demo = Object.keys(t.members).find((u) => u !== su.localId);
+t = await cmd({ type: 'setPayoutHandle', kind: 'upi', handle: 'organizer@okaxis' });
+t = await cmd({ type: 'addExpense', title: 'Airport cab', amount: 2000, splitAmong: Object.keys(t.members) });
+console.log('settleUp:', JSON.stringify({ expenses: t.features.settleUp.expenses.length, myNet: t.features.settleUp.myNet, transfers: t.features.settleUp.transfers.length }));
+console.log('shareCards:', JSON.stringify(t.features.shareCards));
+const shared = JSON.stringify({ ...t, myConstraints: undefined, myPrivateStatus: undefined, features: { ...t.features, silentPrefs: undefined, pledges: { ...t.features.pledges, myPledge: undefined } } });
+console.log('privacy: own budget 400000 absent from shared parts =', !shared.includes('400000'));

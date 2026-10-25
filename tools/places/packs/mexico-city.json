@@ -1,0 +1,356 @@
+{
+  "destination": {
+    "id": "mexico-city",
+    "name": "Mexico City",
+    "country": "Mexico",
+    "countryCode": "MX",
+    "lat": 19.35377,
+    "lon": -99.13589,
+    "timeZone": "America/Mexico_City",
+    "costCurrency": "MXN",
+    "tags": [
+      "food",
+      "culture",
+      "art"
+    ],
+    "passportMonths": 0,
+    "visaKey": null,
+    "visaLeadDays": null,
+    "visaWaivedBy": [],
+    "officialUrl": "https://mexicocity.cdmx.gob.mx/",
+    "reviewedAt": "2026-10-25",
+    "roomCapacity": 2,
+    "roomNight": 2500,
+    "vehicleCapacity": 4,
+    "vehicleDay": 1400,
+    "foodDay": 750,
+    "insurance": 300,
+    "entryAllowance": 0,
+    "activities": [
+      {
+        "id": "mexico-city-metropolitan-cathedral-zocalo",
+        "title": "Mexico City Metropolitan Cathedral and Zócalo",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 180,
+        "location": "Centro",
+        "costPerPerson": 140,
+        "lat": 19.43417,
+        "lon": -99.13306
+      },
+      {
+        "id": "frida-kahlo-museum",
+        "title": "Frida Kahlo Museum",
+        "tags": [
+          "art",
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Coyoacán",
+        "costPerPerson": 250,
+        "lat": 19.35514,
+        "lon": -99.16253
+      },
+      {
+        "id": "templo-mayor",
+        "title": "Templo Mayor",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 180,
+        "location": "Centro",
+        "costPerPerson": 140,
+        "lat": 19.435,
+        "lon": -99.13139
+      },
+      {
+        "id": "local-food-walk",
+        "title": "Mexico City local food walk",
+        "tags": [
+          "food",
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Centro",
+        "costPerPerson": 300,
+        "lat": 19.35377,
+        "lon": -99.13589
+      },
+      {
+        "id": "angel-of-independence",
+        "title": "Angel of Independence",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 60,
+        "location": "Zona Rosa",
+        "costPerPerson": 0,
+        "lat": 19.42694,
+        "lon": -99.1675
+      },
+      {
+        "id": "chapultepec-castle",
+        "title": "Chapultepec Castle",
+        "tags": [
+          "culture",
+          "art"
+        ],
+        "durationMinutes": 150,
+        "location": "Chapultepec",
+        "costPerPerson": 250,
+        "lat": 19.42056,
+        "lon": -99.18167
+      },
+      {
+        "id": "museo-soumaya",
+        "title": "Museo Soumaya",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Polanco",
+        "costPerPerson": 200,
+        "lat": 19.44066,
+        "lon": -99.20462
+      },
+      {
+        "id": "estadio-azteca",
+        "title": "Estadio Azteca",
+        "tags": [
+          "culture",
+          "adventure"
+        ],
+        "durationMinutes": 90,
+        "location": "Coyoacán",
+        "costPerPerson": 350,
+        "lat": 19.30306,
+        "lon": -99.15056
+      },
+      {
+        "id": "national-palace",
+        "title": "National Palace",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Centro",
+        "costPerPerson": 200,
+        "lat": 19.4325,
+        "lon": -99.13139
+      },
+      {
+        "id": "palacio-de-bellas-artes",
+        "title": "Palacio de Bellas Artes",
+        "tags": [
+          "nightlife",
+          "art"
+        ],
+        "durationMinutes": 150,
+        "location": "Centro",
+        "costPerPerson": 600,
+        "lat": 19.43528,
+        "lon": -99.14139
+      },
+      {
+        "id": "monumento-a-la-revolucion-paseo-de-la-reforma",
+        "title": "Monumento a la Revolución and Paseo de la Reforma",
+        "tags": [
+          "culture",
+          "shopping"
+        ],
+        "durationMinutes": 180,
+        "location": "Zona Rosa",
+        "costPerPerson": 0,
+        "lat": 19.43618,
+        "lon": -99.15463
+      },
+      {
+        "id": "xochimilco",
+        "title": "Xochimilco",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 60,
+        "location": "Mexico City",
+        "costPerPerson": 120,
+        "lat": 19.24758,
+        "lon": -99.09822
+      }
+    ],
+    "source": "pack:wikidata+wikivoyage 2026-10",
+    "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+  },
+  "meta": {
+    "generatedOn": "2026-10-25",
+    "generator": "tools/places/city_pack.py",
+    "input": {
+      "city": "Mexico City",
+      "country": "MX",
+      "wikivoyageTitle": "Mexico City"
+    },
+    "wikidata": "Q1489",
+    "wikivoyageUrl": "https://en.wikivoyage.org/wiki/Mexico_City",
+    "population": 9209944.0,
+    "priceLevel": {
+      "indicator": "PA.NUS.PRVT.PP",
+      "year": "2025",
+      "lcuPerIntlDollar": 11.3088,
+      "lcuPerUsd": 19.2375,
+      "priceLevelVsUS": 0.588,
+      "cityMultiplier": 1.2,
+      "basisIntlDollars": {
+        "roomNight": 170,
+        "vehicleDay": 110,
+        "foodDay": 55,
+        "insurance": 25
+      }
+    },
+    "sources": [
+      "pageviews",
+      "wikidata",
+      "wikivoyage",
+      "worldbank"
+    ],
+    "sourcesFailed": {},
+    "candidates": 228,
+    "proseActivities": [],
+    "ranking": [
+      {
+        "title": "Mexico City Metropolitan Cathedral",
+        "qid": "Q610961",
+        "category": "cathedral",
+        "score": 7.368,
+        "pageviews12m": 81438,
+        "sitelinks": 61,
+        "curated": true
+      },
+      {
+        "title": "Frida Kahlo Museum",
+        "qid": "Q2663377",
+        "category": "art_museum",
+        "score": 7.337,
+        "pageviews12m": 55860,
+        "sitelinks": 30,
+        "curated": true
+      },
+      {
+        "title": "Templo Mayor",
+        "qid": "Q774021",
+        "category": "archaeological",
+        "score": 7.205,
+        "pageviews12m": 125666,
+        "sitelinks": 31,
+        "curated": true
+      },
+      {
+        "title": "Angel of Independence",
+        "qid": "Q928541",
+        "category": "monument",
+        "score": 7.107,
+        "pageviews12m": 78951,
+        "sitelinks": 25,
+        "curated": true
+      },
+      {
+        "title": "Chapultepec Castle",
+        "qid": "Q1072510",
+        "category": "palace",
+        "score": 7.085,
+        "pageviews12m": 113540,
+        "sitelinks": 26,
+        "curated": true
+      },
+      {
+        "title": "Museo Soumaya",
+        "qid": "Q2097646",
+        "category": "museum",
+        "score": 7.074,
+        "pageviews12m": 50743,
+        "sitelinks": 28,
+        "curated": true
+      },
+      {
+        "title": "Zócalo",
+        "qid": "Q1348507",
+        "category": "square",
+        "score": 7.046,
+        "pageviews12m": 87945,
+        "sitelinks": 30,
+        "curated": true
+      },
+      {
+        "title": "Estadio Azteca",
+        "qid": "Q320454",
+        "category": "stadium",
+        "score": 7.017,
+        "pageviews12m": 1554353,
+        "sitelinks": 59,
+        "curated": false
+      },
+      {
+        "title": "National Palace",
+        "qid": "Q1517884",
+        "category": "museum",
+        "score": 6.99,
+        "pageviews12m": 74382,
+        "sitelinks": 31,
+        "curated": true
+      },
+      {
+        "title": "Palacio de Bellas Artes",
+        "qid": "Q1139081",
+        "category": "show",
+        "score": 6.886,
+        "pageviews12m": 68954,
+        "sitelinks": 34,
+        "curated": true
+      },
+      {
+        "title": "Monumento a la Revolución",
+        "qid": "Q1389520",
+        "category": "monument",
+        "score": 6.841,
+        "pageviews12m": 60059,
+        "sitelinks": 20,
+        "curated": true
+      },
+      {
+        "title": "Paseo de la Reforma",
+        "qid": "Q1478843",
+        "category": "street",
+        "score": 6.565,
+        "pageviews12m": 35720,
+        "sitelinks": 26,
+        "curated": true
+      },
+      {
+        "title": "Xochimilco",
+        "qid": "Q643026",
+        "category": "landmark",
+        "score": 6.491,
+        "pageviews12m": 102973,
+        "sitelinks": 54,
+        "curated": false
+      },
+      {
+        "title": "Anahuacalli Museum",
+        "qid": "Q675877",
+        "category": "museum",
+        "score": 6.211,
+        "pageviews12m": 22949,
+        "sitelinks": 10,
+        "curated": true
+      },
+      {
+        "title": "Alameda Central",
+        "qid": "Q3355305",
+        "category": "park",
+        "score": 6.176,
+        "pageviews12m": 7498,
+        "sitelinks": 17,
+        "curated": true
+      }
+    ]
+  }
+}

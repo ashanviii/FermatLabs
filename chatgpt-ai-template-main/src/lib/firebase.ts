@@ -28,13 +28,9 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || "G-ZQLJSNJYBM"
 };
 
-// The legacy chat experience retains its historical fallback project. New
-// shared-trip flows must opt in with an explicit client configuration.
+// Shared planning uses the resolved config, so the built-in fermat-9e38d project works without env overrides.
 export const sharedFirebaseConfigured = Boolean(
-  process.env.NEXT_PUBLIC_FIREBASE_API_KEY &&
-  process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN &&
-  process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID &&
-  process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  firebaseConfig.apiKey && firebaseConfig.authDomain && firebaseConfig.projectId && firebaseConfig.appId,
 );
 
 // Initialize Firebase

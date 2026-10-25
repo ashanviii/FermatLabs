@@ -1,0 +1,313 @@
+{
+  "destination": {
+    "id": "rishikesh",
+    "name": "Rishikesh",
+    "country": "India",
+    "countryCode": "IN",
+    "lat": 30.1,
+    "lon": 78.3,
+    "timeZone": "Asia/Kolkata",
+    "costCurrency": "INR",
+    "tags": [
+      "food",
+      "culture",
+      "nature",
+      "adventure"
+    ],
+    "passportMonths": 6,
+    "visaKey": null,
+    "visaLeadDays": null,
+    "visaWaivedBy": [],
+    "officialUrl": "https://uttarakhandtourism.gov.in/destination/rishikesh/",
+    "reviewedAt": "2026-10-25",
+    "roomCapacity": 2,
+    "roomNight": 3000,
+    "vehicleCapacity": 4,
+    "vehicleDay": 2000,
+    "foodDay": 1000,
+    "insurance": 500,
+    "entryAllowance": 0,
+    "activities": [
+      {
+        "id": "beatles-ashram-swarg-ashram",
+        "title": "Beatles Ashram and Swarg Ashram",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Rishikesh",
+        "costPerPerson": 0,
+        "lat": 30.10975,
+        "lon": 78.31277
+      },
+      {
+        "id": "nilkanth-mahadev",
+        "title": "Nilkanth Mahadev",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 60,
+        "location": "Rishikesh",
+        "costPerPerson": 0,
+        "lat": 30.0807,
+        "lon": 78.3409
+      },
+      {
+        "id": "yoga-rishikesh",
+        "title": "Yoga class in Rishikesh",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 90,
+        "location": "Rishikesh",
+        "costPerPerson": 250
+      },
+      {
+        "id": "local-food-walk",
+        "title": "Rishikesh local food walk",
+        "tags": [
+          "food",
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Rishikesh",
+        "costPerPerson": 500,
+        "lat": 30.1,
+        "lon": 78.3
+      },
+      {
+        "id": "lakshman-jhula-trayambakeshwar-temple",
+        "title": "Lakshman Jhula and Trayambakeshwar Temple",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 180,
+        "location": "Rishikesh",
+        "costPerPerson": 500,
+        "lat": 30.12636,
+        "lon": 78.32989
+      },
+      {
+        "id": "bharat-mandir-triveni-ghat",
+        "title": "Bharat Mandir and Triveni Ghat",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Rishikesh",
+        "costPerPerson": 0,
+        "lat": 30.10612,
+        "lon": 78.30205
+      },
+      {
+        "id": "rafting-rishikesh",
+        "title": "River rafting in Rishikesh",
+        "tags": [
+          "adventure",
+          "nature"
+        ],
+        "durationMinutes": 180,
+        "location": "Rishikesh",
+        "costPerPerson": 700
+      },
+      {
+        "id": "gita-bhavan-parmarth-niketan-ashram",
+        "title": "Gita Bhavan and Parmarth Niketan Ashram",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Rishikesh",
+        "costPerPerson": 200,
+        "lat": 30.12061,
+        "lon": 78.31354
+      },
+      {
+        "id": "janki-setu-ram-jhula",
+        "title": "Janki Setu and Ram Jhula",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 180,
+        "location": "Rishikesh",
+        "costPerPerson": 700,
+        "lat": 30.1206,
+        "lon": 78.3197
+      },
+      {
+        "id": "trekking-rishikesh",
+        "title": "Guided trek in Rishikesh",
+        "tags": [
+          "nature",
+          "adventure"
+        ],
+        "durationMinutes": 210,
+        "location": "Rishikesh",
+        "costPerPerson": 400
+      },
+      {
+        "id": "patna-waterfalls",
+        "title": "Patna Waterfalls",
+        "tags": [
+          "nature"
+        ],
+        "durationMinutes": 120,
+        "location": "Rishikesh",
+        "costPerPerson": 250,
+        "lat": 30.1,
+        "lon": 78.3
+      }
+    ],
+    "source": "pack:wikidata+wikivoyage 2026-10",
+    "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+  },
+  "meta": {
+    "generatedOn": "2026-10-25",
+    "generator": "tools/places/city_pack.py",
+    "input": {
+      "city": "Rishikesh",
+      "country": "IN",
+      "wikivoyageTitle": "Rishikesh"
+    },
+    "wikidata": "Q502141",
+    "wikivoyageUrl": "https://en.wikivoyage.org/wiki/Rishikesh",
+    "population": 70499.0,
+    "priceLevel": {
+      "indicator": "PA.NUS.PRVT.PP",
+      "year": "2025",
+      "lcuPerIntlDollar": 19.8389,
+      "lcuPerUsd": 87.1584,
+      "priceLevelVsUS": 0.228,
+      "cityMultiplier": 0.95,
+      "basisIntlDollars": {
+        "roomNight": 170,
+        "vehicleDay": 110,
+        "foodDay": 55,
+        "insurance": 25
+      }
+    },
+    "sources": [
+      "pageviews",
+      "wikidata",
+      "wikivoyage",
+      "worldbank"
+    ],
+    "sourcesFailed": {},
+    "candidates": 12,
+    "proseActivities": [
+      "Yoga class in Rishikesh",
+      "River rafting in Rishikesh",
+      "Guided trek in Rishikesh"
+    ],
+    "ranking": [
+      {
+        "title": "Beatles Ashram",
+        "qid": "Q55605098",
+        "category": "religious",
+        "score": 5.744,
+        "pageviews12m": 26384,
+        "sitelinks": 3,
+        "curated": true
+      },
+      {
+        "title": "Nilkanth Mahadev",
+        "qid": "Q12063668",
+        "category": "religious",
+        "score": 5.503,
+        "pageviews12m": 33025,
+        "sitelinks": 6,
+        "curated": false
+      },
+      {
+        "title": "Lakshman Jhula",
+        "qid": "Q2689560",
+        "category": "tower",
+        "score": 5.475,
+        "pageviews12m": 17012,
+        "sitelinks": 10,
+        "curated": false
+      },
+      {
+        "title": "Bharat Mandir",
+        "qid": null,
+        "category": "religious",
+        "score": 1.54,
+        "pageviews12m": 0,
+        "sitelinks": 0,
+        "curated": true
+      },
+      {
+        "title": "Gita Bhavan",
+        "qid": null,
+        "category": "landmark",
+        "score": 1.52,
+        "pageviews12m": 0,
+        "sitelinks": 0,
+        "curated": true
+      },
+      {
+        "title": "Janki Setu",
+        "qid": null,
+        "category": "landmark",
+        "score": 1.51,
+        "pageviews12m": 0,
+        "sitelinks": 0,
+        "curated": true
+      },
+      {
+        "title": "Patna Waterfalls",
+        "qid": null,
+        "category": "lake",
+        "score": 1.48,
+        "pageviews12m": 0,
+        "sitelinks": 0,
+        "curated": true
+      },
+      {
+        "title": "Ram Jhula",
+        "qid": "Q7288488",
+        "category": "tower",
+        "score": 5.121,
+        "pageviews12m": 10898,
+        "sitelinks": 7,
+        "curated": false
+      },
+      {
+        "title": "Parmarth Niketan Ashram",
+        "qid": null,
+        "category": "religious",
+        "score": 1.49,
+        "pageviews12m": 0,
+        "sitelinks": 0,
+        "curated": true
+      },
+      {
+        "title": "Swarg Ashram",
+        "qid": null,
+        "category": "religious",
+        "score": 1.47,
+        "pageviews12m": 0,
+        "sitelinks": 0,
+        "curated": true
+      },
+      {
+        "title": "Trayambakeshwar Temple",
+        "qid": null,
+        "category": "religious",
+        "score": 1.46,
+        "pageviews12m": 0,
+        "sitelinks": 0,
+        "curated": true
+      },
+      {
+        "title": "Triveni Ghat",
+        "qid": null,
+        "category": "religious",
+        "score": 1.45,
+        "pageviews12m": 0,
+        "sitelinks": 0,
+        "curated": true
+      }
+    ]
+  }
+}

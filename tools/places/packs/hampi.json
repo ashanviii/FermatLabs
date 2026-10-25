@@ -1,0 +1,354 @@
+{
+  "destination": {
+    "id": "hampi",
+    "name": "Hampi",
+    "country": "India",
+    "countryCode": "IN",
+    "lat": 15.33455,
+    "lon": 76.46216,
+    "timeZone": "Asia/Kolkata",
+    "costCurrency": "INR",
+    "tags": [
+      "food",
+      "culture",
+      "nature",
+      "adventure"
+    ],
+    "passportMonths": 6,
+    "visaKey": null,
+    "visaLeadDays": null,
+    "visaWaivedBy": [],
+    "officialUrl": "https://asi.nic.in/hampi/",
+    "reviewedAt": "2026-10-25",
+    "roomCapacity": 2,
+    "roomNight": 3500,
+    "vehicleCapacity": 4,
+    "vehicleDay": 2000,
+    "foodDay": 1000,
+    "insurance": 500,
+    "entryAllowance": 0,
+    "activities": [
+      {
+        "id": "vijayanagara",
+        "title": "Vijayanagara",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 180,
+        "location": "Hampi",
+        "costPerPerson": 250,
+        "lat": 15.325,
+        "lon": 76.465
+      },
+      {
+        "id": "virupaksha-temple-hemakuta-hill-temples",
+        "title": "Virupaksha Temple and Hemakuta Hill temples",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 180,
+        "location": "Hampi",
+        "costPerPerson": 0,
+        "lat": 15.33516,
+        "lon": 76.45873
+      },
+      {
+        "id": "climbing-hampi",
+        "title": "Bouldering and climbing in Hampi",
+        "tags": [
+          "adventure",
+          "nature"
+        ],
+        "durationMinutes": 180,
+        "location": "Hampi",
+        "costPerPerson": 500
+      },
+      {
+        "id": "local-food-walk",
+        "title": "Hampi local food walk",
+        "tags": [
+          "food",
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Hampi",
+        "costPerPerson": 500,
+        "lat": 15.33455,
+        "lon": 76.46216
+      },
+      {
+        "id": "pampa-sarovar",
+        "title": "Pampa Sarovar",
+        "tags": [
+          "nature"
+        ],
+        "durationMinutes": 120,
+        "location": "Hampi",
+        "costPerPerson": 250,
+        "lat": 15.35376,
+        "lon": 76.47737
+      },
+      {
+        "id": "lotus-mahal",
+        "title": "Lotus Mahal",
+        "tags": [
+          "culture",
+          "art"
+        ],
+        "durationMinutes": 150,
+        "location": "Hampi",
+        "costPerPerson": 400,
+        "lat": 15.32053,
+        "lon": 76.47138
+      },
+      {
+        "id": "coracle-hampi",
+        "title": "Coracle boat ride in Hampi",
+        "tags": [
+          "nature"
+        ],
+        "durationMinutes": 60,
+        "location": "Hampi",
+        "costPerPerson": 120
+      },
+      {
+        "id": "sanapur",
+        "title": "Sanapur",
+        "tags": [
+          "nature"
+        ],
+        "durationMinutes": 120,
+        "location": "Gangawati Taluk",
+        "costPerPerson": 250,
+        "lat": 15.35,
+        "lon": 76.434
+      },
+      {
+        "id": "matanga-hill",
+        "title": "Matanga Hill",
+        "tags": [
+          "nature",
+          "adventure"
+        ],
+        "durationMinutes": 180,
+        "location": "Hampi",
+        "costPerPerson": 200,
+        "lat": 15.31667,
+        "lon": 76.46667
+      },
+      {
+        "id": "ananthasayana-temple",
+        "title": "Ananthasayana Temple",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 90,
+        "location": "Hampi",
+        "costPerPerson": 0,
+        "lat": 15.27806,
+        "lon": 76.40722
+      },
+      {
+        "id": "vitthala-temple",
+        "title": "Vitthala Temple",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 90,
+        "location": "Hampi",
+        "costPerPerson": 0,
+        "lat": 15.34249,
+        "lon": 76.47547
+      },
+      {
+        "id": "monolith-bull-achyutaraya-temple",
+        "title": "Monolith Bull and Achyutaraya temple",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Hampi",
+        "costPerPerson": 200,
+        "lat": 15.3337,
+        "lon": 76.4672
+      }
+    ],
+    "source": "pack:wikidata+wikivoyage 2026-10",
+    "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+  },
+  "meta": {
+    "generatedOn": "2026-10-25",
+    "generator": "tools/places/city_pack.py",
+    "input": {
+      "city": "Hampi",
+      "country": "IN",
+      "wikivoyageTitle": "Hampi"
+    },
+    "wikidata": "Q26732",
+    "wikivoyageUrl": "https://en.wikivoyage.org/wiki/Hampi",
+    "population": null,
+    "priceLevel": {
+      "indicator": "PA.NUS.PRVT.PP",
+      "year": "2025",
+      "lcuPerIntlDollar": 19.8389,
+      "lcuPerUsd": 87.1584,
+      "priceLevelVsUS": 0.228,
+      "cityMultiplier": 1.0,
+      "basisIntlDollars": {
+        "roomNight": 170,
+        "vehicleDay": 110,
+        "foodDay": 55,
+        "insurance": 25
+      }
+    },
+    "sources": [
+      "pageviews",
+      "wikidata",
+      "wikivoyage",
+      "worldbank"
+    ],
+    "sourcesFailed": {},
+    "candidates": 23,
+    "proseActivities": [
+      "Bouldering and climbing in Hampi",
+      "Coracle boat ride in Hampi"
+    ],
+    "ranking": [
+      {
+        "title": "Vijayanagara",
+        "qid": "Q1611788",
+        "category": "archaeological",
+        "score": 7.048,
+        "pageviews12m": 62032,
+        "sitelinks": 28,
+        "curated": false
+      },
+      {
+        "title": "Virupaksha Temple",
+        "qid": "Q2502406",
+        "category": "religious",
+        "score": 6.587,
+        "pageviews12m": 76033,
+        "sitelinks": 17,
+        "curated": false
+      },
+      {
+        "title": "Pampa Sarovar",
+        "qid": "Q2763469",
+        "category": "lake",
+        "score": 5.91,
+        "pageviews12m": 9952,
+        "sitelinks": 14,
+        "curated": false
+      },
+      {
+        "title": "Lotus Mahal",
+        "qid": "Q97440781",
+        "category": "palace",
+        "score": 5.822,
+        "pageviews12m": 10904,
+        "sitelinks": 7,
+        "curated": false
+      },
+      {
+        "title": "Sanapur",
+        "qid": "Q28182771",
+        "category": "lake",
+        "score": 4.841,
+        "pageviews12m": 1676,
+        "sitelinks": 6,
+        "curated": true
+      },
+      {
+        "title": "Matanga Hill",
+        "qid": "Q123416595",
+        "category": "mountain",
+        "score": 4.829,
+        "pageviews12m": 4249,
+        "sitelinks": 9,
+        "curated": false
+      },
+      {
+        "title": "Ananthasayana Temple",
+        "qid": "Q4751490",
+        "category": "religious",
+        "score": 4.157,
+        "pageviews12m": 1213,
+        "sitelinks": 8,
+        "curated": false
+      },
+      {
+        "title": "Vitthala Temple",
+        "qid": "Q97440907",
+        "category": "religious",
+        "score": 1.922,
+        "pageviews12m": 0,
+        "sitelinks": 3,
+        "curated": false
+      },
+      {
+        "title": "Monolith Bull",
+        "qid": null,
+        "category": "landmark",
+        "score": 1.58,
+        "pageviews12m": 0,
+        "sitelinks": 0,
+        "curated": true
+      },
+      {
+        "title": "Zanana Enclosure",
+        "qid": null,
+        "category": "landmark",
+        "score": 1.52,
+        "pageviews12m": 0,
+        "sitelinks": 0,
+        "curated": true
+      },
+      {
+        "title": "Elephant Stables",
+        "qid": null,
+        "category": "landmark",
+        "score": 1.51,
+        "pageviews12m": 0,
+        "sitelinks": 0,
+        "curated": true
+      },
+      {
+        "title": "Pushkarani step wells",
+        "qid": null,
+        "category": "archaeological",
+        "score": 1.47,
+        "pageviews12m": 0,
+        "sitelinks": 0,
+        "curated": true
+      },
+      {
+        "title": "Hemakuta Hill temples",
+        "qid": null,
+        "category": "religious",
+        "score": 1.6,
+        "pageviews12m": 0,
+        "sitelinks": 0,
+        "curated": true
+      },
+      {
+        "title": "Achyutaraya temple",
+        "qid": null,
+        "category": "religious",
+        "score": 1.56,
+        "pageviews12m": 0,
+        "sitelinks": 0,
+        "curated": true
+      },
+      {
+        "title": "Badavilinga Temple",
+        "qid": null,
+        "category": "religious",
+        "score": 1.54,
+        "pageviews12m": 0,
+        "sitelinks": 0,
+        "curated": true
+      }
+    ]
+  }
+}

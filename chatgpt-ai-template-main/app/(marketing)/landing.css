@@ -4,8 +4,8 @@
 
 @layer base {
   .landing {
-    /* Palette: leaf green (#5DBB84) + deep forest (#13392A), butter yellow (#F8E6A0) as the one highlight,
-       ink (#141611) and off-white. Large surfaces use tints; strong color stays in accents. */
+    /* Legacy shadcn variables, kept so older markup still renders. New screens use the Fermat tokens
+       (canvas, ink, brand, ...) from tailwind.config.js; see src/components/ui/DESIGN.md. */
     --background: 100 20% 98.5%;
     --foreground: 160 25% 10%;
     --card: 0 0% 100%;
@@ -24,8 +24,8 @@
     --radius: 1rem;
 
     min-height: 100vh;
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
+    background-color: theme('colors.canvas');
+    color: theme('colors.ink.DEFAULT');
     font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -40,8 +40,8 @@
   }
 
   .landing ::selection {
-    background: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
+    background: theme('colors.brand.100');
+    color: theme('colors.brand.900');
   }
 
   html:has(.landing) {

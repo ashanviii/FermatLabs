@@ -1,0 +1,21 @@
+// Live smoke test for a US group: home US, USD, abroad-only, US passports, through lock and vote explanation.
+const [apiKey, app] = process.argv.slice(2);
+const su = await (await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${apiKey}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email: `us-${crypto.randomUUID()}@example.test`, password: `Pw-${crypto.randomUUID()}`, returnSecureToken: true }) })).json();
+const call = async (body) => { const r = await fetch(`${app}/api/group-trips`, { method: 'POST', headers: { authorization: `Bearer ${su.idToken}`, 'content-type': 'application/json' }, body: JSON.stringify(body) }); const j = await r.json(); if (!r.ok) throw new Error(`${body.command?.type || body.action}: ${j.error}`); return j.trip; };
+let t = await call({ action: 'create', idempotencyKey: `us-${crypto.randomUUID()}`, trip: { name: 'US smoke', startDate: '2026-12-26', endDate: '2026-12-31', expectedSize: 4, homeCountry: 'US', currency: 'USD', scope: 'international' } });
+console.log(`trip: home ${t.homeCountry}, ${t.currency}, scope ${t.scope}, ${t.destinations.length} options (domestic in list: ${t.destinations.some((d) => d.domestic)})`);
+const cmd = (command) => call({ action: 'command', tripId: t.id, command });
+t = await cmd({ type: 'addDemoMembers' });
+t = await cmd({ type: 'submitConstraints', expectedInputRevision: t.inputRevision, constraints: { departureCity: 'New York', budget: 1500, passportExpiry: '2031-12', passportCountry: 'US', visas: [], datesConfirmed: true, preferences: ['food'], entryCheckAcknowledged: true, isAdult: true } });
+const fits = t.myPrivateStatus.filter((s) => s.fits).map((s) => s.destinationId);
+console.log(`demo members: ${Object.values(t.members).map((m) => m.nickname).join(', ')} | fits my $1,500: ${fits.slice(0, 6).join(', ')}${fits.length > 6 ? '…' : ''}`);
+t = await cmd({ type: 'openVoting', expectedInputRevision: t.inputRevision });
+const pick = t.destinations.find((d) => d.id === 'tokyo') ? 'tokyo' : t.destinations[0].id;
+t = await cmd({ type: 'vote', destinationId: pick, round: t.round, inputRevision: t.inputRevision });
+t = await cmd({ type: 'lock', round: t.round, inputRevision: t.inputRevision, idempotencyKey: `lock-${crypto.randomUUID()}` });
+const e = t.lockExplanation;
+console.log(`locked: ${t.activePlan.destinationName} | my vote: ${t.myLockedVote} | decidedBy: ${e.decidedBy} | totals: ${JSON.stringify(e.totals)} | ineligible: ${JSON.stringify(e.ineligible)}`);
+const share = t.activePlan.memberTotals.find((m) => m.uid === su.localId).total;
+console.log(`my share: ${share} ${t.activePlan.currency || t.currency}`);
+const shared = JSON.stringify({ ...t, myConstraints: undefined, myPrivateStatus: undefined, features: { ...t.features, silentPrefs: undefined, pledges: { ...t.features.pledges, myPledge: undefined } } });
+console.log('privacy: own budget absent from shared parts =', !shared.includes('"budget":1500'));

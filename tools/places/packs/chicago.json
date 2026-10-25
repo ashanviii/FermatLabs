@@ -1,0 +1,359 @@
+{
+  "destination": {
+    "id": "chicago",
+    "name": "Chicago",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 41.88194,
+    "lon": -87.62778,
+    "timeZone": "America/Chicago",
+    "costCurrency": "USD",
+    "tags": [
+      "food",
+      "culture",
+      "art",
+      "nature",
+      "adventure"
+    ],
+    "passportMonths": 0,
+    "visaKey": null,
+    "visaLeadDays": null,
+    "visaWaivedBy": [],
+    "officialUrl": "http://www.choosechicago.com/articles/view/VISITOR-INFORMATION-CENTERS/257/?fmid=740",
+    "reviewedAt": "2026-10-25",
+    "roomCapacity": 2,
+    "roomNight": 180,
+    "vehicleCapacity": 4,
+    "vehicleDay": 120,
+    "foodDay": 60,
+    "insurance": 25,
+    "entryAllowance": 0,
+    "activities": [
+      {
+        "id": "art-institute-of-chicago",
+        "title": "Art Institute of Chicago",
+        "tags": [
+          "art",
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Loop",
+        "costPerPerson": 20,
+        "lat": 41.87944,
+        "lon": -87.62389
+      },
+      {
+        "id": "soldier-field",
+        "title": "Soldier Field",
+        "tags": [
+          "culture",
+          "adventure"
+        ],
+        "durationMinutes": 90,
+        "location": "Near South",
+        "costPerPerson": 30,
+        "lat": 41.8625,
+        "lon": -87.61667
+      },
+      {
+        "id": "kayaking-chicago",
+        "title": "Kayaking in Chicago",
+        "tags": [
+          "nature",
+          "adventure"
+        ],
+        "durationMinutes": 150,
+        "location": "Chicago",
+        "costPerPerson": 30
+      },
+      {
+        "id": "local-food-walk",
+        "title": "Chicago local food walk",
+        "tags": [
+          "food",
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Loop",
+        "costPerPerson": 25,
+        "lat": 41.88194,
+        "lon": -87.62778
+      },
+      {
+        "id": "the-second-city",
+        "title": "The Second City",
+        "tags": [
+          "nightlife",
+          "art"
+        ],
+        "durationMinutes": 150,
+        "location": "Lincoln Park-Old Town",
+        "costPerPerson": 55,
+        "lat": 41.91151,
+        "lon": -87.63506
+      },
+      {
+        "id": "cloud-gate-millennium-park",
+        "title": "Cloud Gate and Millennium Park",
+        "tags": [
+          "culture",
+          "nature"
+        ],
+        "durationMinutes": 210,
+        "location": "Chicago",
+        "costPerPerson": 0,
+        "lat": 41.8827,
+        "lon": -87.6233
+      },
+      {
+        "id": "grant-park",
+        "title": "Grant Park",
+        "tags": [
+          "nature"
+        ],
+        "durationMinutes": 120,
+        "location": "Loop",
+        "costPerPerson": 0,
+        "lat": 41.87611,
+        "lon": -87.61889
+      },
+      {
+        "id": "museum-of-science-and-industry",
+        "title": "Museum of Science and Industry",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Hyde Park",
+        "costPerPerson": 18,
+        "lat": 41.79056,
+        "lon": -87.58278
+      },
+      {
+        "id": "shedd-aquarium",
+        "title": "Shedd Aquarium",
+        "tags": [
+          "nature",
+          "adventure"
+        ],
+        "durationMinutes": 180,
+        "location": "Near South",
+        "costPerPerson": 30,
+        "lat": 41.86778,
+        "lon": -87.61389
+      },
+      {
+        "id": "chicago-river-boat-cruise",
+        "title": "Chicago River boat cruise",
+        "tags": [
+          "nature"
+        ],
+        "durationMinutes": 120,
+        "location": "Chicago",
+        "costPerPerson": 20,
+        "lat": 41.88837,
+        "lon": -87.61366
+      },
+      {
+        "id": "adler-planetarium",
+        "title": "Adler Planetarium",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Near South",
+        "costPerPerson": 18,
+        "lat": 41.86615,
+        "lon": -87.60667
+      },
+      {
+        "id": "tribune-tower",
+        "title": "Tribune Tower",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 90,
+        "location": "Near North",
+        "costPerPerson": 25,
+        "lat": 41.89039,
+        "lon": -87.62369
+      }
+    ],
+    "source": "pack:wikidata+wikivoyage 2026-10",
+    "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+  },
+  "meta": {
+    "generatedOn": "2026-10-25",
+    "generator": "tools/places/city_pack.py",
+    "input": {
+      "city": "Chicago",
+      "country": "US",
+      "wikivoyageTitle": "Chicago"
+    },
+    "wikidata": "Q1297",
+    "wikivoyageUrl": "https://en.wikivoyage.org/wiki/Chicago",
+    "population": 2746388.0,
+    "priceLevel": {
+      "indicator": "PA.NUS.PRVT.PP",
+      "year": "2025",
+      "lcuPerIntlDollar": 1.0,
+      "lcuPerUsd": 1.0,
+      "priceLevelVsUS": 1.0,
+      "cityMultiplier": 1.1,
+      "basisIntlDollars": {
+        "roomNight": 170,
+        "vehicleDay": 110,
+        "foodDay": 55,
+        "insurance": 25
+      }
+    },
+    "sources": [
+      "pageviews",
+      "wikidata",
+      "wikivoyage",
+      "worldbank"
+    ],
+    "sourcesFailed": {},
+    "candidates": 227,
+    "proseActivities": [
+      "Kayaking in Chicago"
+    ],
+    "ranking": [
+      {
+        "title": "Art Institute of Chicago",
+        "qid": "Q239303",
+        "category": "art_museum",
+        "score": 8.152,
+        "pageviews12m": 126972,
+        "sitelinks": 41,
+        "curated": true
+      },
+      {
+        "title": "Soldier Field",
+        "qid": "Q1132413",
+        "category": "stadium",
+        "score": 7.907,
+        "pageviews12m": 483095,
+        "sitelinks": 39,
+        "curated": true
+      },
+      {
+        "title": "The Second City",
+        "qid": "Q1777200",
+        "category": "show",
+        "score": 7.747,
+        "pageviews12m": 279592,
+        "sitelinks": 9,
+        "curated": true
+      },
+      {
+        "title": "Cloud Gate",
+        "qid": "Q589099",
+        "category": "monument",
+        "score": 7.706,
+        "pageviews12m": 261065,
+        "sitelinks": 30,
+        "curated": false
+      },
+      {
+        "title": "Millennium Park",
+        "qid": "Q1130516",
+        "category": "park",
+        "score": 7.598,
+        "pageviews12m": 49227,
+        "sitelinks": 31,
+        "curated": true
+      },
+      {
+        "title": "Grant Park",
+        "qid": "Q159085",
+        "category": "park",
+        "score": 7.546,
+        "pageviews12m": 45612,
+        "sitelinks": 20,
+        "curated": true
+      },
+      {
+        "title": "Museum of Science and Industry",
+        "qid": "Q1414079",
+        "category": "museum",
+        "score": 7.528,
+        "pageviews12m": 86619,
+        "sitelinks": 25,
+        "curated": true
+      },
+      {
+        "title": "Shedd Aquarium",
+        "qid": "Q2166515",
+        "category": "zoo",
+        "score": 7.497,
+        "pageviews12m": 43256,
+        "sitelinks": 19,
+        "curated": true
+      },
+      {
+        "title": "Chicago River",
+        "qid": "Q643284",
+        "category": "water",
+        "score": 7.486,
+        "pageviews12m": 119441,
+        "sitelinks": 38,
+        "curated": false
+      },
+      {
+        "title": "Adler Planetarium",
+        "qid": "Q358052",
+        "category": "museum",
+        "score": 7.294,
+        "pageviews12m": 24174,
+        "sitelinks": 21,
+        "curated": true
+      },
+      {
+        "title": "Tribune Tower",
+        "qid": "Q2143136",
+        "category": "tower",
+        "score": 7.045,
+        "pageviews12m": 51298,
+        "sitelinks": 18,
+        "curated": true
+      },
+      {
+        "title": "Lincoln Park Zoo",
+        "qid": "Q3241309",
+        "category": "zoo",
+        "score": 6.807,
+        "pageviews12m": 27299,
+        "sitelinks": 11,
+        "curated": true
+      },
+      {
+        "title": "Barack Obama Presidential Center",
+        "qid": "Q15975388",
+        "category": "museum",
+        "score": 6.734,
+        "pageviews12m": 678817,
+        "sitelinks": 18,
+        "curated": true
+      },
+      {
+        "title": "Magnificent Mile",
+        "qid": "Q285218",
+        "category": "neighbourhood",
+        "score": 6.673,
+        "pageviews12m": 49736,
+        "sitelinks": 16,
+        "curated": false
+      },
+      {
+        "title": "Franklin Center",
+        "qid": "Q298584",
+        "category": "landmark",
+        "score": 6.581,
+        "pageviews12m": 14938,
+        "sitelinks": 31,
+        "curated": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,357 @@
+{
+  "destination": {
+    "id": "london",
+    "name": "London",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 51.50722,
+    "lon": -0.1275,
+    "timeZone": "Europe/London",
+    "costCurrency": "GBP",
+    "tags": [
+      "food",
+      "culture",
+      "nightlife",
+      "art",
+      "nature"
+    ],
+    "passportMonths": 0,
+    "visaKey": null,
+    "visaLeadDays": null,
+    "visaWaivedBy": [],
+    "officialUrl": "https://www.visitlondon.com/",
+    "reviewedAt": "2026-10-25",
+    "roomCapacity": 2,
+    "roomNight": 140,
+    "vehicleCapacity": 4,
+    "vehicleDay": 95,
+    "foodDay": 45,
+    "insurance": 18,
+    "entryAllowance": 0,
+    "activities": [
+      {
+        "id": "tower-of-london",
+        "title": "Tower of London",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "City of London",
+        "costPerPerson": 20,
+        "lat": 51.5082,
+        "lon": -0.0762
+      },
+      {
+        "id": "british-museum",
+        "title": "British Museum",
+        "tags": [
+          "art",
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Bloomsbury",
+        "costPerPerson": 30,
+        "lat": 51.51944,
+        "lon": -0.12694
+      },
+      {
+        "id": "trafalgar-square-whitehall",
+        "title": "Trafalgar Square and Whitehall",
+        "tags": [
+          "culture",
+          "shopping"
+        ],
+        "durationMinutes": 180,
+        "location": "Leicester Square",
+        "costPerPerson": 0,
+        "lat": 51.50806,
+        "lon": -0.12806
+      },
+      {
+        "id": "local-food-walk",
+        "title": "London local food walk",
+        "tags": [
+          "food",
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "City of London",
+        "costPerPerson": 18,
+        "lat": 51.50722,
+        "lon": -0.1275
+      },
+      {
+        "id": "buckingham-palace",
+        "title": "Buckingham Palace",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Westminster",
+        "costPerPerson": 20,
+        "lat": 51.501,
+        "lon": -0.142
+      },
+      {
+        "id": "westminster-abbey",
+        "title": "Westminster Abbey",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 90,
+        "location": "Westminster",
+        "costPerPerson": 9,
+        "lat": 51.4994,
+        "lon": -0.12737
+      },
+      {
+        "id": "national-gallery",
+        "title": "National Gallery",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Leicester Square",
+        "costPerPerson": 20,
+        "lat": 51.50889,
+        "lon": -0.12833
+      },
+      {
+        "id": "the-gherkin",
+        "title": "The Gherkin",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 90,
+        "location": "City of London",
+        "costPerPerson": 18,
+        "lat": 51.51444,
+        "lon": -0.08028
+      },
+      {
+        "id": "st-paul-s-cathedral",
+        "title": "St Paul's Cathedral",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 90,
+        "location": "City of London",
+        "costPerPerson": 9,
+        "lat": 51.51378,
+        "lon": -0.09831
+      },
+      {
+        "id": "regent-s-park",
+        "title": "Regent's Park",
+        "tags": [
+          "nature"
+        ],
+        "durationMinutes": 120,
+        "location": "Mayfair-Marylebone",
+        "costPerPerson": 0,
+        "lat": 51.53222,
+        "lon": -0.15667
+      },
+      {
+        "id": "national-portrait-gallery",
+        "title": "National Portrait Gallery",
+        "tags": [
+          "art",
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Leicester Square",
+        "costPerPerson": 14,
+        "lat": 51.50944,
+        "lon": -0.12806
+      },
+      {
+        "id": "marble-arch-hyde-park",
+        "title": "Marble Arch and Hyde Park",
+        "tags": [
+          "culture",
+          "nature"
+        ],
+        "durationMinutes": 210,
+        "location": "Mayfair-Marylebone",
+        "costPerPerson": 0,
+        "lat": 51.51306,
+        "lon": -0.15889
+      }
+    ],
+    "source": "pack:wikidata+wikivoyage 2026-10",
+    "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+  },
+  "meta": {
+    "generatedOn": "2026-10-25",
+    "generator": "tools/places/city_pack.py",
+    "input": {
+      "city": "London",
+      "country": "GB",
+      "wikivoyageTitle": "London"
+    },
+    "wikidata": "Q84",
+    "wikivoyageUrl": "https://en.wikivoyage.org/wiki/London",
+    "population": 8799728.0,
+    "priceLevel": {
+      "indicator": "PA.NUS.PRVT.PP",
+      "year": "2025",
+      "lcuPerIntlDollar": 0.7015,
+      "lcuPerUsd": 0.7595,
+      "priceLevelVsUS": 0.924,
+      "cityMultiplier": 1.2,
+      "basisIntlDollars": {
+        "roomNight": 170,
+        "vehicleDay": 110,
+        "foodDay": 55,
+        "insurance": 25
+      }
+    },
+    "sources": [
+      "pageviews",
+      "wikidata",
+      "wikivoyage",
+      "worldbank"
+    ],
+    "sourcesFailed": {},
+    "candidates": 304,
+    "proseActivities": [],
+    "ranking": [
+      {
+        "title": "Tower of London",
+        "qid": "Q62378",
+        "category": "museum",
+        "score": 9.445,
+        "pageviews12m": 639062,
+        "sitelinks": 88,
+        "curated": true
+      },
+      {
+        "title": "British Museum",
+        "qid": "Q6373",
+        "category": "art_museum",
+        "score": 9.382,
+        "pageviews12m": 424635,
+        "sitelinks": 110,
+        "curated": true
+      },
+      {
+        "title": "Trafalgar Square",
+        "qid": "Q129143",
+        "category": "square",
+        "score": 9.018,
+        "pageviews12m": 298687,
+        "sitelinks": 73,
+        "curated": true
+      },
+      {
+        "title": "Buckingham Palace",
+        "qid": "Q42182",
+        "category": "museum",
+        "score": 8.722,
+        "pageviews12m": 696389,
+        "sitelinks": 95,
+        "curated": true
+      },
+      {
+        "title": "Westminster Abbey",
+        "qid": "Q5933",
+        "category": "cathedral",
+        "score": 8.646,
+        "pageviews12m": 616039,
+        "sitelinks": 91,
+        "curated": true
+      },
+      {
+        "title": "National Gallery",
+        "qid": "Q180788",
+        "category": "museum",
+        "score": 8.615,
+        "pageviews12m": 122030,
+        "sitelinks": 71,
+        "curated": true
+      },
+      {
+        "title": "The Gherkin",
+        "qid": "Q191161",
+        "category": "tower",
+        "score": 8.495,
+        "pageviews12m": 227238,
+        "sitelinks": 49,
+        "curated": true
+      },
+      {
+        "title": "St Paul's Cathedral",
+        "qid": "Q173882",
+        "category": "cathedral",
+        "score": 8.485,
+        "pageviews12m": 543547,
+        "sitelinks": 74,
+        "curated": true
+      },
+      {
+        "title": "Regent's Park",
+        "qid": "Q739341",
+        "category": "park",
+        "score": 8.185,
+        "pageviews12m": 84145,
+        "sitelinks": 42,
+        "curated": true
+      },
+      {
+        "title": "National Portrait Gallery",
+        "qid": "Q238587",
+        "category": "art_museum",
+        "score": 8.164,
+        "pageviews12m": 68580,
+        "sitelinks": 48,
+        "curated": true
+      },
+      {
+        "title": "Marble Arch",
+        "qid": "Q845529",
+        "category": "monument",
+        "score": 8.096,
+        "pageviews12m": 84730,
+        "sitelinks": 35,
+        "curated": true
+      },
+      {
+        "title": "Hyde Park",
+        "qid": "Q123738",
+        "category": "park",
+        "score": 8.084,
+        "pageviews12m": 164520,
+        "sitelinks": 63,
+        "curated": false
+      },
+      {
+        "title": "London Zoo",
+        "qid": "Q270263",
+        "category": "zoo",
+        "score": 7.931,
+        "pageviews12m": 70350,
+        "sitelinks": 44,
+        "curated": true
+      },
+      {
+        "title": "Whitehall",
+        "qid": "Q214820",
+        "category": "street",
+        "score": 7.75,
+        "pageviews12m": 139267,
+        "sitelinks": 46,
+        "curated": true
+      },
+      {
+        "title": "Harrods",
+        "qid": "Q332474",
+        "category": "shopping",
+        "score": 7.669,
+        "pageviews12m": 282518,
+        "sitelinks": 47,
+        "curated": false
+      }
+    ]
+  }
+}

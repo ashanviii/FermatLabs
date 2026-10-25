@@ -1,49 +1,4353 @@
 {
-  "version": "2026.10.1",
+  "version": "2026.10.5",
   "currency": "INR",
   "departureCities": {
-    "Delhi": { "bangkok": 34000, "dubai": 30000, "paris": 72000 },
-    "Mumbai": { "bangkok": 36000, "dubai": 27000, "paris": 70000 },
-    "Bengaluru": { "bangkok": 32000, "dubai": 31000, "paris": 76000 },
-    "Hyderabad": { "bangkok": 35000, "dubai": 30000, "paris": 75000 },
-    "Chennai": { "bangkok": 31000, "dubai": 33000, "paris": 78000 },
-    "Kolkata": { "bangkok": 28000, "dubai": 35000, "paris": 80000 },
-    "Pune": { "bangkok": 39000, "dubai": 29000, "paris": 74000 },
-    "Ahmedabad": { "bangkok": 41000, "dubai": 26000, "paris": 73000 }
+    "Delhi": {
+      "bangkok": 34000,
+      "dubai": 30000,
+      "paris": 72000,
+      "bali": 42000,
+      "singapore": 30000,
+      "hanoi": 32000,
+      "goa": 14000,
+      "manali": 6000,
+      "thailand-duo": 37000,
+      "vietnam-duo": 35000,
+      "uae-duo": 30000,
+      "kerala-trio": 14000,
+      "rajasthan-duo": 7000,
+      "rishikesh": 3000,
+      "pondicherry": 15000,
+      "hampi": 14000
+    },
+    "Mumbai": {
+      "bangkok": 36000,
+      "dubai": 27000,
+      "paris": 70000,
+      "bali": 40000,
+      "singapore": 29000,
+      "hanoi": 34000,
+      "goa": 8000,
+      "manali": 18000,
+      "thailand-duo": 39000,
+      "vietnam-duo": 37000,
+      "uae-duo": 27000,
+      "kerala-trio": 9000,
+      "rajasthan-duo": 10000,
+      "rishikesh": 12000,
+      "pondicherry": 12000,
+      "hampi": 9000
+    },
+    "Bengaluru": {
+      "bangkok": 32000,
+      "dubai": 31000,
+      "paris": 76000,
+      "bali": 36000,
+      "singapore": 24000,
+      "hanoi": 33000,
+      "goa": 9000,
+      "manali": 20000,
+      "thailand-duo": 35000,
+      "vietnam-duo": 36000,
+      "uae-duo": 31000,
+      "kerala-trio": 6000,
+      "rajasthan-duo": 14000,
+      "rishikesh": 14000,
+      "pondicherry": 4000,
+      "hampi": 3000
+    },
+    "Hyderabad": {
+      "bangkok": 35000,
+      "dubai": 30000,
+      "paris": 75000,
+      "bali": 39000,
+      "singapore": 26000,
+      "hanoi": 33000,
+      "goa": 10000,
+      "manali": 19000,
+      "thailand-duo": 38000,
+      "vietnam-duo": 36000,
+      "uae-duo": 30000,
+      "kerala-trio": 8000,
+      "rajasthan-duo": 12000,
+      "rishikesh": 13000,
+      "pondicherry": 9000,
+      "hampi": 4000
+    },
+    "Chennai": {
+      "bangkok": 31000,
+      "dubai": 33000,
+      "paris": 78000,
+      "bali": 35000,
+      "singapore": 22000,
+      "hanoi": 32000,
+      "goa": 11000,
+      "manali": 21000,
+      "thailand-duo": 34000,
+      "vietnam-duo": 35000,
+      "uae-duo": 33000,
+      "kerala-trio": 6000,
+      "rajasthan-duo": 15000,
+      "rishikesh": 15000,
+      "pondicherry": 2500,
+      "hampi": 7000
+    },
+    "Kolkata": {
+      "bangkok": 28000,
+      "dubai": 35000,
+      "paris": 80000,
+      "bali": 38000,
+      "singapore": 25000,
+      "hanoi": 27000,
+      "goa": 15000,
+      "manali": 19000,
+      "thailand-duo": 31000,
+      "vietnam-duo": 30000,
+      "uae-duo": 35000,
+      "kerala-trio": 14000,
+      "rajasthan-duo": 14000,
+      "rishikesh": 12000,
+      "pondicherry": 13000,
+      "hampi": 14000
+    },
+    "Pune": {
+      "bangkok": 39000,
+      "dubai": 29000,
+      "paris": 74000,
+      "bali": 43000,
+      "singapore": 31000,
+      "hanoi": 36000,
+      "goa": 7000,
+      "manali": 19000,
+      "thailand-duo": 42000,
+      "vietnam-duo": 39000,
+      "uae-duo": 29000,
+      "kerala-trio": 9000,
+      "rajasthan-duo": 11000,
+      "rishikesh": 13000,
+      "pondicherry": 12000,
+      "hampi": 7000
+    },
+    "Ahmedabad": {
+      "bangkok": 41000,
+      "dubai": 26000,
+      "paris": 73000,
+      "bali": 45000,
+      "singapore": 32000,
+      "hanoi": 37000,
+      "goa": 11000,
+      "manali": 17000,
+      "thailand-duo": 44000,
+      "vietnam-duo": 40000,
+      "uae-duo": 26000,
+      "kerala-trio": 11000,
+      "rajasthan-duo": 6000,
+      "rishikesh": 11000,
+      "pondicherry": 14000,
+      "hampi": 12000
+    },
+    "Kochi": {
+      "bangkok": 33000,
+      "dubai": 26000,
+      "paris": 78000,
+      "bali": 37000,
+      "singapore": 24000,
+      "hanoi": 35000,
+      "goa": 10000,
+      "manali": 22000,
+      "thailand-duo": 36000,
+      "vietnam-duo": 38000,
+      "uae-duo": 26000,
+      "kerala-trio": 1500,
+      "rajasthan-duo": 17000,
+      "rishikesh": 16000,
+      "pondicherry": 9000,
+      "hampi": 9000
+    },
+    "Jaipur": {
+      "bangkok": 38000,
+      "dubai": 27000,
+      "paris": 74000,
+      "bali": 46000,
+      "singapore": 34000,
+      "hanoi": 36000,
+      "goa": 14000,
+      "manali": 9000,
+      "thailand-duo": 41000,
+      "vietnam-duo": 39000,
+      "uae-duo": 27000,
+      "kerala-trio": 14000,
+      "rajasthan-duo": 3500,
+      "rishikesh": 8000,
+      "pondicherry": 15000,
+      "hampi": 14000
+    },
+    "Goa": {
+      "bangkok": 40000,
+      "dubai": 29000,
+      "paris": 77000,
+      "bali": 44000,
+      "singapore": 32000,
+      "hanoi": 37000,
+      "goa": 1500,
+      "manali": 21000,
+      "thailand-duo": 43000,
+      "vietnam-duo": 40000,
+      "uae-duo": 29000,
+      "kerala-trio": 9000,
+      "rajasthan-duo": 13000,
+      "rishikesh": 14000,
+      "pondicherry": 10000,
+      "hampi": 4000
+    },
+    "Lucknow": {
+      "bangkok": 37000,
+      "dubai": 30000,
+      "paris": 76000,
+      "bali": 46000,
+      "singapore": 34000,
+      "hanoi": 35000,
+      "goa": 15000,
+      "manali": 12000,
+      "thailand-duo": 40000,
+      "vietnam-duo": 38000,
+      "uae-duo": 30000,
+      "kerala-trio": 15000,
+      "rajasthan-duo": 10000,
+      "rishikesh": 8000,
+      "pondicherry": 15000,
+      "hampi": 15000
+    },
+    "Chandigarh": {
+      "bangkok": 39000,
+      "dubai": 31000,
+      "paris": 75000,
+      "bali": 47000,
+      "singapore": 35000,
+      "hanoi": 37000,
+      "goa": 16000,
+      "manali": 4000,
+      "thailand-duo": 42000,
+      "vietnam-duo": 40000,
+      "uae-duo": 31000,
+      "kerala-trio": 16000,
+      "rajasthan-duo": 9000,
+      "rishikesh": 3000,
+      "pondicherry": 16000,
+      "hampi": 16000
+    }
   },
   "destinations": [
     {
-      "id": "bangkok", "name": "Bangkok", "country": "Thailand", "timeZone": "Asia/Bangkok",
-      "tags": ["food", "culture", "nightlife"], "passportMonths": 6, "visaKey": null,
-      "officialUrl": "https://www.thaievisa.go.th/", "reviewedAt": "2026-10-24",
-      "roomCapacity": 2, "roomNight": 5200, "vehicleCapacity": 4, "vehicleDay": 3800,
-      "foodDay": 1800, "insurance": 1800, "entryAllowance": 3500,
+      "id": "bangkok",
+      "name": "Bangkok",
+      "country": "Thailand",
+      "timeZone": "Asia/Bangkok",
+      "tags": [
+        "food",
+        "culture",
+        "nightlife"
+      ],
+      "passportMonths": 6,
+      "visaKey": null,
+      "officialUrl": "https://www.thaievisa.go.th/",
+      "reviewedAt": "2026-10-24",
+      "roomCapacity": 2,
+      "roomNight": 5200,
+      "vehicleCapacity": 4,
+      "vehicleDay": 3800,
+      "foodDay": 1800,
+      "insurance": 1800,
+      "entryAllowance": 3500,
       "activities": [
-        { "id": "old-town", "title": "Old Town and riverside walk", "tags": ["culture", "food"], "durationMinutes": 180, "location": "Rattanakosin", "costPerPerson": 1200 },
-        { "id": "market", "title": "Market food trail", "tags": ["food"], "durationMinutes": 150, "location": "Chinatown", "costPerPerson": 1000 }
-      ]
+        {
+          "id": "old-town",
+          "title": "Old Town and riverside walk",
+          "tags": [
+            "culture",
+            "food"
+          ],
+          "durationMinutes": 180,
+          "location": "Rattanakosin",
+          "costPerPerson": 1200
+        },
+        {
+          "id": "market",
+          "title": "Market food trail",
+          "tags": [
+            "food"
+          ],
+          "durationMinutes": 150,
+          "location": "Chinatown",
+          "costPerPerson": 1000
+        },
+        {
+          "id": "floating-market",
+          "title": "Floating market morning",
+          "tags": [
+            "culture",
+            "food"
+          ],
+          "durationMinutes": 210,
+          "location": "Damnoen Saduak",
+          "costPerPerson": 1800
+        },
+        {
+          "id": "rooftop",
+          "title": "Riverside and rooftop evening",
+          "tags": [
+            "nightlife"
+          ],
+          "durationMinutes": 150,
+          "location": "Silom",
+          "costPerPerson": 2500
+        }
+      ],
+      "domestic": false,
+      "visaLeadDays": null,
+      "visaWaivedBy": [],
+      "countryCode": "TH",
+      "lat": 13.7563,
+      "lon": 100.5018,
+      "source": "curated"
     },
     {
-      "id": "dubai", "name": "Dubai", "country": "United Arab Emirates", "timeZone": "Asia/Dubai",
-      "tags": ["food", "shopping", "nightlife"], "passportMonths": 6, "visaKey": "uae",
-      "officialUrl": "https://u.ae/en/information-and-services/visa-and-emirates-id/tourist-visas", "reviewedAt": "2026-10-24",
-      "roomCapacity": 2, "roomNight": 7800, "vehicleCapacity": 6, "vehicleDay": 5200,
-      "foodDay": 2400, "insurance": 1800, "entryAllowance": 7500,
+      "id": "dubai",
+      "name": "Dubai",
+      "country": "United Arab Emirates",
+      "timeZone": "Asia/Dubai",
+      "tags": [
+        "food",
+        "shopping",
+        "nightlife"
+      ],
+      "passportMonths": 6,
+      "visaKey": "uae",
+      "officialUrl": "https://u.ae/en/information-and-services/visa-and-emirates-id/tourist-visas",
+      "reviewedAt": "2026-10-24",
+      "roomCapacity": 2,
+      "roomNight": 7800,
+      "vehicleCapacity": 6,
+      "vehicleDay": 5200,
+      "foodDay": 2400,
+      "insurance": 1800,
+      "entryAllowance": 7500,
       "activities": [
-        { "id": "old-dubai", "title": "Old Dubai and creek walk", "tags": ["culture", "food"], "durationMinutes": 180, "location": "Al Fahidi", "costPerPerson": 1400 },
-        { "id": "marina", "title": "Marina evening", "tags": ["nightlife", "shopping"], "durationMinutes": 150, "location": "Dubai Marina", "costPerPerson": 1800 }
-      ]
+        {
+          "id": "old-dubai",
+          "title": "Old Dubai and creek walk",
+          "tags": [
+            "culture",
+            "food"
+          ],
+          "durationMinutes": 180,
+          "location": "Al Fahidi",
+          "costPerPerson": 1400
+        },
+        {
+          "id": "marina",
+          "title": "Marina evening",
+          "tags": [
+            "nightlife",
+            "shopping"
+          ],
+          "durationMinutes": 150,
+          "location": "Dubai Marina",
+          "costPerPerson": 1800
+        },
+        {
+          "id": "desert-safari",
+          "title": "Desert safari and dune drive",
+          "tags": [
+            "adventure",
+            "nature"
+          ],
+          "durationMinutes": 210,
+          "location": "Lahbab desert",
+          "costPerPerson": 4500
+        },
+        {
+          "id": "burj",
+          "title": "Burj Khalifa and Dubai Mall",
+          "tags": [
+            "shopping"
+          ],
+          "durationMinutes": 180,
+          "location": "Downtown",
+          "costPerPerson": 4000
+        }
+      ],
+      "domestic": false,
+      "visaLeadDays": 7,
+      "visaWaivedBy": [
+        "us",
+        "uk",
+        "schengen"
+      ],
+      "countryCode": "AE",
+      "lat": 25.2048,
+      "lon": 55.2708,
+      "source": "curated"
     },
     {
-      "id": "paris", "name": "Paris", "country": "France", "timeZone": "Europe/Paris",
-      "tags": ["food", "culture", "art"], "passportMonths": 3, "visaKey": "schengen",
-      "officialUrl": "https://france-visas.gouv.fr/en/", "reviewedAt": "2026-10-24",
-      "roomCapacity": 2, "roomNight": 12500, "vehicleCapacity": 5, "vehicleDay": 7000,
-      "foodDay": 3800, "insurance": 2200, "entryAllowance": 10500,
+      "id": "paris",
+      "name": "Paris",
+      "country": "France",
+      "timeZone": "Europe/Paris",
+      "tags": [
+        "food",
+        "culture",
+        "art"
+      ],
+      "passportMonths": 3,
+      "visaKey": "schengen",
+      "officialUrl": "https://france-visas.gouv.fr/en/",
+      "reviewedAt": "2026-10-24",
+      "roomCapacity": 2,
+      "roomNight": 12500,
+      "vehicleCapacity": 5,
+      "vehicleDay": 7000,
+      "foodDay": 3800,
+      "insurance": 2200,
+      "entryAllowance": 10500,
       "activities": [
-        { "id": "latin-quarter", "title": "Latin Quarter walk", "tags": ["culture", "food"], "durationMinutes": 180, "location": "Latin Quarter", "costPerPerson": 1600 },
-        { "id": "museum", "title": "Museum district visit", "tags": ["art", "culture"], "durationMinutes": 180, "location": "1st arrondissement", "costPerPerson": 2600 }
-      ]
+        {
+          "id": "latin-quarter",
+          "title": "Latin Quarter walk",
+          "tags": [
+            "culture",
+            "food"
+          ],
+          "durationMinutes": 180,
+          "location": "Latin Quarter",
+          "costPerPerson": 1600
+        },
+        {
+          "id": "museum",
+          "title": "Museum district visit",
+          "tags": [
+            "art",
+            "culture"
+          ],
+          "durationMinutes": 180,
+          "location": "1st arrondissement",
+          "costPerPerson": 2600
+        },
+        {
+          "id": "seine",
+          "title": "Seine river cruise",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 120,
+          "location": "Pont Neuf",
+          "costPerPerson": 1800
+        },
+        {
+          "id": "versailles",
+          "title": "Palace of Versailles",
+          "tags": [
+            "culture",
+            "art"
+          ],
+          "durationMinutes": 210,
+          "location": "Versailles",
+          "costPerPerson": 3200
+        }
+      ],
+      "domestic": false,
+      "visaLeadDays": 45,
+      "visaWaivedBy": [],
+      "countryCode": "FR",
+      "lat": 48.8566,
+      "lon": 2.3522,
+      "source": "curated"
+    },
+    {
+      "id": "bali",
+      "name": "Bali",
+      "country": "Indonesia",
+      "timeZone": "Asia/Makassar",
+      "domestic": false,
+      "tags": [
+        "beach",
+        "nature",
+        "culture",
+        "food"
+      ],
+      "passportMonths": 6,
+      "visaKey": null,
+      "officialUrl": "https://evisa.imigrasi.go.id/",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 4800,
+      "vehicleCapacity": 4,
+      "vehicleDay": 3500,
+      "foodDay": 1600,
+      "insurance": 1800,
+      "entryAllowance": 3500,
+      "activities": [
+        {
+          "id": "ubud",
+          "title": "Ubud rice terraces and monkey forest",
+          "tags": [
+            "culture",
+            "nature"
+          ],
+          "durationMinutes": 210,
+          "location": "Ubud",
+          "costPerPerson": 1500
+        },
+        {
+          "id": "uluwatu",
+          "title": "Uluwatu temple sunset and Kecak dance",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 180,
+          "location": "Uluwatu",
+          "costPerPerson": 1400
+        },
+        {
+          "id": "snorkel",
+          "title": "Blue Lagoon snorkelling trip",
+          "tags": [
+            "beach",
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 210,
+          "location": "Padang Bai",
+          "costPerPerson": 2800
+        },
+        {
+          "id": "beach-club",
+          "title": "Seminyak beach club afternoon",
+          "tags": [
+            "beach",
+            "nightlife"
+          ],
+          "durationMinutes": 180,
+          "location": "Seminyak",
+          "costPerPerson": 2500
+        }
+      ],
+      "visaLeadDays": null,
+      "visaWaivedBy": [],
+      "countryCode": "ID",
+      "lat": -8.65,
+      "lon": 115.2167,
+      "source": "curated"
+    },
+    {
+      "id": "singapore",
+      "name": "Singapore",
+      "country": "Singapore",
+      "timeZone": "Asia/Singapore",
+      "domestic": false,
+      "tags": [
+        "food",
+        "shopping",
+        "nature",
+        "culture"
+      ],
+      "passportMonths": 6,
+      "visaKey": "singapore",
+      "officialUrl": "https://www.ica.gov.sg/enter-transit-depart/entering-singapore/visa_requirements",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 11000,
+      "vehicleCapacity": 4,
+      "vehicleDay": 4500,
+      "foodDay": 2600,
+      "insurance": 1800,
+      "entryAllowance": 3000,
+      "activities": [
+        {
+          "id": "hawker",
+          "title": "Hawker centre food trail",
+          "tags": [
+            "food"
+          ],
+          "durationMinutes": 150,
+          "location": "Maxwell and Chinatown",
+          "costPerPerson": 1200
+        },
+        {
+          "id": "gardens",
+          "title": "Gardens by the Bay and Marina Bay walk",
+          "tags": [
+            "nature"
+          ],
+          "durationMinutes": 180,
+          "location": "Marina Bay",
+          "costPerPerson": 2400
+        },
+        {
+          "id": "little-india",
+          "title": "Little India and Kampong Glam walk",
+          "tags": [
+            "culture",
+            "shopping"
+          ],
+          "durationMinutes": 180,
+          "location": "Little India",
+          "costPerPerson": 600
+        },
+        {
+          "id": "sentosa",
+          "title": "Sentosa beaches and cable car",
+          "tags": [
+            "beach",
+            "adventure"
+          ],
+          "durationMinutes": 210,
+          "location": "Sentosa",
+          "costPerPerson": 4500
+        }
+      ],
+      "visaLeadDays": 7,
+      "visaWaivedBy": [],
+      "countryCode": "SG",
+      "lat": 1.3521,
+      "lon": 103.8198,
+      "source": "curated"
+    },
+    {
+      "id": "hanoi",
+      "name": "Hanoi & Ha Long",
+      "country": "Vietnam",
+      "timeZone": "Asia/Ho_Chi_Minh",
+      "domestic": false,
+      "tags": [
+        "food",
+        "culture",
+        "nature",
+        "adventure"
+      ],
+      "passportMonths": 6,
+      "visaKey": "vietnam",
+      "officialUrl": "https://evisa.gov.vn/",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 3500,
+      "vehicleCapacity": 4,
+      "vehicleDay": 3000,
+      "foodDay": 1300,
+      "insurance": 1800,
+      "entryAllowance": 2200,
+      "activities": [
+        {
+          "id": "old-quarter",
+          "title": "Old Quarter street-food walk",
+          "tags": [
+            "food",
+            "culture"
+          ],
+          "durationMinutes": 180,
+          "location": "Hoan Kiem",
+          "costPerPerson": 1200
+        },
+        {
+          "id": "halong",
+          "title": "Ha Long Bay express cruise",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 210,
+          "location": "Ha Long Bay",
+          "costPerPerson": 5500
+        },
+        {
+          "id": "literature",
+          "title": "Temple of Literature and Hoan Kiem Lake",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Dong Da",
+          "costPerPerson": 700
+        },
+        {
+          "id": "ninh-binh",
+          "title": "Ninh Binh river boat ride",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 210,
+          "location": "Trang An",
+          "costPerPerson": 3500
+        }
+      ],
+      "visaLeadDays": 7,
+      "visaWaivedBy": [],
+      "countryCode": "VN",
+      "lat": 21.0278,
+      "lon": 105.8342,
+      "source": "curated"
+    },
+    {
+      "id": "goa",
+      "name": "Goa",
+      "country": "India",
+      "timeZone": "Asia/Kolkata",
+      "domestic": true,
+      "tags": [
+        "beach",
+        "nightlife",
+        "food",
+        "nature"
+      ],
+      "passportMonths": 0,
+      "visaKey": null,
+      "officialUrl": "https://goa-tourism.com/",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 4000,
+      "vehicleCapacity": 4,
+      "vehicleDay": 2500,
+      "foodDay": 1500,
+      "insurance": 500,
+      "entryAllowance": 0,
+      "activities": [
+        {
+          "id": "north-beaches",
+          "title": "North Goa beach hop",
+          "tags": [
+            "beach",
+            "nightlife"
+          ],
+          "durationMinutes": 180,
+          "location": "Anjuna to Vagator",
+          "costPerPerson": 800
+        },
+        {
+          "id": "old-goa",
+          "title": "Old Goa churches and Fontainhas walk",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Old Goa",
+          "costPerPerson": 300
+        },
+        {
+          "id": "dudhsagar",
+          "title": "Dudhsagar falls jeep safari",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 210,
+          "location": "Mollem",
+          "costPerPerson": 2500
+        },
+        {
+          "id": "cruise",
+          "title": "Mandovi sunset cruise",
+          "tags": [
+            "nightlife",
+            "beach"
+          ],
+          "durationMinutes": 120,
+          "location": "Panaji",
+          "costPerPerson": 1200
+        }
+      ],
+      "visaLeadDays": null,
+      "visaWaivedBy": [],
+      "countryCode": "IN",
+      "lat": 15.4909,
+      "lon": 73.8278,
+      "source": "curated"
+    },
+    {
+      "id": "manali",
+      "name": "Manali",
+      "country": "India",
+      "timeZone": "Asia/Kolkata",
+      "domestic": true,
+      "tags": [
+        "nature",
+        "adventure",
+        "culture"
+      ],
+      "passportMonths": 0,
+      "visaKey": null,
+      "officialUrl": "https://himachaltourism.gov.in/",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 3500,
+      "vehicleCapacity": 6,
+      "vehicleDay": 3500,
+      "foodDay": 1200,
+      "insurance": 500,
+      "entryAllowance": 0,
+      "activities": [
+        {
+          "id": "solang",
+          "title": "Solang Valley paragliding and ropeway",
+          "tags": [
+            "adventure",
+            "nature"
+          ],
+          "durationMinutes": 210,
+          "location": "Solang",
+          "costPerPerson": 2000
+        },
+        {
+          "id": "old-manali",
+          "title": "Old Manali cafes and Hadimba temple",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Old Manali",
+          "costPerPerson": 300
+        },
+        {
+          "id": "atal-tunnel",
+          "title": "Atal Tunnel and Sissu day trip",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 210,
+          "location": "Sissu",
+          "costPerPerson": 2500
+        },
+        {
+          "id": "rafting",
+          "title": "Beas river rafting",
+          "tags": [
+            "adventure"
+          ],
+          "durationMinutes": 180,
+          "location": "Kullu",
+          "costPerPerson": 1500
+        }
+      ],
+      "visaLeadDays": null,
+      "visaWaivedBy": [],
+      "countryCode": "IN",
+      "lat": 32.2432,
+      "lon": 77.1892,
+      "source": "curated"
+    },
+    {
+      "id": "thailand-duo",
+      "name": "Thailand: Bangkok + Phuket",
+      "country": "Thailand",
+      "timeZone": "Asia/Bangkok",
+      "domestic": false,
+      "tags": [
+        "food",
+        "culture",
+        "nightlife",
+        "beach",
+        "nature"
+      ],
+      "passportMonths": 6,
+      "visaKey": null,
+      "visaLeadDays": null,
+      "visaWaivedBy": [],
+      "officialUrl": "https://www.thaievisa.go.th/",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "insurance": 1800,
+      "entryAllowance": 3500,
+      "stops": [
+        {
+          "id": "bangkok",
+          "name": "Bangkok",
+          "weight": 2,
+          "fromDestination": "bangkok",
+          "lat": 13.7563,
+          "lon": 100.5018
+        },
+        {
+          "id": "phuket",
+          "name": "Phuket",
+          "weight": 3,
+          "roomNight": 5000,
+          "vehicleCapacity": 4,
+          "vehicleDay": 4000,
+          "foodDay": 1800,
+          "activities": [
+            {
+              "id": "phi-phi",
+              "title": "Phi Phi islands speedboat day",
+              "tags": [
+                "beach",
+                "nature",
+                "adventure"
+              ],
+              "durationMinutes": 210,
+              "location": "Phi Phi",
+              "costPerPerson": 3500
+            },
+            {
+              "id": "phuket-old-town",
+              "title": "Phuket Old Town food walk",
+              "tags": [
+                "culture",
+                "food"
+              ],
+              "durationMinutes": 150,
+              "location": "Old Town",
+              "costPerPerson": 500
+            },
+            {
+              "id": "big-buddha",
+              "title": "Big Buddha and Karon viewpoint",
+              "tags": [
+                "culture",
+                "nature"
+              ],
+              "durationMinutes": 150,
+              "location": "Chalong",
+              "costPerPerson": 400
+            },
+            {
+              "id": "patong",
+              "title": "Patong beach evening",
+              "tags": [
+                "nightlife",
+                "beach"
+              ],
+              "durationMinutes": 150,
+              "location": "Patong",
+              "costPerPerson": 1500
+            }
+          ],
+          "lat": 7.8804,
+          "lon": 98.3923
+        }
+      ],
+      "transfers": [
+        {
+          "title": "Fly Bangkok → Phuket",
+          "mode": "flight",
+          "costPerPerson": 4500,
+          "durationMinutes": 240
+        }
+      ],
+      "countryCode": "TH",
+      "source": "curated"
+    },
+    {
+      "id": "vietnam-duo",
+      "name": "Vietnam: Hanoi + Hoi An",
+      "country": "Vietnam",
+      "timeZone": "Asia/Ho_Chi_Minh",
+      "domestic": false,
+      "tags": [
+        "food",
+        "culture",
+        "nature",
+        "adventure",
+        "beach"
+      ],
+      "passportMonths": 6,
+      "visaKey": "vietnam",
+      "visaLeadDays": 7,
+      "visaWaivedBy": [],
+      "officialUrl": "https://evisa.gov.vn/",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "insurance": 1800,
+      "entryAllowance": 2200,
+      "stops": [
+        {
+          "id": "hanoi",
+          "name": "Hanoi & Ha Long",
+          "weight": 1,
+          "fromDestination": "hanoi",
+          "lat": 21.0278,
+          "lon": 105.8342
+        },
+        {
+          "id": "hoi-an",
+          "name": "Hoi An & Da Nang",
+          "weight": 1,
+          "roomNight": 3200,
+          "vehicleCapacity": 4,
+          "vehicleDay": 2800,
+          "foodDay": 1200,
+          "activities": [
+            {
+              "id": "hoi-an-town",
+              "title": "Hoi An ancient town and lanterns",
+              "tags": [
+                "culture",
+                "food"
+              ],
+              "durationMinutes": 180,
+              "location": "Hoi An",
+              "costPerPerson": 800
+            },
+            {
+              "id": "marble-mountains",
+              "title": "Marble Mountains caves",
+              "tags": [
+                "nature",
+                "culture"
+              ],
+              "durationMinutes": 150,
+              "location": "Da Nang",
+              "costPerPerson": 600
+            },
+            {
+              "id": "my-khe",
+              "title": "My Khe beach afternoon",
+              "tags": [
+                "beach"
+              ],
+              "durationMinutes": 180,
+              "location": "Da Nang",
+              "costPerPerson": 300
+            },
+            {
+              "id": "basket-boat",
+              "title": "Coconut forest basket boats",
+              "tags": [
+                "adventure",
+                "nature"
+              ],
+              "durationMinutes": 120,
+              "location": "Cam Thanh",
+              "costPerPerson": 1200
+            }
+          ],
+          "lat": 15.8801,
+          "lon": 108.338
+        }
+      ],
+      "transfers": [
+        {
+          "title": "Fly Hanoi → Da Nang",
+          "mode": "flight",
+          "costPerPerson": 4000,
+          "durationMinutes": 240
+        }
+      ],
+      "countryCode": "VN",
+      "source": "curated"
+    },
+    {
+      "id": "uae-duo",
+      "name": "UAE: Dubai + Abu Dhabi",
+      "country": "United Arab Emirates",
+      "timeZone": "Asia/Dubai",
+      "domestic": false,
+      "tags": [
+        "food",
+        "shopping",
+        "nightlife",
+        "adventure",
+        "culture",
+        "art"
+      ],
+      "passportMonths": 6,
+      "visaKey": "uae",
+      "visaLeadDays": 7,
+      "visaWaivedBy": [
+        "us",
+        "uk",
+        "schengen"
+      ],
+      "officialUrl": "https://u.ae/en/information-and-services/visa-and-emirates-id/tourist-visas",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "insurance": 1800,
+      "entryAllowance": 7500,
+      "stops": [
+        {
+          "id": "dubai",
+          "name": "Dubai",
+          "weight": 2,
+          "fromDestination": "dubai",
+          "lat": 25.2048,
+          "lon": 55.2708
+        },
+        {
+          "id": "abu-dhabi",
+          "name": "Abu Dhabi",
+          "weight": 1,
+          "roomNight": 7500,
+          "vehicleCapacity": 6,
+          "vehicleDay": 5500,
+          "foodDay": 2400,
+          "activities": [
+            {
+              "id": "grand-mosque",
+              "title": "Sheikh Zayed Grand Mosque",
+              "tags": [
+                "culture"
+              ],
+              "durationMinutes": 150,
+              "location": "Abu Dhabi",
+              "costPerPerson": 200
+            },
+            {
+              "id": "louvre-ad",
+              "title": "Louvre Abu Dhabi",
+              "tags": [
+                "art",
+                "culture"
+              ],
+              "durationMinutes": 180,
+              "location": "Saadiyat",
+              "costPerPerson": 1400
+            },
+            {
+              "id": "yas",
+              "title": "Yas Island theme park",
+              "tags": [
+                "adventure"
+              ],
+              "durationMinutes": 210,
+              "location": "Yas Island",
+              "costPerPerson": 6000
+            },
+            {
+              "id": "corniche",
+              "title": "Corniche beach walk",
+              "tags": [
+                "beach",
+                "nature"
+              ],
+              "durationMinutes": 120,
+              "location": "Corniche",
+              "costPerPerson": 300
+            }
+          ],
+          "lat": 24.4539,
+          "lon": 54.3773
+        }
+      ],
+      "transfers": [
+        {
+          "title": "Drive Dubai → Abu Dhabi",
+          "mode": "road",
+          "costPerPerson": 600,
+          "durationMinutes": 150
+        }
+      ],
+      "countryCode": "AE",
+      "source": "curated"
+    },
+    {
+      "id": "kerala-trio",
+      "name": "Kerala: Kochi + Munnar + Alleppey",
+      "country": "India",
+      "timeZone": "Asia/Kolkata",
+      "domestic": true,
+      "tags": [
+        "nature",
+        "culture",
+        "food",
+        "adventure"
+      ],
+      "passportMonths": 0,
+      "visaKey": null,
+      "visaLeadDays": null,
+      "visaWaivedBy": [],
+      "officialUrl": "https://www.keralatourism.org/",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "insurance": 500,
+      "entryAllowance": 0,
+      "stops": [
+        {
+          "id": "kochi",
+          "name": "Kochi",
+          "weight": 1,
+          "roomNight": 3500,
+          "vehicleCapacity": 4,
+          "vehicleDay": 2500,
+          "foodDay": 1200,
+          "activities": [
+            {
+              "id": "fort-kochi",
+              "title": "Fort Kochi heritage walk",
+              "tags": [
+                "culture",
+                "food"
+              ],
+              "durationMinutes": 150,
+              "location": "Fort Kochi",
+              "costPerPerson": 300
+            },
+            {
+              "id": "kathakali",
+              "title": "Kathakali performance",
+              "tags": [
+                "culture",
+                "art"
+              ],
+              "durationMinutes": 120,
+              "location": "Fort Kochi",
+              "costPerPerson": 500
+            }
+          ],
+          "lat": 9.9312,
+          "lon": 76.2673
+        },
+        {
+          "id": "munnar",
+          "name": "Munnar",
+          "weight": 2,
+          "roomNight": 3800,
+          "vehicleCapacity": 6,
+          "vehicleDay": 3500,
+          "foodDay": 1100,
+          "activities": [
+            {
+              "id": "tea-gardens",
+              "title": "Tea plantation walk and museum",
+              "tags": [
+                "nature"
+              ],
+              "durationMinutes": 180,
+              "location": "Munnar",
+              "costPerPerson": 400
+            },
+            {
+              "id": "eravikulam",
+              "title": "Eravikulam National Park",
+              "tags": [
+                "nature",
+                "adventure"
+              ],
+              "durationMinutes": 180,
+              "location": "Rajamalai",
+              "costPerPerson": 500
+            },
+            {
+              "id": "top-station",
+              "title": "Top Station viewpoint",
+              "tags": [
+                "nature"
+              ],
+              "durationMinutes": 210,
+              "location": "Top Station",
+              "costPerPerson": 300
+            }
+          ],
+          "lat": 10.0889,
+          "lon": 77.0595
+        },
+        {
+          "id": "alleppey",
+          "name": "Alleppey",
+          "weight": 1,
+          "roomNight": 6000,
+          "vehicleCapacity": 4,
+          "vehicleDay": 2000,
+          "foodDay": 1200,
+          "activities": [
+            {
+              "id": "backwaters",
+              "title": "Backwater houseboat cruise",
+              "tags": [
+                "nature"
+              ],
+              "durationMinutes": 210,
+              "location": "Alleppey",
+              "costPerPerson": 1500
+            },
+            {
+              "id": "kayak",
+              "title": "Village canal kayaking",
+              "tags": [
+                "adventure",
+                "nature"
+              ],
+              "durationMinutes": 150,
+              "location": "Kainakary",
+              "costPerPerson": 900
+            }
+          ],
+          "lat": 9.4981,
+          "lon": 76.3388
+        }
+      ],
+      "transfers": [
+        {
+          "title": "Drive Kochi → Munnar",
+          "mode": "road",
+          "costPerPerson": 800,
+          "durationMinutes": 240
+        },
+        {
+          "title": "Drive Munnar → Alleppey",
+          "mode": "road",
+          "costPerPerson": 800,
+          "durationMinutes": 240
+        }
+      ],
+      "countryCode": "IN",
+      "source": "curated"
+    },
+    {
+      "id": "rajasthan-duo",
+      "name": "Rajasthan: Jaipur + Udaipur",
+      "country": "India",
+      "timeZone": "Asia/Kolkata",
+      "domestic": true,
+      "tags": [
+        "culture",
+        "shopping",
+        "food",
+        "nature",
+        "art"
+      ],
+      "passportMonths": 0,
+      "visaKey": null,
+      "visaLeadDays": null,
+      "visaWaivedBy": [],
+      "officialUrl": "https://www.tourism.rajasthan.gov.in/",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "insurance": 500,
+      "entryAllowance": 0,
+      "stops": [
+        {
+          "id": "jaipur",
+          "name": "Jaipur",
+          "weight": 1,
+          "roomNight": 3500,
+          "vehicleCapacity": 4,
+          "vehicleDay": 2800,
+          "foodDay": 1200,
+          "activities": [
+            {
+              "id": "amber-fort",
+              "title": "Amber Fort",
+              "tags": [
+                "culture"
+              ],
+              "durationMinutes": 180,
+              "location": "Amer",
+              "costPerPerson": 500
+            },
+            {
+              "id": "city-palace-jaipur",
+              "title": "City Palace and Hawa Mahal",
+              "tags": [
+                "culture",
+                "shopping"
+              ],
+              "durationMinutes": 180,
+              "location": "Pink City",
+              "costPerPerson": 700
+            },
+            {
+              "id": "bazaar-food",
+              "title": "Johari Bazaar food and shopping",
+              "tags": [
+                "food",
+                "shopping"
+              ],
+              "durationMinutes": 150,
+              "location": "Johari Bazaar",
+              "costPerPerson": 600
+            }
+          ],
+          "lat": 26.9124,
+          "lon": 75.7873
+        },
+        {
+          "id": "udaipur",
+          "name": "Udaipur",
+          "weight": 1,
+          "roomNight": 4200,
+          "vehicleCapacity": 4,
+          "vehicleDay": 2800,
+          "foodDay": 1300,
+          "activities": [
+            {
+              "id": "city-palace-udaipur",
+              "title": "City Palace Udaipur",
+              "tags": [
+                "culture",
+                "art"
+              ],
+              "durationMinutes": 180,
+              "location": "Old City",
+              "costPerPerson": 700
+            },
+            {
+              "id": "pichola",
+              "title": "Lake Pichola boat ride",
+              "tags": [
+                "nature"
+              ],
+              "durationMinutes": 120,
+              "location": "Lake Pichola",
+              "costPerPerson": 800
+            },
+            {
+              "id": "sajjangarh",
+              "title": "Sajjangarh sunset",
+              "tags": [
+                "nature"
+              ],
+              "durationMinutes": 120,
+              "location": "Sajjangarh",
+              "costPerPerson": 300
+            }
+          ],
+          "lat": 24.5854,
+          "lon": 73.7125
+        }
+      ],
+      "transfers": [
+        {
+          "title": "Train or drive Jaipur → Udaipur",
+          "mode": "road",
+          "costPerPerson": 1500,
+          "durationMinutes": 240
+        }
+      ],
+      "countryCode": "IN",
+      "source": "curated"
+    },
+    {
+      "id": "new-york",
+      "name": "New York",
+      "country": "United States",
+      "countryCode": "US",
+      "lat": 40.7128,
+      "lon": -74.006,
+      "timeZone": "America/New_York",
+      "costCurrency": "USD",
+      "tags": [
+        "food",
+        "culture",
+        "art",
+        "nightlife",
+        "shopping"
+      ],
+      "passportMonths": 6,
+      "visaKey": "us",
+      "visaWaivedBy": [],
+      "officialUrl": "https://travel.state.gov/content/travel/en/us-visas/tourism-visit.html",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 320,
+      "vehicleCapacity": 4,
+      "vehicleDay": 120,
+      "foodDay": 85,
+      "insurance": 25,
+      "activities": [
+        {
+          "id": "liberty-ellis",
+          "title": "Statue of Liberty and Ellis Island ferry",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 210,
+          "location": "Battery Park",
+          "costPerPerson": 25
+        },
+        {
+          "id": "met",
+          "title": "The Met museum",
+          "tags": [
+            "art",
+            "culture"
+          ],
+          "durationMinutes": 180,
+          "location": "Upper East Side",
+          "costPerPerson": 30
+        },
+        {
+          "id": "brooklyn-food",
+          "title": "Brooklyn food walk",
+          "tags": [
+            "food"
+          ],
+          "durationMinutes": 180,
+          "location": "DUMBO and Williamsburg",
+          "costPerPerson": 90
+        },
+        {
+          "id": "broadway",
+          "title": "Broadway show",
+          "tags": [
+            "nightlife",
+            "art"
+          ],
+          "durationMinutes": 180,
+          "location": "Theater District",
+          "costPerPerson": 150
+        },
+        {
+          "id": "high-line",
+          "title": "High Line and Chelsea Market",
+          "tags": [
+            "shopping",
+            "food"
+          ],
+          "durationMinutes": 150,
+          "location": "Chelsea",
+          "costPerPerson": 20
+        }
+      ],
+      "source": "curated",
+      "attribution": "Fermat curated estimate"
+    },
+    {
+      "id": "miami",
+      "name": "Miami",
+      "country": "United States",
+      "countryCode": "US",
+      "lat": 25.7617,
+      "lon": -80.1918,
+      "timeZone": "America/New_York",
+      "costCurrency": "USD",
+      "tags": [
+        "beach",
+        "nightlife",
+        "food",
+        "art",
+        "nature"
+      ],
+      "passportMonths": 6,
+      "visaKey": "us",
+      "visaWaivedBy": [],
+      "officialUrl": "https://travel.state.gov/content/travel/en/us-visas/tourism-visit.html",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 260,
+      "vehicleCapacity": 4,
+      "vehicleDay": 110,
+      "foodDay": 75,
+      "insurance": 25,
+      "activities": [
+        {
+          "id": "everglades",
+          "title": "Everglades airboat ride",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 210,
+          "location": "Everglades",
+          "costPerPerson": 45
+        },
+        {
+          "id": "wynwood",
+          "title": "Wynwood Walls art walk",
+          "tags": [
+            "art",
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Wynwood",
+          "costPerPerson": 35
+        },
+        {
+          "id": "little-havana",
+          "title": "Little Havana food tour",
+          "tags": [
+            "food",
+            "culture"
+          ],
+          "durationMinutes": 180,
+          "location": "Little Havana",
+          "costPerPerson": 75
+        },
+        {
+          "id": "south-beach",
+          "title": "South Beach day and Ocean Drive evening",
+          "tags": [
+            "beach",
+            "nightlife"
+          ],
+          "durationMinutes": 180,
+          "location": "South Beach",
+          "costPerPerson": 30
+        },
+        {
+          "id": "key-biscayne",
+          "title": "Key Biscayne kayak",
+          "tags": [
+            "beach",
+            "adventure"
+          ],
+          "durationMinutes": 150,
+          "location": "Key Biscayne",
+          "costPerPerson": 50
+        }
+      ],
+      "source": "curated",
+      "attribution": "Fermat curated estimate"
+    },
+    {
+      "id": "new-orleans",
+      "name": "New Orleans",
+      "country": "United States",
+      "countryCode": "US",
+      "lat": 29.9511,
+      "lon": -90.0715,
+      "timeZone": "America/Chicago",
+      "costCurrency": "USD",
+      "tags": [
+        "food",
+        "nightlife",
+        "culture",
+        "art",
+        "nature"
+      ],
+      "passportMonths": 6,
+      "visaKey": "us",
+      "visaWaivedBy": [],
+      "officialUrl": "https://travel.state.gov/content/travel/en/us-visas/tourism-visit.html",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 210,
+      "vehicleCapacity": 4,
+      "vehicleDay": 90,
+      "foodDay": 70,
+      "insurance": 25,
+      "activities": [
+        {
+          "id": "french-quarter",
+          "title": "French Quarter walking tour",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "French Quarter",
+          "costPerPerson": 25
+        },
+        {
+          "id": "cajun-food",
+          "title": "Creole and Cajun food tour",
+          "tags": [
+            "food"
+          ],
+          "durationMinutes": 180,
+          "location": "French Quarter",
+          "costPerPerson": 80
+        },
+        {
+          "id": "swamp",
+          "title": "Bayou swamp tour",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 210,
+          "location": "Jean Lafitte",
+          "costPerPerson": 60
+        },
+        {
+          "id": "frenchmen-jazz",
+          "title": "Live jazz on Frenchmen Street",
+          "tags": [
+            "nightlife",
+            "art"
+          ],
+          "durationMinutes": 180,
+          "location": "Marigny",
+          "costPerPerson": 40
+        },
+        {
+          "id": "garden-district",
+          "title": "Garden District and cemetery walk",
+          "tags": [
+            "culture",
+            "art"
+          ],
+          "durationMinutes": 150,
+          "location": "Garden District",
+          "costPerPerson": 30
+        }
+      ],
+      "source": "curated",
+      "attribution": "Fermat curated estimate"
+    },
+    {
+      "id": "cancun",
+      "name": "Cancún",
+      "country": "Mexico",
+      "countryCode": "MX",
+      "lat": 21.1619,
+      "lon": -86.8515,
+      "timeZone": "America/Cancun",
+      "costCurrency": "MXN",
+      "tags": [
+        "beach",
+        "nature",
+        "adventure",
+        "culture",
+        "nightlife"
+      ],
+      "passportMonths": 6,
+      "visaKey": null,
+      "visaWaivedBy": [
+        "us",
+        "uk",
+        "schengen"
+      ],
+      "officialUrl": "https://www.inm.gob.mx/",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 3200,
+      "vehicleCapacity": 4,
+      "vehicleDay": 1800,
+      "foodDay": 1100,
+      "insurance": 450,
+      "activities": [
+        {
+          "id": "chichen-itza",
+          "title": "Chichén Itzá day trip",
+          "tags": [
+            "culture",
+            "adventure"
+          ],
+          "durationMinutes": 210,
+          "location": "Yucatán",
+          "costPerPerson": 1900
+        },
+        {
+          "id": "isla-mujeres",
+          "title": "Isla Mujeres catamaran",
+          "tags": [
+            "beach",
+            "nature"
+          ],
+          "durationMinutes": 210,
+          "location": "Isla Mujeres",
+          "costPerPerson": 1500
+        },
+        {
+          "id": "cenotes",
+          "title": "Cenote swim",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 180,
+          "location": "Ruta de los Cenotes",
+          "costPerPerson": 900
+        },
+        {
+          "id": "mercado-28",
+          "title": "Mercado 28 tacos and crafts",
+          "tags": [
+            "food",
+            "shopping"
+          ],
+          "durationMinutes": 150,
+          "location": "Downtown Cancún",
+          "costPerPerson": 500
+        },
+        {
+          "id": "hotel-zone-night",
+          "title": "Hotel Zone night out",
+          "tags": [
+            "nightlife"
+          ],
+          "durationMinutes": 180,
+          "location": "Zona Hotelera",
+          "costPerPerson": 800
+        }
+      ],
+      "source": "curated",
+      "attribution": "Fermat curated estimate"
+    },
+    {
+      "id": "lisbon",
+      "name": "Lisbon",
+      "country": "Portugal",
+      "countryCode": "PT",
+      "lat": 38.7223,
+      "lon": -9.1393,
+      "timeZone": "Europe/Lisbon",
+      "costCurrency": "EUR",
+      "tags": [
+        "food",
+        "culture",
+        "art",
+        "nightlife",
+        "nature"
+      ],
+      "passportMonths": 3,
+      "visaKey": "schengen",
+      "visaWaivedBy": [],
+      "officialUrl": "https://vistos.mne.gov.pt/en/",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 150,
+      "vehicleCapacity": 4,
+      "vehicleDay": 70,
+      "foodDay": 50,
+      "insurance": 22,
+      "activities": [
+        {
+          "id": "alfama",
+          "title": "Alfama and tram 28",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Alfama",
+          "costPerPerson": 15
+        },
+        {
+          "id": "belem",
+          "title": "Belém tower and monastery",
+          "tags": [
+            "culture",
+            "art"
+          ],
+          "durationMinutes": 180,
+          "location": "Belém",
+          "costPerPerson": 25
+        },
+        {
+          "id": "sintra",
+          "title": "Sintra palaces day trip",
+          "tags": [
+            "culture",
+            "nature"
+          ],
+          "durationMinutes": 210,
+          "location": "Sintra",
+          "costPerPerson": 45
+        },
+        {
+          "id": "time-out-food",
+          "title": "Time Out Market food tasting",
+          "tags": [
+            "food"
+          ],
+          "durationMinutes": 150,
+          "location": "Cais do Sodré",
+          "costPerPerson": 40
+        },
+        {
+          "id": "bairro-alto",
+          "title": "Fado and Bairro Alto evening",
+          "tags": [
+            "nightlife",
+            "art"
+          ],
+          "durationMinutes": 180,
+          "location": "Bairro Alto",
+          "costPerPerson": 35
+        }
+      ],
+      "source": "curated",
+      "attribution": "Fermat curated estimate"
+    },
+    {
+      "id": "tokyo",
+      "name": "Tokyo",
+      "country": "Japan",
+      "countryCode": "JP",
+      "lat": 35.6762,
+      "lon": 139.6503,
+      "timeZone": "Asia/Tokyo",
+      "costCurrency": "JPY",
+      "tags": [
+        "food",
+        "culture",
+        "art",
+        "shopping",
+        "nightlife",
+        "nature"
+      ],
+      "passportMonths": 0,
+      "visaKey": null,
+      "visaWaivedBy": [],
+      "officialUrl": "https://www.mofa.go.jp/j_info/visit/visa/index.html",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 22000,
+      "vehicleCapacity": 4,
+      "vehicleDay": 6000,
+      "foodDay": 6000,
+      "insurance": 3000,
+      "activities": [
+        {
+          "id": "asakusa",
+          "title": "Asakusa and Senso-ji temple",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Asakusa",
+          "costPerPerson": 2000
+        },
+        {
+          "id": "teamlab",
+          "title": "teamLab digital art museum",
+          "tags": [
+            "art"
+          ],
+          "durationMinutes": 150,
+          "location": "Toyosu",
+          "costPerPerson": 4000
+        },
+        {
+          "id": "tsukiji",
+          "title": "Tsukiji outer market food walk",
+          "tags": [
+            "food"
+          ],
+          "durationMinutes": 150,
+          "location": "Tsukiji",
+          "costPerPerson": 6000
+        },
+        {
+          "id": "shibuya-night",
+          "title": "Shibuya and Shinjuku night walk",
+          "tags": [
+            "nightlife",
+            "shopping"
+          ],
+          "durationMinutes": 180,
+          "location": "Shibuya",
+          "costPerPerson": 4000
+        },
+        {
+          "id": "takao",
+          "title": "Mount Takao hike",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 210,
+          "location": "Hachioji",
+          "costPerPerson": 5000
+        }
+      ],
+      "source": "curated",
+      "attribution": "Fermat curated estimate"
+    },
+    {
+      "id": "abu-dhabi",
+      "name": "Abu Dhabi",
+      "country": "United Arab Emirates",
+      "countryCode": "AE",
+      "lat": 24.45111,
+      "lon": 54.39694,
+      "timeZone": "Asia/Dubai",
+      "costCurrency": "AED",
+      "tags": [
+        "food",
+        "culture",
+        "art",
+        "nature",
+        "adventure"
+      ],
+      "passportMonths": 6,
+      "visaKey": "uae",
+      "visaWaivedBy": [
+        "us",
+        "uk",
+        "schengen"
+      ],
+      "officialUrl": "https://u.ae/en/information-and-services/visa-and-emirates-id/tourist-visas",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 450,
+      "vehicleCapacity": 4,
+      "vehicleDay": 300,
+      "foodDay": 160,
+      "insurance": 65,
+      "activities": [
+        {
+          "id": "louvre-abu-dhabi",
+          "title": "Louvre Abu Dhabi",
+          "tags": [
+            "art",
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Abu Dhabi",
+          "costPerPerson": 50,
+          "lat": 24.533,
+          "lon": 54.40001
+        },
+        {
+          "id": "sheikh-zayed-grand-mosque",
+          "title": "Sheikh Zayed Grand Mosque",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Abu Dhabi",
+          "costPerPerson": 0,
+          "lat": 24.412,
+          "lon": 54.474
+        },
+        {
+          "id": "yas-island",
+          "title": "Yas Island",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 180,
+          "location": "Abu Dhabi",
+          "costPerPerson": 25,
+          "lat": 24.5,
+          "lon": 54.6
+        },
+        {
+          "id": "local-food-walk",
+          "title": "Abu Dhabi local food walk",
+          "tags": [
+            "food",
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Abu Dhabi",
+          "costPerPerson": 65,
+          "lat": 24.45111,
+          "lon": 54.39694
+        },
+        {
+          "id": "qasr-al-hosn-abu-dhabi-cultural-foundation",
+          "title": "Qasr Al Hosn and Abu Dhabi Cultural Foundation",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Abu Dhabi",
+          "costPerPerson": 50,
+          "lat": 24.48239,
+          "lon": 54.35482
+        },
+        {
+          "id": "zayed-national-museum",
+          "title": "Zayed National Museum",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Abu Dhabi",
+          "costPerPerson": 45,
+          "lat": 24.53456,
+          "lon": 54.4188
+        },
+        {
+          "id": "st-joseph-s-cathedral-mary-mother-of-jesus-mosque",
+          "title": "St. Joseph's Cathedral and Mary, Mother of Jesus Mosque",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 180,
+          "location": "Abu Dhabi",
+          "costPerPerson": 20,
+          "lat": 24.44913,
+          "lon": 54.38535
+        },
+        {
+          "id": "al-lulu-island",
+          "title": "Al Lulu Island",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 180,
+          "location": "Emirate of Abu Dhabi",
+          "costPerPerson": 25,
+          "lat": 24.49917,
+          "lon": 54.34389
+        },
+        {
+          "id": "the-national-aquarium-abu-dhabi",
+          "title": "The National Aquarium Abu Dhabi",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 180,
+          "location": "Abu Dhabi",
+          "costPerPerson": 75,
+          "lat": 24.40205,
+          "lon": 54.49584
+        }
+      ],
+      "source": "pack:wikidata+wikivoyage 2026-10",
+      "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+    },
+    {
+      "id": "amsterdam",
+      "name": "Amsterdam",
+      "country": "Netherlands",
+      "countryCode": "NL",
+      "lat": 52.36667,
+      "lon": 4.88333,
+      "timeZone": "Europe/Amsterdam",
+      "costCurrency": "EUR",
+      "tags": [
+        "food",
+        "culture",
+        "nightlife",
+        "art",
+        "nature"
+      ],
+      "passportMonths": 3,
+      "visaKey": "schengen",
+      "visaWaivedBy": [],
+      "officialUrl": "https://www.netherlandsworldwide.nl/visa-the-netherlands",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 140,
+      "vehicleCapacity": 4,
+      "vehicleDay": 85,
+      "foodDay": 40,
+      "insurance": 20,
+      "activities": [
+        {
+          "id": "rijksmuseum",
+          "title": "Rijksmuseum",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Zuid",
+          "costPerPerson": 20,
+          "lat": 52.36,
+          "lon": 4.88528
+        },
+        {
+          "id": "van-gogh-museum",
+          "title": "Van Gogh Museum",
+          "tags": [
+            "art",
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Zuid",
+          "costPerPerson": 25,
+          "lat": 52.35833,
+          "lon": 4.88111
+        },
+        {
+          "id": "vondelpark",
+          "title": "Vondelpark",
+          "tags": [
+            "nature"
+          ],
+          "durationMinutes": 120,
+          "location": "Zuid",
+          "costPerPerson": 0,
+          "lat": 52.35694,
+          "lon": 4.86639
+        },
+        {
+          "id": "albert-cuyp-market",
+          "title": "Albert Cuyp Market",
+          "tags": [
+            "food",
+            "shopping"
+          ],
+          "durationMinutes": 120,
+          "location": "Amsterdam",
+          "costPerPerson": 16,
+          "lat": 52.35611,
+          "lon": 4.89694
+        },
+        {
+          "id": "anne-frank-house",
+          "title": "Anne Frank House",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Canal District",
+          "costPerPerson": 14,
+          "lat": 52.37515,
+          "lon": 4.88404
+        },
+        {
+          "id": "de-wallen",
+          "title": "De Wallen",
+          "tags": [
+            "culture",
+            "food"
+          ],
+          "durationMinutes": 150,
+          "location": "Amsterdam",
+          "costPerPerson": 8,
+          "lat": 52.37342,
+          "lon": 4.89806
+        },
+        {
+          "id": "magere-brug",
+          "title": "Magere Brug",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 90,
+          "location": "Canal District",
+          "costPerPerson": 20,
+          "lat": 52.36359,
+          "lon": 4.90236
+        },
+        {
+          "id": "amstel-boat-cruise",
+          "title": "Amstel boat cruise",
+          "tags": [
+            "nature"
+          ],
+          "durationMinutes": 120,
+          "location": "Amsterdam",
+          "costPerPerson": 16,
+          "lat": 52.2875,
+          "lon": 4.8875
+        },
+        {
+          "id": "dam-square-homomonument",
+          "title": "Dam Square and Homomonument",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Amsterdam",
+          "costPerPerson": 0,
+          "lat": 52.37306,
+          "lon": 4.89278
+        },
+        {
+          "id": "artis",
+          "title": "Artis",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 180,
+          "location": "Plantage",
+          "costPerPerson": 25,
+          "lat": 52.36611,
+          "lon": 4.91667
+        }
+      ],
+      "source": "pack:wikidata+wikivoyage 2026-10",
+      "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+    },
+    {
+      "id": "barcelona",
+      "name": "Barcelona",
+      "country": "Spain",
+      "countryCode": "ES",
+      "lat": 41.3825,
+      "lon": 2.17694,
+      "timeZone": "Europe/Madrid",
+      "costCurrency": "EUR",
+      "tags": [
+        "food",
+        "culture",
+        "shopping",
+        "nature",
+        "adventure"
+      ],
+      "passportMonths": 3,
+      "visaKey": "schengen",
+      "visaWaivedBy": [],
+      "officialUrl": "https://home-affairs.ec.europa.eu/policies/schengen/visa-policy_en",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 120,
+      "vehicleCapacity": 4,
+      "vehicleDay": 75,
+      "foodDay": 35,
+      "insurance": 16,
+      "activities": [
+        {
+          "id": "sagrada-familia",
+          "title": "Sagrada Família",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Sagrada Família",
+          "costPerPerson": 33,
+          "lat": 41.40369,
+          "lon": 2.17433
+        },
+        {
+          "id": "camp-nou",
+          "title": "Camp Nou",
+          "tags": [
+            "culture",
+            "adventure"
+          ],
+          "durationMinutes": 90,
+          "location": "Inland Suburbs",
+          "costPerPerson": 30,
+          "lat": 41.38083,
+          "lon": 2.12278
+        },
+        {
+          "id": "park-guell",
+          "title": "Park Güell",
+          "tags": [
+            "nature"
+          ],
+          "durationMinutes": 120,
+          "location": "La Salut",
+          "costPerPerson": 18,
+          "lat": 41.41361,
+          "lon": 2.15278
+        },
+        {
+          "id": "la-boqueria",
+          "title": "La Boqueria",
+          "tags": [
+            "food",
+            "shopping"
+          ],
+          "durationMinutes": 120,
+          "location": "El Raval",
+          "costPerPerson": 12,
+          "lat": 41.3818,
+          "lon": 2.17155
+        },
+        {
+          "id": "la-rambla-barcelona-cathedral",
+          "title": "La Rambla and Barcelona Cathedral",
+          "tags": [
+            "culture",
+            "shopping"
+          ],
+          "durationMinutes": 210,
+          "location": "El Raval",
+          "costPerPerson": 5,
+          "lat": 41.38139,
+          "lon": 2.17306
+        },
+        {
+          "id": "palau-de-la-musica-catalana",
+          "title": "Palau de la Música Catalana",
+          "tags": [
+            "nightlife",
+            "art"
+          ],
+          "durationMinutes": 150,
+          "location": "Sant Pere, Santa Caterina i la Ribera",
+          "costPerPerson": 35,
+          "lat": 41.38767,
+          "lon": 2.17528
+        },
+        {
+          "id": "casa-batllo",
+          "title": "Casa Batlló",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 90,
+          "location": "Dreta de l'Eixample",
+          "costPerPerson": 35,
+          "lat": 41.39158,
+          "lon": 2.16492
+        },
+        {
+          "id": "gothic-quarter",
+          "title": "Gothic Quarter",
+          "tags": [
+            "culture",
+            "food"
+          ],
+          "durationMinutes": 150,
+          "location": "Ciutat Vella",
+          "costPerPerson": 6,
+          "lat": 41.38278,
+          "lon": 2.17694
+        },
+        {
+          "id": "torre-glories",
+          "title": "Torre Glòries",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 90,
+          "location": "Sant Martí",
+          "costPerPerson": 16,
+          "lat": 41.40349,
+          "lon": 2.18952
+        },
+        {
+          "id": "tibidabo",
+          "title": "Tibidabo",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 180,
+          "location": "Inland Suburbs",
+          "costPerPerson": 6,
+          "lat": 41.4225,
+          "lon": 2.11861
+        },
+        {
+          "id": "barcelona-pavilion",
+          "title": "Barcelona Pavilion",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 60,
+          "location": "Sants-Montjuïc",
+          "costPerPerson": 6,
+          "lat": 41.37056,
+          "lon": 2.15
+        },
+        {
+          "id": "palau-guell",
+          "title": "Palau Güell",
+          "tags": [
+            "culture",
+            "art"
+          ],
+          "durationMinutes": 150,
+          "location": "El Raval",
+          "costPerPerson": 12,
+          "lat": 41.37882,
+          "lon": 2.17439
+        }
+      ],
+      "source": "pack:wikidata+wikivoyage 2026-10",
+      "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+    },
+    {
+      "id": "chicago",
+      "name": "Chicago",
+      "country": "United States",
+      "countryCode": "US",
+      "lat": 41.88194,
+      "lon": -87.62778,
+      "timeZone": "America/Chicago",
+      "costCurrency": "USD",
+      "tags": [
+        "food",
+        "culture",
+        "art",
+        "nature",
+        "adventure"
+      ],
+      "passportMonths": 0,
+      "visaKey": "us",
+      "visaWaivedBy": [],
+      "officialUrl": "https://travel.state.gov/content/travel/en/us-visas/tourism-visit.html",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 180,
+      "vehicleCapacity": 4,
+      "vehicleDay": 120,
+      "foodDay": 60,
+      "insurance": 25,
+      "activities": [
+        {
+          "id": "art-institute-of-chicago",
+          "title": "Art Institute of Chicago",
+          "tags": [
+            "art",
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Loop",
+          "costPerPerson": 20,
+          "lat": 41.87944,
+          "lon": -87.62389
+        },
+        {
+          "id": "kayaking-chicago",
+          "title": "Kayaking in Chicago",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 150,
+          "location": "Chicago",
+          "costPerPerson": 30
+        },
+        {
+          "id": "local-food-walk",
+          "title": "Chicago local food walk",
+          "tags": [
+            "food",
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Loop",
+          "costPerPerson": 25,
+          "lat": 41.88194,
+          "lon": -87.62778
+        },
+        {
+          "id": "the-second-city",
+          "title": "The Second City",
+          "tags": [
+            "nightlife",
+            "art"
+          ],
+          "durationMinutes": 150,
+          "location": "Lincoln Park-Old Town",
+          "costPerPerson": 55,
+          "lat": 41.91151,
+          "lon": -87.63506
+        },
+        {
+          "id": "cloud-gate-millennium-park",
+          "title": "Cloud Gate and Millennium Park",
+          "tags": [
+            "culture",
+            "nature"
+          ],
+          "durationMinutes": 210,
+          "location": "Chicago",
+          "costPerPerson": 0,
+          "lat": 41.8827,
+          "lon": -87.6233
+        },
+        {
+          "id": "grant-park",
+          "title": "Grant Park",
+          "tags": [
+            "nature"
+          ],
+          "durationMinutes": 120,
+          "location": "Loop",
+          "costPerPerson": 0,
+          "lat": 41.87611,
+          "lon": -87.61889
+        },
+        {
+          "id": "museum-of-science-and-industry",
+          "title": "Museum of Science and Industry",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Hyde Park",
+          "costPerPerson": 18,
+          "lat": 41.79056,
+          "lon": -87.58278
+        },
+        {
+          "id": "shedd-aquarium",
+          "title": "Shedd Aquarium",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 180,
+          "location": "Near South",
+          "costPerPerson": 30,
+          "lat": 41.86778,
+          "lon": -87.61389
+        },
+        {
+          "id": "chicago-river-boat-cruise",
+          "title": "Chicago River boat cruise",
+          "tags": [
+            "nature"
+          ],
+          "durationMinutes": 120,
+          "location": "Chicago",
+          "costPerPerson": 20,
+          "lat": 41.88837,
+          "lon": -87.61366
+        },
+        {
+          "id": "adler-planetarium",
+          "title": "Adler Planetarium",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Near South",
+          "costPerPerson": 18,
+          "lat": 41.86615,
+          "lon": -87.60667
+        },
+        {
+          "id": "tribune-tower",
+          "title": "Tribune Tower",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 90,
+          "location": "Near North",
+          "costPerPerson": 25,
+          "lat": 41.89039,
+          "lon": -87.62369
+        }
+      ],
+      "source": "pack:wikidata+wikivoyage 2026-10",
+      "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+    },
+    {
+      "id": "hampi",
+      "name": "Hampi",
+      "country": "India",
+      "countryCode": "IN",
+      "lat": 15.33455,
+      "lon": 76.46216,
+      "timeZone": "Asia/Kolkata",
+      "costCurrency": "INR",
+      "tags": [
+        "food",
+        "culture",
+        "nature",
+        "adventure"
+      ],
+      "passportMonths": 6,
+      "visaKey": null,
+      "visaWaivedBy": [],
+      "officialUrl": "https://asi.nic.in/hampi/",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 3500,
+      "vehicleCapacity": 4,
+      "vehicleDay": 2000,
+      "foodDay": 1000,
+      "insurance": 500,
+      "activities": [
+        {
+          "id": "vijayanagara",
+          "title": "Vijayanagara",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 180,
+          "location": "Hampi",
+          "costPerPerson": 250,
+          "lat": 15.325,
+          "lon": 76.465
+        },
+        {
+          "id": "virupaksha-temple-hemakuta-hill-temples",
+          "title": "Virupaksha Temple and Hemakuta Hill temples",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 180,
+          "location": "Hampi",
+          "costPerPerson": 0,
+          "lat": 15.33516,
+          "lon": 76.45873
+        },
+        {
+          "id": "climbing-hampi",
+          "title": "Bouldering and climbing in Hampi",
+          "tags": [
+            "adventure",
+            "nature"
+          ],
+          "durationMinutes": 180,
+          "location": "Hampi",
+          "costPerPerson": 500
+        },
+        {
+          "id": "local-food-walk",
+          "title": "Hampi local food walk",
+          "tags": [
+            "food",
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Hampi",
+          "costPerPerson": 500,
+          "lat": 15.33455,
+          "lon": 76.46216
+        },
+        {
+          "id": "pampa-sarovar",
+          "title": "Pampa Sarovar",
+          "tags": [
+            "nature"
+          ],
+          "durationMinutes": 120,
+          "location": "Hampi",
+          "costPerPerson": 250,
+          "lat": 15.35376,
+          "lon": 76.47737
+        },
+        {
+          "id": "lotus-mahal",
+          "title": "Lotus Mahal",
+          "tags": [
+            "culture",
+            "art"
+          ],
+          "durationMinutes": 150,
+          "location": "Hampi",
+          "costPerPerson": 400,
+          "lat": 15.32053,
+          "lon": 76.47138
+        },
+        {
+          "id": "coracle-hampi",
+          "title": "Coracle boat ride in Hampi",
+          "tags": [
+            "nature"
+          ],
+          "durationMinutes": 60,
+          "location": "Hampi",
+          "costPerPerson": 120
+        },
+        {
+          "id": "sanapur",
+          "title": "Sanapur",
+          "tags": [
+            "nature"
+          ],
+          "durationMinutes": 120,
+          "location": "Gangawati Taluk",
+          "costPerPerson": 250,
+          "lat": 15.35,
+          "lon": 76.434
+        },
+        {
+          "id": "matanga-hill",
+          "title": "Matanga Hill",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 180,
+          "location": "Hampi",
+          "costPerPerson": 200,
+          "lat": 15.31667,
+          "lon": 76.46667
+        },
+        {
+          "id": "ananthasayana-temple",
+          "title": "Ananthasayana Temple",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 60,
+          "location": "Hampi",
+          "costPerPerson": 0,
+          "lat": 15.27806,
+          "lon": 76.40722
+        },
+        {
+          "id": "vitthala-temple",
+          "title": "Vitthala Temple",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Hampi",
+          "costPerPerson": 0,
+          "lat": 15.34249,
+          "lon": 76.47547
+        },
+        {
+          "id": "monolith-bull-achyutaraya-temple",
+          "title": "Monolith Bull and Achyutaraya temple",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Hampi",
+          "costPerPerson": 200,
+          "lat": 15.3337,
+          "lon": 76.4672
+        }
+      ],
+      "source": "pack:wikidata+wikivoyage 2026-10",
+      "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+    },
+    {
+      "id": "istanbul",
+      "name": "Istanbul",
+      "country": "Turkey",
+      "countryCode": "TR",
+      "lat": 41.01,
+      "lon": 28.96028,
+      "timeZone": "Europe/Istanbul",
+      "costCurrency": "TRY",
+      "tags": [
+        "food",
+        "culture",
+        "shopping",
+        "art"
+      ],
+      "passportMonths": 5,
+      "visaKey": null,
+      "visaWaivedBy": [],
+      "officialUrl": "https://www.evisa.gov.tr/",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 3500,
+      "vehicleCapacity": 4,
+      "vehicleDay": 2500,
+      "foodDay": 1200,
+      "insurance": 450,
+      "activities": [
+        {
+          "id": "hagia-sophia",
+          "title": "Hagia Sophia",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Historical Peninsula",
+          "costPerPerson": 700,
+          "lat": 41.00833,
+          "lon": 28.98
+        },
+        {
+          "id": "basilica-cistern",
+          "title": "Basilica Cistern",
+          "tags": [
+            "culture",
+            "art"
+          ],
+          "durationMinutes": 150,
+          "location": "Historical Peninsula",
+          "costPerPerson": 350,
+          "lat": 41.0084,
+          "lon": 28.97792
+        },
+        {
+          "id": "galata-tower",
+          "title": "Galata Tower",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Galata",
+          "costPerPerson": 300,
+          "lat": 41.02563,
+          "lon": 28.97415
+        },
+        {
+          "id": "blue-mosque-sublime-porte",
+          "title": "Blue Mosque and Sublime Porte",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 180,
+          "location": "Historical Peninsula",
+          "costPerPerson": 0,
+          "lat": 41.00539,
+          "lon": 28.97682
+        },
+        {
+          "id": "topkap-palace",
+          "title": "Topkapı Palace",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Historical Peninsula",
+          "costPerPerson": 500,
+          "lat": 41.013,
+          "lon": 28.984
+        },
+        {
+          "id": "dolmabahce-palace",
+          "title": "Dolmabahçe Palace",
+          "tags": [
+            "culture",
+            "art"
+          ],
+          "durationMinutes": 150,
+          "location": "European Bosphorus",
+          "costPerPerson": 350,
+          "lat": 41.03944,
+          "lon": 29.00167
+        },
+        {
+          "id": "golden-horn-boat-cruise",
+          "title": "Golden Horn boat cruise",
+          "tags": [
+            "nature"
+          ],
+          "durationMinutes": 120,
+          "location": "Istanbul",
+          "costPerPerson": 350,
+          "lat": 41.02917,
+          "lon": 28.96111
+        },
+        {
+          "id": "suleymaniye-mosque",
+          "title": "Süleymaniye Mosque",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 90,
+          "location": "Historical Peninsula",
+          "costPerPerson": 0,
+          "lat": 41.01611,
+          "lon": 28.96389
+        },
+        {
+          "id": "taksim-square-istiklal-avenue",
+          "title": "Taksim Square and İstiklal Avenue",
+          "tags": [
+            "culture",
+            "shopping"
+          ],
+          "durationMinutes": 180,
+          "location": "Beyoğlu",
+          "costPerPerson": 0,
+          "lat": 41.03694,
+          "lon": 28.98583
+        },
+        {
+          "id": "yedikule-fortress",
+          "title": "Yedikule Fortress",
+          "tags": [
+            "culture",
+            "art"
+          ],
+          "durationMinutes": 150,
+          "location": "Historical Peninsula",
+          "costPerPerson": 350,
+          "lat": 40.99306,
+          "lon": 28.92333
+        },
+        {
+          "id": "grand-bazaar",
+          "title": "Grand Bazaar",
+          "tags": [
+            "food",
+            "shopping"
+          ],
+          "durationMinutes": 120,
+          "location": "Fatih",
+          "costPerPerson": 350,
+          "lat": 41.01058,
+          "lon": 28.96793
+        }
+      ],
+      "source": "pack:wikidata+wikivoyage 2026-10",
+      "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+    },
+    {
+      "id": "kuala-lumpur",
+      "name": "Kuala Lumpur",
+      "country": "Malaysia",
+      "countryCode": "MY",
+      "lat": 3.14778,
+      "lon": 101.69528,
+      "timeZone": "Asia/Kuala_Lumpur",
+      "costCurrency": "MYR",
+      "tags": [
+        "food",
+        "culture",
+        "shopping",
+        "nature",
+        "adventure"
+      ],
+      "passportMonths": 6,
+      "visaKey": null,
+      "visaWaivedBy": [],
+      "officialUrl": "https://www.imi.gov.my/",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 300,
+      "vehicleCapacity": 4,
+      "vehicleDay": 180,
+      "foodDay": 95,
+      "insurance": 35,
+      "activities": [
+        {
+          "id": "petronas-towers",
+          "title": "Petronas Towers",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 90,
+          "location": "Golden Triangle",
+          "costPerPerson": 55,
+          "lat": 3.15778,
+          "lon": 101.71167
+        },
+        {
+          "id": "batu-caves",
+          "title": "Batu Caves",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 180,
+          "location": "North",
+          "costPerPerson": 14,
+          "lat": 3.2374,
+          "lon": 101.68391
+        },
+        {
+          "id": "national-mosque-of-malaysia-kuala-lumpur-railway-station",
+          "title": "National Mosque of Malaysia and Kuala Lumpur railway station",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 180,
+          "location": "Botanical Garden",
+          "costPerPerson": 14,
+          "lat": 3.14194,
+          "lon": 101.69167
+        },
+        {
+          "id": "central-market",
+          "title": "Central Market",
+          "tags": [
+            "food",
+            "shopping"
+          ],
+          "durationMinutes": 120,
+          "location": "Kuala Lumpur",
+          "costPerPerson": 30,
+          "lat": 3.14583,
+          "lon": 101.69556
+        },
+        {
+          "id": "national-monument-carcosa-seri-negara",
+          "title": "National Monument and Carcosa Seri Negara",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Botanical Garden",
+          "costPerPerson": 14,
+          "lat": 3.14886,
+          "lon": 101.68383
+        },
+        {
+          "id": "national-museum",
+          "title": "National Museum",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Botanical Garden",
+          "costPerPerson": 25,
+          "lat": 3.13758,
+          "lon": 101.68739
+        },
+        {
+          "id": "jamek-mosque-independence-square",
+          "title": "Jamek Mosque and Independence Square",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 180,
+          "location": "Central",
+          "costPerPerson": 0,
+          "lat": 3.14891,
+          "lon": 101.69596
+        },
+        {
+          "id": "bukit-bintang",
+          "title": "Bukit Bintang",
+          "tags": [
+            "culture",
+            "food"
+          ],
+          "durationMinutes": 150,
+          "location": "Kuala Lumpur",
+          "costPerPerson": 14,
+          "lat": 3.14669,
+          "lon": 101.71119
+        },
+        {
+          "id": "istana-negara-jalan-tuanku-abdul-halim",
+          "title": "Istana Negara, Jalan Tuanku Abdul Halim",
+          "tags": [
+            "culture",
+            "art"
+          ],
+          "durationMinutes": 150,
+          "location": "West",
+          "costPerPerson": 30,
+          "lat": 3.16139,
+          "lon": 101.66361
+        },
+        {
+          "id": "thean-hou-temple",
+          "title": "Thean Hou Temple",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 60,
+          "location": "Brickfields and Bangsar",
+          "costPerPerson": 0,
+          "lat": 3.12185,
+          "lon": 101.68764
+        },
+        {
+          "id": "aquaria-klcc",
+          "title": "Aquaria KLCC",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 180,
+          "location": "Golden Triangle",
+          "costPerPerson": 45,
+          "lat": 3.15339,
+          "lon": 101.71308
+        }
+      ],
+      "source": "pack:wikidata+wikivoyage 2026-10",
+      "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+    },
+    {
+      "id": "las-vegas",
+      "name": "Las Vegas",
+      "country": "United States",
+      "countryCode": "US",
+      "lat": 36.16722,
+      "lon": -115.14861,
+      "timeZone": "America/Los_Angeles",
+      "costCurrency": "USD",
+      "tags": [
+        "food",
+        "culture",
+        "nightlife",
+        "art",
+        "adventure"
+      ],
+      "passportMonths": 0,
+      "visaKey": "us",
+      "visaWaivedBy": [],
+      "officialUrl": "https://travel.state.gov/content/travel/en/us-visas/tourism-visit.html",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 160,
+      "vehicleCapacity": 4,
+      "vehicleDay": 120,
+      "foodDay": 55,
+      "insurance": 25,
+      "activities": [
+        {
+          "id": "sphere",
+          "title": "Sphere",
+          "tags": [
+            "nightlife",
+            "art"
+          ],
+          "durationMinutes": 150,
+          "location": "The Strip",
+          "costPerPerson": 55,
+          "lat": 36.1212,
+          "lon": -115.16207
+        },
+        {
+          "id": "las-vegas-strip",
+          "title": "Las Vegas Strip",
+          "tags": [
+            "nightlife"
+          ],
+          "durationMinutes": 180,
+          "location": "Las Vegas",
+          "costPerPerson": 40,
+          "lat": 36.12,
+          "lon": -115.1725
+        },
+        {
+          "id": "show-las-vegas",
+          "title": "Evening show in Las Vegas",
+          "tags": [
+            "nightlife",
+            "art"
+          ],
+          "durationMinutes": 150,
+          "location": "Las Vegas",
+          "costPerPerson": 90
+        },
+        {
+          "id": "local-food-walk",
+          "title": "Las Vegas local food walk",
+          "tags": [
+            "food",
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "The Strip",
+          "costPerPerson": 25,
+          "lat": 36.16722,
+          "lon": -115.14861
+        },
+        {
+          "id": "the-strat",
+          "title": "The Strat",
+          "tags": [
+            "nightlife"
+          ],
+          "durationMinutes": 180,
+          "location": "Downtown",
+          "costPerPerson": 40,
+          "lat": 36.14746,
+          "lon": -115.15603
+        },
+        {
+          "id": "welcome-to-fabulous-las-vegas-sign",
+          "title": "Welcome to Fabulous Las Vegas sign",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 60,
+          "location": "The Strip",
+          "costPerPerson": 10,
+          "lat": 36.08206,
+          "lon": -115.17278
+        },
+        {
+          "id": "high-roller-fountains-of-bellagio",
+          "title": "High Roller and Fountains of Bellagio",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 180,
+          "location": "The Strip",
+          "costPerPerson": 25,
+          "lat": 36.1177,
+          "lon": -115.16815
+        },
+        {
+          "id": "fremont-street-experience",
+          "title": "Fremont Street Experience",
+          "tags": [
+            "culture",
+            "shopping"
+          ],
+          "durationMinutes": 90,
+          "location": "Downtown",
+          "costPerPerson": 0,
+          "lat": 36.1708,
+          "lon": -115.144
+        },
+        {
+          "id": "resorts-world-las-vegas",
+          "title": "Resorts World Las Vegas",
+          "tags": [
+            "nightlife"
+          ],
+          "durationMinutes": 180,
+          "location": "Winchester",
+          "costPerPerson": 40,
+          "lat": 36.1339,
+          "lon": -115.168
+        },
+        {
+          "id": "adventuredome",
+          "title": "Adventuredome",
+          "tags": [
+            "adventure"
+          ],
+          "durationMinutes": 210,
+          "location": "The Strip",
+          "costPerPerson": 75,
+          "lat": 36.1378,
+          "lon": -115.166
+        },
+        {
+          "id": "mob-museum",
+          "title": "Mob Museum",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Downtown",
+          "costPerPerson": 18,
+          "lat": 36.1728,
+          "lon": -115.1412
+        }
+      ],
+      "source": "pack:wikidata+wikivoyage 2026-10",
+      "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+    },
+    {
+      "id": "london",
+      "name": "London",
+      "country": "United Kingdom",
+      "countryCode": "GB",
+      "lat": 51.50722,
+      "lon": -0.1275,
+      "timeZone": "Europe/London",
+      "costCurrency": "GBP",
+      "tags": [
+        "food",
+        "culture",
+        "nightlife",
+        "art",
+        "nature"
+      ],
+      "passportMonths": 0,
+      "visaKey": "uk",
+      "visaWaivedBy": [],
+      "officialUrl": "https://www.gov.uk/check-uk-visa",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 140,
+      "vehicleCapacity": 4,
+      "vehicleDay": 95,
+      "foodDay": 45,
+      "insurance": 18,
+      "activities": [
+        {
+          "id": "tower-of-london",
+          "title": "Tower of London",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "City of London",
+          "costPerPerson": 20,
+          "lat": 51.5082,
+          "lon": -0.0762
+        },
+        {
+          "id": "british-museum",
+          "title": "British Museum",
+          "tags": [
+            "art",
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Bloomsbury",
+          "costPerPerson": 30,
+          "lat": 51.51944,
+          "lon": -0.12694
+        },
+        {
+          "id": "trafalgar-square-whitehall",
+          "title": "Trafalgar Square and Whitehall",
+          "tags": [
+            "culture",
+            "shopping"
+          ],
+          "durationMinutes": 180,
+          "location": "Leicester Square",
+          "costPerPerson": 0,
+          "lat": 51.50806,
+          "lon": -0.12806
+        },
+        {
+          "id": "local-food-walk",
+          "title": "Borough Market food walk",
+          "tags": [
+            "food",
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Southwark",
+          "costPerPerson": 18,
+          "lat": 51.5055,
+          "lon": -0.091
+        },
+        {
+          "id": "buckingham-palace",
+          "title": "Buckingham Palace",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Westminster",
+          "costPerPerson": 20,
+          "lat": 51.501,
+          "lon": -0.142
+        },
+        {
+          "id": "westminster-abbey",
+          "title": "Westminster Abbey",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 90,
+          "location": "Westminster",
+          "costPerPerson": 9,
+          "lat": 51.4994,
+          "lon": -0.12737
+        },
+        {
+          "id": "national-gallery",
+          "title": "National Gallery",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Leicester Square",
+          "costPerPerson": 20,
+          "lat": 51.50889,
+          "lon": -0.12833
+        },
+        {
+          "id": "the-gherkin",
+          "title": "The Gherkin",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 90,
+          "location": "City of London",
+          "costPerPerson": 18,
+          "lat": 51.51444,
+          "lon": -0.08028
+        },
+        {
+          "id": "st-paul-s-cathedral",
+          "title": "St Paul's Cathedral",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 90,
+          "location": "City of London",
+          "costPerPerson": 9,
+          "lat": 51.51378,
+          "lon": -0.09831
+        },
+        {
+          "id": "regent-s-park",
+          "title": "Regent's Park",
+          "tags": [
+            "nature"
+          ],
+          "durationMinutes": 120,
+          "location": "Mayfair-Marylebone",
+          "costPerPerson": 0,
+          "lat": 51.53222,
+          "lon": -0.15667
+        },
+        {
+          "id": "national-portrait-gallery",
+          "title": "National Portrait Gallery",
+          "tags": [
+            "art",
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Leicester Square",
+          "costPerPerson": 14,
+          "lat": 51.50944,
+          "lon": -0.12806
+        },
+        {
+          "id": "marble-arch-hyde-park",
+          "title": "Marble Arch and Hyde Park",
+          "tags": [
+            "culture",
+            "nature"
+          ],
+          "durationMinutes": 210,
+          "location": "Mayfair-Marylebone",
+          "costPerPerson": 0,
+          "lat": 51.51306,
+          "lon": -0.15889
+        }
+      ],
+      "source": "pack:wikidata+wikivoyage 2026-10",
+      "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+    },
+    {
+      "id": "mexico-city",
+      "name": "Mexico City",
+      "country": "Mexico",
+      "countryCode": "MX",
+      "lat": 19.35377,
+      "lon": -99.13589,
+      "timeZone": "America/Mexico_City",
+      "costCurrency": "MXN",
+      "tags": [
+        "food",
+        "culture",
+        "art"
+      ],
+      "passportMonths": 0,
+      "visaKey": null,
+      "visaWaivedBy": [
+        "us",
+        "uk",
+        "schengen"
+      ],
+      "officialUrl": "https://www.inm.gob.mx/",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 2500,
+      "vehicleCapacity": 4,
+      "vehicleDay": 1400,
+      "foodDay": 750,
+      "insurance": 300,
+      "activities": [
+        {
+          "id": "mexico-city-metropolitan-cathedral-zocalo",
+          "title": "Mexico City Metropolitan Cathedral and Zócalo",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 180,
+          "location": "Centro",
+          "costPerPerson": 140,
+          "lat": 19.43417,
+          "lon": -99.13306
+        },
+        {
+          "id": "frida-kahlo-museum",
+          "title": "Frida Kahlo Museum",
+          "tags": [
+            "art",
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Coyoacán",
+          "costPerPerson": 250,
+          "lat": 19.35514,
+          "lon": -99.16253
+        },
+        {
+          "id": "templo-mayor",
+          "title": "Templo Mayor",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 180,
+          "location": "Centro",
+          "costPerPerson": 140,
+          "lat": 19.435,
+          "lon": -99.13139
+        },
+        {
+          "id": "local-food-walk",
+          "title": "Mexico City local food walk",
+          "tags": [
+            "food",
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Centro",
+          "costPerPerson": 300,
+          "lat": 19.35377,
+          "lon": -99.13589
+        },
+        {
+          "id": "angel-of-independence",
+          "title": "Angel of Independence",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 60,
+          "location": "Zona Rosa",
+          "costPerPerson": 0,
+          "lat": 19.42694,
+          "lon": -99.1675
+        },
+        {
+          "id": "chapultepec-castle",
+          "title": "Chapultepec Castle",
+          "tags": [
+            "culture",
+            "art"
+          ],
+          "durationMinutes": 150,
+          "location": "Chapultepec",
+          "costPerPerson": 250,
+          "lat": 19.42056,
+          "lon": -99.18167
+        },
+        {
+          "id": "museo-soumaya",
+          "title": "Museo Soumaya",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Polanco",
+          "costPerPerson": 200,
+          "lat": 19.44066,
+          "lon": -99.20462
+        },
+        {
+          "id": "national-palace",
+          "title": "National Palace",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Centro",
+          "costPerPerson": 200,
+          "lat": 19.4325,
+          "lon": -99.13139
+        },
+        {
+          "id": "palacio-de-bellas-artes",
+          "title": "Palacio de Bellas Artes",
+          "tags": [
+            "nightlife",
+            "art"
+          ],
+          "durationMinutes": 150,
+          "location": "Centro",
+          "costPerPerson": 600,
+          "lat": 19.43528,
+          "lon": -99.14139
+        },
+        {
+          "id": "monumento-a-la-revolucion-paseo-de-la-reforma",
+          "title": "Monumento a la Revolución and Paseo de la Reforma",
+          "tags": [
+            "culture",
+            "shopping"
+          ],
+          "durationMinutes": 180,
+          "location": "Zona Rosa",
+          "costPerPerson": 0,
+          "lat": 19.43618,
+          "lon": -99.15463
+        },
+        {
+          "id": "xochimilco",
+          "title": "Xochimilco trajinera boat ride",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 210,
+          "location": "Mexico City",
+          "costPerPerson": 250,
+          "lat": 19.24758,
+          "lon": -99.09822
+        }
+      ],
+      "source": "pack:wikidata+wikivoyage 2026-10",
+      "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+    },
+    {
+      "id": "pondicherry",
+      "name": "Pondicherry",
+      "country": "India",
+      "countryCode": "IN",
+      "lat": 11.93,
+      "lon": 79.83,
+      "timeZone": "Asia/Kolkata",
+      "costCurrency": "INR",
+      "tags": [
+        "food",
+        "culture",
+        "beach",
+        "nature",
+        "adventure"
+      ],
+      "passportMonths": 6,
+      "visaKey": null,
+      "visaWaivedBy": [],
+      "officialUrl": "https://www.py.gov.in",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 3500,
+      "vehicleCapacity": 4,
+      "vehicleDay": 2000,
+      "foodDay": 1000,
+      "insurance": 500,
+      "activities": [
+        {
+          "id": "day-trip-to-auroville",
+          "title": "Day trip to Auroville",
+          "tags": [
+            "culture",
+            "nature"
+          ],
+          "durationMinutes": 210,
+          "location": "Pondicherry",
+          "costPerPerson": 300,
+          "lat": 12.00179,
+          "lon": 79.80094
+        },
+        {
+          "id": "sri-aurobindo-ashram-bharathi-park",
+          "title": "Sri Aurobindo Ashram and Bharathi Park",
+          "tags": [
+            "culture",
+            "nature"
+          ],
+          "durationMinutes": 210,
+          "location": "Puducherry",
+          "costPerPerson": 0,
+          "lat": 11.93675,
+          "lon": 79.83415
+        },
+        {
+          "id": "diving-pondicherry",
+          "title": "Scuba diving trip in Pondicherry",
+          "tags": [
+            "beach",
+            "adventure"
+          ],
+          "durationMinutes": 210,
+          "location": "Pondicherry",
+          "costPerPerson": 1800
+        },
+        {
+          "id": "local-food-walk",
+          "title": "Pondicherry local food walk",
+          "tags": [
+            "food",
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Pondicherry",
+          "costPerPerson": 500,
+          "lat": 11.93,
+          "lon": 79.83
+        },
+        {
+          "id": "arikamedu",
+          "title": "Arikamedu",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 180,
+          "location": "Pondicherry",
+          "costPerPerson": 250,
+          "lat": 11.90267,
+          "lon": 79.81993
+        },
+        {
+          "id": "immaculate-conception-cathedral-aayi-mandapam",
+          "title": "Immaculate Conception Cathedral and Aayi Mandapam",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 180,
+          "location": "Pondicherry",
+          "costPerPerson": 160,
+          "lat": 11.93299,
+          "lon": 79.83055
+        },
+        {
+          "id": "kayaking-pondicherry",
+          "title": "Kayaking in Pondicherry",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 150,
+          "location": "Pondicherry",
+          "costPerPerson": 600
+        },
+        {
+          "id": "promenade-beach",
+          "title": "Promenade Beach",
+          "tags": [
+            "beach",
+            "nature"
+          ],
+          "durationMinutes": 180,
+          "location": "Pondicherry",
+          "costPerPerson": 160,
+          "lat": 11.9325,
+          "lon": 79.8358
+        },
+        {
+          "id": "basilica-of-the-sacred-heart-of-jesus-french-war-memorial",
+          "title": "Basilica of the Sacred Heart of Jesus and French War Memorial",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Pondicherry",
+          "costPerPerson": 0,
+          "lat": 11.92626,
+          "lon": 79.82704
+        },
+        {
+          "id": "varadharaja-perumal-temple",
+          "title": "Varadharaja Perumal Temple",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 90,
+          "location": "Pondicherry",
+          "costPerPerson": 0,
+          "lat": 11.94083,
+          "lon": 79.83
+        },
+        {
+          "id": "ousteri-lake",
+          "title": "Ousteri Lake",
+          "tags": [
+            "nature"
+          ],
+          "durationMinutes": 120,
+          "location": "Pondicherry",
+          "costPerPerson": 250,
+          "lat": 11.955,
+          "lon": 79.745
+        },
+        {
+          "id": "pondicherry-museum",
+          "title": "Pondicherry Museum",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Puducherry",
+          "costPerPerson": 350,
+          "lat": 11.93417,
+          "lon": 79.83472
+        }
+      ],
+      "source": "pack:wikidata+wikivoyage 2026-10",
+      "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+    },
+    {
+      "id": "rishikesh",
+      "name": "Rishikesh",
+      "country": "India",
+      "countryCode": "IN",
+      "lat": 30.1,
+      "lon": 78.3,
+      "timeZone": "Asia/Kolkata",
+      "costCurrency": "INR",
+      "tags": [
+        "food",
+        "culture",
+        "nature",
+        "adventure"
+      ],
+      "passportMonths": 6,
+      "visaKey": null,
+      "visaWaivedBy": [],
+      "officialUrl": "https://uttarakhandtourism.gov.in/destination/rishikesh/",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 3000,
+      "vehicleCapacity": 4,
+      "vehicleDay": 2000,
+      "foodDay": 1000,
+      "insurance": 500,
+      "activities": [
+        {
+          "id": "beatles-ashram-swarg-ashram",
+          "title": "Beatles Ashram and Swarg Ashram",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Rishikesh",
+          "costPerPerson": 0,
+          "lat": 30.10975,
+          "lon": 78.31277
+        },
+        {
+          "id": "nilkanth-mahadev",
+          "title": "Nilkanth Mahadev",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 60,
+          "location": "Rishikesh",
+          "costPerPerson": 0,
+          "lat": 30.0807,
+          "lon": 78.3409
+        },
+        {
+          "id": "yoga-rishikesh",
+          "title": "Yoga class in Rishikesh",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 90,
+          "location": "Rishikesh",
+          "costPerPerson": 250
+        },
+        {
+          "id": "local-food-walk",
+          "title": "Rishikesh local food walk",
+          "tags": [
+            "food",
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Rishikesh",
+          "costPerPerson": 500,
+          "lat": 30.1,
+          "lon": 78.3
+        },
+        {
+          "id": "lakshman-jhula-trayambakeshwar-temple",
+          "title": "Lakshman Jhula and Trayambakeshwar Temple",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 180,
+          "location": "Rishikesh",
+          "costPerPerson": 500,
+          "lat": 30.12636,
+          "lon": 78.32989
+        },
+        {
+          "id": "bharat-mandir-triveni-ghat",
+          "title": "Bharat Mandir and Triveni Ghat",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Rishikesh",
+          "costPerPerson": 0,
+          "lat": 30.10612,
+          "lon": 78.30205
+        },
+        {
+          "id": "rafting-rishikesh",
+          "title": "River rafting in Rishikesh",
+          "tags": [
+            "adventure",
+            "nature"
+          ],
+          "durationMinutes": 180,
+          "location": "Rishikesh",
+          "costPerPerson": 700
+        },
+        {
+          "id": "gita-bhavan-parmarth-niketan-ashram",
+          "title": "Gita Bhavan and Parmarth Niketan Ashram",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Rishikesh",
+          "costPerPerson": 200,
+          "lat": 30.12061,
+          "lon": 78.31354
+        },
+        {
+          "id": "janki-setu-ram-jhula",
+          "title": "Janki Setu and Ram Jhula",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 180,
+          "location": "Rishikesh",
+          "costPerPerson": 700,
+          "lat": 30.1206,
+          "lon": 78.3197
+        },
+        {
+          "id": "trekking-rishikesh",
+          "title": "Guided trek in Rishikesh",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 210,
+          "location": "Rishikesh",
+          "costPerPerson": 400
+        },
+        {
+          "id": "patna-waterfalls",
+          "title": "Patna Waterfalls",
+          "tags": [
+            "nature"
+          ],
+          "durationMinutes": 120,
+          "location": "Rishikesh",
+          "costPerPerson": 250,
+          "lat": 30.1,
+          "lon": 78.3
+        }
+      ],
+      "source": "pack:wikidata+wikivoyage 2026-10",
+      "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+    },
+    {
+      "id": "san-francisco",
+      "name": "San Francisco",
+      "country": "United States",
+      "countryCode": "US",
+      "lat": 37.775,
+      "lon": -122.41944,
+      "timeZone": "America/Los_Angeles",
+      "costCurrency": "USD",
+      "tags": [
+        "food",
+        "culture",
+        "shopping",
+        "nature",
+        "adventure"
+      ],
+      "passportMonths": 0,
+      "visaKey": "us",
+      "visaWaivedBy": [],
+      "officialUrl": "https://travel.state.gov/content/travel/en/us-visas/tourism-visit.html",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 160,
+      "vehicleCapacity": 4,
+      "vehicleDay": 120,
+      "foodDay": 55,
+      "insurance": 25,
+      "activities": [
+        {
+          "id": "golden-gate-bridge",
+          "title": "Golden Gate Bridge walk",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 90,
+          "location": "Golden Gate",
+          "costPerPerson": 0,
+          "lat": 37.81972,
+          "lon": -122.47861
+        },
+        {
+          "id": "golden-gate-park",
+          "title": "Golden Gate Park",
+          "tags": [
+            "nature"
+          ],
+          "durationMinutes": 120,
+          "location": "The Avenues",
+          "costPerPerson": 0,
+          "lat": 37.76972,
+          "lon": -122.47694
+        },
+        {
+          "id": "alcatraz-island",
+          "title": "Alcatraz Island",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 180,
+          "location": "San Francisco",
+          "costPerPerson": 45,
+          "lat": 37.82672,
+          "lon": -122.42283
+        },
+        {
+          "id": "san-francisco-ferry-building",
+          "title": "San Francisco Ferry Building",
+          "tags": [
+            "food",
+            "shopping"
+          ],
+          "durationMinutes": 120,
+          "location": "Union Square-Financial District",
+          "costPerPerson": 20,
+          "lat": 37.79556,
+          "lon": -122.39361
+        },
+        {
+          "id": "palace-of-fine-arts",
+          "title": "Palace of Fine Arts",
+          "tags": [
+            "culture",
+            "food"
+          ],
+          "durationMinutes": 150,
+          "location": "Golden Gate",
+          "costPerPerson": 10,
+          "lat": 37.80278,
+          "lon": -122.44833
+        },
+        {
+          "id": "haight-ashbury",
+          "title": "Haight-Ashbury",
+          "tags": [
+            "culture",
+            "food"
+          ],
+          "durationMinutes": 150,
+          "location": "San Francisco",
+          "costPerPerson": 10,
+          "lat": 37.77002,
+          "lon": -122.44694
+        },
+        {
+          "id": "de-young-museum",
+          "title": "De Young Museum",
+          "tags": [
+            "art",
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "The Avenues",
+          "costPerPerson": 20,
+          "lat": 37.77147,
+          "lon": -122.46868
+        },
+        {
+          "id": "california-academy-of-sciences",
+          "title": "California Academy of Sciences",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 180,
+          "location": "The Avenues",
+          "costPerPerson": 30,
+          "lat": 37.77,
+          "lon": -122.46639
+        },
+        {
+          "id": "angel-island",
+          "title": "Angel Island",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 180,
+          "location": "Fisherman's Wharf",
+          "costPerPerson": 10,
+          "lat": 37.86,
+          "lon": -122.43
+        },
+        {
+          "id": "exploratorium",
+          "title": "Exploratorium",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Fisherman's Wharf",
+          "costPerPerson": 18,
+          "lat": 37.8014,
+          "lon": -122.3976
+        },
+        {
+          "id": "sutro-baths",
+          "title": "Sutro Baths",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 180,
+          "location": "The Avenues",
+          "costPerPerson": 12,
+          "lat": 37.78,
+          "lon": -122.51361
+        },
+        {
+          "id": "grace-cathedral-union-square",
+          "title": "Grace Cathedral and Union Square",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 180,
+          "location": "Nob Hill-Russian Hill",
+          "costPerPerson": 8,
+          "lat": 37.7919,
+          "lon": -122.413
+        }
+      ],
+      "source": "pack:wikidata+wikivoyage 2026-10",
+      "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+    },
+    {
+      "id": "seoul",
+      "name": "Seoul",
+      "country": "South Korea",
+      "countryCode": "KR",
+      "lat": 37.56,
+      "lon": 126.99,
+      "timeZone": "Asia/Seoul",
+      "costCurrency": "KRW",
+      "tags": [
+        "food",
+        "culture",
+        "shopping",
+        "art",
+        "nature"
+      ],
+      "passportMonths": 0,
+      "visaKey": null,
+      "visaWaivedBy": [],
+      "officialUrl": "https://www.visa.go.kr/",
+      "reviewedAt": "2026-10-25",
+      "roomCapacity": 2,
+      "roomNight": 180000,
+      "vehicleCapacity": 4,
+      "vehicleDay": 120000,
+      "foodDay": 60000,
+      "insurance": 20000,
+      "activities": [
+        {
+          "id": "gyeongbokgung",
+          "title": "Gyeongbokgung",
+          "tags": [
+            "culture",
+            "art"
+          ],
+          "durationMinutes": 150,
+          "location": "Jongno",
+          "costPerPerson": 18000,
+          "lat": 37.57988,
+          "lon": 126.9768
+        },
+        {
+          "id": "changdeokgung",
+          "title": "Changdeokgung",
+          "tags": [
+            "culture",
+            "art"
+          ],
+          "durationMinutes": 150,
+          "location": "Jongno",
+          "costPerPerson": 18000,
+          "lat": 37.57944,
+          "lon": 126.99167
+        },
+        {
+          "id": "cheonggyecheon",
+          "title": "Cheonggyecheon",
+          "tags": [
+            "nature"
+          ],
+          "durationMinutes": 120,
+          "location": "Jung",
+          "costPerPerson": 0,
+          "lat": 37.56902,
+          "lon": 126.97771
+        },
+        {
+          "id": "namdaemun-market",
+          "title": "Namdaemun Market",
+          "tags": [
+            "food",
+            "shopping"
+          ],
+          "durationMinutes": 120,
+          "location": "Seoul",
+          "costPerPerson": 18000,
+          "lat": 37.55944,
+          "lon": 126.97742
+        },
+        {
+          "id": "national-museum-of-korea",
+          "title": "National Museum of Korea",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 150,
+          "location": "Yongsan",
+          "costPerPerson": 16000,
+          "lat": 37.52389,
+          "lon": 126.98028
+        },
+        {
+          "id": "deoksugung",
+          "title": "Deoksugung",
+          "tags": [
+            "culture",
+            "art"
+          ],
+          "durationMinutes": 150,
+          "location": "Jung",
+          "costPerPerson": 18000,
+          "lat": 37.56611,
+          "lon": 126.975
+        },
+        {
+          "id": "jongmyo-jogyesa",
+          "title": "Jongmyo and Jogyesa",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 180,
+          "location": "Jongno",
+          "costPerPerson": 0,
+          "lat": 37.57472,
+          "lon": 126.99361
+        },
+        {
+          "id": "lotte-world-tower",
+          "title": "Lotte World Tower",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 90,
+          "location": "Songpa",
+          "costPerPerson": 20000,
+          "lat": 37.5125,
+          "lon": 127.1025
+        },
+        {
+          "id": "namsan",
+          "title": "Namsan",
+          "tags": [
+            "nature",
+            "adventure"
+          ],
+          "durationMinutes": 180,
+          "location": "Yongsan",
+          "costPerPerson": 9000,
+          "lat": 37.54968,
+          "lon": 126.99191
+        },
+        {
+          "id": "itaewon",
+          "title": "Itaewon",
+          "tags": [
+            "culture",
+            "food"
+          ],
+          "durationMinutes": 150,
+          "location": "Seoul",
+          "costPerPerson": 9000,
+          "lat": 37.54,
+          "lon": 126.99194
+        },
+        {
+          "id": "myeongdong-cathedral",
+          "title": "Myeongdong Cathedral",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 90,
+          "location": "Jung",
+          "costPerPerson": 7000,
+          "lat": 37.56333,
+          "lon": 126.98722
+        },
+        {
+          "id": "gwanghwamun-square",
+          "title": "Gwanghwamun Square",
+          "tags": [
+            "culture"
+          ],
+          "durationMinutes": 60,
+          "location": "Jongno",
+          "costPerPerson": 0,
+          "lat": 37.57278,
+          "lon": 126.97667
+        }
+      ],
+      "source": "pack:wikidata+wikivoyage 2026-10",
+      "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
     }
-  ]
+  ],
+  "holdableVisas": {
+    "uae": "UAE",
+    "schengen": "Schengen",
+    "singapore": "Singapore",
+    "vietnam": "Vietnam",
+    "us": "US",
+    "uk": "UK"
+  },
+  "defaultShortlists": {
+    "note": "Destinations offered to a trip by home country. Missing home countries see the whole catalog; a trip may pass destinationIds.",
+    "IN": [
+      "bangkok",
+      "dubai",
+      "paris",
+      "bali",
+      "singapore",
+      "hanoi",
+      "goa",
+      "manali",
+      "thailand-duo",
+      "vietnam-duo",
+      "uae-duo",
+      "kerala-trio",
+      "rajasthan-duo"
+    ]
+  },
+  "curatedVisaPassport": "IN"
 }

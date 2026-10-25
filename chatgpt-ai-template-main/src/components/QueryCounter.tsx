@@ -125,8 +125,7 @@ export const QueryLimitReachedBanner: React.FC<QueryLimitModalProps> = ({ isOpen
           Upgrade to Pro - Unlimited Queries
         </Button>
         <Text fontSize={{ base: '2xs', md: 'xs' }} color={textColor} opacity={0.7} px={{ base: '4', md: '0' }}>
-          Supporting our backend costs helps keep this service running! 💜
-        </Text>
+          Supporting our backend costs helps keep this service running!         </Text>
       </Flex>
     </Box>
   );

@@ -123,7 +123,7 @@ export default function HotelBookingAgent({
                 borderRadius="full"
                 zIndex={1}
               >
-                ⭐ Best Value
+                Best Value
               </Badge>
             )}
 

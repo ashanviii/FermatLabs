@@ -1,0 +1,19 @@
+{
+  "note": "Cities built by `python3 -I tools/places/city_pack.py --batch`. id must not collide with an existing seed destination id.",
+  "cities": [
+    { "city": "Las Vegas", "country": "US" },
+    { "city": "San Francisco", "country": "US" },
+    { "city": "Chicago", "country": "US" },
+    { "city": "Barcelona", "country": "ES" },
+    { "city": "London", "country": "GB" },
+    { "city": "Amsterdam", "country": "NL" },
+    { "city": "Istanbul", "country": "TR" },
+    { "city": "Seoul", "country": "KR" },
+    { "city": "Kuala Lumpur", "country": "MY" },
+    { "city": "Abu Dhabi", "country": "AE" },
+    { "city": "Mexico City", "country": "MX" },
+    { "city": "Rishikesh", "country": "IN" },
+    { "city": "Pondicherry", "country": "IN" },
+    { "city": "Hampi", "country": "IN" }
+  ]
+}

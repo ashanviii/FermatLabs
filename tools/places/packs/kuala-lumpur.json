@@ -1,0 +1,367 @@
+{
+  "destination": {
+    "id": "kuala-lumpur",
+    "name": "Kuala Lumpur",
+    "country": "Malaysia",
+    "countryCode": "MY",
+    "lat": 3.14778,
+    "lon": 101.69528,
+    "timeZone": "Asia/Kuala_Lumpur",
+    "costCurrency": "MYR",
+    "tags": [
+      "food",
+      "culture",
+      "shopping",
+      "nature",
+      "adventure"
+    ],
+    "passportMonths": 6,
+    "visaKey": null,
+    "visaLeadDays": null,
+    "visaWaivedBy": [],
+    "officialUrl": "http://www.dbkl.gov.my",
+    "reviewedAt": "2026-10-25",
+    "roomCapacity": 2,
+    "roomNight": 300,
+    "vehicleCapacity": 4,
+    "vehicleDay": 180,
+    "foodDay": 95,
+    "insurance": 35,
+    "entryAllowance": 0,
+    "activities": [
+      {
+        "id": "petronas-towers",
+        "title": "Petronas Towers",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 90,
+        "location": "Golden Triangle",
+        "costPerPerson": 55,
+        "lat": 3.15778,
+        "lon": 101.71167
+      },
+      {
+        "id": "batu-caves",
+        "title": "Batu Caves",
+        "tags": [
+          "nature",
+          "adventure"
+        ],
+        "durationMinutes": 180,
+        "location": "North",
+        "costPerPerson": 14,
+        "lat": 3.2374,
+        "lon": 101.68391
+      },
+      {
+        "id": "national-mosque-of-malaysia-kuala-lumpur-railway-station",
+        "title": "National Mosque of Malaysia and Kuala Lumpur railway station",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 180,
+        "location": "Botanical Garden",
+        "costPerPerson": 14,
+        "lat": 3.14194,
+        "lon": 101.69167
+      },
+      {
+        "id": "central-market",
+        "title": "Central Market",
+        "tags": [
+          "food",
+          "shopping"
+        ],
+        "durationMinutes": 120,
+        "location": "Kuala Lumpur",
+        "costPerPerson": 30,
+        "lat": 3.14583,
+        "lon": 101.69556
+      },
+      {
+        "id": "national-monument-carcosa-seri-negara",
+        "title": "National Monument and Carcosa Seri Negara",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Botanical Garden",
+        "costPerPerson": 14,
+        "lat": 3.14886,
+        "lon": 101.68383
+      },
+      {
+        "id": "national-museum",
+        "title": "National Museum",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Botanical Garden",
+        "costPerPerson": 25,
+        "lat": 3.13758,
+        "lon": 101.68739
+      },
+      {
+        "id": "jamek-mosque-independence-square",
+        "title": "Jamek Mosque and Independence Square",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 180,
+        "location": "Central",
+        "costPerPerson": 0,
+        "lat": 3.14891,
+        "lon": 101.69596
+      },
+      {
+        "id": "bukit-bintang",
+        "title": "Bukit Bintang",
+        "tags": [
+          "culture",
+          "food"
+        ],
+        "durationMinutes": 150,
+        "location": "Kuala Lumpur",
+        "costPerPerson": 14,
+        "lat": 3.14669,
+        "lon": 101.71119
+      },
+      {
+        "id": "istana-negara-jalan-tuanku-abdul-halim",
+        "title": "Istana Negara, Jalan Tuanku Abdul Halim",
+        "tags": [
+          "culture",
+          "art"
+        ],
+        "durationMinutes": 150,
+        "location": "West",
+        "costPerPerson": 30,
+        "lat": 3.16139,
+        "lon": 101.66361
+      },
+      {
+        "id": "thean-hou-temple",
+        "title": "Thean Hou Temple",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 60,
+        "location": "Brickfields and Bangsar",
+        "costPerPerson": 0,
+        "lat": 3.12185,
+        "lon": 101.68764
+      },
+      {
+        "id": "aquaria-klcc",
+        "title": "Aquaria KLCC",
+        "tags": [
+          "nature",
+          "adventure"
+        ],
+        "durationMinutes": 180,
+        "location": "Golden Triangle",
+        "costPerPerson": 45,
+        "lat": 3.15339,
+        "lon": 101.71308
+      },
+      {
+        "id": "bukit-jalil-national-stadium",
+        "title": "Bukit Jalil National Stadium",
+        "tags": [
+          "culture",
+          "adventure"
+        ],
+        "durationMinutes": 90,
+        "location": "South",
+        "costPerPerson": 45,
+        "lat": 3.05467,
+        "lon": 101.69117
+      }
+    ],
+    "source": "pack:wikidata+wikivoyage 2026-10",
+    "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+  },
+  "meta": {
+    "generatedOn": "2026-10-25",
+    "generator": "tools/places/city_pack.py",
+    "input": {
+      "city": "Kuala Lumpur",
+      "country": "MY",
+      "wikivoyageTitle": "Kuala Lumpur"
+    },
+    "wikidata": "Q1865",
+    "wikivoyageUrl": "https://en.wikivoyage.org/wiki/Kuala_Lumpur",
+    "population": 9000280.0,
+    "priceLevel": {
+      "indicator": "PA.NUS.PRVT.PP",
+      "year": "2025",
+      "lcuPerIntlDollar": 1.4306,
+      "lcuPerUsd": 4.2844,
+      "priceLevelVsUS": 0.334,
+      "cityMultiplier": 1.2,
+      "basisIntlDollars": {
+        "roomNight": 170,
+        "vehicleDay": 110,
+        "foodDay": 55,
+        "insurance": 25
+      }
+    },
+    "sources": [
+      "pageviews",
+      "wikidata",
+      "wikivoyage",
+      "worldbank"
+    ],
+    "sourcesFailed": {},
+    "candidates": 108,
+    "proseActivities": [],
+    "ranking": [
+      {
+        "title": "Petronas Towers",
+        "qid": "Q83063",
+        "category": "tower",
+        "score": 9.133,
+        "pageviews12m": 487465,
+        "sitelinks": 89,
+        "curated": true
+      },
+      {
+        "title": "Batu Caves",
+        "qid": "Q687629",
+        "category": "mountain",
+        "score": 7.96,
+        "pageviews12m": 182023,
+        "sitelinks": 42,
+        "curated": true
+      },
+      {
+        "title": "National Mosque of Malaysia",
+        "qid": "Q1356818",
+        "category": "religious",
+        "score": 7.001,
+        "pageviews12m": 20834,
+        "sitelinks": 36,
+        "curated": true
+      },
+      {
+        "title": "Central Market",
+        "qid": "Q1041262",
+        "category": "market",
+        "score": 5.357,
+        "pageviews12m": 9573,
+        "sitelinks": 13,
+        "curated": false
+      },
+      {
+        "title": "National Monument",
+        "qid": "Q724745",
+        "category": "monument",
+        "score": 6.98,
+        "pageviews12m": 29392,
+        "sitelinks": 14,
+        "curated": true
+      },
+      {
+        "title": "National Museum",
+        "qid": "Q917630",
+        "category": "museum",
+        "score": 6.88,
+        "pageviews12m": 7619,
+        "sitelinks": 25,
+        "curated": true
+      },
+      {
+        "title": "Jamek Mosque",
+        "qid": "Q1143296",
+        "category": "religious",
+        "score": 6.755,
+        "pageviews12m": 13094,
+        "sitelinks": 33,
+        "curated": true
+      },
+      {
+        "title": "Bukit Bintang",
+        "qid": "Q591717",
+        "category": "neighbourhood",
+        "score": 6.647,
+        "pageviews12m": 54355,
+        "sitelinks": 14,
+        "curated": false
+      },
+      {
+        "title": "Independence Square",
+        "qid": "Q3043065",
+        "category": "square",
+        "score": 6.553,
+        "pageviews12m": 20830,
+        "sitelinks": 22,
+        "curated": true
+      },
+      {
+        "title": "Istana Negara, Jalan Tuanku Abdul Halim",
+        "qid": "Q6088543",
+        "category": "palace",
+        "score": 6.549,
+        "pageviews12m": 31945,
+        "sitelinks": 15,
+        "curated": true
+      },
+      {
+        "title": "Thean Hou Temple",
+        "qid": "Q2639733",
+        "category": "religious",
+        "score": 6.511,
+        "pageviews12m": 41280,
+        "sitelinks": 11,
+        "curated": true
+      },
+      {
+        "title": "Aquaria KLCC",
+        "qid": "Q29168",
+        "category": "zoo",
+        "score": 6.435,
+        "pageviews12m": 6727,
+        "sitelinks": 17,
+        "curated": true
+      },
+      {
+        "title": "Bukit Jalil National Stadium",
+        "qid": "Q635363",
+        "category": "stadium",
+        "score": 6.091,
+        "pageviews12m": 73934,
+        "sitelinks": 31,
+        "curated": true
+      },
+      {
+        "title": "Bukit Nanas",
+        "qid": "Q31322",
+        "category": "national_park",
+        "score": 6.067,
+        "pageviews12m": 5843,
+        "sitelinks": 9,
+        "curated": true
+      },
+      {
+        "title": "Kuala Lumpur railway station",
+        "qid": "Q3096708",
+        "category": "landmark",
+        "score": 6.065,
+        "pageviews12m": 15459,
+        "sitelinks": 13,
+        "curated": true
+      },
+      {
+        "title": "Carcosa Seri Negara",
+        "qid": "Q4206988",
+        "category": "landmark",
+        "score": 6.042,
+        "pageviews12m": 24925,
+        "sitelinks": 8,
+        "curated": true
+      }
+    ]
+  }
+}
