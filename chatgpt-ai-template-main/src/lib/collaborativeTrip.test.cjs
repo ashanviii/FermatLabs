@@ -75,7 +75,7 @@ test('integer allocation reconciles for every group size from four through ten',
 
 test('one traveller one rupee below the mandatory baseline makes the destination infeasible', () => {
   const probe = readyTrip(4, 250000);
-  const baseline = generatePlan(probe, 'bangkok');
+  const baseline = generatePlan(probe, 'bangkok', { enforceBudgets: false, maxActivities: 0 });
   const ownerTotal = baseline.memberTotals.find((member) => member.uid === 'owner').total;
   const constraints = { ...probe.constraints.owner, budget: ownerTotal - 1 };
   const next = { ...probe, constraints: { ...probe.constraints, owner: constraints } };
@@ -85,21 +85,24 @@ test('one traveller one rupee below the mandatory baseline makes the destination
 
 test('shared projection never exposes raw private constraints or private ballots', () => {
   let trip = readyTrip();
+  trip.constraints.owner.budget = 149321;
   trip = applyCommand(trip, { type: 'openVoting', uid: 'owner', expectedInputRevision: trip.inputRevision });
   trip = applyCommand(trip, { type: 'vote', uid: 'owner', destinationId: 'dubai', round: trip.round, inputRevision: trip.inputRevision });
   const projection = buildTripProjection(trip, 'm2');
   assert.equal(projection.constraints, undefined);
   assert.equal(projection.ballots, undefined);
-  assert.equal(JSON.stringify(projection).includes('150000'), false);
+  assert.equal(projection.myConstraints.budget, 150000);
+  assert.equal(JSON.stringify(projection).includes('149321'), false);
 });
 
 test('pending member gets a safe waiting-room projection and owner can admit them', () => {
   let trip = createTripState({ id: 'waiting', ownerUid: 'owner', name: 'Waiting', startDate: '2026-12-10', endDate: '2026-12-15', expectedSize: 4 });
   trip = applyCommand(trip, { type: 'requestJoin', uid: 'm2', nickname: 'Member 2', now: 100 });
-  const waiting = buildTripProjection(trip, 'm2');
+  const waiting = buildTripProjection(trip, 'm2', 101);
   assert.equal(waiting.membershipStatus, 'pending');
-  assert.equal(waiting.activePlan, null);
-  assert.equal(buildTripProjection(trip, 'owner').pendingRequests[0].nickname, 'Member 2');
+  assert.equal(waiting.activePlan, undefined);
+  assert.equal(waiting.members, undefined);
+  assert.equal(buildTripProjection(trip, 'owner', 101).pendingRequests[0].nickname, 'Member 2');
   trip = applyCommand(trip, { type: 'admitMember', uid: 'owner', memberUid: 'm2', now: 101 });
   assert.equal(buildTripProjection(trip, 'm2').membershipStatus, 'approved');
 });
@@ -111,12 +114,13 @@ test('edits create a new plan revision and clear previous approvals', () => {
     trip = applyCommand(trip, { type: 'vote', uid, destinationId: 'bangkok', round: trip.round, inputRevision: trip.inputRevision });
   });
   trip = applyCommand(trip, { type: 'lock', uid: 'owner', round: trip.round, inputRevision: trip.inputRevision, idempotencyKey: 'lock-two' });
-  trip = applyCommand(trip, { type: 'approvePlan', uid: 'm2', planRevision: 1, decision: 'approved' });
+  trip = applyCommand(trip, { type: 'approvePlan', uid: 'm2', planVersion: trip.activePlan.version, planRevision: 1, decision: 'approved' });
   assert.equal(trip.activePlan.approvals.m2, 'approved');
   const firstItem = trip.activePlan.itinerary[1].items[0];
   trip = applyCommand(trip, {
     type: 'editPlanItem',
     uid: 'owner',
+    planVersion: trip.activePlan.version,
     planRevision: 1,
     itemId: firstItem.id,
     patch: { title: 'Updated neighbourhood walk' },
@@ -132,9 +136,9 @@ test('cost edits reconcile totals and schedule conflicts mark the revision for r
   trip = applyCommand(trip, { type: 'lock', uid: 'owner', round: trip.round, inputRevision: trip.inputRevision, idempotencyKey: 'edit-lock' });
   const item = trip.activePlan.itinerary[1].items[0];
   const before = trip.activePlan.groupTotal;
-  trip = applyCommand(trip, { type: 'editPlanItem', uid: 'owner', planRevision: 1, itemId: item.id, patch: { estimatedCost: item.estimatedCost + 1003, time: '13:00' } });
+  trip = applyCommand(trip, { type: 'editPlanItem', uid: 'owner', planVersion: trip.activePlan.version, planRevision: 1, itemId: item.id, patch: { estimatedCost: item.estimatedCost + 1003, time: '13:00' } });
   assert.ok(trip.activePlan.groupTotal > before);
-  assert.equal(validatePlan(trip.activePlan).length, 0);
+  assert.match(validatePlan(trip.activePlan).join(' '), /overlapping/i);
   assert.equal(trip.activePlan.status, 'needsReview');
 });
 

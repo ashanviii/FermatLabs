@@ -124,7 +124,12 @@ function passportReadiness(traveller, destination, tripEnd) {
   }
 
   const cutoff = addMonthsClamped(tripEnd, destination.passportMonths);
-  if (expiry >= cutoff) {
+  const expiryMonth = expiry.getUTCFullYear() * 12 + expiry.getUTCMonth();
+  const cutoffMonth = cutoff.getUTCFullYear() * 12 + cutoff.getUTCMonth();
+  if (expiryMonth === cutoffMonth) {
+    return { status: 'unknown', detail: `Verify the exact expiry day against ${formatMonth(cutoff)}`, points: 0.4 };
+  }
+  if (expiryMonth > cutoffMonth) {
     return {
       status: 'ready',
       detail: `Valid through ${traveller.passportExpiry}`,

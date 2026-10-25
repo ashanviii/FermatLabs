@@ -52,7 +52,7 @@ These journeys exercise the authenticated HTTP API and real Firestore emulator t
 
 ## Shared-planning configuration
 
-Copy [`chatgpt-ai-template-main/.env.example`](chatgpt-ai-template-main/.env.example) to `.env.local` and provide the Firebase web values. The server also requires `FIREBASE_PROJECT_ID` and either `FIREBASE_SERVICE_ACCOUNT_JSON` or `GOOGLE_APPLICATION_CREDENTIALS`. Enable Anonymous Authentication in the selected Firebase project and deploy the committed Firestore rules before a multi-device test.
+Copy [`chatgpt-ai-template-main/.env.example`](chatgpt-ai-template-main/.env.example) to `.env.local` and provide the Firebase web values. The server also requires `FIREBASE_PROJECT_ID` and either `FIREBASE_SERVICE_ACCOUNT_JSON` or `GOOGLE_APPLICATION_CREDENTIALS`. Enable Google Authentication for recoverable organizers and Anonymous Authentication for invited participants, then deploy the committed Firestore rules before a multi-device test.
 
 Invite secrets are returned once, placed after the URL fragment, removed from the address bar before telemetry can initialize, and stored only as a SHA-256 digest. Direct browser access to trip, ballot, constraint, and idempotency documents is denied; every shared mutation crosses the verified-ID server transaction boundary.
 

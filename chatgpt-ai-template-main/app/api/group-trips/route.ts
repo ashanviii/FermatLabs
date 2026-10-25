@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
   try {
     const token = await identity(request); const body = await request.json(); const { firestore } = firebaseAdmin();
     if (body.action === 'create') {
+      if (token.firebase?.sign_in_provider === 'anonymous') throw new Error('A recoverable organizer identity is required');
       const result = await service.createTrip({ firestore, uid: token.uid, body, serverTimestamp: () => FieldValue.serverTimestamp() });
       return NextResponse.json({ trip: domain.buildTripProjection(result.state, token.uid), ...(result.invite ? { invite: result.invite } : {}) });
     }

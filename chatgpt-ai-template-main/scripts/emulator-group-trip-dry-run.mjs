@@ -7,11 +7,12 @@ const authBase = process.env.AUTH_EMULATOR_URL || 'http://127.0.0.1:9099';
 const appBase = process.env.APP_URL || 'http://127.0.0.1:3001';
 const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY || 'demo-key';
 
-async function createIdentity() {
+async function createIdentity(recoverable = false) {
+  const credentials = recoverable ? { email: `owner-${crypto.randomUUID()}@example.test`, password: `Dry-run-${crypto.randomUUID()}!` } : {};
   const response = await fetch(`${authBase}/identitytoolkit.googleapis.com/v1/accounts:signUp?key=${encodeURIComponent(apiKey)}`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ returnSecureToken: true }),
+    body: JSON.stringify({ ...credentials, returnSecureToken: true }),
   });
   const body = await response.json();
   assert.equal(response.ok, true, `Auth emulator signup failed: ${body.error?.message || response.status}`);
@@ -38,7 +39,7 @@ async function read(identity, tripId) {
   return result.trip;
 }
 
-const people = await Promise.all(Array.from({ length: count }, () => createIdentity()));
+const people = [await createIdentity(true), ...await Promise.all(Array.from({ length: count - 1 }, () => createIdentity()))];
 const owner = people[0];
 const idempotencyKey = `dry-run-${count}-${crypto.randomUUID()}`;
 let result = await api(owner, {
@@ -103,7 +104,7 @@ assert.equal(result.trip.activePlan.memberTotals.length, count);
 assert.equal(result.trip.activePlan.memberTotals.reduce((sum, member) => sum + member.total, 0), result.trip.activePlan.groupTotal);
 
 for (const person of people) {
-  result = await api(person, { action: 'command', tripId, command: { type: 'approvePlan', planRevision: result.trip.activePlan.revision, decision: 'approved' } });
+  result = await api(person, { action: 'command', tripId, command: { type: 'approvePlan', planVersion: result.trip.activePlan.version, planRevision: result.trip.activePlan.revision, decision: 'approved' } });
 }
 assert.equal(Object.keys(result.trip.activePlan.approvals).length, count);
 

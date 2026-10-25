@@ -37,11 +37,12 @@ test('rotated and revoked invites fail closed while existing membership remains'
   assert.equal(rotated.invite, 'trip-1.new-secret');
   await assert.rejects(() => mutateTrip({ firestore, uid: 'late', body: { tripId: 'trip-1', action: 'join', inviteSecret: 'old-secret', nickname: 'Late' }, ...common }), /invite/i);
   const joined = await mutateTrip({ firestore, uid: 'member', body: { tripId: 'trip-1', action: 'join', inviteSecret: 'new-secret', nickname: 'Member' }, ...common });
-  assert.equal(buildTripProjection(joined.state, 'member').membershipStatus, 'pending');
+  assert.equal(buildTripProjection(joined.state, 'member', 1001).membershipStatus, 'pending');
   await assert.rejects(() => mutateTrip({ firestore, uid: 'member', body: { tripId: 'trip-1', action: 'command', command: { type: 'revokeInvite' } }, ...common }), /organizer/i);
   await mutateTrip({ firestore, uid: 'owner', body: { tripId: 'trip-1', action: 'command', command: { type: 'revokeInvite' } }, ...common });
   await assert.rejects(() => mutateTrip({ firestore, uid: 'later', body: { tripId: 'trip-1', action: 'join', inviteSecret: 'new-secret', nickname: 'Later' }, ...common }), /invite/i);
-  assert.equal(buildTripProjection(joined.state, 'member').membershipStatus, 'pending');
+  await assert.rejects(() => mutateTrip({ firestore, uid: 'bypass', body: { tripId: 'trip-1', action: 'command', command: { type: 'requestJoin', nickname: 'Bypass' } }, ...common }), /unsupported/i);
+  assert.equal(buildTripProjection(joined.state, 'member', 1001).membershipStatus, 'pending');
 });
 
 test('public projections contain neither raw invite secrets nor private constraints', async () => {
