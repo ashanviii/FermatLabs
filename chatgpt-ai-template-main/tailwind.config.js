@@ -3,6 +3,7 @@ module.exports = {
   content: [
     './app/(marketing)/**/*.{ts,tsx}',
     './src/components/landing/**/*.{ts,tsx}',
+    './src/components/group-trip/**/*.{ts,tsx}',
     './src/components/auth/**/*.{ts,tsx}',
     './src/components/ui/**/*.{ts,tsx}',
   ],

@@ -1,6 +1,5 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import {
   getAuth,
   GoogleAuthProvider,
@@ -11,9 +10,11 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   updateProfile,
+  signInAnonymously,
+  connectAuthEmulator,
   type User,
 } from "firebase/auth";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, serverTimestamp } from "firebase/firestore";
+import { getFirestore, connectFirestoreEmulator, doc, getDoc, setDoc, updateDoc, increment, serverTimestamp } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -27,16 +28,31 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || "G-ZQLJSNJYBM"
 };
 
+// The legacy chat experience retains its historical fallback project. New
+// shared-trip flows must opt in with an explicit client configuration.
+export const sharedFirebaseConfigured = Boolean(
+  process.env.NEXT_PUBLIC_FIREBASE_API_KEY &&
+  process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN &&
+  process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID &&
+  process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+);
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
 
 // Initialize Firebase Auth
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 
+export const signInAsGuest = async () => (await signInAnonymously(auth)).user;
+
 // Initialize Firestore
 export const db = getFirestore(app);
+
+if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATORS === 'true') {
+  try { connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true }); } catch (_) {}
+  try { connectFirestoreEmulator(db, '127.0.0.1', 8080); } catch (_) {}
+}
 
 // Auth functions
 export const signInWithGoogle = async () => {
@@ -47,7 +63,7 @@ export const signInWithGoogle = async () => {
     });
     
     const result = await signInWithPopup(auth, googleProvider);
-    console.log('[Firebase] Sign in successful:', result.user.email);
+    console.log('[Firebase] Sign in successful');
     return result.user;
   } catch (error: any) {
     console.error("[Firebase] Error signing in with Google:", error);
@@ -172,12 +188,13 @@ export const getUserData = async (uid: string): Promise<UserData | null> => {
 };
 
 export const createUserDocument = async (user: User): Promise<void> => {
+  const userRef = doc(db, 'users', user.uid);
+
   try {
-    const userRef = doc(db, 'users', user.uid);
     const userDoc = await getDoc(userRef);
     
     if (!userDoc.exists()) {
-      console.log('[Firebase] Creating new user document for:', user.uid);
+      console.log('[Firebase] Creating new user document');
       await setDoc(userRef, {
         email: user.email,
         displayName: user.displayName,
@@ -190,9 +207,17 @@ export const createUserDocument = async (user: User): Promise<void> => {
       });
       console.log('[Firebase] User document created successfully');
     } else {
-      console.log('[Firebase] User document already exists for:', user.uid);
+      console.log('[Firebase] User document already exists');
     }
   } catch (error) {
+    // Auth state listeners can refresh concurrently. If another caller created the
+    // profile after our initial read, the losing create is still a success.
+    const userDoc = await getDoc(userRef).catch(() => null);
+    if (userDoc?.exists()) {
+      console.log('[Firebase] User document already exists');
+      return;
+    }
+
     console.error('[Firebase] Error creating user document:', error);
     throw error;
   }
@@ -275,5 +300,4 @@ export const upgradeToPro = async (uid: string): Promise<void> => {
   }
 };
 
-export { analytics };
 export default app;

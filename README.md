@@ -1,206 +1,67 @@
-# Reddit RAG Systems 🤖
+# Fermat Labs
 
-A comprehensive  Retrieval-Augmented Generation (RAG) system that scrape Reddit posts and provides AI-powered Q&A using OpenAI's GPT models and semantic search.
+Fermat helps small groups choose and plan a trip everyone can actually take. The collaborative MVP gives each traveller a private input form, runs a private ballot, locks one feasible destination, and produces an itemized itinerary and budget that fits every private ceiling.
 
-## 🚀 Feature
+## Group trip MVP
 
-- **Multi-Subreddit Support**: Scrapes and processes posts from r/h1b, r/USCIS, r/Indians_StudyAbroad, and r/SchengenVisa
-- **Semantic Search**: Uses sentence transformers for finding relevant posts
-- **LLM Integration**: OpenAI GPT-3.5-turbo for generating comprehensive answers
-- **Interactive Interface**: Persistent session with no reload delays
-- **Source Attribution**: Clickable URLs to original Reddit posts
-- **Subreddit Filtering**: Focus searches on specific communities
-- **Performance Optimized**: Pre-generated embeddings for fast responses
+The default `/plan` flow is designed for 4–10 adult Indian-passport travellers planning together:
 
-## 📊 Database Stats
+- create an authenticated room and share a fragment-secret invitation;
+- admit members without exposing their private budget, passport month, preferences, or ballot;
+- collect exact-date confirmations and private constraints from each identity;
+- vote privately across deterministic Bangkok, Dubai, and Paris seed data;
+- atomically publish the winner and a reconciled N-person itinerary/budget;
+- edit the plan with optimistic revisions and collect fresh member approvals.
 
-- **Total Posts**: 3,044
-- **r/h1b**: 941 posts
-- **r/USCIS**: 199 posts  
-- **r/Indians_StudyAbroad**: 997 posts
-- **r/SchengenVisa**: 907 posts
+The original organizer-only browser draft remains available through **Use local demo**. Shared planning never silently falls back to that local record.
 
-## 🛠️ Installation
+Visa claims are intentionally conservative. A traveller-reported visa is still shown as **Unknown** until its validity is independently verified, and every destination card links to an official source.
 
-1. **Clone the repository**
-```bash
-git clone <your-repo-url>
-cd reddit-rag-system
-```
+## Run locally
 
-2. **Create conda environment**
-```bash
-conda create -n rag python=3.9
-conda activate rag
-```
-
-3. **Install dependencies**
-```bash
-pip install -r requirements.txt
-```
-
-4. **Configure API key**
-```bash
-cp config_template.py config.py
-# Edit config.py and add your OpenAI API key
-```
-
-## 🎮 Usage
-
-### Interactive Mode (Recommended)
-```bash
-python simple_rag.py
-```
-
-### Single Query Mode
-```bash
-python rag_query.py "Your question here"
-```
-
-### Commands Available
-- Ask any question directly
-- `filter:h1b` - Focus on H1B visa posts
-- `filter:USCIS` - Focus on USCIS posts
-- `filter:Indians_StudyAbroad` - Focus on study abroad posts
-- `filter:SchengenVisa` - Focus on Schengen visa posts
-- `filter:none` - Remove filter
-- `stats` - Show database statistics
-- `quit`/`exit`/`q` - Exit the program
-
-## 📝 Example Queries
+The web application lives in `chatgpt-ai-template-main`.
 
 ```bash
-# H1B related
-"What are H1B visa requirements?"
-"H1B to green card timeline?"
-
-# USCIS related  
-"How to prepare for naturalization interview?"
-"What documents needed for citizenship?"
-
-# Study abroad
-"Best countries for MS in Computer Science?"
-"How to get scholarships for studying abroad?"
-
-# Schengen visa
-"Schengen visa requirements for Indians?"
-"How long does Schengen visa processing take?"
+cd chatgpt-ai-template-main
+npm install
+cp .env.example .env.local
+npm run dev
 ```
 
-## 🏗️ Architecture
+Open [http://localhost:3000](http://localhost:3000) for the landing page or [http://localhost:3000/plan](http://localhost:3000/plan) for the planner.
 
-### Core Components
-
-1. **Scrapers** (`*_scraper.py`)
-   - Reddit API integration with pagination
-   - Rate limiting and error handling
-   - Top comment extraction
-
-2. **Embedding Generation** (`generate_embeddings.py`)
-   - Sentence transformer embeddings
-   - Batch processing for efficiency
-   - Separate files per subreddit
-
-3. **RAG System** (`optimized_rag_system.py`)
-   - Semantic similarity search
-   - LLM integration (OpenAI/Anthropic)
-   - Query caching and optimization
-
-4. **Interactive Interface** (`simple_rag.py`)
-   - User-friendly command interface
-   - Session persistence
-   - Real-time responses
-
-### Data Flow
-```
-Reddit Posts → Scraping → Embedding Generation → Vector Storage → Semantic Search → LLM → Response
-```
-
-## 📁 File Structure
-
-```
-reddit-rag-system/
-├── simple_rag.py              # Interactive interface
-├── rag_query.py              # Single query tool
-├── optimized_rag_system.py   # Core RAG engine
-├── generate_embeddings.py    # Embedding generator
-├── config_template.py        # Configuration template
-├── config.py                 # Your API keys (create from template)
-├── requirements.txt          # Python dependencies
-├── scrapers/
-│   ├── reddit_scraper.py     # Indians_StudyAbroad scraper
-│   ├── h1b_scraper.py        # H1B scraper
-│   ├── uscis_scraper.py      # USCIS scraper
-│   └── schengen_visa_scraper.py # Schengen scraper
-├── data/
-│   ├── *_posts_*.json        # Scraped post data
-│   └── *_embeddings_*.pkl    # Pre-generated embeddings
-└── responses/
-    └── rag_response_*.txt    # Saved Q&A sessions
-```
-
-## ⚙️ Configuration
-
-Edit `config.py` to customize:
-
-```python
-# LLM Provider
-LLM_PROVIDER = "openai"  # or "anthropic", "local"
-MODEL_NAME = "gpt-3.5-turbo"
-
-# API Keys
-OPENAI_API_KEY = "your_openai_api_key_here"
-
-# Performance Settings
-SIMILARITY_THRESHOLD = 0.3
-TOP_K_RESULTS = 5
-MAX_CONTEXT_LENGTH = 4000
-```
-
-## 🔄 Data Updates
-
-To refresh data with new Reddit posts:
+## Verify
 
 ```bash
-# Scrape new posts
-python reddit_scraper.py
-python h1b_scraper.py  
-python uscis_scraper.py
-python schengen_visa_scraper.py
-
-# Regenerate embeddings
-python generate_embeddings.py
-
-# System will automatically load latest embeddings
+cd chatgpt-ai-template-main
+npm run test:group-trip
+npm run test:firestore-rules
+npm run build
 ```
 
-## 🚨 Rate Limiting
+Use Node 20 or newer. The checks cover the legacy local flow, N=4–10 deterministic allocation, private projections, revisions, create/lock idempotency, invite rotation/revocation, command authorization, and the Firestore access matrix.
 
-Reddit API has rate limits. The scrapers include:
-- Automatic delays between requests
-- Error handling for 429 (Too Many Requests)
-- Graceful degradation when limits are hit
+For a full local multi-identity journey, start the Auth and Firestore emulators plus the app with the emulator variables from `.env.example`, then run:
 
-## 🤝 Contributing
+```bash
+npm run dry-run:group-trip -- 4
+npm run dry-run:group-trip -- 10
+```
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+These journeys exercise the authenticated HTTP API and real Firestore emulator transactions from room creation through unanimous approval without printing identity tokens or invite secrets.
 
-## 📄 License
+## Shared-planning configuration
 
-MIT License - see the LICENSE file for details.
+Copy [`chatgpt-ai-template-main/.env.example`](chatgpt-ai-template-main/.env.example) to `.env.local` and provide the Firebase web values. The server also requires `FIREBASE_PROJECT_ID` and either `FIREBASE_SERVICE_ACCOUNT_JSON` or `GOOGLE_APPLICATION_CREDENTIALS`. Enable Google Authentication for recoverable organizers and Anonymous Authentication for invited participants, then deploy the committed Firestore rules before a multi-device test.
 
-## ⚠️ Disclaimer
+Invite secrets are returned once, placed after the URL fragment, removed from the address bar before telemetry can initialize, and stored only as a SHA-256 digest. Direct browser access to trip, ballot, constraint, and idempotency documents is denied; every shared mutation crosses the verified-ID server transaction boundary.
 
-This tool is for educational and research purposes. Please respect Reddit's terms of service and API guidelines. Always use reasonable rate limits when scraping.
+## MVP boundaries
 
-## 🙏 Acknowledgments
+This is a product-validation build, not a booking or legal-advice service. It uses versioned seeded upper-bound estimates and does not include document uploads, payments, bookings, live availability, live fares, or live visa decisions. Official entry checks remain visible actions. Production deployment and Firebase Console configuration are intentionally outside the PR.
 
-- Reddit for providing the data platform
-- OpenAI for the LLM capabilities
-- Sentence Transformers for semantic search
+The product and scoring decisions are documented in [`docs/group-trip-mvp-design.md`](docs/group-trip-mvp-design.md), with the implementation sequence in [`docs/group-trip-mvp-plan.md`](docs/group-trip-mvp-plan.md).
 
-- The open-source community for the underlying libraries
+## Contributing
+
+Create a focused branch, include tests for behavior changes, and open a pull request with the problem, approach, and verification evidence.

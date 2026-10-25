@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function owns(userId) { return request.auth != null && request.auth.uid == userId; }
+
+    // Preserve the existing account/query-counter flow without allowing a
+    // browser to grant itself Pro access or write another user's document.
+    match /users/{userId} {
+      allow read: if owns(userId);
+      allow create: if owns(userId)
+        && request.resource.data.isPro == false
+        && request.resource.data.queryCount == 0;
+      allow update: if owns(userId)
+        && request.resource.data.isPro == resource.data.isPro
+        && request.resource.data.diff(resource.data).changedKeys()
+          .hasOnly(['displayName', 'photoURL', 'queryCount', 'lastQueryAt', 'lastResetDate']);
+      allow delete: if false;
+    }
+
+    match /groupTrips/{document=**} { allow read, write: if false; }
+    match /groupTripCreateRequests/{document=**} { allow read, write: if false; }
+
+    match /{document=**} { allow read, write: if false; }
+  }
+}
