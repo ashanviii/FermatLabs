@@ -1,0 +1,356 @@
+{
+  "destination": {
+    "id": "istanbul",
+    "name": "Istanbul",
+    "country": "Turkey",
+    "countryCode": "TR",
+    "lat": 41.01,
+    "lon": 28.96028,
+    "timeZone": "Europe/Istanbul",
+    "costCurrency": "TRY",
+    "tags": [
+      "food",
+      "culture",
+      "shopping",
+      "art"
+    ],
+    "passportMonths": 5,
+    "visaKey": null,
+    "visaLeadDays": null,
+    "visaWaivedBy": [],
+    "officialUrl": "https://www.instagram.com/istanbultourismpolice/?hl=en",
+    "reviewedAt": "2026-10-25",
+    "roomCapacity": 2,
+    "roomNight": 3500,
+    "vehicleCapacity": 4,
+    "vehicleDay": 2500,
+    "foodDay": 1200,
+    "insurance": 450,
+    "entryAllowance": 0,
+    "activities": [
+      {
+        "id": "hagia-sophia",
+        "title": "Hagia Sophia",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Historical Peninsula",
+        "costPerPerson": 700,
+        "lat": 41.00833,
+        "lon": 28.98
+      },
+      {
+        "id": "basilica-cistern",
+        "title": "Basilica Cistern",
+        "tags": [
+          "culture",
+          "art"
+        ],
+        "durationMinutes": 150,
+        "location": "Historical Peninsula",
+        "costPerPerson": 350,
+        "lat": 41.0084,
+        "lon": 28.97792
+      },
+      {
+        "id": "galata-tower",
+        "title": "Galata Tower",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Galata",
+        "costPerPerson": 300,
+        "lat": 41.02563,
+        "lon": 28.97415
+      },
+      {
+        "id": "blue-mosque-sublime-porte",
+        "title": "Blue Mosque and Sublime Porte",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 180,
+        "location": "Historical Peninsula",
+        "costPerPerson": 0,
+        "lat": 41.00539,
+        "lon": 28.97682
+      },
+      {
+        "id": "ecumenical-patriarchate-of-constantinopl-fatih-mosque",
+        "title": "Ecumenical Patriarchate of Constantinople and Fatih Mosque",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 210,
+        "location": "Historical Peninsula",
+        "costPerPerson": 250,
+        "lat": 41.02922,
+        "lon": 28.95168
+      },
+      {
+        "id": "topkap-palace",
+        "title": "Topkapı Palace",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Historical Peninsula",
+        "costPerPerson": 500,
+        "lat": 41.013,
+        "lon": 28.984
+      },
+      {
+        "id": "dolmabahce-palace",
+        "title": "Dolmabahçe Palace",
+        "tags": [
+          "culture",
+          "art"
+        ],
+        "durationMinutes": 150,
+        "location": "European Bosphorus",
+        "costPerPerson": 350,
+        "lat": 41.03944,
+        "lon": 29.00167
+      },
+      {
+        "id": "golden-horn-boat-cruise",
+        "title": "Golden Horn boat cruise",
+        "tags": [
+          "nature"
+        ],
+        "durationMinutes": 120,
+        "location": "Istanbul",
+        "costPerPerson": 350,
+        "lat": 41.02917,
+        "lon": 28.96111
+      },
+      {
+        "id": "suleymaniye-mosque",
+        "title": "Süleymaniye Mosque",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 90,
+        "location": "Historical Peninsula",
+        "costPerPerson": 0,
+        "lat": 41.01611,
+        "lon": 28.96389
+      },
+      {
+        "id": "taksim-square-istiklal-avenue",
+        "title": "Taksim Square and İstiklal Avenue",
+        "tags": [
+          "culture",
+          "shopping"
+        ],
+        "durationMinutes": 180,
+        "location": "Beyoğlu",
+        "costPerPerson": 0,
+        "lat": 41.03694,
+        "lon": 28.98583
+      },
+      {
+        "id": "yedikule-fortress",
+        "title": "Yedikule Fortress",
+        "tags": [
+          "culture",
+          "art"
+        ],
+        "durationMinutes": 150,
+        "location": "Historical Peninsula",
+        "costPerPerson": 350,
+        "lat": 40.99306,
+        "lon": 28.92333
+      },
+      {
+        "id": "grand-bazaar",
+        "title": "Grand Bazaar",
+        "tags": [
+          "food",
+          "shopping"
+        ],
+        "durationMinutes": 120,
+        "location": "Fatih",
+        "costPerPerson": 350,
+        "lat": 41.01058,
+        "lon": 28.96793
+      }
+    ],
+    "source": "pack:wikidata+wikivoyage 2026-10",
+    "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+  },
+  "meta": {
+    "generatedOn": "2026-10-25",
+    "generator": "tools/places/city_pack.py",
+    "input": {
+      "city": "Istanbul",
+      "country": "TR",
+      "wikivoyageTitle": "Istanbul"
+    },
+    "wikidata": "Q406",
+    "wikivoyageUrl": "https://en.wikivoyage.org/wiki/Istanbul",
+    "population": 15655924.0,
+    "priceLevel": {
+      "indicator": "PA.NUS.PRVT.PP",
+      "year": "2025",
+      "lcuPerIntlDollar": 17.7444,
+      "lcuPerUsd": 39.4548,
+      "priceLevelVsUS": 0.45,
+      "cityMultiplier": 1.2,
+      "basisIntlDollars": {
+        "roomNight": 170,
+        "vehicleDay": 110,
+        "foodDay": 55,
+        "insurance": 25
+      }
+    },
+    "sources": [
+      "pageviews",
+      "wikidata",
+      "wikivoyage",
+      "worldbank"
+    ],
+    "sourcesFailed": {},
+    "candidates": 303,
+    "proseActivities": [],
+    "ranking": [
+      {
+        "title": "Hagia Sophia",
+        "qid": "Q12506",
+        "category": "museum",
+        "score": 9.94,
+        "pageviews12m": 1042341,
+        "sitelinks": 152,
+        "curated": true
+      },
+      {
+        "title": "Basilica Cistern",
+        "qid": "Q216511",
+        "category": "palace",
+        "score": 8.369,
+        "pageviews12m": 209582,
+        "sitelinks": 41,
+        "curated": true
+      },
+      {
+        "title": "Galata Tower",
+        "qid": "Q91274",
+        "category": "museum",
+        "score": 8.294,
+        "pageviews12m": 117176,
+        "sitelinks": 58,
+        "curated": true
+      },
+      {
+        "title": "Blue Mosque",
+        "qid": "Q80541",
+        "category": "religious",
+        "score": 8.252,
+        "pageviews12m": 254950,
+        "sitelinks": 89,
+        "curated": true
+      },
+      {
+        "title": "Ecumenical Patriarchate of Constantinople",
+        "qid": "Q211004",
+        "category": "cathedral",
+        "score": 8.059,
+        "pageviews12m": 172598,
+        "sitelinks": 70,
+        "curated": true
+      },
+      {
+        "title": "Topkapı Palace",
+        "qid": "Q170495",
+        "category": "museum",
+        "score": 7.978,
+        "pageviews12m": 247766,
+        "sitelinks": 79,
+        "curated": true
+      },
+      {
+        "title": "Dolmabahçe Palace",
+        "qid": "Q274141",
+        "category": "palace",
+        "score": 7.811,
+        "pageviews12m": 151274,
+        "sitelinks": 53,
+        "curated": true
+      },
+      {
+        "title": "Golden Horn",
+        "qid": "Q179839",
+        "category": "water",
+        "score": 7.737,
+        "pageviews12m": 117309,
+        "sitelinks": 63,
+        "curated": false
+      },
+      {
+        "title": "Süleymaniye Mosque",
+        "qid": "Q178643",
+        "category": "religious",
+        "score": 7.295,
+        "pageviews12m": 120569,
+        "sitelinks": 69,
+        "curated": true
+      },
+      {
+        "title": "Taksim Square",
+        "qid": "Q736072",
+        "category": "square",
+        "score": 7.191,
+        "pageviews12m": 43838,
+        "sitelinks": 50,
+        "curated": false
+      },
+      {
+        "title": "Yedikule Fortress",
+        "qid": "Q632795",
+        "category": "palace",
+        "score": 7.115,
+        "pageviews12m": 18956,
+        "sitelinks": 27,
+        "curated": true
+      },
+      {
+        "title": "Sublime Porte",
+        "qid": "Q18871",
+        "category": "monument",
+        "score": 7.053,
+        "pageviews12m": 100927,
+        "sitelinks": 50,
+        "curated": false
+      },
+      {
+        "title": "Fatih Mosque",
+        "qid": "Q756189",
+        "category": "religious",
+        "score": 7.046,
+        "pageviews12m": 68696,
+        "sitelinks": 38,
+        "curated": true
+      },
+      {
+        "title": "Grand Bazaar",
+        "qid": "Q505954",
+        "category": "market",
+        "score": 7.029,
+        "pageviews12m": 105311,
+        "sitelinks": 46,
+        "curated": false
+      },
+      {
+        "title": "İstiklal Avenue",
+        "qid": "Q344348",
+        "category": "street",
+        "score": 6.963,
+        "pageviews12m": 38121,
+        "sitelinks": 36,
+        "curated": false
+      }
+    ]
+  }
+}

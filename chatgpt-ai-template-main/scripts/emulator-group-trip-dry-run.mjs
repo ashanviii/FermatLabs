@@ -113,7 +113,10 @@ for (const person of people) {
   assert.equal(projection.id, tripId);
   assert.equal(projection.constraints, undefined);
   assert.equal(projection.ballots, undefined);
-  assert.equal(JSON.stringify(projection).includes('300000'), false, 'Projection must not contain a private budget ceiling');
+  // Each traveller sees their own inputs; no other part of the projection may carry a ceiling.
+  const { myConstraints, ...shared } = projection;
+  assert.equal(myConstraints.budget, 300000, 'Traveller must see their own budget');
+  assert.equal(JSON.stringify(shared).includes('300000'), false, 'Projection must not contain a private budget ceiling');
 }
 
 console.log(`PASS ${count}-person shared journey: create retry, join/admit, private inputs, vote, lock, reconcile, approve, privacy`);

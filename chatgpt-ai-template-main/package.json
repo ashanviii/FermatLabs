@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:group-trip": "node --test src/lib/groupTrip.test.cjs src/lib/collaborativeTrip.test.cjs src/lib/groupTripCommandService.test.cjs",
+    "test:group-trip": "node --test src/lib/groupTrip.test.cjs src/lib/collaborativeTrip.test.cjs src/lib/groupTripCommandService.test.cjs src/lib/globalTrips.test.cjs src/lib/features/*.test.cjs",
     "test:firestore-rules": "firebase emulators:exec --project demo-fermat --only firestore \"node --test src/lib/firestore.rules.test.cjs\"",
     "dry-run:group-trip": "node scripts/emulator-group-trip-dry-run.mjs"
   },

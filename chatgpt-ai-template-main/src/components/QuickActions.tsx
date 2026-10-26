@@ -92,7 +92,7 @@ export default function QuickActions({ onActionClick }: QuickActionsProps) {
         <Flex align="center" justify="space-between">
           <HStack spacing={2}>
             <Text fontSize={{ base: "md", md: "lg" }} fontWeight="700" color="gray.800">
-              ⚡ Quick Actions
+              Quick Actions
             </Text>
             <Badge colorScheme="purple" fontSize="2xs" px={2} py={0.5} borderRadius="full">
               Try these

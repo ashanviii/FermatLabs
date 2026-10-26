@@ -125,7 +125,7 @@ export default function FlightResults({ flights, isLoading = false, onSelectFlig
                 borderRadius="full"
                 boxShadow="0 4px 12px rgba(102, 126, 234, 0.3)"
               >
-                ⭐ Best Deal
+                Best Deal
               </Badge>
             )}
 

@@ -1,171 +1,94 @@
-'use client';
-
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { ArrowRight, Compass, Plane } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
-import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { icons } from '@/components/ui/icons';
+import { sources } from '@/lib/geo';
 import FermatMark from './FermatMark';
 
-// Each sticker drops in with a small overshoot, then rests at its own tilt.
-function Sticker({
-  children,
-  rotate,
-  delay,
-  visible,
-  className,
-}: {
-  children: React.ReactNode;
-  rotate: number;
-  delay: number;
-  visible: boolean;
-  className?: string;
-}) {
-  return (
-    <span
-      className={cn(
-        'inline-flex shrink-0 transition-[transform,opacity] duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)]',
-        className,
-      )}
-      style={{
-        transitionDelay: `${delay}ms`,
-        opacity: visible ? 1 : 0,
-        transform: visible
-          ? `rotate(${rotate}deg) scale(1)`
-          : `translateY(24px) rotate(${rotate - 18}deg) scale(0.4)`,
-      }}
-    >
-      <span className="inline-flex transition-transform duration-300 hover:-rotate-6 hover:scale-105">{children}</span>
-    </span>
-  );
-}
-
-const pill =
-  'rounded-full border-[2.5px] border-[#0B1F17] px-4 py-1 text-3xl font-semibold leading-tight tracking-tight sm:px-5 sm:text-5xl';
-const circle = 'grid size-12 place-items-center rounded-full border-[2.5px] border-[#0B1F17] sm:size-14';
-
-// Rounded so server and browser produce identical markup (raw trig floats differ slightly).
-const starburstPoints = Array.from({ length: 24 }, (_, i) => {
-  const r = i % 2 === 0 ? 48 : 38;
-  const a = (Math.PI * i) / 12 - Math.PI / 2;
-  return `${(50 + r * Math.cos(a)).toFixed(2)},${(50 + r * Math.sin(a)).toFixed(2)}`;
-}).join(' ');
-
-function Starburst({ className }: { className?: string }) {
-  const d = starburstPoints;
-  return (
-    <span className={cn('relative grid size-16 place-items-center sm:size-20', className)}>
-      <svg viewBox="0 0 100 100" className="absolute inset-0 size-full animate-spin-slow" aria-hidden>
-        <polygon points={d} fill="#F8E6A0" stroke="#0B1F17" strokeWidth="3" strokeLinejoin="round" />
-      </svg>
-      <FermatMark className="relative h-7 text-[#0B1F17] sm:h-8" />
-    </span>
-  );
-}
-
+/** Closing call to action: the one brand-green panel on the page. */
 export default function ClosingCta() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.3 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <footer className="container pb-6 md:pb-10">
-      <div
-        ref={ref}
-        className="relative overflow-hidden rounded-[2rem] bg-[#DCF2E3] px-6 py-12 text-[#0B1F17] md:px-12 md:py-16"
-      >
-        <div aria-hidden className="absolute -right-24 -top-24 size-80 rounded-full bg-[#F8E6A0]/30 blur-3xl" />
-        <div aria-hidden className="absolute -bottom-32 left-1/3 size-80 rounded-full bg-[#5DBB84]/20 blur-3xl" />
+    <section aria-labelledby="cta-title" className="mx-auto w-full max-w-page px-4 sm:px-6 lg:px-8">
+      <div className="relative overflow-hidden rounded-3xl bg-brand-900 px-6 py-12 text-white shadow-raised sm:px-12 sm:py-16">
+        {/* Soft decorative glow, no meaning. */}
+        <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 size-80 rounded-full bg-brand-500/25 blur-3xl" />
 
-        <div className="relative grid items-center gap-12 lg:grid-cols-2">
-          <div className="flex flex-col items-start gap-3" aria-label="Your next trip is one chat away">
-            <div className="flex items-center gap-3">
-              <Sticker visible={visible} delay={0} rotate={-8}>
-                <span className={circle}>
-                  <Plane className="size-5 sm:size-6" />
-                </span>
-              </Sticker>
-              <Sticker visible={visible} delay={120} rotate={-4}>
-                <span className={pill}>Your</span>
-              </Sticker>
-            </div>
-            <div className="flex items-center gap-3 pl-6 sm:pl-12">
-              <Sticker visible={visible} delay={240} rotate={3}>
-                <span className={pill}>next trip</span>
-              </Sticker>
-              <Sticker visible={visible} delay={360} rotate={0}>
-                <span className={cn(circle, 'bg-white/50')}>
-                  <Compass className="size-5 sm:size-6" />
-                </span>
-              </Sticker>
-            </div>
-            <div className="flex items-center gap-3 pl-24 sm:pl-44">
-              <Sticker visible={visible} delay={480} rotate={-6}>
-                <span className={pill}>is</span>
-              </Sticker>
-            </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <Sticker visible={visible} delay={600} rotate={-2}>
-                <span className={cn(pill, 'bg-[#0B1F17] text-[#DCF2E3]')}>one chat away</span>
-              </Sticker>
-              <Sticker visible={visible} delay={760} rotate={10}>
-                <Starburst />
-              </Sticker>
-            </div>
-          </div>
-
-          <div
-            className={cn(
-              'transition-all delay-300 duration-700 ease-out lg:pl-6',
-              visible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0',
-            )}
-          >
-            <h2 className="max-w-md text-3xl font-semibold leading-tight tracking-tight md:text-4xl">
-              Feeling inspired to plan your next trip?
+        <div className="relative flex flex-col items-start gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-prose">
+            <p className="type-overline m-0 text-brand-200">Free for every group</p>
+            <h2 id="cta-title" className="type-h1 m-0 mt-2 text-white sm:text-[2.5rem] sm:leading-[1.1]">
+              Get the whole group on the same trip.
             </h2>
-            <p className="mt-3 max-w-sm text-[#0B1F17]/70">
-              Tell Fermat where you want to go and get visas, flights and stays sorted in one conversation.
+            <p className="type-lead m-0 mt-3 text-brand-100">
+              Start a room, share the link and see which trips work for everyone in a few minutes.
             </p>
-            <Link
-              href="/plan"
-              className="group mt-7 inline-flex h-12 items-center gap-2 rounded-full bg-[#141611] px-7 font-semibold text-white shadow-[0_10px_24px_-10px_rgba(20,22,17,0.35)] transition-all hover:-translate-y-0.5 hover:bg-[#2A2D27]"
+          </div>
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+            <Button asChild size="lg" className="bg-white text-brand-900 hover:bg-brand-50 focus-visible:ring-offset-brand-900">
+              <Link href="/plan">
+                Start a group trip
+                <ArrowRight className="size-5" strokeWidth={2} aria-hidden />
+              </Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="ghost"
+              className="text-white ring-1 ring-inset ring-white/30 hover:bg-white/10 hover:text-white focus-visible:ring-offset-brand-900"
             >
-              Start planning
-              <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </Link>
-
-            <nav className="mt-12 flex flex-wrap gap-x-8 gap-y-2 text-sm font-medium">
-              {['Support', 'Privacy', 'Terms', 'FAQ'].map((item) => (
-                <span key={item} className="cursor-pointer underline-offset-4 transition-colors hover:underline">
-                  {item}
-                </span>
-              ))}
-            </nav>
+              <Link href="/plan?preview=locked">See an example plan</Link>
+            </Button>
           </div>
         </div>
+      </div>
+    </section>
+  );
+}
 
-        <div className="relative mt-12 flex flex-col items-start justify-between gap-3 border-t border-[#0B1F17]/15 pt-6 text-sm sm:flex-row sm:items-center">
-          <span className="flex items-center gap-2 text-base font-semibold">
-            <FermatMark className="h-6" />
-            Fermat
-          </span>
-          <span className="text-[#0B1F17]/60">© {new Date().getFullYear()} Fermat AI. All rights reserved.</span>
+const footerLinks = [
+  { label: 'Planner', href: '/plan' },
+  { label: 'Privacy', href: '/privacy' },
+  { label: 'Terms', href: '/terms' },
+];
+
+/** Site footer: links, the single estimates disclaimer, copyright. Shared by the landing and legal pages. */
+export function SiteFooter() {
+  return (
+    <footer className="mx-auto w-full max-w-page px-4 pb-10 pt-12 sm:px-6 lg:px-8">
+      <div className="flex flex-col gap-6 border-0 border-t border-solid border-line pt-8 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex max-w-sm flex-col gap-3">
+          <Link href="/" className="inline-flex items-center gap-2 text-ink no-underline">
+            <FermatMark className="h-6 text-brand-900" />
+            <span className="type-h3">Fermat</span>
+          </Link>
+          <p className="type-small m-0 flex gap-2 text-ink-muted">
+            <icons.info className="mt-0.5 size-4 shrink-0 text-ink-faint" strokeWidth={1.75} aria-hidden />
+            <span>
+              <strong className="font-semibold text-ink-soft">Estimates.</strong> Prices, routes and entry rules change.
+              Fermat doesn&apos;t book anything, so check before you pay.
+            </span>
+          </p>
         </div>
+        <nav aria-label="Footer" className="flex flex-wrap gap-x-6 gap-y-2">
+          {footerLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="type-small rounded font-semibold text-ink-soft no-underline underline-offset-4 hover:text-brand-800 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
+      <div className="mt-6 flex flex-col gap-1.5 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+        <p className="type-caption m-0 text-ink-muted">© {new Date().getFullYear()} Fermat Labs</p>
+        {/* Data credits: the holiday data is CC BY 3.0, so its attribution must be shown. */}
+        <p className="type-caption m-0 max-w-prose text-ink-muted sm:text-right">
+          {sources.holidays.attribution}. {sources.fx.attribution}.
+        </p>
       </div>
     </footer>
   );

@@ -81,7 +81,7 @@ export default function FirstTimeHint({ onDismiss }: FirstTimeHintProps) {
           {/* Content */}
           <VStack spacing={2} align="stretch">
             <Text fontSize="sm" fontWeight="700" color="gray.800">
-              👋 Welcome to Fermat Travel AI!
+              Welcome to Fermat Travel AI!
             </Text>
             <Text fontSize="xs" color="gray.600" lineHeight="1.6">
               Click <strong>"Show All Services"</strong> (top-left) to see everything we can help you with, 

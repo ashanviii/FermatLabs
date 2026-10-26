@@ -1,0 +1,367 @@
+{
+  "destination": {
+    "id": "amsterdam",
+    "name": "Amsterdam",
+    "country": "Netherlands",
+    "countryCode": "NL",
+    "lat": 52.36667,
+    "lon": 4.88333,
+    "timeZone": "Europe/Amsterdam",
+    "costCurrency": "EUR",
+    "tags": [
+      "food",
+      "culture",
+      "nightlife",
+      "art",
+      "nature"
+    ],
+    "passportMonths": 3,
+    "visaKey": null,
+    "visaLeadDays": null,
+    "visaWaivedBy": [],
+    "officialUrl": "http://www.iamsterdam.com/en",
+    "reviewedAt": "2026-10-25",
+    "roomCapacity": 2,
+    "roomNight": 140,
+    "vehicleCapacity": 4,
+    "vehicleDay": 85,
+    "foodDay": 40,
+    "insurance": 20,
+    "entryAllowance": 0,
+    "activities": [
+      {
+        "id": "rijksmuseum",
+        "title": "Rijksmuseum",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Zuid",
+        "costPerPerson": 20,
+        "lat": 52.36,
+        "lon": 4.88528
+      },
+      {
+        "id": "van-gogh-museum",
+        "title": "Van Gogh Museum",
+        "tags": [
+          "art",
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Zuid",
+        "costPerPerson": 25,
+        "lat": 52.35833,
+        "lon": 4.88111
+      },
+      {
+        "id": "vondelpark",
+        "title": "Vondelpark",
+        "tags": [
+          "nature"
+        ],
+        "durationMinutes": 120,
+        "location": "Zuid",
+        "costPerPerson": 0,
+        "lat": 52.35694,
+        "lon": 4.86639
+      },
+      {
+        "id": "albert-cuyp-market",
+        "title": "Albert Cuyp Market",
+        "tags": [
+          "food",
+          "shopping"
+        ],
+        "durationMinutes": 120,
+        "location": "Amsterdam",
+        "costPerPerson": 16,
+        "lat": 52.35611,
+        "lon": 4.89694
+      },
+      {
+        "id": "anne-frank-house",
+        "title": "Anne Frank House",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Canal District",
+        "costPerPerson": 14,
+        "lat": 52.37515,
+        "lon": 4.88404
+      },
+      {
+        "id": "de-wallen",
+        "title": "De Wallen",
+        "tags": [
+          "culture",
+          "food"
+        ],
+        "durationMinutes": 150,
+        "location": "Amsterdam",
+        "costPerPerson": 8,
+        "lat": 52.37342,
+        "lon": 4.89806
+      },
+      {
+        "id": "magere-brug",
+        "title": "Magere Brug",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 90,
+        "location": "Canal District",
+        "costPerPerson": 20,
+        "lat": 52.36359,
+        "lon": 4.90236
+      },
+      {
+        "id": "amstel-boat-cruise",
+        "title": "Amstel boat cruise",
+        "tags": [
+          "nature"
+        ],
+        "durationMinutes": 120,
+        "location": "Amsterdam",
+        "costPerPerson": 16,
+        "lat": 52.2875,
+        "lon": 4.8875
+      },
+      {
+        "id": "dam-square-homomonument",
+        "title": "Dam Square and Homomonument",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Amsterdam",
+        "costPerPerson": 0,
+        "lat": 52.37306,
+        "lon": 4.89278
+      },
+      {
+        "id": "johan-cruyff-arena",
+        "title": "Johan Cruyff Arena",
+        "tags": [
+          "culture",
+          "adventure"
+        ],
+        "durationMinutes": 90,
+        "location": "Zuidoost",
+        "costPerPerson": 25,
+        "lat": 52.31417,
+        "lon": 4.94194
+      },
+      {
+        "id": "artis",
+        "title": "Artis",
+        "tags": [
+          "nature",
+          "adventure"
+        ],
+        "durationMinutes": 180,
+        "location": "Plantage",
+        "costPerPerson": 25,
+        "lat": 52.36611,
+        "lon": 4.91667
+      },
+      {
+        "id": "ziggo-dome",
+        "title": "Ziggo Dome",
+        "tags": [
+          "nightlife",
+          "art"
+        ],
+        "durationMinutes": 150,
+        "location": "Zuidoost",
+        "costPerPerson": 40,
+        "lat": 52.31333,
+        "lon": 4.93694
+      }
+    ],
+    "source": "pack:wikidata+wikivoyage 2026-10",
+    "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+  },
+  "meta": {
+    "generatedOn": "2026-10-25",
+    "generator": "tools/places/city_pack.py",
+    "input": {
+      "city": "Amsterdam",
+      "country": "NL",
+      "wikivoyageTitle": "Amsterdam"
+    },
+    "wikidata": "Q727",
+    "wikivoyageUrl": "https://en.wikivoyage.org/wiki/Amsterdam",
+    "population": 921468.0,
+    "priceLevel": {
+      "indicator": "PA.NUS.PRVT.PP",
+      "year": "2025",
+      "lcuPerIntlDollar": 0.7673,
+      "lcuPerUsd": 0.885,
+      "priceLevelVsUS": 0.867,
+      "cityMultiplier": 1.0,
+      "basisIntlDollars": {
+        "roomNight": 170,
+        "vehicleDay": 110,
+        "foodDay": 55,
+        "insurance": 25
+      }
+    },
+    "sources": [
+      "pageviews",
+      "wikidata",
+      "wikivoyage",
+      "worldbank"
+    ],
+    "sourcesFailed": {},
+    "candidates": 167,
+    "proseActivities": [],
+    "ranking": [
+      {
+        "title": "Rijksmuseum",
+        "qid": "Q190804",
+        "category": "museum",
+        "score": 8.459,
+        "pageviews12m": 137232,
+        "sitelinks": 70,
+        "curated": true
+      },
+      {
+        "title": "Van Gogh Museum",
+        "qid": "Q224124",
+        "category": "art_museum",
+        "score": 8.087,
+        "pageviews12m": 69963,
+        "sitelinks": 60,
+        "curated": true
+      },
+      {
+        "title": "Vondelpark",
+        "qid": "Q1419691",
+        "category": "park",
+        "score": 7.516,
+        "pageviews12m": 31517,
+        "sitelinks": 26,
+        "curated": true
+      },
+      {
+        "title": "Albert Cuyp Market",
+        "qid": "Q2342892",
+        "category": "market",
+        "score": 5.422,
+        "pageviews12m": 10250,
+        "sitelinks": 14,
+        "curated": false
+      },
+      {
+        "title": "Anne Frank House",
+        "qid": "Q165366",
+        "category": "museum",
+        "score": 7.333,
+        "pageviews12m": 133038,
+        "sitelinks": 38,
+        "curated": true
+      },
+      {
+        "title": "De Wallen",
+        "qid": "Q447664",
+        "category": "neighbourhood",
+        "score": 7.198,
+        "pageviews12m": 207250,
+        "sitelinks": 36,
+        "curated": false
+      },
+      {
+        "title": "Magere Brug",
+        "qid": "Q1344400",
+        "category": "tower",
+        "score": 6.986,
+        "pageviews12m": 11262,
+        "sitelinks": 22,
+        "curated": true
+      },
+      {
+        "title": "Amstel",
+        "qid": "Q185405",
+        "category": "water",
+        "score": 6.925,
+        "pageviews12m": 37155,
+        "sitelinks": 60,
+        "curated": false
+      },
+      {
+        "title": "Dam Square",
+        "qid": "Q839050",
+        "category": "square",
+        "score": 6.883,
+        "pageviews12m": 35044,
+        "sitelinks": 33,
+        "curated": false
+      },
+      {
+        "title": "Johan Cruyff Arena",
+        "qid": "Q207109",
+        "category": "stadium",
+        "score": 6.876,
+        "pageviews12m": 149177,
+        "sitelinks": 54,
+        "curated": true
+      },
+      {
+        "title": "Artis",
+        "qid": "Q713124",
+        "category": "zoo",
+        "score": 6.8,
+        "pageviews12m": 8131,
+        "sitelinks": 30,
+        "curated": true
+      },
+      {
+        "title": "Ziggo Dome",
+        "qid": "Q71922",
+        "category": "show",
+        "score": 6.743,
+        "pageviews12m": 51467,
+        "sitelinks": 21,
+        "curated": true
+      },
+      {
+        "title": "Amsterdam Museum",
+        "qid": "Q1820897",
+        "category": "museum",
+        "score": 6.682,
+        "pageviews12m": 9888,
+        "sitelinks": 20,
+        "curated": true
+      },
+      {
+        "title": "H'ART Museum",
+        "qid": "Q1350009",
+        "category": "art_museum",
+        "score": 6.544,
+        "pageviews12m": 7623,
+        "sitelinks": 19,
+        "curated": true
+      },
+      {
+        "title": "Homomonument",
+        "qid": "Q51411",
+        "category": "monument",
+        "score": 6.426,
+        "pageviews12m": 14760,
+        "sitelinks": 23,
+        "curated": true
+      },
+      {
+        "title": "Amsterdam Centraal station",
+        "qid": "Q50719",
+        "category": "landmark",
+        "score": 6.414,
+        "pageviews12m": 34019,
+        "sitelinks": 36,
+        "curated": true
+      }
+    ]
+  }
+}

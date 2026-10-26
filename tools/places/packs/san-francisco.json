@@ -1,0 +1,368 @@
+{
+  "destination": {
+    "id": "san-francisco",
+    "name": "San Francisco",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 37.775,
+    "lon": -122.41944,
+    "timeZone": "America/Los_Angeles",
+    "costCurrency": "USD",
+    "tags": [
+      "food",
+      "culture",
+      "shopping",
+      "nature",
+      "adventure"
+    ],
+    "passportMonths": 0,
+    "visaKey": null,
+    "visaLeadDays": null,
+    "visaWaivedBy": [],
+    "officialUrl": "https://moscone.com/visitor-information-center",
+    "reviewedAt": "2026-10-25",
+    "roomCapacity": 2,
+    "roomNight": 160,
+    "vehicleCapacity": 4,
+    "vehicleDay": 120,
+    "foodDay": 55,
+    "insurance": 25,
+    "entryAllowance": 0,
+    "activities": [
+      {
+        "id": "golden-gate-bridge",
+        "title": "Golden Gate Bridge",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 90,
+        "location": "Golden Gate",
+        "costPerPerson": 55,
+        "lat": 37.81972,
+        "lon": -122.47861
+      },
+      {
+        "id": "golden-gate-park",
+        "title": "Golden Gate Park",
+        "tags": [
+          "nature"
+        ],
+        "durationMinutes": 120,
+        "location": "The Avenues",
+        "costPerPerson": 0,
+        "lat": 37.76972,
+        "lon": -122.47694
+      },
+      {
+        "id": "alcatraz-island",
+        "title": "Alcatraz Island",
+        "tags": [
+          "nature",
+          "adventure"
+        ],
+        "durationMinutes": 180,
+        "location": "San Francisco",
+        "costPerPerson": 10,
+        "lat": 37.82672,
+        "lon": -122.42283
+      },
+      {
+        "id": "san-francisco-ferry-building",
+        "title": "San Francisco Ferry Building",
+        "tags": [
+          "food",
+          "shopping"
+        ],
+        "durationMinutes": 120,
+        "location": "Union Square-Financial District",
+        "costPerPerson": 20,
+        "lat": 37.79556,
+        "lon": -122.39361
+      },
+      {
+        "id": "palace-of-fine-arts",
+        "title": "Palace of Fine Arts",
+        "tags": [
+          "culture",
+          "food"
+        ],
+        "durationMinutes": 150,
+        "location": "Golden Gate",
+        "costPerPerson": 10,
+        "lat": 37.80278,
+        "lon": -122.44833
+      },
+      {
+        "id": "haight-ashbury",
+        "title": "Haight-Ashbury",
+        "tags": [
+          "culture",
+          "food"
+        ],
+        "durationMinutes": 150,
+        "location": "San Francisco",
+        "costPerPerson": 10,
+        "lat": 37.77002,
+        "lon": -122.44694
+      },
+      {
+        "id": "de-young-museum",
+        "title": "De Young Museum",
+        "tags": [
+          "art",
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "The Avenues",
+        "costPerPerson": 20,
+        "lat": 37.77147,
+        "lon": -122.46868
+      },
+      {
+        "id": "california-academy-of-sciences",
+        "title": "California Academy of Sciences",
+        "tags": [
+          "nature",
+          "adventure"
+        ],
+        "durationMinutes": 180,
+        "location": "The Avenues",
+        "costPerPerson": 30,
+        "lat": 37.77,
+        "lon": -122.46639
+      },
+      {
+        "id": "angel-island",
+        "title": "Angel Island",
+        "tags": [
+          "nature",
+          "adventure"
+        ],
+        "durationMinutes": 180,
+        "location": "Fisherman's Wharf",
+        "costPerPerson": 10,
+        "lat": 37.86,
+        "lon": -122.43
+      },
+      {
+        "id": "exploratorium",
+        "title": "Exploratorium",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Fisherman's Wharf",
+        "costPerPerson": 18,
+        "lat": 37.8014,
+        "lon": -122.3976
+      },
+      {
+        "id": "sutro-baths",
+        "title": "Sutro Baths",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 180,
+        "location": "The Avenues",
+        "costPerPerson": 12,
+        "lat": 37.78,
+        "lon": -122.51361
+      },
+      {
+        "id": "grace-cathedral-union-square",
+        "title": "Grace Cathedral and Union Square",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 180,
+        "location": "Nob Hill-Russian Hill",
+        "costPerPerson": 8,
+        "lat": 37.7919,
+        "lon": -122.413
+      }
+    ],
+    "source": "pack:wikidata+wikivoyage 2026-10",
+    "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+  },
+  "meta": {
+    "generatedOn": "2026-10-25",
+    "generator": "tools/places/city_pack.py",
+    "input": {
+      "city": "San Francisco",
+      "country": "US",
+      "wikivoyageTitle": "San Francisco"
+    },
+    "wikidata": "Q62",
+    "wikivoyageUrl": "https://en.wikivoyage.org/wiki/San_Francisco",
+    "population": 873965.0,
+    "priceLevel": {
+      "indicator": "PA.NUS.PRVT.PP",
+      "year": "2025",
+      "lcuPerIntlDollar": 1.0,
+      "lcuPerUsd": 1.0,
+      "priceLevelVsUS": 1.0,
+      "cityMultiplier": 1.0,
+      "basisIntlDollars": {
+        "roomNight": 170,
+        "vehicleDay": 110,
+        "foodDay": 55,
+        "insurance": 25
+      }
+    },
+    "sources": [
+      "pageviews",
+      "wikidata",
+      "wikivoyage",
+      "worldbank"
+    ],
+    "sourcesFailed": {},
+    "candidates": 281,
+    "proseActivities": [],
+    "ranking": [
+      {
+        "title": "Golden Gate Bridge",
+        "qid": "Q44440",
+        "category": "tower",
+        "score": 8.582,
+        "pageviews12m": 659413,
+        "sitelinks": 110,
+        "curated": true
+      },
+      {
+        "title": "Golden Gate Park",
+        "qid": "Q635559",
+        "category": "park",
+        "score": 8.007,
+        "pageviews12m": 80363,
+        "sitelinks": 35,
+        "curated": true
+      },
+      {
+        "title": "Alcatraz Island",
+        "qid": "Q131354",
+        "category": "mountain",
+        "score": 7.824,
+        "pageviews12m": 360360,
+        "sitelinks": 64,
+        "curated": false
+      },
+      {
+        "title": "San Francisco Ferry Building",
+        "qid": "Q1408117",
+        "category": "market",
+        "score": 6.631,
+        "pageviews12m": 28513,
+        "sitelinks": 13,
+        "curated": true
+      },
+      {
+        "title": "Palace of Fine Arts",
+        "qid": "Q966263",
+        "category": "neighbourhood",
+        "score": 7.699,
+        "pageviews12m": 89886,
+        "sitelinks": 15,
+        "curated": true
+      },
+      {
+        "title": "Haight-Ashbury",
+        "qid": "Q1027700",
+        "category": "neighbourhood",
+        "score": 7.335,
+        "pageviews12m": 95191,
+        "sitelinks": 23,
+        "curated": false
+      },
+      {
+        "title": "De Young Museum",
+        "qid": "Q1470276",
+        "category": "art_museum",
+        "score": 7.3,
+        "pageviews12m": 33075,
+        "sitelinks": 25,
+        "curated": true
+      },
+      {
+        "title": "California Academy of Sciences",
+        "qid": "Q965731",
+        "category": "zoo",
+        "score": 7.28,
+        "pageviews12m": 31211,
+        "sitelinks": 25,
+        "curated": true
+      },
+      {
+        "title": "Angel Island",
+        "qid": "Q531734",
+        "category": "mountain",
+        "score": 7.229,
+        "pageviews12m": 65196,
+        "sitelinks": 15,
+        "curated": true
+      },
+      {
+        "title": "Exploratorium",
+        "qid": "Q206518",
+        "category": "museum",
+        "score": 7.1,
+        "pageviews12m": 33406,
+        "sitelinks": 16,
+        "curated": true
+      },
+      {
+        "title": "Sutro Baths",
+        "qid": "Q3505806",
+        "category": "archaeological",
+        "score": 6.994,
+        "pageviews12m": 89501,
+        "sitelinks": 9,
+        "curated": true
+      },
+      {
+        "title": "Grace Cathedral",
+        "qid": "Q3082361",
+        "category": "cathedral",
+        "score": 6.956,
+        "pageviews12m": 40392,
+        "sitelinks": 10,
+        "curated": true
+      },
+      {
+        "title": "Union Square",
+        "qid": "Q527972",
+        "category": "square",
+        "score": 6.936,
+        "pageviews12m": 24615,
+        "sitelinks": 15,
+        "curated": true
+      },
+      {
+        "title": "SS Jeremiah O'Brien",
+        "qid": "Q2464180",
+        "category": "landmark",
+        "score": 6.927,
+        "pageviews12m": 34965,
+        "sitelinks": 7,
+        "curated": true
+      },
+      {
+        "title": "Pier 39",
+        "qid": "Q1856083",
+        "category": "park",
+        "score": 6.845,
+        "pageviews12m": 25563,
+        "sitelinks": 12,
+        "curated": true
+      },
+      {
+        "title": "Cliff House",
+        "qid": "Q863464",
+        "category": "landmark",
+        "score": 6.831,
+        "pageviews12m": 69876,
+        "sitelinks": 8,
+        "curated": true
+      }
+    ]
+  }
+}

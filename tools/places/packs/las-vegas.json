@@ -1,0 +1,357 @@
+{
+  "destination": {
+    "id": "las-vegas",
+    "name": "Las Vegas",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 36.16722,
+    "lon": -115.14861,
+    "timeZone": "America/Los_Angeles",
+    "costCurrency": "USD",
+    "tags": [
+      "food",
+      "culture",
+      "nightlife",
+      "art",
+      "adventure"
+    ],
+    "passportMonths": 0,
+    "visaKey": null,
+    "visaLeadDays": null,
+    "visaWaivedBy": [],
+    "officialUrl": "http://www.visitlasvegas.co",
+    "reviewedAt": "2026-10-25",
+    "roomCapacity": 2,
+    "roomNight": 160,
+    "vehicleCapacity": 4,
+    "vehicleDay": 120,
+    "foodDay": 55,
+    "insurance": 25,
+    "entryAllowance": 0,
+    "activities": [
+      {
+        "id": "sphere",
+        "title": "Sphere",
+        "tags": [
+          "nightlife",
+          "art"
+        ],
+        "durationMinutes": 150,
+        "location": "The Strip",
+        "costPerPerson": 55,
+        "lat": 36.1212,
+        "lon": -115.16207
+      },
+      {
+        "id": "las-vegas-strip",
+        "title": "Las Vegas Strip",
+        "tags": [
+          "nightlife"
+        ],
+        "durationMinutes": 180,
+        "location": "Las Vegas",
+        "costPerPerson": 40,
+        "lat": 36.12,
+        "lon": -115.1725
+      },
+      {
+        "id": "show-las-vegas",
+        "title": "Evening show in Las Vegas",
+        "tags": [
+          "nightlife",
+          "art"
+        ],
+        "durationMinutes": 150,
+        "location": "Las Vegas",
+        "costPerPerson": 90
+      },
+      {
+        "id": "local-food-walk",
+        "title": "Las Vegas local food walk",
+        "tags": [
+          "food",
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "The Strip",
+        "costPerPerson": 25,
+        "lat": 36.16722,
+        "lon": -115.14861
+      },
+      {
+        "id": "the-strat",
+        "title": "The Strat",
+        "tags": [
+          "nightlife"
+        ],
+        "durationMinutes": 180,
+        "location": "Downtown",
+        "costPerPerson": 40,
+        "lat": 36.14746,
+        "lon": -115.15603
+      },
+      {
+        "id": "welcome-to-fabulous-las-vegas-sign",
+        "title": "Welcome to Fabulous Las Vegas sign",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 60,
+        "location": "The Strip",
+        "costPerPerson": 10,
+        "lat": 36.08206,
+        "lon": -115.17278
+      },
+      {
+        "id": "high-roller-fountains-of-bellagio",
+        "title": "High Roller and Fountains of Bellagio",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 180,
+        "location": "The Strip",
+        "costPerPerson": 25,
+        "lat": 36.1177,
+        "lon": -115.16815
+      },
+      {
+        "id": "fremont-street-experience",
+        "title": "Fremont Street Experience",
+        "tags": [
+          "culture",
+          "shopping"
+        ],
+        "durationMinutes": 90,
+        "location": "Downtown",
+        "costPerPerson": 0,
+        "lat": 36.1708,
+        "lon": -115.144
+      },
+      {
+        "id": "resorts-world-las-vegas",
+        "title": "Resorts World Las Vegas",
+        "tags": [
+          "nightlife"
+        ],
+        "durationMinutes": 180,
+        "location": "Winchester",
+        "costPerPerson": 40,
+        "lat": 36.1339,
+        "lon": -115.168
+      },
+      {
+        "id": "adventuredome",
+        "title": "Adventuredome",
+        "tags": [
+          "adventure"
+        ],
+        "durationMinutes": 210,
+        "location": "The Strip",
+        "costPerPerson": 75,
+        "lat": 36.1378,
+        "lon": -115.166
+      },
+      {
+        "id": "t-mobile-arena",
+        "title": "T-Mobile Arena",
+        "tags": [
+          "culture",
+          "adventure"
+        ],
+        "durationMinutes": 90,
+        "location": "Las Vegas",
+        "costPerPerson": 30,
+        "lat": 36.10292,
+        "lon": -115.17836
+      },
+      {
+        "id": "mob-museum",
+        "title": "Mob Museum",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Downtown",
+        "costPerPerson": 18,
+        "lat": 36.1728,
+        "lon": -115.1412
+      }
+    ],
+    "source": "pack:wikidata+wikivoyage 2026-10",
+    "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+  },
+  "meta": {
+    "generatedOn": "2026-10-25",
+    "generator": "tools/places/city_pack.py",
+    "input": {
+      "city": "Las Vegas",
+      "country": "US",
+      "wikivoyageTitle": "Las Vegas"
+    },
+    "wikidata": "Q23768",
+    "wikivoyageUrl": "https://en.wikivoyage.org/wiki/Las_Vegas",
+    "population": 641903.0,
+    "priceLevel": {
+      "indicator": "PA.NUS.PRVT.PP",
+      "year": "2025",
+      "lcuPerIntlDollar": 1.0,
+      "lcuPerUsd": 1.0,
+      "priceLevelVsUS": 1.0,
+      "cityMultiplier": 1.0,
+      "basisIntlDollars": {
+        "roomNight": 170,
+        "vehicleDay": 110,
+        "foodDay": 55,
+        "insurance": 25
+      }
+    },
+    "sources": [
+      "pageviews",
+      "wikidata",
+      "wikivoyage",
+      "worldbank"
+    ],
+    "sourcesFailed": {},
+    "candidates": 106,
+    "proseActivities": [
+      "Evening show in Las Vegas"
+    ],
+    "ranking": [
+      {
+        "title": "Sphere",
+        "qid": "Q60749353",
+        "category": "show",
+        "score": 8.504,
+        "pageviews12m": 492971,
+        "sitelinks": 30,
+        "curated": true
+      },
+      {
+        "title": "Las Vegas Strip",
+        "qid": "Q745608",
+        "category": "casino",
+        "score": 7.284,
+        "pageviews12m": 309429,
+        "sitelinks": 37,
+        "curated": false
+      },
+      {
+        "title": "The Strat",
+        "qid": "Q845846",
+        "category": "casino",
+        "score": 7.115,
+        "pageviews12m": 98390,
+        "sitelinks": 32,
+        "curated": true
+      },
+      {
+        "title": "Welcome to Fabulous Las Vegas sign",
+        "qid": "Q175665",
+        "category": "landmark",
+        "score": 6.655,
+        "pageviews12m": 52579,
+        "sitelinks": 16,
+        "curated": true
+      },
+      {
+        "title": "High Roller",
+        "qid": "Q892103",
+        "category": "tower",
+        "score": 6.569,
+        "pageviews12m": 32817,
+        "sitelinks": 19,
+        "curated": true
+      },
+      {
+        "title": "Fremont Street Experience",
+        "qid": "Q1368842",
+        "category": "street",
+        "score": 6.415,
+        "pageviews12m": 46728,
+        "sitelinks": 8,
+        "curated": true
+      },
+      {
+        "title": "Resorts World Las Vegas",
+        "qid": "Q14705265",
+        "category": "casino",
+        "score": 6.384,
+        "pageviews12m": 95244,
+        "sitelinks": 14,
+        "curated": false
+      },
+      {
+        "title": "Fountains of Bellagio",
+        "qid": "Q2735117",
+        "category": "monument",
+        "score": 6.218,
+        "pageviews12m": 26856,
+        "sitelinks": 4,
+        "curated": true
+      },
+      {
+        "title": "Adventuredome",
+        "qid": "Q379978",
+        "category": "theme_park",
+        "score": 6.084,
+        "pageviews12m": 21803,
+        "sitelinks": 8,
+        "curated": true
+      },
+      {
+        "title": "T-Mobile Arena",
+        "qid": "Q3338973",
+        "category": "stadium",
+        "score": 6.059,
+        "pageviews12m": 180749,
+        "sitelinks": 26,
+        "curated": false
+      },
+      {
+        "title": "Mob Museum",
+        "qid": "Q6886561",
+        "category": "museum",
+        "score": 5.854,
+        "pageviews12m": 20885,
+        "sitelinks": 5,
+        "curated": true
+      },
+      {
+        "title": "Springs Preserve",
+        "qid": "Q3218251",
+        "category": "national_park",
+        "score": 5.815,
+        "pageviews12m": 3804,
+        "sitelinks": 5,
+        "curated": true
+      },
+      {
+        "title": "Neon Museum",
+        "qid": "Q6993430",
+        "category": "art_museum",
+        "score": 5.789,
+        "pageviews12m": 14963,
+        "sitelinks": 6,
+        "curated": true
+      },
+      {
+        "title": "Old Las Vegas Mormon Fort State Historic Park",
+        "qid": "Q3816781",
+        "category": "palace",
+        "score": 5.787,
+        "pageviews12m": 18365,
+        "sitelinks": 3,
+        "curated": true
+      },
+      {
+        "title": "Big Apple Coaster",
+        "qid": "Q1670601",
+        "category": "activity",
+        "score": 5.532,
+        "pageviews12m": 20379,
+        "sitelinks": 4,
+        "curated": true
+      }
+    ]
+  }
+}

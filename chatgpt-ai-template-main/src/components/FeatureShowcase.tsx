@@ -167,7 +167,7 @@ export default function FeatureShowcase({ onServiceClick }: FeatureShowcaseProps
         {/* Main Services Grid */}
         <Box>
           <Text fontSize="lg" fontWeight="700" mb={4} color="gray.700">
-            🌍 Complete Travel Services
+            Complete Travel Services
           </Text>
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
             {mainFeatures.map((feature, index) => (
@@ -189,7 +189,7 @@ export default function FeatureShowcase({ onServiceClick }: FeatureShowcaseProps
           borderColor={borderColor}
         >
           <Text fontSize="lg" fontWeight="700" mb={4} color="gray.700">
-            ✨ Powered by Advanced AI
+            Powered by Advanced AI
           </Text>
           <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4}>
             {aiFeatures.map((feature, index) => (

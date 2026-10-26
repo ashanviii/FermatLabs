@@ -30,10 +30,10 @@ const CompactSearchIndicator: React.FC<CompactSearchIndicatorProps> = ({
   const borderColor = useColorModeValue('blue.200', 'blue.600');
 
   const steps = [
-    '🔍 Searching...',
-    '🌐 Finding results...',
-    '✨ Almost done...',
-    '✅ Complete!'
+    'Searching...',
+    'Finding results...',
+    'Almost done...',
+    'Complete!'
   ];
 
   useEffect(() => {

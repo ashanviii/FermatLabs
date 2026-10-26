@@ -1,0 +1,368 @@
+{
+  "destination": {
+    "id": "barcelona",
+    "name": "Barcelona",
+    "country": "Spain",
+    "countryCode": "ES",
+    "lat": 41.3825,
+    "lon": 2.17694,
+    "timeZone": "Europe/Madrid",
+    "costCurrency": "EUR",
+    "tags": [
+      "food",
+      "culture",
+      "shopping",
+      "nature",
+      "adventure"
+    ],
+    "passportMonths": 3,
+    "visaKey": null,
+    "visaLeadDays": null,
+    "visaWaivedBy": [],
+    "officialUrl": "http://www.barcelonaturisme.com/wv3/en/page/38/tourist-information-points.html",
+    "reviewedAt": "2026-10-25",
+    "roomCapacity": 2,
+    "roomNight": 120,
+    "vehicleCapacity": 4,
+    "vehicleDay": 75,
+    "foodDay": 35,
+    "insurance": 16,
+    "entryAllowance": 0,
+    "activities": [
+      {
+        "id": "sagrada-familia",
+        "title": "Sagrada Família",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 90,
+        "location": "Sagrada Família",
+        "costPerPerson": 10,
+        "lat": 41.40369,
+        "lon": 2.17433
+      },
+      {
+        "id": "camp-nou",
+        "title": "Camp Nou",
+        "tags": [
+          "culture",
+          "adventure"
+        ],
+        "durationMinutes": 90,
+        "location": "Inland Suburbs",
+        "costPerPerson": 30,
+        "lat": 41.38083,
+        "lon": 2.12278
+      },
+      {
+        "id": "park-guell",
+        "title": "Park Güell",
+        "tags": [
+          "nature"
+        ],
+        "durationMinutes": 120,
+        "location": "La Salut",
+        "costPerPerson": 5,
+        "lat": 41.41361,
+        "lon": 2.15278
+      },
+      {
+        "id": "la-boqueria",
+        "title": "La Boqueria",
+        "tags": [
+          "food",
+          "shopping"
+        ],
+        "durationMinutes": 120,
+        "location": "El Raval",
+        "costPerPerson": 12,
+        "lat": 41.3818,
+        "lon": 2.17155
+      },
+      {
+        "id": "la-rambla-barcelona-cathedral",
+        "title": "La Rambla and Barcelona Cathedral",
+        "tags": [
+          "culture",
+          "shopping"
+        ],
+        "durationMinutes": 210,
+        "location": "El Raval",
+        "costPerPerson": 5,
+        "lat": 41.38139,
+        "lon": 2.17306
+      },
+      {
+        "id": "palau-de-la-musica-catalana",
+        "title": "Palau de la Música Catalana",
+        "tags": [
+          "nightlife",
+          "art"
+        ],
+        "durationMinutes": 150,
+        "location": "Sant Pere, Santa Caterina i la Ribera",
+        "costPerPerson": 35,
+        "lat": 41.38767,
+        "lon": 2.17528
+      },
+      {
+        "id": "casa-batllo",
+        "title": "Casa Batlló",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 60,
+        "location": "Dreta de l'Eixample",
+        "costPerPerson": 6,
+        "lat": 41.39158,
+        "lon": 2.16492
+      },
+      {
+        "id": "gothic-quarter",
+        "title": "Gothic Quarter",
+        "tags": [
+          "culture",
+          "food"
+        ],
+        "durationMinutes": 150,
+        "location": "Ciutat Vella",
+        "costPerPerson": 6,
+        "lat": 41.38278,
+        "lon": 2.17694
+      },
+      {
+        "id": "torre-glories",
+        "title": "Torre Glòries",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 90,
+        "location": "Sant Martí",
+        "costPerPerson": 16,
+        "lat": 41.40349,
+        "lon": 2.18952
+      },
+      {
+        "id": "tibidabo",
+        "title": "Tibidabo",
+        "tags": [
+          "nature",
+          "adventure"
+        ],
+        "durationMinutes": 180,
+        "location": "Inland Suburbs",
+        "costPerPerson": 6,
+        "lat": 41.4225,
+        "lon": 2.11861
+      },
+      {
+        "id": "barcelona-pavilion",
+        "title": "Barcelona Pavilion",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 60,
+        "location": "Sants-Montjuïc",
+        "costPerPerson": 6,
+        "lat": 41.37056,
+        "lon": 2.15
+      },
+      {
+        "id": "palau-guell",
+        "title": "Palau Güell",
+        "tags": [
+          "culture",
+          "art"
+        ],
+        "durationMinutes": 150,
+        "location": "El Raval",
+        "costPerPerson": 12,
+        "lat": 41.37882,
+        "lon": 2.17439
+      }
+    ],
+    "source": "pack:wikidata+wikivoyage 2026-10",
+    "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+  },
+  "meta": {
+    "generatedOn": "2026-10-25",
+    "generator": "tools/places/city_pack.py",
+    "input": {
+      "city": "Barcelona",
+      "country": "ES",
+      "wikivoyageTitle": "Barcelona"
+    },
+    "wikidata": "Q1492",
+    "wikivoyageUrl": "https://en.wikivoyage.org/wiki/Barcelona",
+    "population": 1731649.0,
+    "priceLevel": {
+      "indicator": "PA.NUS.PRVT.PP",
+      "year": "2025",
+      "lcuPerIntlDollar": 0.6079,
+      "lcuPerUsd": 0.885,
+      "priceLevelVsUS": 0.687,
+      "cityMultiplier": 1.1,
+      "basisIntlDollars": {
+        "roomNight": 170,
+        "vehicleDay": 110,
+        "foodDay": 55,
+        "insurance": 25
+      }
+    },
+    "sources": [
+      "pageviews",
+      "wikidata",
+      "wikivoyage",
+      "worldbank"
+    ],
+    "sourcesFailed": {},
+    "candidates": 159,
+    "proseActivities": [],
+    "ranking": [
+      {
+        "title": "Sagrada Família",
+        "qid": "Q48435",
+        "category": "cathedral",
+        "score": 9.627,
+        "pageviews12m": 2383624,
+        "sitelinks": 109,
+        "curated": true
+      },
+      {
+        "title": "Camp Nou",
+        "qid": "Q159848",
+        "category": "stadium",
+        "score": 8.684,
+        "pageviews12m": 739337,
+        "sitelinks": 89,
+        "curated": true
+      },
+      {
+        "title": "Park Güell",
+        "qid": "Q212867",
+        "category": "garden",
+        "score": 8.626,
+        "pageviews12m": 169275,
+        "sitelinks": 55,
+        "curated": true
+      },
+      {
+        "title": "La Boqueria",
+        "qid": "Q1334899",
+        "category": "market",
+        "score": 6.095,
+        "pageviews12m": 15021,
+        "sitelinks": 26,
+        "curated": false
+      },
+      {
+        "title": "La Rambla",
+        "qid": "Q850593",
+        "category": "street",
+        "score": 8.066,
+        "pageviews12m": 69704,
+        "sitelinks": 39,
+        "curated": true
+      },
+      {
+        "title": "Palau de la Música Catalana",
+        "qid": "Q327940",
+        "category": "show",
+        "score": 7.949,
+        "pageviews12m": 46232,
+        "sitelinks": 44,
+        "curated": true
+      },
+      {
+        "title": "Barcelona Cathedral",
+        "qid": "Q17155",
+        "category": "cathedral",
+        "score": 7.898,
+        "pageviews12m": 129968,
+        "sitelinks": 44,
+        "curated": true
+      },
+      {
+        "title": "Casa Batlló",
+        "qid": "Q461371",
+        "category": "landmark",
+        "score": 7.833,
+        "pageviews12m": 187696,
+        "sitelinks": 51,
+        "curated": true
+      },
+      {
+        "title": "Gothic Quarter",
+        "qid": "Q17154",
+        "category": "neighbourhood",
+        "score": 7.527,
+        "pageviews12m": 43366,
+        "sitelinks": 30,
+        "curated": true
+      },
+      {
+        "title": "Torre Glòries",
+        "qid": "Q336246",
+        "category": "tower",
+        "score": 7.423,
+        "pageviews12m": 48696,
+        "sitelinks": 40,
+        "curated": true
+      },
+      {
+        "title": "Tibidabo",
+        "qid": "Q658271",
+        "category": "mountain",
+        "score": 7.408,
+        "pageviews12m": 45510,
+        "sitelinks": 31,
+        "curated": true
+      },
+      {
+        "title": "Barcelona Pavilion",
+        "qid": "Q807915",
+        "category": "landmark",
+        "score": 7.337,
+        "pageviews12m": 55882,
+        "sitelinks": 30,
+        "curated": true
+      },
+      {
+        "title": "Palau Güell",
+        "qid": "Q597051",
+        "category": "palace",
+        "score": 7.208,
+        "pageviews12m": 37204,
+        "sitelinks": 33,
+        "curated": true
+      },
+      {
+        "title": "Montjuïc",
+        "qid": "Q1122701",
+        "category": "mountain",
+        "score": 7.149,
+        "pageviews12m": 72364,
+        "sitelinks": 30,
+        "curated": false
+      },
+      {
+        "title": "Museu Nacional d'Art de Catalunya",
+        "qid": "Q861252",
+        "category": "art_museum",
+        "score": 7.097,
+        "pageviews12m": 30978,
+        "sitelinks": 31,
+        "curated": true
+      },
+      {
+        "title": "Museu Picasso",
+        "qid": "Q1050032",
+        "category": "art_museum",
+        "score": 6.791,
+        "pageviews12m": 25193,
+        "sitelinks": 30,
+        "curated": true
+      }
+    ]
+  }
+}

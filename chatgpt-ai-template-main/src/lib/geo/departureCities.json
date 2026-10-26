@@ -1,0 +1,881 @@
+{
+ "source": "https://davidmegginson.github.io/ourairports-data/airports.csv",
+ "license": "Public domain (OurAirports data, https://ourairports.com/data/)",
+ "fetchedAt": "2026-10-25",
+ "note": "lat/lon are the main airport coordinates, used for great-circle fare estimates. Indian names match seeds.departureCities.",
+ "cities": [
+  {
+   "name": "Delhi",
+   "countryCode": "IN",
+   "lat": 28.5556,
+   "lon": 77.0952,
+   "iata": "DEL",
+   "airport": "Indira Gandhi International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Mumbai",
+   "countryCode": "IN",
+   "lat": 19.0887,
+   "lon": 72.8679,
+   "iata": "BOM",
+   "airport": "Chhatrapati Shivaji Maharaj International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Bengaluru",
+   "countryCode": "IN",
+   "lat": 13.1979,
+   "lon": 77.7063,
+   "iata": "BLR",
+   "airport": "Kempegowda International Airport Bengaluru",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Hyderabad",
+   "countryCode": "IN",
+   "lat": 17.2313,
+   "lon": 78.4299,
+   "iata": "HYD",
+   "airport": "Rajiv Gandhi International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Chennai",
+   "countryCode": "IN",
+   "lat": 12.99,
+   "lon": 80.1693,
+   "iata": "MAA",
+   "airport": "Chennai International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Kolkata",
+   "countryCode": "IN",
+   "lat": 22.654,
+   "lon": 88.4476,
+   "iata": "CCU",
+   "airport": "Netaji Subhash Chandra Bose International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Pune",
+   "countryCode": "IN",
+   "lat": 18.5821,
+   "lon": 73.9197,
+   "iata": "PNQ",
+   "airport": "Pune International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Ahmedabad",
+   "countryCode": "IN",
+   "lat": 23.0772,
+   "lon": 72.6347,
+   "iata": "AMD",
+   "airport": "Sardar Vallabh Patel International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Kochi",
+   "countryCode": "IN",
+   "lat": 10.151,
+   "lon": 76.4008,
+   "iata": "COK",
+   "airport": "Cochin International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Jaipur",
+   "countryCode": "IN",
+   "lat": 26.8242,
+   "lon": 75.8122,
+   "iata": "JAI",
+   "airport": "Jaipur International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Goa",
+   "countryCode": "IN",
+   "lat": 15.3801,
+   "lon": 73.8333,
+   "iata": "GOI",
+   "airport": "Goa Dabolim International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Lucknow",
+   "countryCode": "IN",
+   "lat": 26.7606,
+   "lon": 80.8893,
+   "iata": "LKO",
+   "airport": "Chaudhary Charan Singh International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Chandigarh",
+   "countryCode": "IN",
+   "lat": 30.6735,
+   "lon": 76.7885,
+   "iata": "IXC",
+   "airport": "Shaheed Bhagat Singh International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "New York",
+   "countryCode": "US",
+   "lat": 40.6394,
+   "lon": -73.7793,
+   "iata": "JFK",
+   "airport": "John F. Kennedy International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Los Angeles",
+   "countryCode": "US",
+   "lat": 33.9425,
+   "lon": -118.408,
+   "iata": "LAX",
+   "airport": "Los Angeles International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Chicago",
+   "countryCode": "US",
+   "lat": 41.9786,
+   "lon": -87.9048,
+   "iata": "ORD",
+   "airport": "Chicago O'Hare International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "San Francisco",
+   "countryCode": "US",
+   "lat": 37.6198,
+   "lon": -122.3748,
+   "iata": "SFO",
+   "airport": "San Francisco International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Dallas",
+   "countryCode": "US",
+   "lat": 32.8968,
+   "lon": -97.038,
+   "iata": "DFW",
+   "airport": "Dallas Fort Worth International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Houston",
+   "countryCode": "US",
+   "lat": 29.9844,
+   "lon": -95.3414,
+   "iata": "IAH",
+   "airport": "George Bush Intercontinental Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Atlanta",
+   "countryCode": "US",
+   "lat": 33.6367,
+   "lon": -84.4281,
+   "iata": "ATL",
+   "airport": "Hartsfield Jackson Atlanta International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Miami",
+   "countryCode": "US",
+   "lat": 25.796,
+   "lon": -80.2898,
+   "iata": "MIA",
+   "airport": "Miami International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Seattle",
+   "countryCode": "US",
+   "lat": 47.4479,
+   "lon": -122.3103,
+   "iata": "SEA",
+   "airport": "Seattle–Tacoma International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Boston",
+   "countryCode": "US",
+   "lat": 42.362,
+   "lon": -71.0079,
+   "iata": "BOS",
+   "airport": "Boston Logan International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Washington DC",
+   "countryCode": "US",
+   "lat": 38.9445,
+   "lon": -77.4558,
+   "iata": "IAD",
+   "airport": "Washington Dulles International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Denver",
+   "countryCode": "US",
+   "lat": 39.86,
+   "lon": -104.6738,
+   "iata": "DEN",
+   "airport": "Denver International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Phoenix",
+   "countryCode": "US",
+   "lat": 33.4353,
+   "lon": -112.0059,
+   "iata": "PHX",
+   "airport": "Phoenix Sky Harbor International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Las Vegas",
+   "countryCode": "US",
+   "lat": 36.0834,
+   "lon": -115.1518,
+   "iata": "LAS",
+   "airport": "Harry Reid International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Orlando",
+   "countryCode": "US",
+   "lat": 28.4294,
+   "lon": -81.309,
+   "iata": "MCO",
+   "airport": "Orlando International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Philadelphia",
+   "countryCode": "US",
+   "lat": 39.8719,
+   "lon": -75.2411,
+   "iata": "PHL",
+   "airport": "Philadelphia International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Minneapolis",
+   "countryCode": "US",
+   "lat": 44.8801,
+   "lon": -93.2217,
+   "iata": "MSP",
+   "airport": "Minneapolis–Saint Paul International Airport / Wold–Chamberlain Field",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Austin",
+   "countryCode": "US",
+   "lat": 30.1975,
+   "lon": -97.662,
+   "iata": "AUS",
+   "airport": "Austin Bergstrom International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Toronto",
+   "countryCode": "CA",
+   "lat": 43.6759,
+   "lon": -79.6294,
+   "iata": "YYZ",
+   "airport": "Toronto Pearson International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Vancouver",
+   "countryCode": "CA",
+   "lat": 49.1939,
+   "lon": -123.184,
+   "iata": "YVR",
+   "airport": "Vancouver International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Montreal",
+   "countryCode": "CA",
+   "lat": 45.4678,
+   "lon": -73.7423,
+   "iata": "YUL",
+   "airport": "Montreal / Pierre Elliott Trudeau International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Calgary",
+   "countryCode": "CA",
+   "lat": 51.1188,
+   "lon": -114.0099,
+   "iata": "YYC",
+   "airport": "Calgary International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "London",
+   "countryCode": "GB",
+   "lat": 51.4707,
+   "lon": -0.4599,
+   "iata": "LHR",
+   "airport": "London Heathrow Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Manchester",
+   "countryCode": "GB",
+   "lat": 53.3494,
+   "lon": -2.2795,
+   "iata": "MAN",
+   "airport": "Manchester Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Birmingham",
+   "countryCode": "GB",
+   "lat": 52.4539,
+   "lon": -1.748,
+   "iata": "BHX",
+   "airport": "Birmingham Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Edinburgh",
+   "countryCode": "GB",
+   "lat": 55.9501,
+   "lon": -3.3723,
+   "iata": "EDI",
+   "airport": "Edinburgh Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Dublin",
+   "countryCode": "IE",
+   "lat": 53.4287,
+   "lon": -6.2621,
+   "iata": "DUB",
+   "airport": "Dublin Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Paris",
+   "countryCode": "FR",
+   "lat": 49.009,
+   "lon": 2.5541,
+   "iata": "CDG",
+   "airport": "Charles de Gaulle International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Amsterdam",
+   "countryCode": "NL",
+   "lat": 52.3086,
+   "lon": 4.7639,
+   "iata": "AMS",
+   "airport": "Amsterdam Airport Schiphol",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Frankfurt",
+   "countryCode": "DE",
+   "lat": 50.0267,
+   "lon": 8.5584,
+   "iata": "FRA",
+   "airport": "Frankfurt Main Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Berlin",
+   "countryCode": "DE",
+   "lat": 52.3617,
+   "lon": 13.5023,
+   "iata": "BER",
+   "airport": "Berlin Brandenburg Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Munich",
+   "countryCode": "DE",
+   "lat": 48.3538,
+   "lon": 11.7861,
+   "iata": "MUC",
+   "airport": "Munich Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Madrid",
+   "countryCode": "ES",
+   "lat": 40.4934,
+   "lon": -3.5722,
+   "iata": "MAD",
+   "airport": "Adolfo Suárez Madrid–Barajas Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Barcelona",
+   "countryCode": "ES",
+   "lat": 41.2971,
+   "lon": 2.0785,
+   "iata": "BCN",
+   "airport": "Josep Tarradellas Barcelona-El Prat Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Rome",
+   "countryCode": "IT",
+   "lat": 41.8045,
+   "lon": 12.252,
+   "iata": "FCO",
+   "airport": "Rome–Fiumicino Leonardo da Vinci International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Milan",
+   "countryCode": "IT",
+   "lat": 45.6306,
+   "lon": 8.7281,
+   "iata": "MXP",
+   "airport": "Milan Malpensa International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Lisbon",
+   "countryCode": "PT",
+   "lat": 38.7813,
+   "lon": -9.1359,
+   "iata": "LIS",
+   "airport": "Lisbon Humberto Delgado Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Zurich",
+   "countryCode": "CH",
+   "lat": 47.4581,
+   "lon": 8.5481,
+   "iata": "ZRH",
+   "airport": "Zürich Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Vienna",
+   "countryCode": "AT",
+   "lat": 48.1103,
+   "lon": 16.5697,
+   "iata": "VIE",
+   "airport": "Vienna International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Brussels",
+   "countryCode": "BE",
+   "lat": 50.9014,
+   "lon": 4.4844,
+   "iata": "BRU",
+   "airport": "Brussels Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Copenhagen",
+   "countryCode": "DK",
+   "lat": 55.6179,
+   "lon": 12.656,
+   "iata": "CPH",
+   "airport": "Copenhagen Kastrup Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Stockholm",
+   "countryCode": "SE",
+   "lat": 59.6485,
+   "lon": 17.9288,
+   "iata": "ARN",
+   "airport": "Stockholm-Arlanda Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Oslo",
+   "countryCode": "NO",
+   "lat": 60.1939,
+   "lon": 11.1004,
+   "iata": "OSL",
+   "airport": "Oslo-Gardermoen International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Warsaw",
+   "countryCode": "PL",
+   "lat": 52.1657,
+   "lon": 20.9671,
+   "iata": "WAW",
+   "airport": "Warsaw Chopin Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Athens",
+   "countryCode": "GR",
+   "lat": 37.9364,
+   "lon": 23.9445,
+   "iata": "ATH",
+   "airport": "Athens Eleftherios Venizelos International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Istanbul",
+   "countryCode": "TR",
+   "lat": 41.2749,
+   "lon": 28.7321,
+   "iata": "IST",
+   "airport": "İstanbul Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Dubai",
+   "countryCode": "AE",
+   "lat": 25.2498,
+   "lon": 55.371,
+   "iata": "DXB",
+   "airport": "Dubai International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Abu Dhabi",
+   "countryCode": "AE",
+   "lat": 24.441,
+   "lon": 54.6492,
+   "iata": "AUH",
+   "airport": "Zayed International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Doha",
+   "countryCode": "QA",
+   "lat": 25.2731,
+   "lon": 51.6081,
+   "iata": "DOH",
+   "airport": "Hamad International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Riyadh",
+   "countryCode": "SA",
+   "lat": 24.9576,
+   "lon": 46.6988,
+   "iata": "RUH",
+   "airport": "King Khalid International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Jeddah",
+   "countryCode": "SA",
+   "lat": 21.6802,
+   "lon": 39.1574,
+   "iata": "JED",
+   "airport": "King Abdulaziz International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Muscat",
+   "countryCode": "OM",
+   "lat": 23.6002,
+   "lon": 58.2853,
+   "iata": "MCT",
+   "airport": "Muscat International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Kuwait City",
+   "countryCode": "KW",
+   "lat": 29.2245,
+   "lon": 47.9698,
+   "iata": "KWI",
+   "airport": "Kuwait International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Tel Aviv",
+   "countryCode": "IL",
+   "lat": 32.0114,
+   "lon": 34.8867,
+   "iata": "TLV",
+   "airport": "Ben Gurion International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Dhaka",
+   "countryCode": "BD",
+   "lat": 23.8433,
+   "lon": 90.3978,
+   "iata": "DAC",
+   "airport": "Hazrat Shahjalal International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Colombo",
+   "countryCode": "LK",
+   "lat": 7.1808,
+   "lon": 79.8841,
+   "iata": "CMB",
+   "airport": "Bandaranaike International Colombo Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Kathmandu",
+   "countryCode": "NP",
+   "lat": 27.6966,
+   "lon": 85.3591,
+   "iata": "KTM",
+   "airport": "Tribhuvan International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Singapore",
+   "countryCode": "SG",
+   "lat": 1.3502,
+   "lon": 103.994,
+   "iata": "SIN",
+   "airport": "Singapore Changi Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Bangkok",
+   "countryCode": "TH",
+   "lat": 13.6811,
+   "lon": 100.747,
+   "iata": "BKK",
+   "airport": "Suvarnabhumi Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Kuala Lumpur",
+   "countryCode": "MY",
+   "lat": 2.7456,
+   "lon": 101.71,
+   "iata": "KUL",
+   "airport": "Kuala Lumpur International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Jakarta",
+   "countryCode": "ID",
+   "lat": -6.1256,
+   "lon": 106.656,
+   "iata": "CGK",
+   "airport": "Soekarno-Hatta International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Manila",
+   "countryCode": "PH",
+   "lat": 14.5086,
+   "lon": 121.02,
+   "iata": "MNL",
+   "airport": "Ninoy Aquino International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Ho Chi Minh City",
+   "countryCode": "VN",
+   "lat": 10.8188,
+   "lon": 106.652,
+   "iata": "SGN",
+   "airport": "Tan Son Nhat International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Hong Kong",
+   "countryCode": "HK",
+   "lat": 22.3118,
+   "lon": 113.9149,
+   "iata": "HKG",
+   "airport": "Hong Kong International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Taipei",
+   "countryCode": "TW",
+   "lat": 25.0777,
+   "lon": 121.233,
+   "iata": "TPE",
+   "airport": "Taiwan Taoyuan International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Seoul",
+   "countryCode": "KR",
+   "lat": 37.4691,
+   "lon": 126.451,
+   "iata": "ICN",
+   "airport": "Incheon International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Tokyo",
+   "countryCode": "JP",
+   "lat": 35.5497,
+   "lon": 139.787,
+   "iata": "HND",
+   "airport": "Tokyo Haneda International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Shanghai",
+   "countryCode": "CN",
+   "lat": 31.1434,
+   "lon": 121.805,
+   "iata": "PVG",
+   "airport": "Shanghai Pudong International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Sydney",
+   "countryCode": "AU",
+   "lat": -33.9461,
+   "lon": 151.177,
+   "iata": "SYD",
+   "airport": "Sydney Kingsford Smith International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Melbourne",
+   "countryCode": "AU",
+   "lat": -37.6707,
+   "lon": 144.8379,
+   "iata": "MEL",
+   "airport": "Melbourne Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Brisbane",
+   "countryCode": "AU",
+   "lat": -27.3842,
+   "lon": 153.117,
+   "iata": "BNE",
+   "airport": "Brisbane International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Perth",
+   "countryCode": "AU",
+   "lat": -31.9403,
+   "lon": 115.967,
+   "iata": "PER",
+   "airport": "Perth International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Auckland",
+   "countryCode": "NZ",
+   "lat": -37.012,
+   "lon": 174.7863,
+   "iata": "AKL",
+   "airport": "Auckland International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Mexico City",
+   "countryCode": "MX",
+   "lat": 19.4358,
+   "lon": -99.0703,
+   "iata": "MEX",
+   "airport": "Mexico City Benito Juárez International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "São Paulo",
+   "countryCode": "BR",
+   "lat": -23.4313,
+   "lon": -46.47,
+   "iata": "GRU",
+   "airport": "São Paulo/Guarulhos–Governor André Franco Montoro International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Buenos Aires",
+   "countryCode": "AR",
+   "lat": -34.8222,
+   "lon": -58.5358,
+   "iata": "EZE",
+   "airport": "Ezeiza International Airport - Ministro Pistarini",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Bogotá",
+   "countryCode": "CO",
+   "lat": 4.7016,
+   "lon": -74.1469,
+   "iata": "BOG",
+   "airport": "El Dorado International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Lima",
+   "countryCode": "PE",
+   "lat": -12.0219,
+   "lon": -77.1143,
+   "iata": "LIM",
+   "airport": "Jorge Chávez International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Santiago",
+   "countryCode": "CL",
+   "lat": -33.393,
+   "lon": -70.7858,
+   "iata": "SCL",
+   "airport": "Comodoro Arturo Merino Benítez International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Johannesburg",
+   "countryCode": "ZA",
+   "lat": -26.1401,
+   "lon": 28.2468,
+   "iata": "JNB",
+   "airport": "O.R. Tambo International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Cape Town",
+   "countryCode": "ZA",
+   "lat": -33.974,
+   "lon": 18.6043,
+   "iata": "CPT",
+   "airport": "Cape Town International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Nairobi",
+   "countryCode": "KE",
+   "lat": -1.3189,
+   "lon": 36.9282,
+   "iata": "NBO",
+   "airport": "Jomo Kenyatta International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Cairo",
+   "countryCode": "EG",
+   "lat": 30.1115,
+   "lon": 31.3967,
+   "iata": "CAI",
+   "airport": "Cairo International Airport",
+   "airportType": "large_airport"
+  },
+  {
+   "name": "Lagos",
+   "countryCode": "NG",
+   "lat": 6.5774,
+   "lon": 3.3212,
+   "iata": "LOS",
+   "airport": "Murtala Muhammed International Airport",
+   "airportType": "large_airport"
+  }
+ ]
+}

@@ -1,0 +1,357 @@
+{
+  "destination": {
+    "id": "pondicherry",
+    "name": "Pondicherry",
+    "country": "India",
+    "countryCode": "IN",
+    "lat": 11.93,
+    "lon": 79.83,
+    "timeZone": "Asia/Kolkata",
+    "costCurrency": "INR",
+    "tags": [
+      "food",
+      "culture",
+      "beach",
+      "nature",
+      "adventure"
+    ],
+    "passportMonths": 6,
+    "visaKey": null,
+    "visaLeadDays": null,
+    "visaWaivedBy": [],
+    "officialUrl": "https://www.py.gov.in",
+    "reviewedAt": "2026-10-25",
+    "roomCapacity": 2,
+    "roomNight": 3500,
+    "vehicleCapacity": 4,
+    "vehicleDay": 2000,
+    "foodDay": 1000,
+    "insurance": 500,
+    "entryAllowance": 0,
+    "activities": [
+      {
+        "id": "day-trip-to-auroville",
+        "title": "Day trip to Auroville",
+        "tags": [
+          "culture",
+          "nature"
+        ],
+        "durationMinutes": 210,
+        "location": "Pondicherry",
+        "costPerPerson": 300,
+        "lat": 12.00179,
+        "lon": 79.80094
+      },
+      {
+        "id": "sri-aurobindo-ashram-bharathi-park",
+        "title": "Sri Aurobindo Ashram and Bharathi Park",
+        "tags": [
+          "culture",
+          "nature"
+        ],
+        "durationMinutes": 210,
+        "location": "Puducherry",
+        "costPerPerson": 0,
+        "lat": 11.93675,
+        "lon": 79.83415
+      },
+      {
+        "id": "diving-pondicherry",
+        "title": "Scuba diving trip in Pondicherry",
+        "tags": [
+          "beach",
+          "adventure"
+        ],
+        "durationMinutes": 210,
+        "location": "Pondicherry",
+        "costPerPerson": 1800
+      },
+      {
+        "id": "local-food-walk",
+        "title": "Pondicherry local food walk",
+        "tags": [
+          "food",
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Pondicherry",
+        "costPerPerson": 500,
+        "lat": 11.93,
+        "lon": 79.83
+      },
+      {
+        "id": "arikamedu",
+        "title": "Arikamedu",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 180,
+        "location": "Pondicherry",
+        "costPerPerson": 250,
+        "lat": 11.90267,
+        "lon": 79.81993
+      },
+      {
+        "id": "immaculate-conception-cathedral-aayi-mandapam",
+        "title": "Immaculate Conception Cathedral and Aayi Mandapam",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 180,
+        "location": "Pondicherry",
+        "costPerPerson": 160,
+        "lat": 11.93299,
+        "lon": 79.83055
+      },
+      {
+        "id": "kayaking-pondicherry",
+        "title": "Kayaking in Pondicherry",
+        "tags": [
+          "nature",
+          "adventure"
+        ],
+        "durationMinutes": 150,
+        "location": "Pondicherry",
+        "costPerPerson": 600
+      },
+      {
+        "id": "promenade-beach",
+        "title": "Promenade Beach",
+        "tags": [
+          "beach",
+          "nature"
+        ],
+        "durationMinutes": 180,
+        "location": "Pondicherry",
+        "costPerPerson": 160,
+        "lat": 11.9325,
+        "lon": 79.8358
+      },
+      {
+        "id": "basilica-of-the-sacred-heart-of-jesus-french-war-memorial",
+        "title": "Basilica of the Sacred Heart of Jesus and French War Memorial",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Pondicherry",
+        "costPerPerson": 0,
+        "lat": 11.92626,
+        "lon": 79.82704
+      },
+      {
+        "id": "varadharaja-perumal-temple",
+        "title": "Varadharaja Perumal Temple",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 90,
+        "location": "Pondicherry",
+        "costPerPerson": 0,
+        "lat": 11.94083,
+        "lon": 79.83
+      },
+      {
+        "id": "ousteri-lake",
+        "title": "Ousteri Lake",
+        "tags": [
+          "nature"
+        ],
+        "durationMinutes": 120,
+        "location": "Pondicherry",
+        "costPerPerson": 250,
+        "lat": 11.955,
+        "lon": 79.745
+      },
+      {
+        "id": "pondicherry-museum",
+        "title": "Pondicherry Museum",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Puducherry",
+        "costPerPerson": 350,
+        "lat": 11.93417,
+        "lon": 79.83472
+      }
+    ],
+    "source": "pack:wikidata+wikivoyage 2026-10",
+    "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+  },
+  "meta": {
+    "generatedOn": "2026-10-25",
+    "generator": "tools/places/city_pack.py",
+    "input": {
+      "city": "Pondicherry",
+      "country": "IN",
+      "wikivoyageTitle": "Pondicherry"
+    },
+    "wikidata": "Q639421",
+    "wikivoyageUrl": "https://en.wikivoyage.org/wiki/Pondicherry",
+    "population": null,
+    "priceLevel": {
+      "indicator": "PA.NUS.PRVT.PP",
+      "year": "2025",
+      "lcuPerIntlDollar": 19.8389,
+      "lcuPerUsd": 87.1584,
+      "priceLevelVsUS": 0.228,
+      "cityMultiplier": 1.0,
+      "basisIntlDollars": {
+        "roomNight": 170,
+        "vehicleDay": 110,
+        "foodDay": 55,
+        "insurance": 25
+      }
+    },
+    "sources": [
+      "pageviews",
+      "wikidata",
+      "wikivoyage",
+      "worldbank"
+    ],
+    "sourcesFailed": {},
+    "candidates": 31,
+    "proseActivities": [
+      "Scuba diving trip in Pondicherry",
+      "Kayaking in Pondicherry"
+    ],
+    "ranking": [
+      {
+        "title": "Auroville",
+        "qid": "Q590361",
+        "category": "daytrip",
+        "score": 6.745,
+        "pageviews12m": 223134,
+        "sitelinks": 43,
+        "curated": false
+      },
+      {
+        "title": "Sri Aurobindo Ashram",
+        "qid": "Q303682",
+        "category": "religious",
+        "score": 6.228,
+        "pageviews12m": 32852,
+        "sitelinks": 14,
+        "curated": true
+      },
+      {
+        "title": "Arikamedu",
+        "qid": "Q2861278",
+        "category": "archaeological",
+        "score": 5.986,
+        "pageviews12m": 20370,
+        "sitelinks": 16,
+        "curated": false
+      },
+      {
+        "title": "Immaculate Conception Cathedral",
+        "qid": "Q1659902",
+        "category": "cathedral",
+        "score": 5.552,
+        "pageviews12m": 4525,
+        "sitelinks": 11,
+        "curated": true
+      },
+      {
+        "title": "Promenade Beach",
+        "qid": "Q16898816",
+        "category": "beach",
+        "score": 5.548,
+        "pageviews12m": 12859,
+        "sitelinks": 4,
+        "curated": true
+      },
+      {
+        "title": "Basilica of the Sacred Heart of Jesus",
+        "qid": "Q810086",
+        "category": "religious",
+        "score": 5.053,
+        "pageviews12m": 10068,
+        "sitelinks": 10,
+        "curated": true
+      },
+      {
+        "title": "Varadharaja Perumal Temple",
+        "qid": "Q24938746",
+        "category": "religious",
+        "score": 4.988,
+        "pageviews12m": 1785,
+        "sitelinks": 5,
+        "curated": true
+      },
+      {
+        "title": "Aayi Mandapam",
+        "qid": "Q20572068",
+        "category": "monument",
+        "score": 4.915,
+        "pageviews12m": 2505,
+        "sitelinks": 6,
+        "curated": false
+      },
+      {
+        "title": "French War Memorial",
+        "qid": "Q18750135",
+        "category": "monument",
+        "score": 4.633,
+        "pageviews12m": 4992,
+        "sitelinks": 5,
+        "curated": false
+      },
+      {
+        "title": "Ousteri Lake",
+        "qid": "Q64604953",
+        "category": "lake",
+        "score": 4.632,
+        "pageviews12m": 2279,
+        "sitelinks": 6,
+        "curated": true
+      },
+      {
+        "title": "Pondicherry Museum",
+        "qid": "Q48734612",
+        "category": "museum",
+        "score": 4.523,
+        "pageviews12m": 1203,
+        "sitelinks": 4,
+        "curated": true
+      },
+      {
+        "title": "Eden Beach Puducherry",
+        "qid": "Q132675321",
+        "category": "beach",
+        "score": 4.364,
+        "pageviews12m": 2123,
+        "sitelinks": 2,
+        "curated": true
+      },
+      {
+        "title": "Puducherry Science Centre & Planetarium",
+        "qid": "Q19895474",
+        "category": "museum",
+        "score": 3.986,
+        "pageviews12m": 641,
+        "sitelinks": 2,
+        "curated": true
+      },
+      {
+        "title": "Indira Gandhi Sports Stadium",
+        "qid": "Q24928669",
+        "category": "stadium",
+        "score": 3.466,
+        "pageviews12m": 1231,
+        "sitelinks": 2,
+        "curated": true
+      },
+      {
+        "title": "Bharathi Park",
+        "qid": "Q119084299",
+        "category": "park",
+        "score": 2.461,
+        "pageviews12m": 0,
+        "sitelinks": 1,
+        "curated": true
+      }
+    ]
+  }
+}

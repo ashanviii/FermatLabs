@@ -161,7 +161,7 @@ export default function ItineraryPlanner({
 
               {day.accommodation && (
                 <Badge colorScheme="purple" fontSize="xs" px="12px" py="4px">
-                  🏨 {day.accommodation}
+                  {day.accommodation}
                 </Badge>
               )}
 
@@ -278,17 +278,17 @@ export default function ItineraryPlanner({
                   <Icon as={FaUtensils} color="orange.500" w="16px" h="16px" mt="2px" />
                   {day.meals.breakfast && (
                     <Text fontSize="xs" color="gray.700">
-                      🍳 <strong>Breakfast:</strong> {day.meals.breakfast}
+                      <strong>Breakfast:</strong> {day.meals.breakfast}
                     </Text>
                   )}
                   {day.meals.lunch && (
                     <Text fontSize="xs" color="gray.700">
-                      🍱 <strong>Lunch:</strong> {day.meals.lunch}
+                      <strong>Lunch:</strong> {day.meals.lunch}
                     </Text>
                   )}
                   {day.meals.dinner && (
                     <Text fontSize="xs" color="gray.700">
-                      🍽️ <strong>Dinner:</strong> {day.meals.dinner}
+                      <strong>Dinner:</strong> {day.meals.dinner}
                     </Text>
                   )}
                 </Flex>
@@ -310,7 +310,7 @@ export default function ItineraryPlanner({
         gap="12px"
       >
         <Text fontSize="sm" color="gray.700" fontWeight="600">
-          ✨ AI-generated itinerary customized for you
+          AI-generated itinerary customized for you
         </Text>
         <Button
           size="md"

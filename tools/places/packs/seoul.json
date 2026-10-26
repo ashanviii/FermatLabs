@@ -1,0 +1,367 @@
+{
+  "destination": {
+    "id": "seoul",
+    "name": "Seoul",
+    "country": "South Korea",
+    "countryCode": "KR",
+    "lat": 37.56,
+    "lon": 126.99,
+    "timeZone": "Asia/Seoul",
+    "costCurrency": "KRW",
+    "tags": [
+      "food",
+      "culture",
+      "shopping",
+      "art",
+      "nature"
+    ],
+    "passportMonths": 0,
+    "visaKey": null,
+    "visaLeadDays": null,
+    "visaWaivedBy": [],
+    "officialUrl": "https://english.seoul.go.kr/",
+    "reviewedAt": "2026-10-25",
+    "roomCapacity": 2,
+    "roomNight": 180000,
+    "vehicleCapacity": 4,
+    "vehicleDay": 120000,
+    "foodDay": 60000,
+    "insurance": 20000,
+    "entryAllowance": 0,
+    "activities": [
+      {
+        "id": "gyeongbokgung",
+        "title": "Gyeongbokgung",
+        "tags": [
+          "culture",
+          "art"
+        ],
+        "durationMinutes": 150,
+        "location": "Jongno",
+        "costPerPerson": 18000,
+        "lat": 37.57988,
+        "lon": 126.9768
+      },
+      {
+        "id": "changdeokgung",
+        "title": "Changdeokgung",
+        "tags": [
+          "culture",
+          "art"
+        ],
+        "durationMinutes": 150,
+        "location": "Jongno",
+        "costPerPerson": 18000,
+        "lat": 37.57944,
+        "lon": 126.99167
+      },
+      {
+        "id": "cheonggyecheon",
+        "title": "Cheonggyecheon",
+        "tags": [
+          "nature"
+        ],
+        "durationMinutes": 120,
+        "location": "Jung",
+        "costPerPerson": 0,
+        "lat": 37.56902,
+        "lon": 126.97771
+      },
+      {
+        "id": "namdaemun-market",
+        "title": "Namdaemun Market",
+        "tags": [
+          "food",
+          "shopping"
+        ],
+        "durationMinutes": 120,
+        "location": "Seoul",
+        "costPerPerson": 18000,
+        "lat": 37.55944,
+        "lon": 126.97742
+      },
+      {
+        "id": "national-museum-of-korea",
+        "title": "National Museum of Korea",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 150,
+        "location": "Yongsan",
+        "costPerPerson": 16000,
+        "lat": 37.52389,
+        "lon": 126.98028
+      },
+      {
+        "id": "deoksugung",
+        "title": "Deoksugung",
+        "tags": [
+          "culture",
+          "art"
+        ],
+        "durationMinutes": 150,
+        "location": "Jung",
+        "costPerPerson": 18000,
+        "lat": 37.56611,
+        "lon": 126.975
+      },
+      {
+        "id": "jongmyo-jogyesa",
+        "title": "Jongmyo and Jogyesa",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 180,
+        "location": "Jongno",
+        "costPerPerson": 0,
+        "lat": 37.57472,
+        "lon": 126.99361
+      },
+      {
+        "id": "lotte-world-tower",
+        "title": "Lotte World Tower",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 90,
+        "location": "Songpa",
+        "costPerPerson": 20000,
+        "lat": 37.5125,
+        "lon": 127.1025
+      },
+      {
+        "id": "namsan",
+        "title": "Namsan",
+        "tags": [
+          "nature",
+          "adventure"
+        ],
+        "durationMinutes": 180,
+        "location": "Yongsan",
+        "costPerPerson": 9000,
+        "lat": 37.54968,
+        "lon": 126.99191
+      },
+      {
+        "id": "itaewon",
+        "title": "Itaewon",
+        "tags": [
+          "culture",
+          "food"
+        ],
+        "durationMinutes": 150,
+        "location": "Seoul",
+        "costPerPerson": 9000,
+        "lat": 37.54,
+        "lon": 126.99194
+      },
+      {
+        "id": "myeongdong-cathedral",
+        "title": "Myeongdong Cathedral",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 90,
+        "location": "Jung",
+        "costPerPerson": 7000,
+        "lat": 37.56333,
+        "lon": 126.98722
+      },
+      {
+        "id": "gwanghwamun-square",
+        "title": "Gwanghwamun Square",
+        "tags": [
+          "culture"
+        ],
+        "durationMinutes": 60,
+        "location": "Jongno",
+        "costPerPerson": 0,
+        "lat": 37.57278,
+        "lon": 126.97667
+      }
+    ],
+    "source": "pack:wikidata+wikivoyage 2026-10",
+    "attribution": "Places: Wikivoyage contributors (CC BY-SA 4.0) and Wikidata (CC0); popularity: Wikimedia pageviews; price level: World Bank ICP (CC BY 4.0). Costs are estimates; verify before booking."
+  },
+  "meta": {
+    "generatedOn": "2026-10-25",
+    "generator": "tools/places/city_pack.py",
+    "input": {
+      "city": "Seoul",
+      "country": "KR",
+      "wikivoyageTitle": "Seoul"
+    },
+    "wikidata": "Q8684",
+    "wikivoyageUrl": "https://en.wikivoyage.org/wiki/Seoul",
+    "population": 9668465.0,
+    "priceLevel": {
+      "indicator": "PA.NUS.PRVT.PP",
+      "year": "2025",
+      "lcuPerIntlDollar": 880.1254,
+      "lcuPerUsd": 1422.4408,
+      "priceLevelVsUS": 0.619,
+      "cityMultiplier": 1.2,
+      "basisIntlDollars": {
+        "roomNight": 170,
+        "vehicleDay": 110,
+        "foodDay": 55,
+        "insurance": 25
+      }
+    },
+    "sources": [
+      "pageviews",
+      "wikidata",
+      "wikivoyage",
+      "worldbank"
+    ],
+    "sourcesFailed": {},
+    "candidates": 196,
+    "proseActivities": [],
+    "ranking": [
+      {
+        "title": "Gyeongbokgung",
+        "qid": "Q482485",
+        "category": "palace",
+        "score": 8.614,
+        "pageviews12m": 202879,
+        "sitelinks": 46,
+        "curated": true
+      },
+      {
+        "title": "Changdeokgung",
+        "qid": "Q477157",
+        "category": "palace",
+        "score": 8.207,
+        "pageviews12m": 72065,
+        "sitelinks": 50,
+        "curated": true
+      },
+      {
+        "title": "Cheonggyecheon",
+        "qid": "Q495437",
+        "category": "park",
+        "score": 7.942,
+        "pageviews12m": 63648,
+        "sitelinks": 33,
+        "curated": true
+      },
+      {
+        "title": "Namdaemun Market",
+        "qid": "Q494687",
+        "category": "market",
+        "score": 5.439,
+        "pageviews12m": 13912,
+        "sitelinks": 11,
+        "curated": false
+      },
+      {
+        "title": "National Museum of Korea",
+        "qid": "Q494407",
+        "category": "museum",
+        "score": 7.744,
+        "pageviews12m": 55028,
+        "sitelinks": 38,
+        "curated": true
+      },
+      {
+        "title": "Deoksugung",
+        "qid": "Q482631",
+        "category": "palace",
+        "score": 7.648,
+        "pageviews12m": 33572,
+        "sitelinks": 32,
+        "curated": true
+      },
+      {
+        "title": "Jongmyo",
+        "qid": "Q490497",
+        "category": "religious",
+        "score": 7.415,
+        "pageviews12m": 13176,
+        "sitelinks": 45,
+        "curated": true
+      },
+      {
+        "title": "Lotte World Tower",
+        "qid": "Q494895",
+        "category": "tower",
+        "score": 7.309,
+        "pageviews12m": 175882,
+        "sitelinks": 37,
+        "curated": true
+      },
+      {
+        "title": "Namsan",
+        "qid": "Q484448",
+        "category": "mountain",
+        "score": 6.924,
+        "pageviews12m": 15467,
+        "sitelinks": 22,
+        "curated": true
+      },
+      {
+        "title": "Itaewon",
+        "qid": "Q495646",
+        "category": "neighbourhood",
+        "score": 6.799,
+        "pageviews12m": 46199,
+        "sitelinks": 22,
+        "curated": false
+      },
+      {
+        "title": "Myeongdong Cathedral",
+        "qid": "Q487036",
+        "category": "cathedral",
+        "score": 6.788,
+        "pageviews12m": 28382,
+        "sitelinks": 18,
+        "curated": true
+      },
+      {
+        "title": "Gwanghwamun Square",
+        "qid": "Q5623300",
+        "category": "square",
+        "score": 6.678,
+        "pageviews12m": 42909,
+        "sitelinks": 15,
+        "curated": true
+      },
+      {
+        "title": "Bukhansan",
+        "qid": "Q494652",
+        "category": "mountain",
+        "score": 6.677,
+        "pageviews12m": 17699,
+        "sitelinks": 19,
+        "curated": true
+      },
+      {
+        "title": "National Museum of Modern and Contemporary Art",
+        "qid": "Q484054",
+        "category": "museum",
+        "score": 6.556,
+        "pageviews12m": 7841,
+        "sitelinks": 19,
+        "curated": true
+      },
+      {
+        "title": "Jogyesa",
+        "qid": "Q488824",
+        "category": "religious",
+        "score": 6.54,
+        "pageviews12m": 12687,
+        "sitelinks": 12,
+        "curated": true
+      },
+      {
+        "title": "Bongeunsa",
+        "qid": "Q135709",
+        "category": "religious",
+        "score": 6.459,
+        "pageviews12m": 17533,
+        "sitelinks": 12,
+        "curated": true
+      }
+    ]
+  }
+}

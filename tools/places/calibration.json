@@ -1,0 +1,286 @@
+{
+  "inrPerUsd": 87.1584483507393,
+  "rows": [
+    {
+      "seed": "bangkok",
+      "currency": "THB",
+      "roomNight": {
+        "pack": 2000,
+        "packInr": 5301,
+        "seedInr": 5200,
+        "ratio": 1.02
+      },
+      "foodDay": {
+        "pack": 700,
+        "packInr": 1855,
+        "seedInr": 1800,
+        "ratio": 1.03
+      },
+      "vehicleDay": {
+        "pack": 1400,
+        "packInr": 3711,
+        "seedInr": 3800,
+        "ratio": 0.98
+      }
+    },
+    {
+      "seed": "dubai",
+      "currency": "AED",
+      "roomNight": {
+        "pack": 450,
+        "packInr": 10680,
+        "seedInr": 7800,
+        "ratio": 1.37
+      },
+      "foodDay": {
+        "pack": 160,
+        "packInr": 3797,
+        "seedInr": 2400,
+        "ratio": 1.58
+      },
+      "vehicleDay": {
+        "pack": 300,
+        "packInr": 7120,
+        "seedInr": 5200,
+        "ratio": 1.37
+      }
+    },
+    {
+      "seed": "paris",
+      "currency": "EUR",
+      "roomNight": {
+        "pack": 140,
+        "packInr": 13788,
+        "seedInr": 12500,
+        "ratio": 1.1
+      },
+      "foodDay": {
+        "pack": 45,
+        "packInr": 4432,
+        "seedInr": 3800,
+        "ratio": 1.17
+      },
+      "vehicleDay": {
+        "pack": 90,
+        "packInr": 8864,
+        "seedInr": 7000,
+        "ratio": 1.27
+      }
+    },
+    {
+      "seed": "singapore",
+      "currency": "SGD",
+      "roomNight": {
+        "pack": 200,
+        "packInr": 13332,
+        "seedInr": 11000,
+        "ratio": 1.21
+      },
+      "foodDay": {
+        "pack": 70,
+        "packInr": 4666,
+        "seedInr": 2600,
+        "ratio": 1.79
+      },
+      "vehicleDay": {
+        "pack": 140,
+        "packInr": 9332,
+        "seedInr": 4500,
+        "ratio": 2.07
+      }
+    },
+    {
+      "seed": "hanoi",
+      "currency": "VND",
+      "roomNight": {
+        "pack": 1400000,
+        "packInr": 5050,
+        "seedInr": 3500,
+        "ratio": 1.44
+      },
+      "foodDay": {
+        "pack": 500000,
+        "packInr": 1803,
+        "seedInr": 1300,
+        "ratio": 1.39
+      },
+      "vehicleDay": {
+        "pack": 950000,
+        "packInr": 3426,
+        "seedInr": 3000,
+        "ratio": 1.14
+      }
+    },
+    {
+      "seed": "manali",
+      "currency": "INR",
+      "roomNight": {
+        "pack": 3000,
+        "packInr": 3000,
+        "seedInr": 3500,
+        "ratio": 0.86
+      },
+      "foodDay": {
+        "pack": 1000,
+        "packInr": 1000,
+        "seedInr": 1200,
+        "ratio": 0.83
+      },
+      "vehicleDay": {
+        "pack": 2000,
+        "packInr": 2000,
+        "seedInr": 3500,
+        "ratio": 0.57
+      }
+    },
+    {
+      "seed": "thailand-duo/phuket",
+      "currency": "THB",
+      "roomNight": {
+        "pack": 1800,
+        "packInr": 4771,
+        "seedInr": 5000,
+        "ratio": 0.95
+      },
+      "foodDay": {
+        "pack": 600,
+        "packInr": 1590,
+        "seedInr": 1800,
+        "ratio": 0.88
+      },
+      "vehicleDay": {
+        "pack": 1200,
+        "packInr": 3181,
+        "seedInr": 4000,
+        "ratio": 0.8
+      }
+    },
+    {
+      "seed": "uae-duo/abu-dhabi",
+      "currency": "AED",
+      "roomNight": {
+        "pack": 450,
+        "packInr": 10680,
+        "seedInr": 7500,
+        "ratio": 1.42
+      },
+      "foodDay": {
+        "pack": 160,
+        "packInr": 3797,
+        "seedInr": 2400,
+        "ratio": 1.58
+      },
+      "vehicleDay": {
+        "pack": 300,
+        "packInr": 7120,
+        "seedInr": 5500,
+        "ratio": 1.29
+      }
+    },
+    {
+      "seed": "kerala-trio/kochi",
+      "currency": "INR",
+      "roomNight": {
+        "pack": 3500,
+        "packInr": 3500,
+        "seedInr": 3500,
+        "ratio": 1.0
+      },
+      "foodDay": {
+        "pack": 1000,
+        "packInr": 1000,
+        "seedInr": 1200,
+        "ratio": 0.83
+      },
+      "vehicleDay": {
+        "pack": 2000,
+        "packInr": 2000,
+        "seedInr": 2500,
+        "ratio": 0.8
+      }
+    },
+    {
+      "seed": "kerala-trio/munnar",
+      "currency": "INR",
+      "roomNight": {
+        "pack": 3500,
+        "packInr": 3500,
+        "seedInr": 3800,
+        "ratio": 0.92
+      },
+      "foodDay": {
+        "pack": 1000,
+        "packInr": 1000,
+        "seedInr": 1100,
+        "ratio": 0.91
+      },
+      "vehicleDay": {
+        "pack": 2000,
+        "packInr": 2000,
+        "seedInr": 3500,
+        "ratio": 0.57
+      }
+    },
+    {
+      "seed": "rajasthan-duo/jaipur",
+      "currency": "INR",
+      "roomNight": {
+        "pack": 3500,
+        "packInr": 3500,
+        "seedInr": 3500,
+        "ratio": 1.0
+      },
+      "foodDay": {
+        "pack": 1200,
+        "packInr": 1200,
+        "seedInr": 1200,
+        "ratio": 1.0
+      },
+      "vehicleDay": {
+        "pack": 2500,
+        "packInr": 2500,
+        "seedInr": 2800,
+        "ratio": 0.89
+      }
+    },
+    {
+      "seed": "rajasthan-duo/udaipur",
+      "currency": "INR",
+      "roomNight": {
+        "pack": 3500,
+        "packInr": 3500,
+        "seedInr": 4200,
+        "ratio": 0.83
+      },
+      "foodDay": {
+        "pack": 1000,
+        "packInr": 1000,
+        "seedInr": 1300,
+        "ratio": 0.77
+      },
+      "vehicleDay": {
+        "pack": 2000,
+        "packInr": 2000,
+        "seedInr": 2800,
+        "ratio": 0.71
+      }
+    }
+  ],
+  "summary": {
+    "roomNight": {
+      "median": 1.01,
+      "min": 0.83,
+      "max": 1.44
+    },
+    "foodDay": {
+      "median": 1.02,
+      "min": 0.77,
+      "max": 1.79
+    },
+    "vehicleDay": {
+      "median": 0.93,
+      "min": 0.57,
+      "max": 2.07
+    }
+  }
+}

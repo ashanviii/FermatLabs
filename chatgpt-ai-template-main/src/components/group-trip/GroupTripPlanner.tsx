@@ -1,31 +1,21 @@
 'use client';
 
-import Link from 'next/link';
+// Offline demo: the whole trip lives in this browser (no sign-in, nothing shared).
+// Same design system as the shared planner. Domain logic lives in src/lib/groupTrip.js (unchanged).
 import { useEffect, useMemo, useState } from 'react';
-import {
-  AlertCircle,
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  ChevronRight,
-  CircleHelp,
-  ExternalLink,
-  Info,
-  LockKeyhole,
-  MapPin,
-  Plus,
-  RotateCcw,
-  ShieldCheck,
-  Sparkles,
-  Trash2,
-  Users,
-  WalletCards,
-} from 'lucide-react';
+import { ArrowLeft, ArrowRight, ExternalLink, HardDrive, Plus, RotateCcw, Trash2 } from 'lucide-react';
 
 import FermatMark from '@/components/landing/FermatMark';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import { Card, CardBody, CardFooter, CardHeader } from '@/components/ui/card';
+import { Badge, StatusPill, type Status } from '@/components/ui/badge';
+import { ChipGroup, Field, Input, Select, ToggleChip } from '@/components/ui/field';
+import { MonthYearSelect } from '@/components/ui/month-year-select';
+import { Notice } from '@/components/ui/notice';
+import { PageContainer } from '@/components/ui/section';
+import { Stepper, type StepperStep } from '@/components/ui/stepper';
+import { icons } from '@/components/ui/icons';
+import { formatINR, formatMonthYear, plural } from '@/lib/format';
 import {
   buildReadinessRows,
   createDefaultDraft,
@@ -35,64 +25,42 @@ import {
   resetTripDraft,
   saveTripDraft,
 } from '@/lib/groupTrip';
+import { PlannerFooter } from './shell/PlannerChrome';
+import { departureCities } from './shell/tripState';
 
-const stages = [
+const stages: StepperStep[] = [
   { id: 'basics', label: 'Trip basics' },
   { id: 'travellers', label: 'Your group' },
   { id: 'compare', label: 'Compare' },
   { id: 'readiness', label: 'Get ready' },
 ];
 
-const departureCities = ['Delhi', 'Mumbai', 'Bengaluru', 'Hyderabad', 'Chennai', 'Kolkata', 'Pune', 'Ahmedabad'];
+const demoVisas: [string, string][] = [
+  ['uae', 'UAE'],
+  ['schengen', 'Schengen'],
+];
 
-const statusStyles: Record<string, string> = {
-  ready: 'border-[#83CCA1] bg-[#E9F8EF] text-[#235E3C]',
-  action: 'border-[#E8C55F] bg-[#FFF8D9] text-[#725A10]',
-  unknown: 'border-[#C9CDD2] bg-[#F5F6F7] text-[#555C63]',
-};
-
-const statusLabels: Record<string, string> = {
-  ready: 'Ready',
-  action: 'Action needed',
-  unknown: 'Unknown',
+// Readiness status from the engine -> pill status + words (never colour alone).
+const readiness: Record<string, { status: Status; label: string }> = {
+  ready: { status: 'ok', label: 'Ready' },
+  action: { status: 'warning', label: 'Needs action' },
+  unknown: { status: 'pending', label: 'Not known yet' },
 };
 
 type FieldErrors = Record<string, string>;
 
-function formatInr(value: number) {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0,
-  }).format(value);
+/** Next 18 months as 'YYYY-MM', plus the saved value if it falls outside that window. */
+function travelMonthOptions(current: string) {
+  const now = new Date();
+  const list = Array.from({ length: 18 }, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  });
+  if (current && !list.includes(current)) list.unshift(current);
+  return list;
 }
 
-function StatusPill({ status }: { status: string }) {
-  return (
-    <span className={cn('inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold', statusStyles[status])}>
-      {status === 'ready' ? <Check className="size-3" /> : status === 'action' ? <AlertCircle className="size-3" /> : <CircleHelp className="size-3" />}
-      {statusLabels[status]}
-    </span>
-  );
-}
-
-function FieldLabel({ htmlFor, children, hint }: { htmlFor: string; children: React.ReactNode; hint?: string }) {
-  return (
-    <label htmlFor={htmlFor} className="mb-2 block text-sm font-semibold text-foreground">
-      {children}
-      {hint && <span className="ml-1 font-normal text-muted-foreground">{hint}</span>}
-    </label>
-  );
-}
-
-function textInputClass(hasError = false) {
-  return cn(
-    'h-12 w-full rounded-xl border bg-white px-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground/60 focus:ring-2 focus:ring-[#5DBB84]/35',
-    hasError ? 'border-red-500' : 'border-border focus:border-[#5DBB84]',
-  );
-}
-
-export default function GroupTripPlanner() {
+export default function GroupTripPlanner({ onExit }: { onExit?: () => void } = {}) {
   const [draft, setDraft] = useState<any>(() => createDefaultDraft());
   const [hydrated, setHydrated] = useState(false);
   const [storageWarning, setStorageWarning] = useState('');
@@ -115,10 +83,7 @@ export default function GroupTripPlanner() {
 
   const recommendations = useMemo(() => recommendDestinations(draft), [draft]);
   const selected = draft.selectedDestinationId ? getDestination(draft.selectedDestinationId) : null;
-  const readinessRows = useMemo(
-    () => (draft.selectedDestinationId ? buildReadinessRows(draft, draft.selectedDestinationId) : []),
-    [draft],
-  );
+  const readinessRows = useMemo(() => (draft.selectedDestinationId ? buildReadinessRows(draft, draft.selectedDestinationId) : []), [draft]);
   const activeStage = Math.max(0, stages.findIndex((stage) => stage.id === draft.stage));
 
   const patchDraft = (patch: Record<string, unknown>) => setDraft((current: any) => ({ ...current, ...patch }));
@@ -128,7 +93,7 @@ export default function GroupTripPlanner() {
     if (!draft.tripName.trim()) next.tripName = 'Give the trip a short name.';
     if (!draft.travelMonth) next.travelMonth = 'Choose a travel month.';
     if (draft.durationDays < 3 || draft.durationDays > 14) next.durationDays = 'Choose 3–14 days.';
-    if (draft.budgetPerPerson < 40000) next.budgetPerPerson = 'Use at least ₹40,000 per traveller for this demo.';
+    if (draft.budgetPerPerson < 40000) next.budgetPerPerson = 'Use at least ₹40,000 per person for this demo.';
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -139,9 +104,9 @@ export default function GroupTripPlanner() {
     draft.travellers.forEach((traveller: any, index: number) => {
       const name = traveller.name.trim().toLowerCase();
       if (!name) next[`name-${traveller.id}`] = `Add a nickname for traveller ${index + 1}.`;
-      if (name && names.has(name)) next[`name-${traveller.id}`] = 'Use a unique nickname.';
+      if (name && names.has(name)) next[`name-${traveller.id}`] = 'Use a different nickname.';
       if (name) names.add(name);
-      if (!traveller.departureCity) next[`city-${traveller.id}`] = 'Choose a departure city.';
+      if (!traveller.departureCity) next[`city-${traveller.id}`] = 'Choose a city.';
     });
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -186,8 +151,14 @@ export default function GroupTripPlanner() {
 
   const selectDestination = (id: string) => patchDraft({ selectedDestinationId: id, stage: 'readiness' });
 
+  // Done steps in the stepper jump back (same moves as the old Back / Edit buttons).
+  const goToStage = (step: StepperStep) => {
+    setErrors({});
+    patchDraft(step.id === 'basics' || step.id === 'travellers' || step.id === 'compare' ? { stage: step.id, selectedDestinationId: null } : { stage: step.id });
+  };
+
   const reset = () => {
-    const confirmed = window.confirm('Delete this group-trip draft from this browser and start again?');
+    const confirmed = window.confirm('Delete this trip from this browser and start again?');
     if (!confirmed) return;
     const cleared = resetTripDraft(window.localStorage, true, setStorageWarning);
     if (cleared) {
@@ -198,292 +169,361 @@ export default function GroupTripPlanner() {
   };
 
   if (!hydrated) {
-    return <div className="grid min-h-screen place-items-center text-sm text-muted-foreground">Opening your trip workspace…</div>;
+    return (
+      <div className="grid min-h-[60vh] place-items-center bg-canvas font-sans">
+        <p className="type-body m-0 flex items-center gap-2 text-ink-muted" role="status">
+          <icons.pending className="size-4 animate-pulse" strokeWidth={1.75} aria-hidden />
+          Opening your trip…
+        </p>
+      </div>
+    );
   }
 
+  const readyCount = readinessRows.filter((row: any) => row.passport.status === 'ready' && row.cost.status === 'ready').length;
+
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#F4FBF6_0%,#FAFBF7_42%,#F7F5ED_100%)]">
-      <header className="border-b border-[#DDE8E0] bg-white/80 backdrop-blur-xl">
-        <div className="container flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
-            <FermatMark className="h-7" />
-            Fermat
-          </Link>
+    <main className="bg-canvas pb-6 font-sans text-ink">
+      <PageContainer>
+        {/* Top bar */}
+        <div className="flex h-16 items-center justify-between gap-3">
+          <a href="/" className="flex items-center gap-2 rounded-full text-ink no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">
+            <FermatMark className="h-6 text-brand-900" />
+            <span className="type-h3">Fermat</span>
+          </a>
           <div className="flex items-center gap-2">
-            <span className="hidden items-center gap-1.5 rounded-full bg-[#EAF7EF] px-3 py-1.5 text-xs font-semibold text-[#285F43] sm:inline-flex">
-              <LockKeyhole className="size-3" /> Saved on this device
-            </span>
-            <Button type="button" variant="ghost" size="sm" onClick={reset} className="text-muted-foreground hover:text-foreground">
-              <RotateCcw /> Reset
+            <Badge size="sm" icon={HardDrive} className="hidden sm:inline-flex">
+              Saved on this device
+            </Badge>
+            <Button variant="ghost" size="sm" icon={RotateCcw} onClick={reset}>
+              Start over
             </Button>
+            {onExit && (
+              <Button variant="outline" size="sm" icon={ArrowLeft} onClick={onExit}>
+                <span className="sm:hidden">Exit demo</span>
+                <span className="hidden sm:inline">Back to shared trips</span>
+              </Button>
+            )}
           </div>
         </div>
-      </header>
 
-      <main className="container py-8 md:py-12">
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-8 grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
-            <div>
-              <span className="inline-flex items-center gap-2 rounded-full bg-[#DFF4E7] px-3 py-1 text-xs font-semibold text-[#285F43]">
-                <Sparkles className="size-3.5" /> Group-trip dry run
-              </span>
-              <h1 className="mt-4 max-w-3xl text-3xl font-semibold tracking-tight md:text-5xl">
-                The group trip that actually gets decided.
-              </h1>
-              <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
-                Combine everyone’s timing, budget and passport readiness. Fermat ranks three realistic starting points and shows exactly what needs attention.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-[#DDE8E0] bg-white/70 px-4 py-3 text-xs leading-relaxed text-muted-foreground lg:max-w-xs">
-              <strong className="text-foreground">Indian passports only in this MVP.</strong> Estimates are illustrative and not legal or booking advice.
-            </div>
+        {/* Header + progress */}
+        <header className="grid gap-6 pb-2 pt-4 sm:pt-8">
+          <div className="grid gap-2">
+            <p className="type-overline m-0 text-brand-600">Offline demo</p>
+            <h1 className="type-h1 m-0 text-balance">{draft.tripName.trim() || 'Plan a group trip'}</h1>
+            <p className="type-body m-0 max-w-prose text-ink-muted">Everything stays in this browser. Visa checks assume Indian passports.</p>
           </div>
+          <Stepper steps={stages} current={activeStage} onStepClick={goToStage} />
+        </header>
 
-          {storageWarning && (
-            <div role="alert" className="mb-5 flex items-start gap-3 rounded-2xl border border-[#E8C55F] bg-[#FFF8D9] p-4 text-sm text-[#725A10]">
-              <AlertCircle className="mt-0.5 size-4 shrink-0" />
-              <span>{storageWarning}</span>
-            </div>
-          )}
+        {storageWarning && (
+          <Notice tone="warning" role="alert" className="mt-6">
+            {storageWarning}
+          </Notice>
+        )}
 
-          <ol aria-label="Planning progress" className="mb-8 grid grid-cols-4 overflow-hidden rounded-2xl border bg-white shadow-sm">
-            {stages.map((stage, index) => (
-              <li key={stage.id} className={cn('relative px-2 py-3 text-center text-xs font-semibold sm:px-4 sm:text-sm', index <= activeStage ? 'text-[#285F43]' : 'text-muted-foreground')}>
-                <span className={cn('mx-auto mb-1 grid size-6 place-items-center rounded-full text-xs', index < activeStage ? 'bg-[#5DBB84] text-[#153524]' : index === activeStage ? 'bg-[#153524] text-white' : 'bg-muted')}>
-                  {index < activeStage ? <Check className="size-3.5" /> : index + 1}
-                </span>
-                {stage.label}
-                {index < stages.length - 1 && <ChevronRight aria-hidden className="absolute -right-2 top-5 hidden size-4 text-border sm:block" />}
-              </li>
-            ))}
-          </ol>
-
+        <div className="mt-10">
+          {/* 1. Basics */}
           {draft.stage === 'basics' && (
-            <Card className="overflow-hidden border-[#DDE8E0] bg-white shadow-[0_24px_60px_-38px_rgba(22,68,45,0.35)]">
-              <div className="border-b bg-[#F7FBF8] p-6 md:p-8">
-                <div className="flex items-center gap-3">
-                  <span className="grid size-11 place-items-center rounded-2xl bg-[#153524] text-[#7ED49F]"><MapPin className="size-5" /></span>
-                  <div>
-                    <h2 className="text-xl font-semibold md:text-2xl">Start with the shared constraints</h2>
-                    <p className="text-sm text-muted-foreground">Takes about three minutes. No account required.</p>
-                  </div>
-                </div>
-              </div>
-              <div className="grid gap-6 p-6 md:grid-cols-2 md:p-8">
-                <div className="md:col-span-2">
-                  <FieldLabel htmlFor="trip-name">Trip name</FieldLabel>
-                  <input id="trip-name" value={draft.tripName} onChange={(event) => patchDraft({ tripName: event.target.value })} className={textInputClass(Boolean(errors.tripName))} placeholder="December escape" aria-describedby={errors.tripName ? 'trip-name-error' : undefined} />
-                  {errors.tripName && <p id="trip-name-error" className="mt-1.5 text-sm text-red-600">{errors.tripName}</p>}
-                </div>
-                <div>
-                  <FieldLabel htmlFor="travel-month">Travel month</FieldLabel>
-                  <input id="travel-month" type="month" value={draft.travelMonth} onChange={(event) => patchDraft({ travelMonth: event.target.value, selectedDestinationId: null })} className={textInputClass(Boolean(errors.travelMonth))} />
-                  {errors.travelMonth && <p className="mt-1.5 text-sm text-red-600">{errors.travelMonth}</p>}
-                </div>
-                <div>
-                  <FieldLabel htmlFor="duration">Trip length <span className="font-normal text-muted-foreground">(3–14 days)</span></FieldLabel>
-                  <input id="duration" type="number" min={3} max={14} value={draft.durationDays} onChange={(event) => patchDraft({ durationDays: Number(event.target.value), selectedDestinationId: null })} className={textInputClass(Boolean(errors.durationDays))} />
-                  {errors.durationDays && <p className="mt-1.5 text-sm text-red-600">{errors.durationDays}</p>}
-                </div>
-                <div className="md:col-span-2">
-                  <FieldLabel htmlFor="budget" hint="total trip estimate, per traveller, excluding shopping">Budget in INR</FieldLabel>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-muted-foreground">₹</span>
-                    <input id="budget" type="number" min={40000} step={5000} value={draft.budgetPerPerson} onChange={(event) => patchDraft({ budgetPerPerson: Number(event.target.value), selectedDestinationId: null })} className={cn(textInputClass(Boolean(errors.budgetPerPerson)), 'pl-8')} />
-                  </div>
-                  <p className="mt-2 text-xs text-muted-foreground">One shared planning ceiling for everyone. Room-sharing and loyalty points are not modelled yet.</p>
-                  {errors.budgetPerPerson && <p className="mt-1.5 text-sm text-red-600">{errors.budgetPerPerson}</p>}
-                </div>
-              </div>
-              <div className="flex justify-end border-t bg-[#FCFDFC] p-5 md:px-8">
-                <Button type="button" onClick={continueFromBasics} className="bg-[#153524] text-white hover:bg-[#204D38]">Add your group <ArrowRight /></Button>
-              </div>
+            <Card className="mx-auto max-w-content">
+              <CardHeader icon={icons.calendar} title="Trip basics" description="Takes about three minutes. No account needed." />
+              <CardBody className="grid gap-5 sm:grid-cols-2">
+                <Field label="Trip name" error={errors.tripName} className="sm:col-span-2">
+                  <Input value={draft.tripName} onChange={(event) => patchDraft({ tripName: event.target.value })} placeholder="December escape" />
+                </Field>
+                <Field label="Travel month" error={errors.travelMonth}>
+                  <Select value={draft.travelMonth} onChange={(event) => patchDraft({ travelMonth: event.target.value, selectedDestinationId: null })} placeholder="Choose a month">
+                    {travelMonthOptions(draft.travelMonth).map((month) => (
+                      <option key={month} value={month}>
+                        {formatMonthYear(month)}
+                      </option>
+                    ))}
+                  </Select>
+                </Field>
+                <Field label="Trip length" hint="3 to 14 days" error={errors.durationDays}>
+                  <Input
+                    type="number"
+                    inputMode="numeric"
+                    min={3}
+                    max={14}
+                    trailing="days"
+                    value={draft.durationDays}
+                    onChange={(event) => patchDraft({ durationDays: Number(event.target.value), selectedDestinationId: null })}
+                  />
+                </Field>
+                <Field label="Budget per person" hint="The whole trip, not counting shopping. One budget for everyone." error={errors.budgetPerPerson} className="sm:col-span-2">
+                  <Input
+                    type="number"
+                    inputMode="numeric"
+                    min={40000}
+                    step={5000}
+                    leading="₹"
+                    value={draft.budgetPerPerson}
+                    onChange={(event) => patchDraft({ budgetPerPerson: Number(event.target.value), selectedDestinationId: null })}
+                  />
+                </Field>
+              </CardBody>
+              <CardFooter className="justify-end">
+                <Button size="lg" iconRight={ArrowRight} onClick={continueFromBasics} className="w-full sm:w-auto">
+                  Add your group
+                </Button>
+              </CardFooter>
             </Card>
           )}
 
+          {/* 2. Travellers */}
           {draft.stage === 'travellers' && (
-            <div className="space-y-5">
-              <Card className="border-[#DDE8E0] bg-white p-6 shadow-sm md:p-8">
-                <div className="flex flex-col gap-4 border-b pb-6 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <h2 className="flex items-center gap-2 text-xl font-semibold md:text-2xl"><Users className="size-5 text-[#3D9163]" /> Add 4–10 travellers</h2>
-                    <p className="mt-1 text-sm text-muted-foreground">Nicknames and planning status only—never passport numbers or document uploads.</p>
-                  </div>
-                  <Button type="button" variant="outline" onClick={addTraveller} disabled={draft.travellers.length >= 10}><Plus /> Add traveller</Button>
-                </div>
-
-                <div className="mt-6 grid gap-4 lg:grid-cols-2">
+            <div className="mx-auto grid max-w-content gap-6">
+              <Card>
+                <CardHeader
+                  icon={icons.members}
+                  title={`Who's coming · ${draft.travellers.length}`}
+                  description="4 to 10 people. Nicknames only, never passport numbers."
+                  action={
+                    <Button variant="outline" size="sm" icon={Plus} onClick={addTraveller} disabled={draft.travellers.length >= 10}>
+                      Add traveller
+                    </Button>
+                  }
+                />
+                <ol className="m-0 list-none p-0">
                   {draft.travellers.map((traveller: any, index: number) => (
-                    <div key={traveller.id} className="rounded-2xl border border-[#DDE8E0] bg-[#FBFDFB] p-5">
-                      <div className="mb-5 flex items-center justify-between">
-                        <span className="text-xs font-bold uppercase tracking-[0.14em] text-[#3D9163]">Traveller {index + 1}</span>
-                        <button type="button" onClick={() => removeTraveller(traveller.id)} disabled={draft.travellers.length <= 4} aria-label={`Remove ${traveller.name || `traveller ${index + 1}`}`} className="grid size-8 place-items-center rounded-full text-muted-foreground transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-25"><Trash2 className="size-4" /></button>
+                    <li key={traveller.id} className="grid gap-4 border-0 border-t border-solid border-line-subtle px-5 py-5 sm:px-6">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="type-overline m-0 text-brand-600">Traveller {index + 1}</p>
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          icon={Trash2}
+                          onClick={() => removeTraveller(traveller.id)}
+                          disabled={draft.travellers.length <= 4}
+                          aria-label={`Remove ${traveller.name || `traveller ${index + 1}`}`}
+                          title={draft.travellers.length <= 4 ? 'A trip needs at least 4 people' : 'Remove'}
+                        />
                       </div>
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        <div>
-                          <FieldLabel htmlFor={`name-${traveller.id}`}>Nickname</FieldLabel>
-                          <input id={`name-${traveller.id}`} value={traveller.name} onChange={(event) => updateTraveller(traveller.id, { name: event.target.value })} className={textInputClass(Boolean(errors[`name-${traveller.id}`]))} />
-                          {errors[`name-${traveller.id}`] && <p className="mt-1 text-xs text-red-600">{errors[`name-${traveller.id}`]}</p>}
-                        </div>
-                        <div>
-                          <FieldLabel htmlFor={`city-${traveller.id}`}>Flying from</FieldLabel>
-                          <select id={`city-${traveller.id}`} value={traveller.departureCity} onChange={(event) => updateTraveller(traveller.id, { departureCity: event.target.value })} className={textInputClass(Boolean(errors[`city-${traveller.id}`]))}>
-                            <option value="">Choose city</option>
-                            {departureCities.map((city) => <option key={city}>{city}</option>)}
-                          </select>
-                          {errors[`city-${traveller.id}`] && <p className="mt-1 text-xs text-red-600">{errors[`city-${traveller.id}`]}</p>}
-                        </div>
-                        <div>
-                          <FieldLabel htmlFor={`passport-${traveller.id}`} hint="or leave unknown">Passport expires</FieldLabel>
-                          <input id={`passport-${traveller.id}`} type="month" value={traveller.passportExpiry} onChange={(event) => updateTraveller(traveller.id, { passportExpiry: event.target.value })} className={textInputClass()} />
-                        </div>
-                        <fieldset>
-                          <legend className="mb-2 text-sm font-semibold">Visas reported</legend>
-                          <div className="flex min-h-12 flex-wrap items-center gap-2">
-                            {[['uae', 'UAE'], ['schengen', 'Schengen']].map(([key, label]) => (
-                              <label key={key} className={cn('cursor-pointer rounded-full border px-3 py-2 text-xs font-semibold transition', traveller.visas.includes(key) ? 'border-[#5DBB84] bg-[#E9F8EF] text-[#235E3C]' : 'border-border bg-white text-muted-foreground')}>
-                                <input type="checkbox" checked={traveller.visas.includes(key)} onChange={() => toggleVisa(traveller.id, key)} className="sr-only" />
-                                {label}
-                              </label>
+                      <div className="grid gap-5 sm:grid-cols-2">
+                        <Field label="Nickname" error={errors[`name-${traveller.id}`]}>
+                          <Input value={traveller.name} onChange={(event) => updateTraveller(traveller.id, { name: event.target.value })} />
+                        </Field>
+                        <Field label="Flying from" error={errors[`city-${traveller.id}`]}>
+                          <Select value={traveller.departureCity} onChange={(event) => updateTraveller(traveller.id, { departureCity: event.target.value })} placeholder="Choose a city">
+                            {departureCities.map((city) => (
+                              <option key={city} value={city}>
+                                {city}
+                              </option>
                             ))}
-                          </div>
-                        </fieldset>
+                          </Select>
+                        </Field>
+                        <Field label="Passport expires" hint="Leave empty if you're not sure">
+                          <MonthYearSelect
+                            label={`Traveller ${index + 1} passport expiry`}
+                            value={traveller.passportExpiry}
+                            onChange={(passportExpiry) => updateTraveller(traveller.id, { passportExpiry })}
+                          />
+                        </Field>
+                        <ChipGroup label="Visas they already have">
+                          {demoVisas.map(([key, label]) => (
+                            <ToggleChip key={key} icon={icons.visa} selected={traveller.visas.includes(key)} onSelectedChange={() => toggleVisa(traveller.id, key)}>
+                              {label}
+                            </ToggleChip>
+                          ))}
+                        </ChipGroup>
                       </div>
-                    </div>
+                    </li>
+                  ))}
+                </ol>
+              </Card>
+              <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+                <Button variant="outline" size="lg" icon={ArrowLeft} onClick={() => patchDraft({ stage: 'basics' })}>
+                  Back
+                </Button>
+                <Button size="lg" iconRight={ArrowRight} onClick={continueFromTravellers}>
+                  Compare destinations
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* 3. Compare */}
+          {draft.stage === 'compare' && (
+            <section className="grid gap-6">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                <div className="grid gap-1">
+                  <h2 className="type-h2 m-0">Three places to start from</h2>
+                  <p className="type-small m-0 text-ink-muted">Places with nothing blocking come first, then by fit.</p>
+                </div>
+                <Button variant="outline" size="sm" icon={icons.members} onClick={() => patchDraft({ stage: 'travellers' })}>
+                  Edit group
+                </Button>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {recommendations.map((destination: any, index: number) => {
+                  const blocked = destination.blockers.length > 0;
+                  return (
+                    <Card key={destination.id} variant={index === 0 ? 'raised' : 'default'} className={index === 0 ? 'flex flex-col ring-2 ring-brand-500' : 'flex flex-col'}>
+                      <div className="grid gap-4 p-5 sm:p-6">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <h3 className="type-h3 m-0">{destination.city}</h3>
+                            <p className="type-small m-0 mt-0.5 flex items-center gap-1 text-ink-muted">
+                              <icons.destination className="size-3.5 shrink-0" strokeWidth={1.75} aria-hidden />
+                              {destination.country}
+                            </p>
+                          </div>
+                          {index === 0 && (
+                            <Badge size="sm" tone="brand" icon={icons.check}>
+                              Best match
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="flex flex-wrap items-end justify-between gap-3">
+                          <p className="m-0">
+                            <span className="type-num font-display text-[1.75rem] font-bold leading-none text-ink">{destination.fitScore}</span>
+                            <span className="type-small text-ink-muted"> / 100 fit</span>
+                          </p>
+                          {blocked ? (
+                            <StatusPill status="blocked">{plural(destination.blockers.length, 'blocker')}</StatusPill>
+                          ) : (
+                            <StatusPill status="ok">Nothing blocking</StatusPill>
+                          )}
+                        </div>
+                        <div className="rounded-xl bg-surface-muted px-3 py-2.5">
+                          <p className="type-caption m-0 text-ink-muted">Estimated per person</p>
+                          <p className="type-num type-body m-0 font-semibold text-ink">
+                            ~{formatINR(destination.estimate.min)}–{formatINR(destination.estimate.max)}
+                          </p>
+                        </div>
+                        <ul className="m-0 grid list-none gap-2 p-0">
+                          {destination.reasons.map((reason: string) => (
+                            <li key={reason} className="type-small flex gap-2 text-ink-soft">
+                              <icons.check className="mt-0.5 size-4 shrink-0 text-brand-500" strokeWidth={2} aria-hidden />
+                              <span>{reason}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        {(destination.blockers.length > 0 || destination.actions.length > 0) && (
+                          <details className="group rounded-xl bg-surface-muted px-3 py-2.5">
+                            <summary className="type-small flex cursor-pointer list-none items-center justify-between gap-2 rounded-lg font-semibold text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 [&::-webkit-details-marker]:hidden">
+                              What to check
+                              <icons.info className="size-4 text-ink-faint" strokeWidth={1.75} aria-hidden />
+                            </summary>
+                            <ul className="m-0 mt-2 grid list-none gap-1.5 p-0">
+                              {destination.blockers.map((item: any, i: number) => (
+                                <li key={`b-${i}`} className="type-small flex gap-2 text-danger-ink">
+                                  <icons.danger className="mt-0.5 size-3.5 shrink-0" strokeWidth={2} aria-hidden />
+                                  <span>{item.message}</span>
+                                </li>
+                              ))}
+                              {destination.actions.slice(0, 4).map((item: any, i: number) => (
+                                <li key={`a-${i}`} className="type-small flex gap-2 text-ink-soft">
+                                  <icons.pending className="mt-0.5 size-3.5 shrink-0 text-ink-faint" strokeWidth={2} aria-hidden />
+                                  <span>{item.message}</span>
+                                </li>
+                              ))}
+                              {destination.actions.length > 4 && <li className="type-small text-ink-muted">and {destination.actions.length - 4} more to check</li>}
+                            </ul>
+                          </details>
+                        )}
+                      </div>
+                      <div className="mt-auto grid gap-2 px-5 pb-5 sm:px-6 sm:pb-6">
+                        <Button block variant={index === 0 ? 'primary' : 'outline'} iconRight={ArrowRight} onClick={() => selectDestination(destination.id)}>
+                          Choose {destination.city}
+                        </Button>
+                        <Button asChild variant="link" size="sm" className="justify-center">
+                          <a href={destination.officialUrl} target="_blank" rel="noreferrer">
+                            Official entry rules
+                            <ExternalLink className="size-3.5" strokeWidth={2} aria-hidden />
+                          </a>
+                        </Button>
+                      </div>
+                    </Card>
+                  );
+                })}
+              </div>
+
+              <Notice variant="inline" tone="neutral" title="How fit works.">
+                Budget counts for 40, passports 20, visas 20 and season 20. Sample data checked 24 Oct 2026.
+              </Notice>
+            </section>
+          )}
+
+          {/* 4. Readiness */}
+          {draft.stage === 'readiness' && selected && (
+            <div className="grid gap-6">
+              <Card variant="brand" className="overflow-hidden rounded-3xl p-6 sm:p-8">
+                <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
+                  <div className="grid gap-2">
+                    <p className="type-overline m-0 text-brand-200">{draft.tripName || 'Your group trip'}</p>
+                    <h2 className="type-display m-0 text-white">{selected.city}</h2>
+                    <p className="type-body m-0 max-w-prose text-white/80">Now sort out whoever still needs something. A visa you have stays "not known" until you check its dates.</p>
+                  </div>
+                  <div className="rounded-2xl bg-white/10 px-5 py-4">
+                    <p className="type-caption m-0 text-white/75">Budget and passport ready</p>
+                    <p className="type-num m-0 mt-1 font-display text-[1.75rem] font-bold leading-8 text-white">
+                      {readyCount} of {readinessRows.length}
+                    </p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card>
+                <CardHeader
+                  icon={icons.members}
+                  title="Who's ready"
+                  description="Departure cities are for context; routes aren't checked."
+                  action={
+                    <>
+                      <Button size="sm" variant="outline" onClick={() => patchDraft({ stage: 'travellers', selectedDestinationId: null })}>
+                        Edit group
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => patchDraft({ stage: 'compare', selectedDestinationId: null })}>
+                        Change place
+                      </Button>
+                    </>
+                  }
+                />
+                <div className="hidden grid-cols-[1.1fr_1fr_1.2fr_1.3fr] gap-4 border-0 border-t border-solid border-line-subtle bg-surface-muted px-6 py-2.5 md:grid" aria-hidden>
+                  {['Traveller', 'Budget', 'Passport', 'Visa'].map((label) => (
+                    <span key={label} className="type-overline text-ink-muted">
+                      {label}
+                    </span>
                   ))}
                 </div>
-              </Card>
-
-              <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
-                <Button type="button" variant="outline" onClick={() => patchDraft({ stage: 'basics' })}><ArrowLeft /> Back</Button>
-                <Button type="button" onClick={continueFromTravellers} className="bg-[#153524] text-white hover:bg-[#204D38]">Compare destinations <ArrowRight /></Button>
-              </div>
-            </div>
-          )}
-
-          {draft.stage === 'compare' && (
-            <div className="space-y-6">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                  <h2 className="text-2xl font-semibold md:text-3xl">Three realistic starting points</h2>
-                  <p className="mt-2 text-sm text-muted-foreground">Feasibility ranks before fit score. Expand every card to see the assumptions.</p>
-                </div>
-                <Button type="button" variant="outline" onClick={() => patchDraft({ stage: 'travellers' })}>Edit group</Button>
-              </div>
-
-              <div className="grid gap-5 lg:grid-cols-3">
-                {recommendations.map((destination: any, index: number) => (
-                  <Card key={destination.id} className={cn('relative flex flex-col overflow-hidden border-[#DDE8E0] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl', index === 0 && 'ring-2 ring-[#5DBB84]')}>
-                    {index === 0 && <span className="absolute right-4 top-4 z-10 rounded-full bg-[#153524] px-3 py-1 text-xs font-bold text-white">Best match</span>}
-                    <div className="p-6" style={{ backgroundColor: destination.accent }}>
-                      <span className="text-4xl" aria-hidden>{destination.emoji}</span>
-                      <h3 className="mt-4 text-2xl font-semibold">{destination.city}</h3>
-                      <p className="text-sm text-muted-foreground">{destination.country}</p>
-                      <div className="mt-5 flex items-end justify-between">
-                        <div>
-                          <span className="text-3xl font-semibold">{destination.fitScore}</span>
-                          <span className="text-sm text-muted-foreground">/100 fit</span>
-                        </div>
-                        <span className={cn('rounded-full px-3 py-1 text-xs font-semibold', destination.blockers.length ? 'bg-white/70 text-[#725A10]' : 'bg-[#153524] text-white')}>
-                          {destination.blockers.length ? `${destination.blockers.length} blocker${destination.blockers.length > 1 ? 's' : ''}` : 'No hard blockers'}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex flex-1 flex-col p-6">
-                      <p className="text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">Estimated per person</p>
-                      <p className="mt-1 font-semibold">{formatInr(destination.estimate.min)}–{formatInr(destination.estimate.max)}</p>
-                      <ul className="mt-5 space-y-3 text-sm">
-                        {destination.reasons.map((reason: string) => (
-                          <li key={reason} className="flex gap-2"><Check className="mt-0.5 size-4 shrink-0 text-[#3D9163]" /><span>{reason}</span></li>
-                        ))}
-                      </ul>
-                      {(destination.blockers.length > 0 || destination.actions.length > 0) && (
-                        <details className="mt-5 rounded-xl border bg-[#FAFBFA] p-3 text-sm">
-                          <summary className="cursor-pointer font-semibold">Why this ranking?</summary>
-                          <div className="mt-3 space-y-3 text-xs leading-relaxed text-muted-foreground">
-                            {destination.blockers.map((item: any, itemIndex: number) => <p key={`b-${itemIndex}`}><strong className="text-[#725A10]">Blocker:</strong> {item.message}</p>)}
-                            {destination.actions.slice(0, 4).map((item: any, itemIndex: number) => <p key={`a-${itemIndex}`}><strong className="text-foreground">Verify:</strong> {item.message}</p>)}
-                            {destination.actions.length > 4 && <p>+ {destination.actions.length - 4} more traveller checks</p>}
-                          </div>
-                        </details>
-                      )}
-                      <div className="mt-auto pt-6">
-                        <Button type="button" onClick={() => selectDestination(destination.id)} className="w-full bg-[#153524] text-white hover:bg-[#204D38]">Choose {destination.city} <ArrowRight /></Button>
-                        <a href={destination.officialUrl} target="_blank" rel="noreferrer" className="mt-3 flex items-center justify-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground">Verify official rules <ExternalLink className="size-3" /></a>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-
-              <div className="rounded-2xl border border-[#DDE8E0] bg-white p-4 text-xs leading-relaxed text-muted-foreground">
-                <strong className="text-foreground">How scores work:</strong> 40% budget, 20% passport readiness, 20% visa readiness, 20% seasonal fit. Illustrative data reviewed 24 Oct 2026; always verify government sources before paying.
-              </div>
-            </div>
-          )}
-
-          {draft.stage === 'readiness' && selected && (
-            <div className="space-y-6">
-              <Card className="overflow-hidden border-[#DDE8E0] bg-[#153524] text-white shadow-xl">
-                <div className="grid gap-6 p-6 md:grid-cols-[1fr_auto] md:items-center md:p-8">
-                  <div>
-                    <span className="text-sm font-semibold text-[#7ED49F]">{draft.tripName || 'Your group trip'}</span>
-                    <h2 className="mt-2 text-3xl font-semibold md:text-4xl">{selected.emoji} {selected.city} is selected</h2>
-                    <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/65">Now focus on the people who need action. A reported visa still stays Unknown until validity and entry conditions are verified.</p>
-                  </div>
-                  <div className="rounded-2xl bg-white/10 px-5 py-4 ring-1 ring-white/10">
-                    <p className="text-xs text-white/55">Group readiness</p>
-                    <p className="mt-1 text-3xl font-semibold">{readinessRows.filter((row: any) => row.passport.status === 'ready' && row.cost.status === 'ready').length}/{readinessRows.length}</p>
-                    <p className="text-xs text-white/55">budget + passport ready</p>
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="overflow-hidden border-[#DDE8E0] bg-white shadow-sm">
-                <div className="flex flex-col gap-3 border-b p-5 sm:flex-row sm:items-center sm:justify-between md:px-7">
-                  <div>
-                    <h3 className="text-xl font-semibold">Traveller readiness</h3>
-                    <p className="text-sm text-muted-foreground">Departure cities are context only; live route availability is not scored.</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button type="button" size="sm" variant="outline" onClick={() => patchDraft({ stage: 'travellers', selectedDestinationId: null })}>Edit inputs</Button>
-                    <Button type="button" size="sm" variant="outline" onClick={() => patchDraft({ stage: 'compare', selectedDestinationId: null })}>Change destination</Button>
-                  </div>
-                </div>
-
-                <div className="hidden grid-cols-[1.2fr_1fr_1.2fr_1.3fr] gap-4 border-b bg-[#F7F9F7] px-7 py-3 text-xs font-bold uppercase tracking-[0.1em] text-muted-foreground md:grid">
-                  <span>Traveller</span><span>Budget</span><span>Passport</span><span>Visa</span>
-                </div>
-                <div className="divide-y">
+                <ul className="m-0 list-none p-0">
                   {readinessRows.map((row: any) => (
-                    <div key={row.travellerId} className="grid gap-4 p-5 md:grid-cols-[1.2fr_1fr_1.2fr_1.3fr] md:items-start md:px-7">
+                    <li key={row.travellerId} className="grid gap-3 border-0 border-t border-solid border-line-subtle px-5 py-4 sm:px-6 md:grid-cols-[1.1fr_1fr_1.2fr_1.3fr] md:items-start md:gap-4">
                       <div>
-                        <p className="font-semibold">{row.travellerName}</p>
-                        <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="size-3" /> {row.departureCity}</p>
+                        <p className="type-body m-0 font-semibold text-ink">{row.travellerName}</p>
+                        <p className="type-small m-0 mt-0.5 flex items-center gap-1 text-ink-muted">
+                          <icons.departure className="size-3.5 shrink-0" strokeWidth={1.75} aria-hidden />
+                          {row.departureCity}
+                        </p>
                       </div>
-                      {[row.cost, row.passport, row.visa].map((item: any, index: number) => (
-                        <div key={index} className="grid grid-cols-[88px_1fr] gap-3 md:block">
-                          <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground md:hidden">{['Budget', 'Passport', 'Visa'][index]}</span>
-                          <div>
-                            <StatusPill status={item.status} />
-                            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{item.detail}</p>
+                      {[row.cost, row.passport, row.visa].map((item: any, i: number) => (
+                        <div key={i} className="grid grid-cols-[5.5rem_1fr] items-start gap-3 md:block">
+                          <span className="type-overline pt-1 text-ink-muted md:hidden">{['Budget', 'Passport', 'Visa'][i]}</span>
+                          <div className="grid justify-items-start gap-1.5">
+                            <StatusPill size="sm" status={readiness[item.status]?.status ?? 'pending'}>
+                              {readiness[item.status]?.label ?? 'Not known yet'}
+                            </StatusPill>
+                            <p className="type-small m-0 text-ink-muted">{item.detail}</p>
                           </div>
                         </div>
                       ))}
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </Card>
 
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="rounded-2xl border border-[#DDE8E0] bg-white p-5"><ShieldCheck className="size-5 text-[#3D9163]" /><h3 className="mt-3 font-semibold">Verify documents</h3><p className="mt-1 text-sm text-muted-foreground">Check passport validity and official entry rules before any non-refundable payment.</p></div>
-                <div className="rounded-2xl border border-[#DDE8E0] bg-white p-5"><WalletCards className="size-5 text-[#3D9163]" /><h3 className="mt-3 font-semibold">Align the budget</h3><p className="mt-1 text-sm text-muted-foreground">The estimate uses one shared ceiling and illustrative six-day baseline costs.</p></div>
-                <div className="rounded-2xl border border-[#DDE8E0] bg-white p-5"><Info className="size-5 text-[#3D9163]" /><h3 className="mt-3 font-semibold">Keep it private</h3><p className="mt-1 text-sm text-muted-foreground">This draft is unencrypted browser storage. Avoid shared devices and never enter document numbers.</p></div>
-              </div>
+              <Notice tone="neutral" title="Before anyone pays.">
+                Check passport dates and the official entry rules. This demo is saved unencrypted in this browser, so avoid shared devices and never enter document numbers.
+              </Notice>
             </div>
           )}
         </div>
-      </main>
-    </div>
+
+        <PlannerFooter />
+      </PageContainer>
+    </main>
   );
 }

@@ -13,5 +13,5 @@ export function firebaseAdmin() {
   if (!projectId) throw new Error('Shared planning is not configured: Firebase project ID is missing.');
   const usingEmulators = Boolean(process.env.FIRESTORE_EMULATOR_HOST && process.env.FIREBASE_AUTH_EMULATOR_HOST);
   const app = getApps()[0] || initializeApp(usingEmulators ? { projectId } : { credential: credential(), projectId });
-  return { auth: getAuth(app), firestore: getFirestore(app) };
+  return { auth: getAuth(app), firestore: getFirestore(app, process.env.FIRESTORE_DATABASE_ID || '(default)') };
 }
