@@ -62,8 +62,29 @@ test('four members can collect, vote, and atomically lock one budgeted plan', ()
   assert.deepEqual(replayed, trip);
 });
 
-test('integer allocation reconciles for every group size from four through ten', () => {
-  for (let count = 4; count <= 10; count += 1) {
+test('two members can collect, vote, and atomically lock one budgeted plan', () => {
+  let trip = readyTrip(2);
+  trip = applyCommand(trip, { type: 'openVoting', uid: 'owner', expectedInputRevision: trip.inputRevision });
+  ['owner', 'm2'].forEach((uid) => {
+    trip = applyCommand(trip, { type: 'vote', uid, destinationId: 'bangkok', round: trip.round, inputRevision: trip.inputRevision });
+  });
+  trip = applyCommand(trip, { type: 'lock', uid: 'owner', round: trip.round, inputRevision: trip.inputRevision, idempotencyKey: 'lock-two-person-trip' });
+  assert.equal(trip.phase, 'locked');
+  assert.equal(trip.lockedDestinationId, 'bangkok');
+  assert.equal(trip.activePlan.memberTotals.length, 2);
+  assert.equal(validatePlan(trip.activePlan).length, 0);
+  assert.equal(trip.activePlan.memberTotals.reduce((sum, member) => sum + member.total, 0), trip.activePlan.groupTotal);
+});
+
+test('one-person trips remain outside the supported group-size boundary', () => {
+  assert.throws(
+    () => createTripState({ id: 'solo', ownerUid: 'owner', name: 'Solo', startDate: '2026-12-10', endDate: '2026-12-15', expectedSize: 1 }),
+    /2–10/,
+  );
+});
+
+test('integer allocation reconciles for every group size from two through ten', () => {
+  for (let count = 2; count <= 10; count += 1) {
     const allocation = allocateInteger(100003, Array.from({ length: count }, (_, index) => `m${index + 1}`));
     assert.equal(Object.values(allocation).reduce((sum, value) => sum + value, 0), 100003);
     assert.ok(Math.max(...Object.values(allocation)) - Math.min(...Object.values(allocation)) <= 1);

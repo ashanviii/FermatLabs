@@ -117,6 +117,7 @@ test('returns a clean draft when storage is empty', () => {
   const storage = memoryStorage({ unrelated: 'keep me' });
 
   assert.deepEqual(loadTripDraft(storage), createDefaultDraft());
+  assert.equal(createDefaultDraft().travellers.length, 2);
   assert.equal(storage.getItem('unrelated'), 'keep me');
 });
 

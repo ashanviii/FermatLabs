@@ -145,7 +145,7 @@ export default function GroupTripPlanner({ onExit }: { onExit?: () => void } = {
   };
 
   const removeTraveller = (id: string) => {
-    if (draft.travellers.length <= 4) return;
+    if (draft.travellers.length <= 2) return;
     patchDraft({ travellers: draft.travellers.filter((traveller: any) => traveller.id !== id), selectedDestinationId: null });
   };
 
@@ -278,7 +278,7 @@ export default function GroupTripPlanner({ onExit }: { onExit?: () => void } = {
                 <CardHeader
                   icon={icons.members}
                   title={`Who's coming · ${draft.travellers.length}`}
-                  description="4 to 10 people. Nicknames only, never passport numbers."
+                  description="2 to 10 people. Nicknames only, never passport numbers."
                   action={
                     <Button variant="outline" size="sm" icon={Plus} onClick={addTraveller} disabled={draft.travellers.length >= 10}>
                       Add traveller
@@ -295,9 +295,9 @@ export default function GroupTripPlanner({ onExit }: { onExit?: () => void } = {
                           size="icon-sm"
                           icon={Trash2}
                           onClick={() => removeTraveller(traveller.id)}
-                          disabled={draft.travellers.length <= 4}
+                          disabled={draft.travellers.length <= 2}
                           aria-label={`Remove ${traveller.name || `traveller ${index + 1}`}`}
-                          title={draft.travellers.length <= 4 ? 'A trip needs at least 4 people' : 'Remove'}
+                          title={draft.travellers.length <= 2 ? 'A trip needs at least 2 people' : 'Remove'}
                         />
                       </div>
                       <div className="grid gap-5 sm:grid-cols-2">

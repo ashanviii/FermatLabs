@@ -2,13 +2,13 @@
 
 ## Outcome
 
-Fermat will take a group of 4–10 adult travellers with Indian passports from private constraint collection through a shared decision and a budgeted, day-by-day plan. The organizer creates a room, each traveller submits their own constraints, the group votes, Fermat atomically locks the eligible vote winner, and one deterministic engine produces an editable itinerary whose mandatory costs fit every traveller's private ceiling.
+Fermat will take a group of 2–10 adult travellers with Indian passports from private constraint collection through a shared decision and a budgeted, day-by-day plan. The organizer creates a room, each traveller submits their own constraints, the group votes, Fermat atomically locks the eligible vote winner, and one deterministic engine produces an editable itinerary whose mandatory costs fit every traveller's private ceiling.
 
 This is a planning and readiness product. It does not book travel, collect payments or identity documents, verify visas, or claim live prices or legal eligibility.
 
 ## User journey and lifecycle
 
-1. An authenticated organizer enters a trip name, exact start and end dates, and an expected group size of 4–10.
+1. An authenticated organizer enters a trip name, exact start and end dates, and an expected group size of 2–10.
 2. Fermat creates a scoped invite. Guests authenticate anonymously, choose a unique nickname, and the organizer admits them while the room is collecting responses.
 3. Each approved traveller privately enters a departure city, INR ceiling, passport-expiry month or explicit unknown, held-visa choices, date confirmation, controlled preferences, and an unselected self-attestation that they will be at least 18 on the start date and travel on an Indian passport. Missing or false attestation leaves the submission incomplete; no birth date, numeric age, nationality field, or document proof is collected.
 4. The shared comparison shows roster progress and coarse aggregate blockers without revealing raw private constraints.
@@ -164,7 +164,7 @@ Invariant: every shared write is server-authoritative and transactionally checks
 
 ## Definition of done and release boundary
 
-- Deterministic domain tests cover N=4..10, all ten contingency remainder classes, budget boundaries, reconciliation, preference-only tie breaks, passport boundaries, schedule validity, revisions, and idempotency.
+- Deterministic domain tests cover N=2..10, all ten contingency remainder classes, budget boundaries, reconciliation, preference-only tie breaks, passport boundaries, schedule validity, revisions, and idempotency.
 - Firestore emulator/rules tests prove the complete read matrix and direct-write denial.
 - API integration tests cover authentication, roles, invite lifecycle, validation, transaction races, stale conflicts, and failure responses.
 - The production build passes.

@@ -69,7 +69,7 @@ function createDefaultDraft() {
     travelMonth: '2026-12',
     durationDays: 6,
     budgetPerPerson: 100000,
-    travellers: Array.from({ length: 4 }, (_, index) => createTraveller(index)),
+    travellers: Array.from({ length: 2 }, (_, index) => createTraveller(index)),
     selectedDestinationId: null,
   };
 }

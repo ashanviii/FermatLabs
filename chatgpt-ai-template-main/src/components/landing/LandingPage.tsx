@@ -197,7 +197,7 @@ export default function LandingPage() {
           <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
             <div className="flex flex-col items-start">
               <Badge tone="brand" size="lg" icon={icons.members}>
-                For groups of 4 to 10 friends
+                For groups of 2 to 10 friends
               </Badge>
               <h1 id="hero-title" className="type-display m-0 mt-5 lg:text-[3.5rem] lg:leading-[1.05]">
                 One trip everyone can{' '}

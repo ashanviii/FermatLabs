@@ -4,7 +4,7 @@ Fermat helps small groups choose and plan a trip everyone can actually take. The
 
 ## Group trip MVP
 
-The default `/plan` flow is designed for 4–10 adult Indian-passport travellers planning together:
+The default `/plan` flow is designed for 2–10 adult Indian-passport travellers planning together:
 
 - create an authenticated room and share a fragment-secret invitation;
 - admit members without exposing their private budget, passport month, preferences, or ballot;
@@ -39,7 +39,7 @@ npm run test:firestore-rules
 npm run build
 ```
 
-Use Node 20 or newer. The checks cover the legacy local flow, N=4–10 deterministic allocation, private projections, revisions, create/lock idempotency, invite rotation/revocation, command authorization, and the Firestore access matrix.
+Use Node 20 or newer. The checks cover the legacy local flow, N=2–10 deterministic allocation, private projections, revisions, create/lock idempotency, invite rotation/revocation, command authorization, and the Firestore access matrix.
 
 For a full local multi-identity journey, start the Auth and Firestore emulators plus the app with the emulator variables from `.env.example`, then run:
 

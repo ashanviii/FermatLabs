@@ -142,7 +142,7 @@ export default function CollaborativeTripPlanner() {
     name: 'Friends escape',
     startDate: '2026-12-10',
     endDate: '2026-12-15',
-    expectedSize: 4,
+    expectedSize: 2,
     homeCountry: DEFAULT_HOME_COUNTRY,
     currency: 'INR',
     scope: 'any',

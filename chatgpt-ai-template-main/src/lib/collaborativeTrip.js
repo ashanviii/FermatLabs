@@ -121,7 +121,7 @@ function allocateInteger(total, orderedIds) {
 function createTripState({ id, ownerUid, name, startDate, endDate, expectedSize, createdAt = null, homeCountry = DEFAULT_HOME_COUNTRY, currency, scope = 'any', destinationIds }) {
   const cleanName = typeof name === 'string' ? name.trim() : '';
   if (!id || !ownerUid || !cleanName || cleanName.length > 80) fail('Trip id, owner, and a name of at most 80 characters are required');
-  if (!Number.isInteger(expectedSize) || expectedSize < 4 || expectedSize > 10) fail('Expected size must be 4–10');
+  if (!Number.isInteger(expectedSize) || expectedSize < 2 || expectedSize > 10) fail('Expected size must be 2–10');
   if (!isExactDate(startDate) || !isExactDate(endDate) || endDate < startDate) fail('Valid exact dates are required');
   const tripDays = Math.round((Date.parse(`${endDate}T00:00:00Z`) - Date.parse(`${startDate}T00:00:00Z`)) / DAY) + 1;
   if (tripDays < 2 || tripDays > 31) fail('Trip length must be between 2 and 31 days');

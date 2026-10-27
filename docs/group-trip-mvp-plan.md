@@ -22,7 +22,7 @@ Runnable gates: domain tests, command/API integration tests, Firestore emulator 
 5. Add member approval/rejection for the current plan revision. Any edit clears approvals; private ceilings and reasons remain private while shared readiness is coarse.
 6. Build itemized group/per-person budget, daily itinerary editor, private shortfall view, shared plan-status/approval dashboard, and print-friendly summary.
 
-Runnable gates: deterministic N=4..10 and boundary-budget tests, exact reconciliation, schedule validation, stale-edit/API integration tests, production build, and responsive browser verification at 390px and desktop widths.
+Runnable gates: deterministic N=2..10 and boundary-budget tests, exact reconciliation, schedule validation, stale-edit/API integration tests, production build, and responsive browser verification at 390px and desktop widths.
 
 ## Delivery and review
 
