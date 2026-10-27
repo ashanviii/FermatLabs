@@ -16,9 +16,20 @@ The controls use the existing private-details form and `submitConstraints` comma
 
 Keeping earlier sections mounted makes the collecting page slightly longer, but it gives every navigation control a stable target and avoids introducing a second client-side step state that could disagree with the server-derived lifecycle.
 
-## Statefulness
+## UI state and server state
 
-This change is not stateful. It only scrolls to and reveals existing collecting-phase UI; it does not alter persisted fields, server commands, retries, recovery, or lifecycle transitions.
+This change does not alter persisted fields, server commands, retries, recovery, or lifecycle transitions. It does add an ephemeral client-side edit mode with the following transitions:
+
+| UI state | Event | Result | Server effect |
+| --- | --- | --- | --- |
+| saved summary, collecting | Back to your details / Edit details | open the form with the latest saved values | none |
+| form open, collecting | Cancel | restore the latest `trip.myConstraints`, clear dirty state, close the form | none |
+| form open, collecting | Save succeeds | accept the returned trip, clear dirty state, close the form | existing `submitConstraints` command |
+| form open, collecting | Save fails | keep the draft and form open; show the existing error notice | none acknowledged |
+| form open | trip advances to voting or locked | discard edit mode and hide the editable form | none |
+| form already open | Back/Edit repeated | remain open and scroll to the same stable section anchor | none |
+
+While the form is dirty, the existing polling guard continues to prevent a refresh from overwriting the draft. Cancel restores the most recent saved snapshot currently present in `trip.myConstraints`.
 
 ## Acceptance criteria
 
@@ -32,6 +43,7 @@ This change is not stateful. It only scrolls to and reveals existing collecting-
 
 - Record the missing controls against the unchanged `?preview=ready` page.
 - Run a browser dry run at mobile and desktop widths covering Choose → Your details → Invite and edit/cancel.
+- Check `?preview=voting` and `?preview=locked` explicitly: neither may expose Edit/Back-to-details controls or an editable private-details form.
 - Run the complete group-trip suite, TypeScript checking, and a production build.
 - Review the final diff for lifecycle or privacy regressions.
 
