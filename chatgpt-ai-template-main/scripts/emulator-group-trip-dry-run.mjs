@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
-const count = Number(process.argv[2] || 4);
-assert.ok(Number.isInteger(count) && count >= 4 && count <= 10, 'Member count must be an integer from 4 through 10');
+const count = Number(process.argv[2] || 2);
+assert.ok(Number.isInteger(count) && count >= 2 && count <= 10, 'Member count must be an integer from 2 through 10');
 
 const authBase = process.env.AUTH_EMULATOR_URL || 'http://127.0.0.1:9099';
 const appBase = process.env.APP_URL || 'http://127.0.0.1:3001';

@@ -234,7 +234,7 @@ export function CreateRoomCard({ draft, onChange, onCreate, disabled, busy }: { 
         </div>
         <Field label="How many people" hint="Including you">
           <Select value={draft.expectedSize} onChange={(e) => onChange({ ...draft, expectedSize: Number(e.target.value) })}>
-            {[4, 5, 6, 7, 8, 9, 10].map((n) => (
+            {[2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
               <option key={n} value={n}>
                 {n} people
               </option>

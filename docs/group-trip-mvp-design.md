@@ -2,13 +2,13 @@
 
 ## Outcome
 
-Fermat will take a group of 4–10 adult travellers with Indian passports from private constraint collection through a shared decision and a budgeted, day-by-day plan. The organizer creates a room, each traveller submits their own constraints, the group votes, Fermat atomically locks the eligible vote winner, and one deterministic engine produces an editable itinerary whose mandatory costs fit every traveller's private ceiling.
+Fermat will take a group of 2–10 adult travellers with Indian passports from private constraint collection through a shared decision and a budgeted, day-by-day plan. The organizer creates a room, each traveller submits their own constraints, the group votes, Fermat atomically locks the eligible vote winner, and one deterministic engine produces an editable itinerary whose mandatory costs fit every traveller's private ceiling.
 
 This is a planning and readiness product. It does not book travel, collect payments or identity documents, verify visas, or claim live prices or legal eligibility.
 
 ## User journey and lifecycle
 
-1. An authenticated organizer enters a trip name, exact start and end dates, and an expected group size of 4–10.
+1. An authenticated organizer enters a trip name, exact start and end dates, and an expected group size of 2–10.
 2. Fermat creates a scoped invite. Guests authenticate anonymously, choose a unique nickname, and the organizer admits them while the room is collecting responses.
 3. Each approved traveller privately enters a departure city, INR ceiling, passport-expiry month or explicit unknown, held-visa choices, date confirmation, controlled preferences, and an unselected self-attestation that they will be at least 18 on the start date and travel on an Indian passport. Missing or false attestation leaves the submission incomplete; no birth date, numeric age, nationality field, or document proof is collected.
 4. The shared comparison shows roster progress and coarse aggregate blockers without revealing raw private constraints.
@@ -147,14 +147,14 @@ Invariant: every shared write is server-authoritative and transactionally checks
 
 ## Acceptance criteria
 
-1. Four and ten independent browser identities can create, join, submit, vote, lock, reload, and see the same saved itinerary.
+1. Two and ten independent browser identities can create, join, submit, vote, lock, reload, and see the same saved itinerary.
 2. Eleven concurrent admissions never exceed approved capacity, pending requests neither consume capacity nor reserve nicknames, expired/rejected requests cannot be admitted, and retrying with the same UID never creates a second membership.
 3. An authenticated outsider or ordinary member cannot read another member's constraints, spoof a UID/role, write authoritative documents, alter derived totals, or execute owner-only commands.
 4. Expired or revoked invites fail, rotation preserves existing membership, the fragment is removed before telemetry initialization, and sentinel invite/private values are absent from every application-controlled log/telemetry sink and shared payload.
 5. Missing submissions, ballots, stale revisions, hard blockers, and unaffordable mandatory baselines prevent lock. Tied eligible ballots always produce the published winner.
 6. Racing an answer edit with lock either locks the accepted complete revision or invalidates that lock attempt; stale constraints never silently lock.
 7. Retrying create or lock after a simulated committed-but-lost response produces exactly one trip and one locked plan.
-8. For every group size from 4 through 10 and boundary budgets, rooms and seats cover the group, allocations are nonnegative integer INR, and member totals equal the group total exactly.
+8. For every group size from 2 through 10 and boundary budgets, rooms and seats cover the group, allocations are nonnegative integer INR, and member totals equal the group total exactly.
 9. A ceiling equal to baseline plus contingency passes; one rupee less fails. A high group average never hides one member's shortfall.
 10. The itinerary covers the exact dates with valid times, buffers, no overlapping required activities, no duplicate paid templates, and costs matching all totals.
 11. Editing an item recalculates costs and conflicts, creates a revision, and clears approvals; concurrent stale edits conflict visibly.
@@ -164,11 +164,11 @@ Invariant: every shared write is server-authoritative and transactionally checks
 
 ## Definition of done and release boundary
 
-- Deterministic domain tests cover N=4..10, all ten contingency remainder classes, budget boundaries, reconciliation, preference-only tie breaks, passport boundaries, schedule validity, revisions, and idempotency.
+- Deterministic domain tests cover N=2..10, all ten contingency remainder classes, budget boundaries, reconciliation, preference-only tie breaks, passport boundaries, schedule validity, revisions, and idempotency.
 - Firestore emulator/rules tests prove the complete read matrix and direct-write denial.
 - API integration tests cover authentication, roles, invite lifecycle, validation, transaction races, stale conflicts, and failure responses.
 - The production build passes.
-- A recorded two-device browser dry run covers the four-member journey, ten-member boundary, mobile layout, desktop keyboard flow, offline status, and outsider denial.
+- A recorded two-device browser dry run covers the two-member journey, ten-member boundary, mobile layout, desktop keyboard flow, offline status, and outsider denial.
 - The branch, issues, design records, and PR description agree on scope and limitations.
 
 Code and emulator-verified PR delivery are in scope. Live staging remains deferred until a named Firebase project has required auth providers enabled, server credentials configured, scoped rules deployed, and the two-device outsider-denial journey passes. Production deployment, merge, and release require separate authorization.

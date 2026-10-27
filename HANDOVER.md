@@ -1,6 +1,6 @@
 # Fermat handover: where things stand (25 October 2026)
 
-**Fermat** helps a group of 4–10 friends pick one trip everyone can actually take.
+**Fermat** helps a group of 2–10 friends pick one trip everyone can actually take.
 
 - Each person privately enters a budget, departure city, passport and visas.
 - The group sees only anonymous summaries ("2 budgets short").
