@@ -227,6 +227,7 @@ export default function CollaborativeTripPlanner() {
   // Private details can only be edited while the group is still collecting inputs.
   useEffect(() => {
     if (trip?.phase !== 'collecting') {
+      if (trip?.myConstraints) setPrivateInput(fromSaved(trip.myConstraints, trip));
       setEditingDetails(false);
       setPrivateInputDirty(false);
     }
