@@ -30,7 +30,8 @@ This is not a stateful schema change. `expectedSize` is stored as ordinary trip 
 - Run the focused collaborative-trip tests, including the two-person end-to-end domain case and one-person rejection.
 - Run the complete group-trip test suite.
 - Run TypeScript checking and the production build.
-- Inspect the final diff for stale 4–10 minimums and unrelated changes.
+- Record a browser dry run that verifies the shared `/plan` create form defaults to 2, offers every size from 2 through 10, and can create a two-person trip; then verify the offline demo starts with two traveller rows and keeps both remove actions disabled at that floor.
+- Inspect the final diff for stale 4–10 minimums in the landing page, README, handover, and canonical design/plan docs, plus unrelated changes.
 
 ## Residual exposure
 
