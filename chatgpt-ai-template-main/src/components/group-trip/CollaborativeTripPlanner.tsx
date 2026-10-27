@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { ChevronDown, WifiOff } from 'lucide-react';
+import { ArrowLeft, Pencil, WifiOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody } from '@/components/ui/card';
@@ -137,6 +137,7 @@ export default function CollaborativeTripPlanner() {
   const [online, setOnline] = useState(true);
   const [inviteReady, setInviteReady] = useState(false);
   const [privateInputDirty, setPrivateInputDirty] = useState(false);
+  const [editingDetails, setEditingDetails] = useState(false);
   const [createKey] = useState(() => `create-${globalThis.crypto?.randomUUID?.() || Date.now()}`);
   const [draft, setDraft] = useState<RoomDraft>({
     name: 'Friends escape',
@@ -223,6 +224,13 @@ export default function CollaborativeTripPlanner() {
     startedFor.current = key;
     setPrivateInput(startingInput(trip));
   }, [trip?.id, trip?.homeCountry, trip?.currency, trip?.scope, trip?.myConstraints, privateInputDirty]);
+  // Private details can only be edited while the group is still collecting inputs.
+  useEffect(() => {
+    if (trip?.phase !== 'collecting') {
+      setEditingDetails(false);
+      setPrivateInputDirty(false);
+    }
+  }, [trip?.phase]);
   async function request(body: any) {
     if (preview) return true;
     if (!user) return false;
@@ -263,7 +271,20 @@ export default function CollaborativeTripPlanner() {
 
   // Commands (payloads unchanged).
   const saveDetails = async () => {
-    if (await command({ type: 'submitConstraints', expectedInputRevision: trip.inputRevision, constraints: constraintsPayload(privateInput) })) setPrivateInputDirty(false);
+    if (await command({ type: 'submitConstraints', expectedInputRevision: trip.inputRevision, constraints: constraintsPayload(privateInput) })) {
+      setPrivateInputDirty(false);
+      setEditingDetails(false);
+    }
+  };
+  const editDetails = () => {
+    if (trip?.phase !== 'collecting') return;
+    setEditingDetails(true);
+    requestAnimationFrame(() => scrollToStep('details'));
+  };
+  const cancelDetailsEdit = () => {
+    if (trip?.myConstraints) setPrivateInput(fromSaved(trip.myConstraints, trip));
+    setPrivateInputDirty(false);
+    setEditingDetails(false);
   };
   const openVoting = () => command({ type: 'openVoting', expectedInputRevision: trip.inputRevision });
   const vote = (id: string) => command({ type: 'vote', destinationId: id, round: trip.round, inputRevision: trip.inputRevision });
@@ -288,6 +309,7 @@ export default function CollaborativeTripPlanner() {
   const joined = trip ? approvedCount(trip) : 0;
   const requests: any[] = trip?.pendingRequests || [];
   const showInvite = Boolean(me) && trip?.phase === 'collecting' && (joined < trip.expectedSize || (owner && requests.length > 0));
+  const showInviteSection = Boolean(me) && trip?.phase === 'collecting' && (owner || showInvite);
   const everyoneIn = trip && joined >= trip.expectedSize && (trip.submissionProgress ?? 0) >= trip.expectedSize;
   const hasBoard = (trip?.destinationBoard?.length ?? 0) > 0 || (trip?.myPrivateStatus?.length ?? 0) > 0;
 
@@ -304,7 +326,7 @@ export default function CollaborativeTripPlanner() {
 
   /* ---------------------------------------------------------------- sections */
 
-  const inviteSection = showInvite && (
+  const inviteSection = showInviteSection && (
     <Section key="invite" id="step-invite" className="scroll-mt-6" eyebrow={stepEyebrow('invite')} title="Invite your friends" description="Fermat works best when the whole group is in.">
       <InvitePanel trip={trip} owner={owner} invite={invite} disabled={disabled} command={command} />
     </Section>
@@ -323,7 +345,9 @@ export default function CollaborativeTripPlanner() {
     />
   );
 
-  // Before the vote: full form when it's your step, otherwise a private summary with the form tucked away.
+  const showDetailsForm = trip?.phase === 'collecting' && (!trip.myConstraints || step === 'details' || step === 'invite' || editingDetails);
+
+  // Before the vote: full form when it's your step or you explicitly reopen it; otherwise show a private summary.
   const detailsSection = me && (trip.phase === 'collecting' || trip.phase === 'voting') && (
     <Section
       key="details"
@@ -332,21 +356,34 @@ export default function CollaborativeTripPlanner() {
       eyebrow={stepEyebrow('details')}
       title={step === 'details' || step === 'invite' ? 'What works for you' : 'Your details'}
       description={trip.phase === 'voting' ? 'Locked while voting is open.' : 'Takes about a minute. You can change it until voting opens.'}
+      action={
+        trip.phase === 'collecting' ? (
+          <>
+            {owner && showInviteSection && (
+              <Button size="sm" variant="outline" icon={ArrowLeft} onClick={() => scrollToStep('invite')}>
+                Back to invite
+              </Button>
+            )}
+            {trip.myConstraints && (showDetailsForm ? (
+              editingDetails && (
+                <Button size="sm" variant="ghost" onClick={cancelDetailsEdit}>
+                  Cancel
+                </Button>
+              )
+            ) : (
+              <Button size="sm" variant="outline" icon={Pencil} onClick={editDetails}>
+                Edit details
+              </Button>
+            ))}
+          </>
+        ) : undefined
+      }
     >
-      {trip.phase === 'collecting' && (!trip.myConstraints || step === 'details' || step === 'invite') ? (
+      {showDetailsForm ? (
         detailsForm
       ) : (
         <div className="grid gap-4">
-            <PrivateDetailsSummary trip={trip} value={privateInput} />
-            {trip.phase === 'collecting' && (
-              <details className="group">
-                <summary className="type-small flex w-fit cursor-pointer list-none items-center gap-1.5 rounded-full font-semibold text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
-                  Change my details
-                  <ChevronDown className="size-4 transition-transform group-open:rotate-180" strokeWidth={2} aria-hidden />
-                </summary>
-                <div className="mt-4">{detailsForm}</div>
-              </details>
-            )}
+          <PrivateDetailsSummary trip={trip} value={privateInput} />
         </div>
       )}
       <SilentPrefs {...featureProps} />
@@ -413,6 +450,13 @@ export default function CollaborativeTripPlanner() {
       eyebrow={stepEyebrow('choose')}
       title={voting ? 'Vote for where to go' : 'Where you could go'}
       description={voting ? "Your vote is secret. A place someone can't afford or enter can't win." : 'Everyone sees the same list. Only you see your own fit.'}
+      action={
+        trip.phase === 'collecting' && trip.myConstraints ? (
+          <Button size="sm" variant="outline" icon={ArrowLeft} onClick={editDetails}>
+            Back to your details
+          </Button>
+        ) : undefined
+      }
     >
       {chooseBar}
       {hasBoard ? (
