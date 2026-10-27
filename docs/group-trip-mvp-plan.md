@@ -11,7 +11,7 @@ Deliver the approved outcome as two implementation contracts in one coherent ext
 5. Replace organizer-entered traveller constraints with a collaborative UI: authenticated organizer setup, fragment-based invitation, guest join/rejoin states, roster progress, each member's private form, aggregate comparison, private ballot, and atomic lock result.
 6. Add explicit full-room, revoked/expired invite, unauthorized, stale, offline, expired-session, and missing-configuration states. Never report an unacknowledged command as saved.
 
-Runnable gates: domain tests, command/API integration tests, Firestore emulator rules tests, production build, and a four-/ten-identity browser journey through atomic lock.
+Runnable gates: domain tests, command/API integration tests, Firestore emulator rules tests, production build, and a two-/ten-identity browser journey through atomic lock.
 
 ## Ticket 2 — N-person itinerary, budget, and approvals
 
