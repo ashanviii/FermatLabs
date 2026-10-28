@@ -14,23 +14,36 @@ Source: `app/(marketing)/design/page.tsx`. Copy patterns from there.
 7. **Mobile first.** Design at 390px, then widen to 1280px. Tap targets are at least 36px (buttons `sm` = 36px, `md` = 44px).
 8. **Accessible by default.** Every control has a visible label (`<Field>`), focus rings are visible (`ring-brand-500`), and text meets 4.5:1.
 
+## Look and feel
+
+Editorial and calm, in the spirit of Nuvio, with ASCII art as the signature:
+
+- **White canvas, faint grid.** Hero and feature bands sit on `.bg-grid` (graph paper that fades at the edges). Alternate bands use `surface-muted`.
+- **Hairline cards.** White cards with a 1px border (built into `shadow-card`) and a soft low shadow. Big panels are `rounded-3xl`.
+- **Floating pill nav.** Marketing and /plan both use a frosted pill bar (`.material-bar rounded-full shadow-raised`) that floats below the top edge.
+- **One accent.** Fermat green (`brand-600`) for actions, links and selection. Deep green (`brand-900`) for brand panels. Marigold (`warm`) only for the route in ASCII art and the odd highlight.
+- **Type with three voices.** Manrope headlines (medium, set tight), one italic serif phrase per headline (`type-accent`), and small mono caps for labels (`type-overline`).
+- **ASCII art.** Hand-drawn pieces, dividers and a few animated scenes. See "ASCII art" below.
+- **Kept from the Apple pass.** Press-to-shrink feedback (`active:scale-[0.97]`, `ease-apple`), 17px inputs (no iOS zoom on focus), soft focus halo (`ring-4 ring-brand-500/35`), solid bars under Reduce Transparency, no motion under Reduce Motion.
+
 ## Font and type
 
-- One family: **Plus Jakarta Sans** (variable, 200-800), loaded in `app/(marketing)/layout.tsx` as `--font-sans`. `--font-display` points to it too.
-- Tailwind: `font-sans` (body, default) and `font-display` (headings).
+- Three families, loaded in `app/(marketing)/layout.tsx`: **Manrope** (`--font-sans`, `--font-display`), **Instrument Serif** (`--font-serif`, italic accent only) and **JetBrains Mono** (`--font-mono`, labels and ASCII).
+- Tailwind: `font-sans` (body, default), `font-display` (headings), `font-serif`, `font-mono`.
 - The type scale is a set of **classes**, not `text-*` sizes. They set size, line height, weight and tracking; headings also set `text-ink`. Add a colour class next to them for anything else.
 
 | Class | Size / weight | Use |
 |---|---|---|
-| `type-display` | 34px (48px md+) / 800 | Landing hero, the locked plan's hero title |
-| `type-h1` | 26px (32px md+) / 700 | Page title (one per page) |
-| `type-h2` | 20px (22px md+) / 700 | Section titles (`<Section>` uses it) |
-| `type-h3` | 17px / 650 | Card titles, list group titles |
-| `type-lead` | 17px / 400 | Intro paragraph under a page title |
-| `type-body` | 15px / 400 | Default reading text |
-| `type-small` | 13px / 400 | Helper text, meta, labels |
+| `type-display` | 38px (64px md+) / 500 | Landing hero, the locked plan's hero title |
+| `type-h1` | 30px (42px md+) / 500 | Page and section titles |
+| `type-h2` | 22px (26px md+) / 600 | Section titles inside /plan (`<Section>` uses it) |
+| `type-h3` | 17px / 600 | Card titles, list group titles |
+| `type-lead` | 19px / 400 | Intro paragraph under a title |
+| `type-body` | 16px / 400 | Default reading text |
+| `type-small` | 14px / 400 | Helper text, meta, labels |
 | `type-caption` | 12px / 500 | Timestamps, tiny meta |
-| `type-overline` | 11px / 700, caps | Eyebrows ("Step 3 of 5") |
+| `type-overline` | 11px mono caps / 500 | Eyebrows and labels ("STEP 3 OF 5", "LIVE EXAMPLE") |
+| `type-accent` | serif italic, 1.08em, green | The one accent phrase in a headline: `One trip everyone can <span className="type-accent">actually take.</span>`. Max one per heading; on dark panels add `text-warm-300` |
 | `type-num` | tabular numbers | Money and counts in columns |
 
 Why classes: `tailwind-merge` (used by `cn()`) would treat a custom `text-h1` as a colour and silently drop it when combined with `text-ink`.
@@ -43,15 +56,16 @@ Never write hex in screens. Use these Tailwind names (`bg-*`, `text-*`, `ring-*`
 
 | Token | Value | Use |
 |---|---|---|
-| `brand-50 … brand-950` (`brand` = 900) | `#EEF6F1` … `#153524` … `#0C2116` | Primary actions (`bg-brand-900`), selected states, links (`text-brand-700`), soft fills (`bg-brand-50`). `brand-500` `#3D9163` is the leaf green: icons and accents, not text on white |
-| `warm-50 … warm-800` (`warm` = 400) | marigold `#F4B740` | **The one warm accent.** Use rarely: "Your pick", hero highlight, money collected bar. Never for status |
-| `ink` | `#16201B` | Headings, primary text |
-| `ink-soft` | `#3A4540` | Body copy |
-| `ink-muted` | `#5E6862` | Helper text, labels (5.3:1 on canvas) |
-| `ink-faint` | `#8A938D` | Icons, placeholders, disabled only. Not for readable text |
-| `canvas` | `#F7F6F2` | Page background (the /plan shell sets `bg-canvas`) |
-| `surface` / `surface-muted` / `surface-strong` | `#FFF` / `#F2F1EC` / `#E9E7E0` | Cards and inputs / sunken wells, chips / tracks, pressed |
-| `line` / `line-subtle` / `line-strong` | `#E4E2DA` / `#EEEDE7` / `#CFCCC2` | Input rings, dividers, hover rings |
+| `brand-50 … brand-950` (`brand` = 900) | `#EEF6F1` … `#153524` … `#0C2116` | **The accent.** Actions and selected states use `brand-600` `#2E7650` (5.4:1 with white). Links `text-brand-700`, soft fills `bg-brand-50`. `brand-900` for brand panels and the wordmark. `brand-500` `#3D9163` for icons and accents, not text on white |
+| `warm-50 … warm-800` (`warm` = 400) | marigold `#F4B740` | **The one warm accent.** Routes in ASCII art, "Your pick", accents on dark panels. Never for status |
+| `ink` | `#131316` | Headings, primary text |
+| `ink-soft` | `#3F3F46` | Body copy |
+| `ink-muted` | `#6B6B76` | Helper text, labels (5.2:1 on white) |
+| `ink-faint` | `#A1A1AA` | Icons, placeholders, dividers, disabled only. Not for readable text |
+| `canvas` | `#FAFAF8` | Page background, a soft off-white so white cards lift off it (the /plan shell sets `bg-canvas`) |
+| `surface` / `surface-muted` / `surface-strong` | `#FFF` / `#F3F3F0` / `#EDEDF0` | Cards and inputs / alternate bands, wells / tracks, pressed |
+| `fill` / `fill-strong` / `fill-subtle` | translucent ink (6% / 10% / 4%) | Grey buttons (`outline`), unselected chips, segmented tracks. Works on any surface |
+| `line` / `line-subtle` / `line-strong` | `#DCDCE3` / `#EFEFF2` / `#CFCFD6` | Card and input borders, dividers inside cards, hover borders |
 | `success`, `warning`, `danger`, `info`, `private` | each has `DEFAULT`, `soft`, `ink`, `line` | `bg-success-soft text-success-ink` for pills/notices, `text-success` for icons, `ring-success-line` for outlines |
 | `whatsapp` (`DEFAULT`, `hover`, `ink`) | `#25D366` | WhatsApp button only |
 
@@ -59,12 +73,46 @@ Legacy shadcn names (`primary`, `muted-foreground`, `accent`, `card`, `backgroun
 
 ## Radius, shadow, layout
 
-- Radius: `rounded-xl` inputs and small tiles, `rounded-2xl` cards, `rounded-3xl` hero panels, `rounded-full` buttons, pills, chips, avatars.
-- Shadow instead of borders: `shadow-card` (default card), `shadow-raised` (hover, selected, hero), `shadow-pop` (menus, sheets). `ring-1 ring-inset ring-line` when a hairline is needed inside another surface.
+- Radius: `rounded-xl` inputs and small tiles, `rounded-2xl` cards, `rounded-3xl` hero panels and bands, `rounded-full` buttons, pills, chips, avatars, the nav.
+- Elevation: `shadow-card` = 1px border + soft low shadow (default card), `shadow-raised` (hover, the nav pill, hero panels), `shadow-pop` (menus, sheets). `ring-1 ring-inset ring-line-subtle` for a hairline inside another surface.
+- Backgrounds: `.bg-grid` (graph paper; put it on an `absolute inset-0 -z-10` layer inside an `isolate` section), `.bg-hatch` (diagonal stripes in `currentColor`, for blocked or lost time in bars).
+- Motion: `ease-apple` (`cubic-bezier(0.32, 0.72, 0, 1)`) with 200–300ms for state changes. Press feedback is `active:scale-[0.97]`.
 - Widths: `max-w-page` (72rem / 1152px) outer page, `max-w-content` (48rem) single-column flows and forms, `max-w-prose` (38rem) paragraphs. Use `<PageContainer>` for the outer column (`px-4 sm:px-6 lg:px-8`).
 - Spacing scale (Tailwind units): 1.5 / 2 / 3 / 4 / 5 / 6 / 8 / 12 / 16. Inside a card: `p-5 sm:p-6`, gaps of `gap-3` (tight lists) to `gap-5` (form fields). Between sections: `gap-12 sm:gap-16`. Between a section title and its content: `gap-4` (built into `<Section>`).
 - Grids: stat rows `grid-cols-2 lg:grid-cols-4`; destination cards `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`; form fields `grid gap-5 sm:grid-cols-2`.
 - Mobile: single column, full-width primary button at the bottom of a step (`<Button block size="lg">`), horizontal chip rows wrap (never scroll sideways except the section nav). On desktop, /plan can use a two-column layout: main step (`lg:col-span-8`) + sidebar (`lg:col-span-4`) for Tasks / members.
+
+## ASCII art
+
+The signature detail. Static pieces in `@/components/ui/ascii`, animated ones in `@/components/ui/ascii-motion` (client).
+
+| Piece | Where it's used |
+|---|---|
+| `<AsciiArt art={asciiArt.envelope / passport / ballot / route} />` | The four "How it works" steps |
+| `<AsciiArt art={asciiArt.suitcase} />` | Closing CTA panel, the /plan loading screen |
+| `<AsciiArt art={asciiArt.wordmark} />` | Footer signature |
+| `<EmptyState art={asciiArt.pin / lock / clipboard} … />` | Empty states in /plan |
+| `<AsciiRoute from="YOU" to="BALI" />` | The locked plan's hero: the route draws itself, then lands |
+| `<AsciiSpinner />` | Loading states, next to a visible status message |
+
+Rules:
+- **Plain ASCII only** in art (no emoji or box-drawing characters), so columns stay aligned in any monospace fallback.
+- **Decorative by default** (`aria-hidden`). Pass `label` only when the art carries meaning, and say the same thing in visible text too.
+- **Size with `text-*`, colour with `text-*`.** The `.ascii` class sets the mono font, line height and no wrapping. Green (`text-brand-600/700`) on light, `text-brand-300` or `text-warm-300` on dark.
+- **Motion** only in `ascii-motion`: each piece draws a finished still frame first, animates only while on screen and in a visible tab, and stays still under Reduce Motion.
+- **One showpiece per screen.** The landing's showpiece is the hero globe (below); the route is the plan's. Everything else is small and quiet.
+
+## Hero globe
+
+`src/components/landing/HeroGlobe.tsx`: real country shapes (Natural Earth via `world-atlas`, drawn with `d3-geo` on a canvas) on a soft grey sphere. The landing uses it as a dome (`<HeroGlobe dome />`, top half only) centred above the hero copy.
+
+- **Motion, GitHub-globe style.** A steady turn (`BASE_SPEED`, 3°/s). Several group flights (`FLIGHTS`) are in the air at once: each is a glowing streak with a fading tail, arcs higher the longer the trip, and lands with a ripple on the surface. Drag to spin; the flick's momentum eases back into the steady turn.
+- **Pins.** Cities with a photo get a Google Maps-style red pin that drops in with a bounce as it turns into view. Cities without one (trip origins) get a quiet white dot.
+- **Place cards.** A compact map-preview card (square thumbnail, name, "country · tag", and a "From <city>" chip after a landing) on a frosted surface springs up from a pin when a flight lands there, and on hover or tap. Cards near the top edge open below the pin. The spin slows while a card is up and pauses while you hover a pin.
+- **Bubbles.** iMessage-style bubbles carry a word per city (`tag`): they pop out above the pin, show typing dots for a beat (`TYPING_MS`), then the text.
+- **Smoothness.** Everything is time-based; the sphere shading and the pin and glow sprites are pre-rendered once per resize; no per-frame canvas blurs; the loop pauses off screen and in background tabs.
+- **Reduce Motion.** No spin, flights, drops or springs; one route is drawn still. Dragging and cards still work.
+- **Content.** Edit `CITIES` (position, `photo` = Unsplash id, `tag`, bubble `side`) and `FLIGHTS` (example trips). Photos are hotlinked from Unsplash and preloaded on mount. Canvas colours mirror the tokens (canvas can't read Tailwind), so update both together.
 
 ## Private-info treatment
 
@@ -109,7 +157,7 @@ Anonymous group information (what everyone sees) never uses the private colour.
 All files are in `src/components/ui/`. Import from the file or the barrel `@/components/ui`.
 
 ### Button — `@/components/ui/button`
-Variants `primary` (= `default`), `secondary`, `outline`, `ghost`, `danger`, `whatsapp`, `link`. Sizes `sm` (36px), `md` (= `default`, 44px), `lg` (48px), `icon`, `icon-sm`. Props `icon`, `iconRight` (pass the component), `loading`, `block`, `asChild`.
+Variants: `primary` (= `default`) filled green, `secondary` tinted green, `outline` grey fill (no border, despite the name), `ghost` plain green text, plus `danger`, `whatsapp`, `link`. Sizes `sm` (36px), `md` (= `default`, 44px, the minimum comfortable tap target), `lg` (50px), `icon`, `icon-sm`. Props `icon`, `iconRight` (pass the component), `loading`, `block`, `asChild`.
 ```tsx
 <Button icon={icons.vote} onClick={openVoting}>Open voting</Button>
 <Button variant="outline" size="sm" iconRight={ChevronRight}>See plan</Button>
@@ -216,7 +264,16 @@ Initials + stable colour from the nickname. Sizes `xs|sm|md|lg`, optional `statu
 <AvatarStack names={members.map((m) => m.nickname)} max={5} />
 ```
 
+### Segmented control — `@/components/ui/segmented`
+Class helpers for the iOS segmented look (grey track, white raised thumb). Styles only: keep `role="tablist"`/`role="tab"` + `aria-selected` when it switches a panel, or `aria-pressed` buttons when it picks an option.
+```tsx
+<div role="group" aria-label="Card style" className={segmentedTrack}>
+  {styles.map((s) => <button key={s.value} type="button" aria-pressed={style === s.value} onClick={() => setStyle(s.value)} className={segmentedItem(style === s.value)}>{s.label}</button>)}
+</div>
+```
+
 ### EmptyState — `@/components/ui/empty-state`
+Pass `art={asciiArt.pin}` (or `lock`, `clipboard`) to show ASCII art instead of the icon tile.
 ```tsx
 <EmptyState icon={icons.tasks} title="No tasks yet" description="Add one, like booking the airport cab." action={<Button size="sm" variant="outline" icon={Plus}>Add a task</Button>} />
 ```

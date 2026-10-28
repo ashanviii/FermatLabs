@@ -10,6 +10,9 @@ export * from './stepper';
 export * from './avatar';
 export * from './empty-state';
 export * from './progress';
+export * from './segmented';
+export * from './ascii';
+// Animated ASCII (AsciiRoute, AsciiSpinner) is a client module: import from './ascii-motion' directly.
 export * from './section';
 export * from './icons';
 export * from './whatsapp-icon';

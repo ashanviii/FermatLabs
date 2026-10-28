@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 
+import { AsciiArt, asciiArt } from '@/components/ui/ascii';
 import { Button } from '@/components/ui/button';
 import { icons } from '@/components/ui/icons';
 import { sources } from '@/lib/geo';
@@ -12,16 +13,20 @@ export default function ClosingCta() {
   return (
     <section aria-labelledby="cta-title" className="mx-auto w-full max-w-page px-4 sm:px-6 lg:px-8">
       <div className="relative overflow-hidden rounded-3xl bg-brand-900 px-6 py-12 text-white shadow-raised sm:px-12 sm:py-16">
-        {/* Soft decorative glow, no meaning. */}
-        <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 size-80 rounded-full bg-brand-500/25 blur-3xl" />
+        {/* Decorative: a faint grid and the packed suitcase, no meaning. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:linear-gradient(to_right,white_1px,transparent_1px),linear-gradient(to_bottom,white_1px,transparent_1px)] [background-size:44px_44px]"
+        />
+        <AsciiArt art={asciiArt.suitcase} className="pointer-events-none absolute -right-2 top-8 hidden text-[0.9375rem] text-brand-300/70 lg:block" />
 
-        <div className="relative flex flex-col items-start gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="relative flex flex-col items-start gap-8">
           <div className="max-w-prose">
             <p className="type-overline m-0 text-brand-200">Free for every group</p>
-            <h2 id="cta-title" className="type-h1 m-0 mt-2 text-white sm:text-[2.5rem] sm:leading-[1.1]">
-              Get the whole group on the same trip.
+            <h2 id="cta-title" className="type-h1 m-0 mt-3 text-white">
+              Get the whole group <span className="type-accent text-warm-300">on the same trip.</span>
             </h2>
-            <p className="type-lead m-0 mt-3 text-brand-100">
+            <p className="type-lead m-0 mt-4 text-brand-100">
               Start a room, share the link and see which trips work for everyone in a few minutes.
             </p>
           </div>
@@ -90,6 +95,8 @@ export function SiteFooter() {
           {sources.holidays.attribution}. {sources.fx.attribution}.
         </p>
       </div>
+      {/* Signature: the wordmark in ASCII, scaled to the column width. */}
+      <AsciiArt art={asciiArt.wordmark} className="mt-10 text-[3.6vw] leading-[1.05] text-brand-200 lg:text-[2.6rem]" />
     </footer>
   );
 }

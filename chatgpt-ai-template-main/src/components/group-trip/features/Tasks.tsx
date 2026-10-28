@@ -5,6 +5,7 @@ import { Avatar } from '@/components/ui/avatar';
 import { Badge, StatusPill } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody, CardHeader } from '@/components/ui/card';
+import { asciiArt } from '@/components/ui/ascii';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Input, controlClass } from '@/components/ui/field';
 import { icons, type IconComponent } from '@/components/ui/icons';
@@ -174,7 +175,7 @@ export default function Tasks({ trip, uid, owner, disabled, command }: FeaturePr
         )}
 
         {ordered.length === 0 ? (
-          <EmptyState size="sm" icon={icons.tasks} title="No tasks yet" description="Add one, like booking the airport cab." />
+          <EmptyState size="sm" icon={icons.tasks} art={asciiArt.clipboard} title="No tasks yet" description="Add one, like booking the airport cab." />
         ) : (
           <div className="grid gap-2">
             <div className="flex items-baseline justify-between">

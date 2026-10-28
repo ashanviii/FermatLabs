@@ -14,15 +14,23 @@ import { approvedCount, avatarName, memberList, phaseLabel, planApprovals, scope
 
 export function TopBar({ trip, action }: { trip?: any; action?: React.ReactNode }) {
   const names = memberList(trip).map((m: any) => avatarName(m.nickname));
+  // Full-width frosted bar, the same as the marketing nav. It lives inside the page column, so the material and
+  // hairline bleed to the screen edges (w-screen; .landing clips the overflow-x) while the content stays aligned.
   return (
-    <div className="flex h-16 items-center justify-between gap-3">
-      <a href="/" className="flex items-center gap-2 rounded-full text-ink no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">
-        <FermatMark className="h-6 text-brand-900" />
-        <span className="type-h3">Fermat</span>
-      </a>
-      <div className="flex items-center gap-3">
-        {names.length > 0 && <AvatarStack names={names} max={4} size="sm" className="hidden sm:flex" aria-label={`${names.length} people in this trip`} />}
-        {action}
+    <div className="sticky top-0 z-30">
+      <div
+        aria-hidden
+        className="material-bar pointer-events-none absolute inset-y-0 left-1/2 w-screen -translate-x-1/2 border-0 border-b border-solid border-line-subtle"
+      />
+      <div className="relative flex h-16 items-center justify-between gap-3">
+        <a href="/" className="flex items-center gap-2 rounded-full text-ink no-underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/35">
+          <FermatMark className="h-6 text-brand-600" />
+          <span className="type-h3 text-brand-900">Fermat</span>
+        </a>
+        <div className="flex items-center gap-3">
+          {names.length > 0 && <AvatarStack names={names} max={4} size="sm" className="hidden sm:flex" aria-label={`${names.length} people in this trip`} />}
+          {action}
+        </div>
       </div>
     </div>
   );

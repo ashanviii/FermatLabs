@@ -46,7 +46,7 @@ export function Stepper({ steps = PLAN_STEPS, current, onStepClick, className }:
         </div>
         <div className="mt-2 flex gap-1" aria-hidden>
           {steps.map((step, i) => (
-            <span key={step.id} className={cn('h-1.5 flex-1 rounded-full', i < index ? 'bg-brand-600' : i === index ? 'bg-brand-900' : 'bg-surface-strong')} />
+            <span key={step.id} className={cn('h-1.5 flex-1 rounded-full', i < index ? 'bg-brand-300' : i === index ? 'bg-brand-600' : 'bg-surface-strong')} />
           ))}
         </div>
       </div>
@@ -62,7 +62,7 @@ export function Stepper({ steps = PLAN_STEPS, current, onStepClick, className }:
                 className={cn(
                   'flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-colors',
                   state === 'done' && 'bg-brand-100 text-brand-800',
-                  state === 'current' && 'bg-brand-900 text-white shadow-card ring-4 ring-brand-100',
+                  state === 'current' && 'bg-brand-600 text-white ring-4 ring-brand-100',
                   state === 'upcoming' && 'bg-surface text-ink-muted ring-1 ring-inset ring-line-strong',
                 )}
               >

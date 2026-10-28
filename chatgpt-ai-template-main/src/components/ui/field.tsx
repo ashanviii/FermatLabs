@@ -64,11 +64,14 @@ export function Field({ label, hint, error, aside, htmlFor, hideLabel, className
   );
 }
 
-/* Shared control look: white, hairline ring, brand focus ring, red ring when invalid. */
+/*
+ * Shared control look: white, hairline ring, tinted focus halo, red ring when invalid.
+ * Text is 17px (Apple's body size). Anything under 16px makes iOS Safari zoom the page when the field is tapped.
+ */
 export const controlClass = cn(
-  'h-11 w-full min-w-0 rounded-xl border-0 bg-surface px-3.5 font-sans text-[0.9375rem] text-ink shadow-none outline-none ring-1 ring-inset ring-line',
-  'placeholder:text-ink-faint transition-shadow duration-150 hover:ring-line-strong',
-  'focus-visible:ring-2 focus-visible:ring-brand-500',
+  'h-11 w-full min-w-0 rounded-xl border-0 bg-surface px-3.5 font-sans text-[1.0625rem] tracking-[-0.024em] text-ink shadow-none outline-none ring-1 ring-inset ring-line',
+  'placeholder:text-ink-faint transition-shadow duration-200 ease-apple hover:ring-line-strong',
+  'focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:shadow-[0_0_0_4px_rgba(61,145,99,0.18)]',
   'disabled:cursor-not-allowed disabled:bg-surface-muted disabled:text-ink-muted',
   'aria-[invalid=true]:ring-2 aria-[invalid=true]:ring-danger',
 );
@@ -108,7 +111,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className
   return (
     <div className={cn('relative', className)}>
       {leading && (
-        <span className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-[0.9375rem] font-medium text-ink-muted [&_svg]:size-4">
+        <span className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-[1.0625rem] font-medium text-ink-muted [&_svg]:size-4">
           {leading}
         </span>
       )}
@@ -173,12 +176,13 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(({ lab
       className,
     )}
   >
-    <span className="relative mt-0.5 flex size-5 shrink-0 items-center justify-center">
+    {/* Round, like iOS selection checkmarks. Still a native checkbox underneath. */}
+    <span className="relative mt-0.5 flex size-[1.375rem] shrink-0 items-center justify-center">
       <input
         ref={ref}
         type="checkbox"
         disabled={disabled}
-        className="peer absolute inset-0 m-0 size-5 cursor-pointer appearance-none rounded-[0.375rem] border-0 bg-surface ring-1 ring-inset ring-line-strong transition-colors checked:bg-brand-900 checked:ring-brand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed"
+        className="peer absolute inset-0 m-0 size-[1.375rem] cursor-pointer appearance-none rounded-full border-0 bg-surface ring-[1.5px] ring-inset ring-line-strong transition-colors duration-200 ease-apple checked:bg-brand-600 checked:ring-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed"
         {...props}
       />
       <Check className="pointer-events-none relative size-3.5 text-white opacity-0 peer-checked:opacity-100" strokeWidth={3} aria-hidden />
@@ -235,7 +239,7 @@ export function RadioCards<T extends string = string>({ legend, hideLegend, name
               className={cn(
                 'relative flex cursor-pointer items-start gap-3 rounded-xl bg-surface p-3.5 ring-1 ring-inset ring-line transition-shadow hover:ring-line-strong',
                 'has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-500',
-                checked && 'bg-brand-50/70 ring-2 ring-brand-700 hover:ring-brand-700',
+                checked && 'bg-brand-50/70 ring-2 ring-brand-600 hover:ring-brand-600',
                 option.disabled && 'cursor-not-allowed opacity-50',
               )}
             >
@@ -249,7 +253,7 @@ export function RadioCards<T extends string = string>({ legend, hideLegend, name
                 onChange={() => onChange(option.value)}
               />
               {Icon && (
-                <span className={cn('flex size-9 shrink-0 items-center justify-center rounded-lg', checked ? 'bg-brand-900 text-white' : 'bg-surface-muted text-ink-soft')}>
+                <span className={cn('flex size-9 shrink-0 items-center justify-center rounded-lg', checked ? 'bg-brand-600 text-white' : 'bg-surface-muted text-ink-soft')}>
                   <Icon className="size-[1.125rem]" strokeWidth={1.75} aria-hidden />
                 </span>
               )}
@@ -261,10 +265,10 @@ export function RadioCards<T extends string = string>({ legend, hideLegend, name
                 aria-hidden
                 className={cn(
                   'mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full ring-1 ring-inset',
-                  checked ? 'bg-brand-900 ring-brand-900' : 'bg-surface ring-line-strong',
+                  checked ? 'bg-brand-600 ring-brand-600' : 'bg-surface ring-line-strong',
                 )}
               >
-                {checked && <span className="size-2 rounded-full bg-white" />}
+                {checked && <Check className="size-3 text-white" strokeWidth={3.5} />}
               </span>
             </label>
           );
@@ -298,10 +302,10 @@ export const ToggleChip = React.forwardRef<HTMLButtonElement, ToggleChipProps>((
       if (!event.defaultPrevented) onSelectedChange?.(!selected);
     }}
     className={cn(
-      'inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border-0 px-3.5 font-sans text-[0.8125rem] font-semibold transition-colors duration-150',
-      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2',
+      'inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border-0 px-3.5 font-sans text-[0.875rem] font-semibold tracking-[-0.01em] transition-[background-color,color,transform] duration-200 ease-apple active:scale-[0.96]',
+      'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/35',
       'disabled:cursor-not-allowed disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0',
-      selected ? 'bg-brand-900 text-white hover:bg-brand-800' : 'bg-surface text-ink-soft ring-1 ring-inset ring-line hover:bg-surface-muted hover:text-ink',
+      selected ? 'bg-brand-600 text-white hover:bg-brand-700' : 'bg-fill text-ink hover:bg-fill-strong',
       className,
     )}
     {...props}

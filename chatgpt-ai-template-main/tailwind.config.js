@@ -38,55 +38,72 @@ const warm = {
 
 const tone = (DEFAULT, soft, ink, line) => ({ DEFAULT, soft, ink, line });
 
-const INK = '#16201B';
+const INK = '#131316';
 const displayFont = "var(--font-display), var(--font-sans), ui-sans-serif, system-ui, sans-serif";
+const serifFont = "var(--font-serif), ui-serif, Georgia, serif";
+const monoFont = "var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace";
 
+/*
+ * Type scale. Editorial and calm: medium-weight headlines set tight, an italic serif for the one accent phrase,
+ * and small monospaced caps for labels. All sizes are rem, so text follows the browser's text-size setting.
+ */
 const typeScale = () => ({
   '.type-display': {
     fontFamily: displayFont,
-    fontSize: '2.125rem',
-    lineHeight: '2.5rem',
-    fontWeight: '800',
-    letterSpacing: '-0.03em',
+    fontSize: '2.375rem',
+    lineHeight: '2.625rem',
+    fontWeight: '500',
+    letterSpacing: '-0.04em',
     color: INK,
-    '@media (min-width: 768px)': { fontSize: '3rem', lineHeight: '3.25rem' },
+    '@media (min-width: 768px)': { fontSize: '4rem', lineHeight: '4.125rem', letterSpacing: '-0.045em' },
   },
   '.type-h1': {
     fontFamily: displayFont,
-    fontSize: '1.625rem',
-    lineHeight: '2rem',
-    fontWeight: '700',
-    letterSpacing: '-0.025em',
+    fontSize: '1.875rem',
+    lineHeight: '2.25rem',
+    fontWeight: '500',
+    letterSpacing: '-0.035em',
     color: INK,
-    '@media (min-width: 768px)': { fontSize: '2rem', lineHeight: '2.5rem' },
+    '@media (min-width: 768px)': { fontSize: '2.625rem', lineHeight: '2.875rem', letterSpacing: '-0.04em' },
   },
   '.type-h2': {
     fontFamily: displayFont,
-    fontSize: '1.25rem',
+    fontSize: '1.375rem',
     lineHeight: '1.75rem',
-    fontWeight: '700',
-    letterSpacing: '-0.02em',
+    fontWeight: '600',
+    letterSpacing: '-0.03em',
     color: INK,
-    '@media (min-width: 768px)': { fontSize: '1.375rem', lineHeight: '1.875rem' },
+    '@media (min-width: 768px)': { fontSize: '1.625rem', lineHeight: '2rem' },
   },
   '.type-h3': {
     fontFamily: displayFont,
     fontSize: '1.0625rem',
     lineHeight: '1.5rem',
-    fontWeight: '650',
-    letterSpacing: '-0.01em',
+    fontWeight: '600',
+    letterSpacing: '-0.02em',
     color: INK,
   },
-  '.type-lead': { fontSize: '1.0625rem', lineHeight: '1.65rem', fontWeight: '400' },
-  '.type-body': { fontSize: '0.9375rem', lineHeight: '1.5rem', fontWeight: '400' },
-  '.type-small': { fontSize: '0.8125rem', lineHeight: '1.25rem', fontWeight: '400' },
+  '.type-lead': { fontSize: '1.1875rem', lineHeight: '1.875rem', fontWeight: '400', letterSpacing: '-0.015em' },
+  '.type-body': { fontSize: '1rem', lineHeight: '1.625rem', fontWeight: '400', letterSpacing: '-0.01em' },
+  '.type-small': { fontSize: '0.875rem', lineHeight: '1.25rem', fontWeight: '400', letterSpacing: '-0.005em' },
   '.type-caption': { fontSize: '0.75rem', lineHeight: '1rem', fontWeight: '500' },
+  // Small monospaced caps: "THIS WEEK", "STEP 3 OF 5".
   '.type-overline': {
+    fontFamily: monoFont,
     fontSize: '0.6875rem',
     lineHeight: '1rem',
-    fontWeight: '700',
-    letterSpacing: '0.08em',
+    fontWeight: '500',
+    letterSpacing: '0.1em',
     textTransform: 'uppercase',
+  },
+  // The one italic serif phrase in a headline: <span className="type-accent">actually take.</span>
+  '.type-accent': {
+    fontFamily: serifFont,
+    fontStyle: 'italic',
+    fontWeight: '400',
+    letterSpacing: '-0.01em',
+    fontSize: '1.08em',
+    color: '#2E7650',
   },
   '.type-num': { fontVariantNumeric: 'tabular-nums', fontFeatureSettings: '"tnum" 1' },
 });
@@ -109,36 +126,47 @@ module.exports = {
     },
     extend: {
       fontFamily: {
+        // Set in app/(marketing)/layout.tsx: Manrope (sans/display), Instrument Serif (accent), JetBrains Mono (mono).
         sans: ['var(--font-sans)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         display: ['var(--font-display)', 'var(--font-sans)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-serif)', 'ui-serif', 'Georgia', 'serif'],
+        mono: ['var(--font-mono)', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
       colors: {
         /* ---- Fermat semantic tokens (use these) ---- */
         brand,
         warm,
+        // Cool, near-neutral greys on a white canvas. Fermat green is the only accent.
         ink: {
-          DEFAULT: '#16201B', // headings, primary text
-          soft: '#3A4540', // body copy on light surfaces
-          muted: '#5E6862', // helper text, labels (5.3:1 on canvas)
-          faint: '#8A938D', // icons, placeholders, disabled only (NOT for text that must be read)
+          DEFAULT: '#131316', // headings, primary text
+          soft: '#3F3F46', // body copy on light surfaces
+          muted: '#6B6B76', // helper text, labels (5.2:1 on white, 4.9:1 on surface-muted)
+          faint: '#A1A1AA', // icons, placeholders, disabled only (NOT for text that must be read)
           inverse: '#FFFFFF',
         },
-        canvas: '#F7F6F2', // page background
+        canvas: '#FAFAF8', // page background: a soft off-white, so white cards lift off it (sections can sit on .bg-grid)
         surface: {
           DEFAULT: '#FFFFFF', // cards, inputs
-          muted: '#F2F1EC', // sunken wells, table stripes, inactive chips
-          strong: '#E9E7E0', // pressed / skeleton
+          muted: '#F3F3F0', // alternate section bands, sunken wells, inactive chips
+          strong: '#EDEDF0', // pressed / skeleton / tracks
+        },
+        // Translucent grey fills: grey buttons, chips and segmented tracks on any surface.
+        fill: {
+          DEFAULT: 'rgba(19, 19, 22, 0.06)',
+          strong: 'rgba(19, 19, 22, 0.1)',
+          subtle: 'rgba(19, 19, 22, 0.04)',
         },
         line: {
-          DEFAULT: '#E4E2DA', // hairlines, input borders
-          subtle: '#EEEDE7', // dividers inside cards
-          strong: '#CFCCC2', // hover borders
+          DEFAULT: '#DCDCE3', // card borders, input borders
+          subtle: '#EFEFF2', // dividers inside cards
+          strong: '#CFCFD6', // hover borders
         },
-        success: tone('#2E7D4F', '#E7F4EC', '#1D5C38', '#BFE0CB'),
-        warning: tone('#B26A00', '#FDF3E1', '#7A4A00', '#F2D59F'),
-        danger: tone('#C0392B', '#FCEBE9', '#8E2A20', '#F3C4BE'),
-        info: tone('#2F6FB3', '#EAF2FB', '#1F4F85', '#C5DAF1'),
-        private: tone('#5B4BC4', '#F1EFFC', '#3F3399', '#D9D3F5'),
+        // Apple's accessible system colours (the dark variants that pass 4.5:1 as text).
+        success: tone('#248A3D', '#E8F5EC', '#1A6B2F', '#B9E0C4'),
+        warning: tone('#B25000', '#FFF2E5', '#7F3A00', '#F6CFA8'),
+        danger: tone('#D70015', '#FFEBEC', '#A1000F', '#FFC2C6'),
+        info: tone('#0066CC', '#E8F2FC', '#004C99', '#BCD8F5'),
+        private: tone('#5856D6', '#EEEEFC', '#3634A3', '#D5D4F6'), // system indigo
         whatsapp: { DEFAULT: '#25D366', hover: '#1FBF5B', ink: '#06301A' },
 
         /* ---- Legacy shadcn tokens (CSS variables in landing.css). Keep for old markup. ---- */
@@ -174,11 +202,17 @@ module.exports = {
         sm: 'calc(var(--radius) - 4px)',
         // Standard Tailwind radii carry the system: xl = inputs/buttons-in-cards, 2xl = cards, 3xl = hero panels.
       },
+      // Cards sit on a white canvas, so each shadow starts with a 1px hairline ring (the card's border),
+      // then a soft, low shadow. Things that float (hover, menus, the nav pill) get a wider one.
       boxShadow: {
-        card: '0 1px 2px rgba(22, 32, 27, 0.04), 0 2px 8px rgba(22, 32, 27, 0.05)',
-        raised: '0 2px 4px rgba(22, 32, 27, 0.04), 0 10px 28px rgba(22, 32, 27, 0.09)',
-        pop: '0 16px 48px rgba(22, 32, 27, 0.16)',
-        inset: 'inset 0 0 0 1px rgba(22, 32, 27, 0.06)',
+        card: '0 0 0 1px #DCDCE3, 0 1px 2px rgba(19, 19, 22, 0.04)',
+        raised: '0 0 0 1px #DCDCE3, 0 14px 36px -14px rgba(19, 19, 22, 0.16)',
+        pop: '0 0 0 1px #DCDCE3, 0 24px 60px -18px rgba(19, 19, 22, 0.24)',
+        inset: 'inset 0 0 0 1px #DCDCE3',
+      },
+      // The curve iOS uses for sheets and springy UI: quick start, long gentle settle.
+      transitionTimingFunction: {
+        apple: 'cubic-bezier(0.32, 0.72, 0, 1)',
       },
       maxWidth: {
         page: '72rem', // 1152px: outer page width
@@ -214,6 +248,11 @@ module.exports = {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-10px)' },
         },
+        // iMessage typing indicator: each dot lifts and brightens in turn.
+        typing: {
+          '0%, 60%, 100%': { transform: 'translateY(0)', opacity: '0.35' },
+          '30%': { transform: 'translateY(-2px)', opacity: '1' },
+        },
         fly: {
           '0%': { left: '0%', opacity: '0' },
           '15%, 85%': { opacity: '1' },
@@ -229,6 +268,7 @@ module.exports = {
         marquee: 'marquee 40s linear infinite',
         float: 'float 6s ease-in-out infinite',
         fly: 'fly 3.2s ease-in-out infinite',
+        typing: 'typing 1s ease-in-out infinite',
         'spin-slow': 'spin 14s linear infinite',
       },
     },

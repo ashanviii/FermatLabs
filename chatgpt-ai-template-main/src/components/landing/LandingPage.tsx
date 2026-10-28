@@ -2,12 +2,14 @@ import React from 'react';
 import Link from 'next/link';
 import { ArrowRight, ChevronDown, ShieldCheck } from 'lucide-react';
 
+import { AsciiArt, asciiArt } from '@/components/ui/ascii';
 import { Badge, PrivateBadge, StatusPill } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { icons, type IconComponent } from '@/components/ui/icons';
 import { formatMoney } from '@/lib/format';
 import ClosingCta, { SiteFooter } from './ClosingCta';
+import HeroGlobe from './HeroGlobe';
 import HeroPreview from './HeroPreview';
 import SiteHeader from './SiteHeader';
 import VoteResultsPreview from './VoteResultsPreview';
@@ -22,6 +24,9 @@ const steps: { icon: IconComponent; title: string; body: string }[] = [
   { icon: icons.vote, title: 'Choose together', body: 'See which trips work for everyone, without seeing anyone’s numbers. Then vote in private.' },
   { icon: icons.plan, title: 'Plan, pledge and pay', body: 'Lock the top pick that fits all of you, see why it won, and get a day-by-day plan with each person’s cost.' },
 ];
+
+// One ASCII piece per step, in step order.
+const stepArt = [asciiArt.envelope, asciiArt.passport, asciiArt.ballot, asciiArt.route];
 
 const features: { icon: IconComponent; title: string; body: string }[] = [
   {
@@ -158,11 +163,11 @@ function IconTile({ icon: Icon, tone = 'brand' }: { icon: IconComponent; tone?: 
   );
 }
 
-function SectionHeading({ id, eyebrow, title, lead, center }: { id: string; eyebrow: string; title: string; lead?: string; center?: boolean }) {
+function SectionHeading({ id, eyebrow, title, lead, center }: { id: string; eyebrow: string; title: React.ReactNode; lead?: string; center?: boolean }) {
   return (
     <div className={center ? 'mx-auto max-w-prose text-center' : 'max-w-prose'}>
-      <p className="type-overline m-0 text-brand-600">{eyebrow}</p>
-      <h2 id={id} className="type-h1 m-0 mt-2">
+      <p className="type-overline m-0 text-ink-muted">{eyebrow}</p>
+      <h2 id={id} className="type-h1 m-0 mt-3">
         {title}
       </h2>
       {lead && <p className="type-lead m-0 mt-3 text-ink-soft">{lead}</p>}
@@ -191,44 +196,63 @@ export default function LandingPage() {
         { label: 'FAQ', href: '#faq' },
       ]} />
 
-      <main id="main" className="flex flex-col gap-20 pb-8 sm:gap-28">
-        {/* Hero */}
-        <section aria-labelledby="hero-title" className="mx-auto w-full max-w-page px-4 pt-10 sm:px-6 sm:pt-16 lg:px-8 lg:pt-20">
-          <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
-            <div className="flex flex-col items-start">
-              <Badge tone="brand" size="lg" icon={icons.members}>
-                For groups of 2 to 10 friends
-              </Badge>
-              <h1 id="hero-title" className="type-display m-0 mt-5 lg:text-[3.5rem] lg:leading-[1.05]">
-                One trip everyone can{' '}
-                <span className="relative inline-block isolate whitespace-nowrap">
-                  <span aria-hidden className="absolute inset-x-[-0.1em] bottom-[0.08em] -z-10 h-[0.32em] rounded-sm bg-warm-200" />
-                  actually take.
-                </span>
+      {/* Pulled up under the sticky nav (4rem tall) so the hero grid runs behind the frosted bar. */}
+      <main id="main" className="-mt-16 flex flex-col gap-20 pb-8 sm:gap-28">
+        {/* Hero: the globe as a dome (top half) centred above centred copy, all on the faint grid. */}
+        <section aria-labelledby="hero-title" className="relative isolate">
+          <div aria-hidden className="bg-grid absolute inset-0 -z-10" />
+          <div className="mx-auto flex w-full max-w-page flex-col items-center px-4 pb-4 pt-24 text-center sm:px-6 sm:pt-28 lg:px-8">
+            <HeroGlobe dome />
+            <div className="relative -mt-4 flex flex-col items-center sm:-mt-8">
+              <p className="type-small m-0 inline-flex flex-wrap items-center justify-center gap-x-1.5 rounded-full bg-surface px-3.5 py-1.5 font-medium text-ink-soft shadow-card">
+                Group trip planner for 2 to 10 friends.
+                <span className="font-semibold text-brand-600">Budgets stay private.</span>
+              </p>
+              <h1 id="hero-title" className="type-display m-0 mt-6 max-w-[16ch] text-balance">
+                One trip everyone can <span className="type-accent whitespace-nowrap">actually take.</span>
               </h1>
-              <p className="type-lead m-0 mt-5 max-w-prose text-ink-soft sm:text-lg">
+              <p className="type-lead m-0 mt-6 max-w-prose text-ink-soft">
                 Everyone adds their budget, city and passport in private. Fermat shows which trips, at home or abroad, work
                 for all of you. Then you vote, lock it in and get the plan.
               </p>
-              <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+              <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-center sm:gap-5">
                 <Button asChild size="lg">
                   <Link href="/plan">
                     Start a group trip
                     <ArrowRight className="size-5" strokeWidth={2} aria-hidden />
                   </Link>
                 </Button>
-                <Button asChild size="lg" variant="outline">
-                  <a href="#how">See how it works</a>
-                </Button>
+                <a
+                  href="#how"
+                  className="type-body inline-flex items-center justify-center gap-1.5 rounded-full px-2 py-2 font-semibold text-brand-700 no-underline hover:text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/35"
+                >
+                  See how it works
+                  <ArrowRight className="size-4" strokeWidth={2} aria-hidden />
+                </a>
               </div>
-              <ul className="m-0 mt-8 flex list-none flex-wrap gap-x-5 gap-y-2 p-0">
+              <p className="type-small m-0 mt-4 text-ink-muted">Free for the whole group. No card, any country, any currency.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Live example: what the group sees on the Choose step. */}
+        <section aria-labelledby="example-title" className="mx-auto w-full max-w-page px-4 sm:px-6 lg:px-8">
+          <div className="grid items-center gap-10 rounded-3xl bg-surface-muted p-6 ring-1 ring-inset ring-line-subtle sm:p-10 lg:grid-cols-[0.8fr_1fr] lg:gap-16 lg:p-12">
+            <div>
+              <p className="type-overline m-0 text-ink-muted">Live example / choose step</p>
+              <h2 id="example-title" className="type-h1 m-0 mt-3">
+                The group sees the answer. <span className="type-accent">Not the numbers.</span>
+              </h2>
+              <p className="type-body m-0 mt-4 text-ink-soft">
+                Each place shows whether it works for everyone. Only you see whether it fits your own budget.
+              </p>
+              <ul className="m-0 mt-6 flex list-none flex-col gap-2.5 p-0">
                 {[
                   { icon: icons.private, text: 'Budgets stay private' },
-                  { icon: icons.check, text: 'Free, no card' },
                   { icon: icons.money, text: 'Any country, any currency' },
                   { icon: icons.whatsapp, text: 'Share on WhatsApp' },
                 ].map(({ icon: Icon, text }) => (
-                  <li key={text} className="type-small flex items-center gap-1.5 font-medium text-ink-soft">
+                  <li key={text} className="type-small flex items-center gap-2 font-medium text-ink-soft">
                     <Icon className="size-4 text-brand-600" strokeWidth={2} aria-hidden />
                     {text}
                   </li>
@@ -239,17 +263,19 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* How it works */}
-        <section id="how" aria-labelledby="how-title" className="mx-auto w-full max-w-page scroll-mt-20 px-4 sm:px-6 lg:px-8">
-          <SectionHeading id="how-title" eyebrow="How it works" title="From group chat to a plan in four steps" />
+        {/* How it works: one hand-drawn ASCII piece per step. */}
+        <section id="how" aria-labelledby="how-title" className="mx-auto w-full max-w-page scroll-mt-24 px-4 sm:px-6 lg:px-8">
+          <SectionHeading id="how-title" eyebrow="How it works" title={<>From group chat to a plan <span className="type-accent">in four steps.</span></>} />
           <ol className="m-0 mt-10 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4">
             {steps.map((step, index) => (
-              <li key={step.title} className="flex gap-4 rounded-2xl bg-surface p-5 shadow-card sm:flex-col sm:p-6">
-                <IconTile icon={step.icon} />
-                <div className="min-w-0">
-                  <p className="type-overline m-0 text-ink-muted">Step {index + 1}</p>
-                  <h3 className="type-h3 m-0 mt-1">{step.title}</h3>
-                  <p className="type-body m-0 mt-1.5 text-ink-soft">{step.body}</p>
+              <li key={step.title} className="flex flex-col overflow-hidden rounded-2xl bg-surface shadow-card">
+                <div className="flex h-40 items-center justify-center border-0 border-b border-solid border-line-subtle bg-surface-muted">
+                  <AsciiArt art={stepArt[index]} className="text-[0.6875rem] text-brand-700" />
+                </div>
+                <div className="min-w-0 p-5 sm:p-6">
+                  <p className="type-overline m-0 text-ink-muted">Step 0{index + 1}</p>
+                  <h3 className="type-h3 m-0 mt-2">{step.title}</h3>
+                  <p className="type-small m-0 mt-2 text-ink-soft">{step.body}</p>
                 </div>
               </li>
             ))}
@@ -257,11 +283,11 @@ export default function LandingPage() {
         </section>
 
         {/* Features */}
-        <section id="features" aria-labelledby="features-title" className="mx-auto w-full max-w-page scroll-mt-20 px-4 sm:px-6 lg:px-8">
+        <section id="features" aria-labelledby="features-title" className="mx-auto w-full max-w-page scroll-mt-24 px-4 sm:px-6 lg:px-8">
           <SectionHeading
             id="features-title"
             eyebrow="Built for real groups"
-            title="The awkward parts, handled"
+            title={<>The awkward parts, <span className="type-accent">handled.</span></>}
             lead="Money, dates and dietary needs are where group trips fall apart. Fermat keeps them private and fair."
           />
           <ul className="m-0 mt-10 grid list-none gap-x-10 gap-y-9 p-0 sm:grid-cols-2 lg:grid-cols-3">
@@ -284,7 +310,7 @@ export default function LandingPage() {
               <SectionHeading
                 id="results-title"
                 eyebrow="Fair results"
-                title="See exactly why a destination won"
+                title={<>See exactly <span className="type-accent">why it won.</span></>}
                 lead="The winner is the most-voted trip that works for everyone. When it’s locked, the group sees how the votes fell and why a more popular pick missed out."
               />
               <ul className="m-0 mt-6 flex list-none flex-col gap-3 p-0">
@@ -309,7 +335,7 @@ export default function LandingPage() {
           <SectionHeading
             id="privacy-title"
             eyebrow="Privacy"
-            title="Your budget stays yours"
+            title={<>Your budget <span className="type-accent">stays yours.</span></>}
             lead="Fermat checks every option against everyone’s details, then shows the group only the answer."
           />
           <div className="mt-10 grid gap-4 lg:grid-cols-2">
@@ -381,9 +407,10 @@ export default function LandingPage() {
 
         {/* Any country, India first */}
         <section id="anywhere" aria-labelledby="anywhere-title" className="mx-auto w-full max-w-page px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-10 rounded-3xl bg-surface-muted p-6 sm:p-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16 lg:p-12">
+          <div className="relative isolate grid gap-10 overflow-hidden rounded-3xl bg-surface-muted p-6 ring-1 ring-inset ring-line-subtle sm:p-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16 lg:p-12">
+            <div aria-hidden className="bg-grid absolute inset-0 -z-10" />
             <div>
-              <p className="type-overline m-0 text-brand-600">Any home country</p>
+              <p className="type-overline m-0 text-ink-muted">Any home country</p>
               <h2 id="anywhere-title" className="type-h1 m-0 mt-2">
                 Built for anywhere, launching in India
               </h2>
@@ -410,7 +437,7 @@ export default function LandingPage() {
 
         {/* FAQ */}
         <section id="faq" aria-labelledby="faq-title" className="mx-auto w-full max-w-content scroll-mt-20 px-4 sm:px-6 lg:px-8">
-          <SectionHeading id="faq-title" eyebrow="FAQ" title="Questions groups ask" center />
+          <SectionHeading id="faq-title" eyebrow="FAQ" title={<>Questions groups <span className="type-accent">ask.</span></>} center />
           <Card className="mt-10 overflow-hidden">
             {faqs.map((item, index) => (
               <details

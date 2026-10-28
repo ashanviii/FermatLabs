@@ -4,6 +4,7 @@ import { Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody, CardHeader } from '@/components/ui/card';
 import { icons } from '@/components/ui/icons';
+import { segmentedItem, segmentedTrack } from '@/components/ui/segmented';
 import { cn } from '@/lib/utils';
 import { formatDate, formatMoney } from '@/lib/format';
 import { tripCurrency } from './currency';
@@ -92,18 +93,14 @@ export default function ShareCards({ trip }: FeatureProps) {
         title="Share your trip"
         description="Budgets never appear on the card."
         action={
-          <div role="group" aria-label="Card style" className="inline-flex rounded-full bg-surface-muted p-1">
+          <div role="group" aria-label="Card style" className={segmentedTrack}>
             {VARIANTS.map((v) => (
               <button
                 key={v.value}
                 type="button"
                 aria-pressed={variant === v.value}
                 onClick={() => setChoice(v.value)}
-                className={cn(
-                  'h-8 cursor-pointer rounded-full border-0 px-3.5 font-sans text-[0.8125rem] font-semibold transition-colors',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-1',
-                  variant === v.value ? 'bg-surface text-ink shadow-card' : 'bg-transparent text-ink-muted hover:text-ink',
-                )}
+                className={segmentedItem(variant === v.value)}
               >
                 {v.label}
               </button>

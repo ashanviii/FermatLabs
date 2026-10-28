@@ -4,6 +4,8 @@ import { ArrowLeft, Pencil, WifiOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody } from '@/components/ui/card';
+import { AsciiArt, asciiArt } from '@/components/ui/ascii';
+import { AsciiSpinner } from '@/components/ui/ascii-motion';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Notice } from '@/components/ui/notice';
 import { Progress } from '@/components/ui/progress';
@@ -298,10 +300,12 @@ export default function CollaborativeTripPlanner() {
 
   if (loading)
     return (
-      <main className="flex min-h-screen items-center justify-center bg-canvas font-sans">
-        <p className="type-body m-0 flex items-center gap-2 text-ink-muted" role="status">
-          <icons.pending className="size-4 animate-pulse" strokeWidth={1.75} aria-hidden />
-          Opening your trip…
+      <main className="relative isolate flex min-h-screen flex-col items-center justify-center gap-6 bg-canvas font-sans">
+        <div aria-hidden className="bg-grid absolute inset-0 -z-10" />
+        <AsciiArt art={asciiArt.suitcase} className="text-[0.8125rem] text-brand-600" />
+        <p className="type-overline m-0 flex items-center gap-3 text-ink-muted" role="status">
+          <AsciiSpinner className="text-brand-600" />
+          Opening your trip
         </p>
       </main>
     );
@@ -463,7 +467,7 @@ export default function CollaborativeTripPlanner() {
       {hasBoard ? (
         <DestinationPicker trip={trip} disabled={disabled} onVote={vote} />
       ) : (
-        <EmptyState icon={icons.destination} title="Places show up here soon" description="Once everyone has added their details, you'll see where the whole group can go." />
+        <EmptyState icon={icons.destination} art={asciiArt.pin} title="Places show up here soon" description="Once everyone has added their details, you'll see where the whole group can go." />
       )}
     </Section>
   );
@@ -553,7 +557,7 @@ export default function CollaborativeTripPlanner() {
             {trip.membershipStatus === 'pending' ? (
               <PendingApproval />
             ) : (
-              <EmptyState icon={icons.private} title="You're not in this trip" description="Ask the organizer for a new invite link." />
+              <EmptyState icon={icons.private} art={asciiArt.lock} title="You're not in this trip" description="Ask the organizer for a new invite link." />
             )}
           </div>
         )}

@@ -17,29 +17,32 @@ import type { IconComponent } from './icons';
  */
 const buttonVariants = cva(
   [
-    'relative inline-flex cursor-pointer select-none items-center justify-center gap-2 whitespace-nowrap rounded-full border border-transparent font-sans font-semibold no-underline',
-    'transition-[background-color,border-color,color,box-shadow,transform] duration-150 active:translate-y-px',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas',
-    'disabled:pointer-events-none disabled:opacity-45 aria-disabled:pointer-events-none aria-disabled:opacity-45',
+    'relative inline-flex cursor-pointer select-none items-center justify-center gap-2 whitespace-nowrap rounded-full border border-transparent font-sans font-semibold tracking-[-0.01em] no-underline',
+    // iOS press feedback: a quick shrink and dim, released on the springy Apple curve.
+    'transition-[background-color,border-color,color,box-shadow,transform,opacity] duration-200 ease-apple active:scale-[0.97] active:opacity-80',
+    // Apple-style focus halo: a soft tinted ring hugging the control, no offset gap.
+    'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/35',
+    'disabled:pointer-events-none disabled:opacity-40 aria-disabled:pointer-events-none aria-disabled:opacity-40',
     '[&_svg]:pointer-events-none [&_svg]:shrink-0',
   ].join(' '),
   {
     variants: {
+      // Mapped to Apple's button styles: primary = filled, secondary = tinted, outline = grey, ghost = plain.
       variant: {
-        primary: 'bg-brand-900 text-white shadow-card hover:bg-brand-800',
-        default: 'bg-brand-900 text-white shadow-card hover:bg-brand-800',
-        secondary: 'bg-brand-50 text-brand-800 hover:bg-brand-100',
-        outline: 'border-line bg-surface text-ink hover:border-line-strong hover:bg-surface-muted',
-        ghost: 'bg-transparent text-ink-soft hover:bg-surface-muted hover:text-ink',
-        danger: 'bg-danger text-white shadow-card hover:bg-danger-ink',
-        whatsapp: 'bg-whatsapp text-whatsapp-ink shadow-card hover:bg-whatsapp-hover',
-        link: 'h-auto rounded-md bg-transparent px-0 text-brand-700 underline-offset-4 hover:underline',
+        primary: 'bg-brand-600 text-white hover:bg-brand-700',
+        default: 'bg-brand-600 text-white hover:bg-brand-700',
+        secondary: 'bg-brand-50 text-brand-700 hover:bg-brand-100',
+        outline: 'bg-fill text-ink hover:bg-fill-strong',
+        ghost: 'bg-transparent text-brand-700 hover:bg-fill-subtle',
+        danger: 'bg-danger text-white hover:bg-danger-ink',
+        whatsapp: 'bg-whatsapp text-whatsapp-ink hover:bg-whatsapp-hover',
+        link: 'h-auto rounded-md bg-transparent px-0 text-brand-700 underline-offset-4 hover:underline active:scale-100',
       },
       size: {
-        sm: 'h-9 px-3.5 text-[0.8125rem] [&_svg]:size-4',
-        md: 'h-11 px-5 text-sm [&_svg]:size-[1.125rem]',
-        default: 'h-11 px-5 text-sm [&_svg]:size-[1.125rem]',
-        lg: 'h-12 px-6 text-[0.9375rem] [&_svg]:size-5',
+        sm: 'h-9 px-4 text-[0.875rem] [&_svg]:size-4',
+        md: 'h-11 px-5 text-[0.9375rem] [&_svg]:size-[1.125rem]',
+        default: 'h-11 px-5 text-[0.9375rem] [&_svg]:size-[1.125rem]',
+        lg: 'h-[3.125rem] px-7 text-[1.0625rem] [&_svg]:size-5',
         icon: 'h-10 w-10 p-0 [&_svg]:size-[1.125rem]',
         'icon-sm': 'h-8 w-8 p-0 [&_svg]:size-4',
       },

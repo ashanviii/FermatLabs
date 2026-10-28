@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { MessageSquareText, Pencil, Printer, RotateCcw } from 'lucide-react';
 
 import { Avatar } from '@/components/ui/avatar';
+import { AsciiRoute } from '@/components/ui/ascii-motion';
 import { Badge, StatusPill } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader } from '@/components/ui/card';
@@ -124,11 +125,20 @@ export default function PlanView({ trip, uid, owner, disabled, command, onShare 
     <div className="flex min-w-0 flex-col gap-6">
       {/* Hero */}
       <div className="relative overflow-hidden rounded-3xl bg-brand-900 p-6 text-white shadow-raised sm:p-8">
-        <div aria-hidden className="pointer-events-none absolute -right-16 -top-20 size-64 rounded-full bg-brand-800/60" />
-        <div aria-hidden className="pointer-events-none absolute -bottom-24 right-24 size-48 rounded-full bg-brand-800/40" />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:linear-gradient(to_right,white_1px,transparent_1px),linear-gradient(to_bottom,white_1px,transparent_1px)] [background-size:44px_44px]"
+        />
         <div className="relative">
           <p className="type-overline m-0 text-brand-200">Where you're going</p>
           <h3 className="type-display m-0 mt-2 text-white">{plan.destinationName}</h3>
+          {/* The trip is locked: the route draws itself from home to the destination. */}
+          <AsciiRoute
+            from="YOU"
+            to={plan.destinationName.toUpperCase()}
+            length={16}
+            className="mt-4 max-w-full overflow-hidden text-[0.6875rem] text-warm-300 sm:text-[0.8125rem]"
+          />
           <ul className="type-body m-0 mt-4 flex list-none flex-wrap gap-x-5 gap-y-2 p-0 text-white/85">
             <li className="flex items-center gap-2">
               <icons.calendar className="size-4 text-brand-200" strokeWidth={1.75} aria-hidden />

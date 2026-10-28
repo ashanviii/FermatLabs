@@ -6,6 +6,7 @@ import { AvatarStack } from '@/components/ui/avatar';
 import { Badge, PrivateBadge, StatusPill } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { icons, type IconComponent } from '@/components/ui/icons';
+import { segmentedItem, segmentedTrack } from '@/components/ui/segmented';
 import { formatApproxMoney, formatMoney } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
@@ -82,7 +83,7 @@ export default function HeroPreview({ className }: { className?: string }) {
     <figure className={cn('relative m-0 flex flex-col gap-3 lg:pb-14', className)}>
       <div className="flex flex-wrap items-center justify-between gap-2 px-1">
         <p className="type-caption m-0 text-ink-muted">Example group</p>
-        <div role="tablist" aria-label="Example group" className="inline-flex rounded-full bg-surface-strong p-1">
+        <div role="tablist" aria-label="Example group" className={segmentedTrack}>
           {examples.map((item, index) => {
             const selected = index === active;
             return (
@@ -99,12 +100,9 @@ export default function HeroPreview({ className }: { className?: string }) {
                 tabIndex={selected ? 0 : -1}
                 onClick={() => setActive(index)}
                 onKeyDown={onTabKeyDown}
-                className={cn(
-                  'type-small m-0 inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border-0 px-3.5 font-sans font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500',
-                  selected ? 'bg-surface text-ink shadow-card' : 'bg-transparent text-ink-muted hover:text-ink',
-                )}
+                className={segmentedItem(selected)}
               >
-                <icons.departure className="size-4" strokeWidth={1.75} aria-hidden />
+                <icons.departure strokeWidth={1.75} aria-hidden />
                 Friends in {item.city}
               </button>
             );

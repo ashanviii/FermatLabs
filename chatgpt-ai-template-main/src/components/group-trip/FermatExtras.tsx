@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Badge, StatusPill, PrivateBadge, type Status } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody, CardHeader } from '@/components/ui/card';
+import { asciiArt } from '@/components/ui/ascii';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Checkbox, Field, Input, Select } from '@/components/ui/field';
 import { icons, type IconComponent } from '@/components/ui/icons';
@@ -316,6 +317,7 @@ function Picker({ trip, disabled, onVote, action, voting, showSummary = true, sh
       <div className="flex flex-col gap-4">
         <EmptyState
           icon={icons.destination}
+          art={asciiArt.pin}
           title="Destinations show up once everyone's in"
           description="When every member has added their details, you'll see where the whole group can go."
         />

@@ -20,13 +20,14 @@ const cardVariants = cva('relative text-ink', {
     variant: {
       default: 'rounded-2xl bg-surface shadow-card',
       raised: 'rounded-2xl bg-surface shadow-raised',
-      flat: 'rounded-2xl bg-surface ring-1 ring-inset ring-line', // inside other surfaces / dense lists
+      flat: 'rounded-2xl bg-surface ring-1 ring-inset ring-line-subtle', // inside other surfaces / dense lists
       sunken: 'rounded-2xl bg-surface-muted',
       brand: 'rounded-2xl bg-brand-900 text-white shadow-raised',
       private: 'rounded-2xl bg-private-soft ring-1 ring-inset ring-private-line',
     },
     interactive: {
-      true: 'cursor-pointer transition-shadow duration-150 hover:shadow-raised focus-within:ring-2 focus-within:ring-brand-500',
+      // Lifts on hover and gives slightly under a press, like a tappable iOS card.
+      true: 'cursor-pointer transition-[box-shadow,transform] duration-300 ease-apple hover:shadow-raised active:scale-[0.99] focus-within:ring-4 focus-within:ring-brand-500/35',
       false: '',
     },
   },
