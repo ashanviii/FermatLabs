@@ -80,7 +80,7 @@ export function Stepper({ steps = PLAN_STEPS, current, onStepClick, className }:
                 <button
                   type="button"
                   onClick={() => onStepClick?.(step, i)}
-                  className="flex cursor-pointer items-center gap-2 rounded-full border-0 bg-transparent p-0 pr-1 font-sans hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+                  className="flex min-h-11 cursor-pointer items-center gap-2 rounded-full border-0 bg-transparent p-0 pr-1 font-sans hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
                 >
                   {content}
                 </button>

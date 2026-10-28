@@ -3,7 +3,7 @@ import { firebaseAdmin } from '@/lib/firebaseAdmin';
 
 const domain = require('@/lib/collaborativeTrip');
 const service = require('@/lib/groupTripCommandService');
-const { FieldValue } = require('firebase-admin/firestore');
+const { FieldPath, FieldValue } = require('firebase-admin/firestore');
 
 async function identity(request: NextRequest) {
   const header = request.headers.get('authorization') || '';
@@ -24,7 +24,21 @@ function errorResponse(error: unknown) {
 export async function GET(request: NextRequest) {
   try {
     const token = await identity(request); const tripId = request.nextUrl.searchParams.get('tripId');
-    if (!tripId) throw new Error('Trip ID is required');
+    if (!tripId) {
+      const { firestore } = firebaseAdmin();
+      const memberPath = new FieldPath('state', 'members', token.uid, 'status');
+      const pendingPath = new FieldPath('state', 'pending', token.uid, 'status');
+      const [memberTrips, pendingTrips] = await Promise.all([
+        firestore.collection('groupTrips').where(memberPath, '==', 'approved').limit(50).get(),
+        firestore.collection('groupTrips').where(pendingPath, '==', 'pending').limit(50).get(),
+      ]);
+      const docs = new Map([...memberTrips.docs, ...pendingTrips.docs].map((doc: any) => [doc.id, doc]));
+      const today = new Date().toISOString().slice(0, 10);
+      const trips = [...docs.values()]
+        .flatMap((doc: any) => { try { return [domain.buildTripSummary(doc.data()?.state, token.uid)]; } catch { return []; } })
+        .sort((a: any, b: any) => Number(a.endDate < today) - Number(b.endDate < today) || (a.endDate < today ? b.startDate.localeCompare(a.startDate) : a.startDate.localeCompare(b.startDate)) || a.name.localeCompare(b.name));
+      return NextResponse.json({ trips });
+    }
     const snap = await firebaseAdmin().firestore.doc(`groupTrips/${tripId}`).get();
     if (!snap.exists) throw new Error('Trip not found');
     return NextResponse.json({ trip: domain.buildTripProjection(snap.data()?.state, token.uid) });

@@ -206,8 +206,8 @@ function PrivateFitRow({ fit, nudge, muted }: { fit: NonNullable<ReturnType<type
 }
 
 function DestinationCard({
-  dest, board, mine, nudge, voting, selected, disabled, onVote, currency,
-}: { dest: Dest; board?: BoardRow; mine?: PrivateRow; nudge?: string; voting: boolean; selected: boolean; disabled: boolean; onVote: (id: string) => void; currency: string }) {
+  dest, board, mine, nudge, voting, selected, disabled, onVote, currency, compareSelected, compareDisabled, onCompare,
+}: { dest: Dest; board?: BoardRow; mine?: PrivateRow; nudge?: string; voting: boolean; selected: boolean; disabled: boolean; onVote: (id: string) => void; currency: string; compareSelected: boolean; compareDisabled: boolean; onCompare: (id: string) => void }) {
   const { title, line, multi } = describe(dest);
   const blocked = Boolean(board && !board.eligible);
   const statuses = groupStatus(board);
@@ -240,7 +240,10 @@ function DestinationCard({
             </span>
           </p>
         </div>
-        {selected && <Badge tone="warm" icon={icons.check} className="shrink-0">Your vote</Badge>}
+        <div className="flex shrink-0 flex-col items-end gap-2">
+          {selected && <Badge tone="warm" icon={icons.check}>Your vote</Badge>}
+          {!blocked && <Button size="sm" variant={compareSelected ? 'secondary' : 'ghost'} aria-pressed={compareSelected} disabled={compareDisabled} onClick={() => onCompare(dest.id)}>{compareSelected ? 'Comparing' : 'Compare'}</Button>}
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-1.5 px-5">
@@ -303,6 +306,8 @@ interface PickerProps {
 }
 
 function Picker({ trip, disabled, onVote, action, voting, showSummary = true, showPrivateSummary = true }: PickerProps & { voting: boolean; showSummary?: boolean; showPrivateSummary?: boolean }) {
+  const [showAll, setShowAll] = useState(false);
+  const [compareIds, setCompareIds] = useState<string[]>([]);
   const currency = tripCurrency(trip);
   const allDestinations = destinationsOf(trip);
   const destinationName = (id: string) => allDestinations.find((d) => d.id === id)?.name || id;
@@ -338,6 +343,14 @@ function Picker({ trip, disabled, onVote, action, voting, showSummary = true, sh
   const eligible = allDestinations.filter((d) => board.get(d.id)?.eligible !== false);
   const ineligible = allDestinations.filter((d) => board.get(d.id)?.eligible === false);
   const myBallot: string | null = voting ? trip.myBallot || null : null;
+  const rankedEligible = [...eligible].sort((a, b) => {
+    const aFit = mine.get(a.id); const bFit = mine.get(b.id);
+    return Number(Boolean(bFit?.fits)) - Number(Boolean(aFit?.fits)) || (aFit?.total ?? Number.MAX_SAFE_INTEGER) - (bFit?.total ?? Number.MAX_SAFE_INTEGER) || a.name.localeCompare(b.name);
+  });
+  const visibleEligible = showAll || rankedEligible.length <= 3
+    ? rankedEligible
+    : [...rankedEligible.slice(0, 3), ...rankedEligible.filter((destination) => destination.id === myBallot && !rankedEligible.slice(0, 3).some((top) => top.id === destination.id))];
+  const toggleCompare = (id: string) => setCompareIds((current) => current.includes(id) ? current.filter((item) => item !== id) : current.length < 3 ? [...current, id] : current);
   const total = allDestinations.length;
   const headline = !hasBoard
     ? `${plural(total, 'option')} to vote on`
@@ -359,6 +372,9 @@ function Picker({ trip, disabled, onVote, action, voting, showSummary = true, sh
       disabled={disabled}
       onVote={onVote}
       currency={currency}
+      compareSelected={compareIds.includes(dest.id)}
+      compareDisabled={!compareIds.includes(dest.id) && compareIds.length >= 3}
+      onCompare={toggleCompare}
     />
   );
 
@@ -394,6 +410,18 @@ function Picker({ trip, disabled, onVote, action, voting, showSummary = true, sh
       {showPrivateSummary && <PrivateSummary rows={privateRows} />}
       </div>
 
+      {compareIds.length > 0 && (
+        <Card variant="private">
+          <CardHeader icon={icons.private} iconTone="private" title={`Compare ${plural(compareIds.length, 'option')}`} description="This shortlist stays on your device and is not shared with the group." />
+          <CardBody className="grid gap-3 sm:grid-cols-3">
+            {compareIds.map((id) => {
+              const destination = allDestinations.find((item) => item.id === id)!; const fit = mine.get(id);
+              return <div key={id} className="grid gap-1 rounded-xl bg-surface/80 p-3"><b className="type-body">{destination.name}</b><span className="type-small text-ink-muted">{destination.tags.slice(0, 3).map(capitalise).join(' · ')}</span><span className="type-small font-semibold text-private-ink">{fit?.total != null ? `${formatMoney(fit.total, currency)} for you` : 'Estimate unavailable'}</span><Button size="sm" variant="ghost" onClick={() => toggleCompare(id)}>Remove</Button></div>;
+            })}
+          </CardBody>
+        </Card>
+      )}
+
       {eligible.length > 0 && (
         <section aria-label="Options that work for everyone" className="flex flex-col gap-3">
           {hasBoard && ineligible.length > 0 && (
@@ -401,13 +429,18 @@ function Picker({ trip, disabled, onVote, action, voting, showSummary = true, sh
               <icons.success className="size-3.5" strokeWidth={2} aria-hidden /> Works for everyone · {eligible.length}
             </h3>
           )}
-          <div className={GRID}>{eligible.map(card)}</div>
+          <div className={GRID}>{visibleEligible.map(card)}</div>
+          {rankedEligible.length > 3 && (
+            <Button variant="outline" className="self-start" onClick={() => setShowAll((value) => !value)} aria-expanded={showAll}>
+              {showAll ? 'Show recommended only' : `Show all ${rankedEligible.length} options`}
+            </Button>
+          )}
         </section>
       )}
 
       {ineligible.length > 0 && (
         <details className="group flex flex-col gap-3" open={ineligible.length <= 4 || eligible.length === 0}>
-          <summary className="type-overline flex w-fit cursor-pointer list-none items-center gap-1.5 rounded-md text-ink-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 [&::-webkit-details-marker]:hidden">
+          <summary className="type-overline flex min-h-11 w-fit cursor-pointer list-none items-center gap-1.5 rounded-md text-ink-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 [&::-webkit-details-marker]:hidden">
             <icons.danger className="size-3.5" strokeWidth={2} aria-hidden />
             Not possible right now · {ineligible.length}
             <span className="ml-1 normal-case tracking-normal text-brand-700 group-open:hidden">Show</span>

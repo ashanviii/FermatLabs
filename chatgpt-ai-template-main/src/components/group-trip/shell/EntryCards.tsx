@@ -1,7 +1,7 @@
 'use client';
 // Screens before you're inside a trip: sign in, switch to a recoverable account, create a trip, join by invite.
-import { useState } from 'react';
-import { Globe, LogIn, Mail } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { ChevronRight, Globe, LogIn, Mail, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody, CardHeader } from '@/components/ui/card';
@@ -10,7 +10,7 @@ import { Notice } from '@/components/ui/notice';
 import { icons } from '@/components/ui/icons';
 import { formatDateRange, nightsBetween, plural } from '@/lib/format';
 import { DateFinder } from '../FermatExtras';
-import { countryInSentence, currencyForCountry, currencyOptions, homeCountryOptions, popularHomeCountries, scopeAvailability, type TripScope } from './tripState';
+import { countryInSentence, currencyForCountry, currencyOptions, fiatCurrencyOptions, homeCountryOptions, popularHomeCountries, scopeAvailability, type TripScope } from './tripState';
 
 function Divider({ children }: { children: React.ReactNode }) {
   return (
@@ -150,8 +150,42 @@ export interface RoomDraft {
   scope: TripScope;
 }
 
+export type RoomDraftErrors = Partial<Record<keyof RoomDraft, string>>;
+
+const exactDate = (value: string) => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
+};
+const addDays = (value: string, days: number) => {
+  if (!exactDate(value)) return undefined;
+  const date = new Date(`${value}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+};
+
+export function validateRoomDraft(draft: RoomDraft): RoomDraftErrors {
+  const errors: RoomDraftErrors = {};
+  const name = draft.name.trim();
+  if (!name) errors.name = 'Give this trip a name.';
+  else if (name.length > 80) errors.name = 'Keep the trip name to 80 characters or fewer.';
+  if (!exactDate(draft.startDate)) errors.startDate = 'Choose a valid first day.';
+  if (!exactDate(draft.endDate)) errors.endDate = 'Choose a valid last day.';
+  if (!errors.startDate && !errors.endDate) {
+    const days = Math.round((Date.parse(`${draft.endDate}T00:00:00Z`) - Date.parse(`${draft.startDate}T00:00:00Z`)) / 86400000) + 1;
+    if (days < 2) errors.endDate = 'Choose a last day after the first day.';
+    else if (days > 31) errors.endDate = 'Trips can be at most 31 days.';
+  }
+  if (!Number.isInteger(draft.expectedSize) || draft.expectedSize < 2 || draft.expectedSize > 10) errors.expectedSize = 'Choose between 2 and 10 people.';
+  if (!homeCountryOptions.some((country) => country.code === draft.homeCountry)) errors.homeCountry = 'Choose a supported home country.';
+  if (!currencyOptions.some((currency) => currency.code === draft.currency)) errors.currency = 'Choose a supported travel currency.';
+  const available = scopeAvailability(draft.homeCountry);
+  if ((draft.scope === 'domestic' && !available.domestic) || (draft.scope === 'international' && !available.international)) errors.scope = 'That trip type is not available from this country yet.';
+  return errors;
+}
+
 /** Where the group lives and what kind of trip it wants. Prices follow the country unless changed. */
-function TripBasics({ draft, onChange }: { draft: RoomDraft; onChange: (draft: RoomDraft) => void }) {
+function TripBasics({ draft, onChange, errors, structuralDisabled = false }: { draft: RoomDraft; onChange: (draft: RoomDraft) => void; errors: RoomDraftErrors; structuralDisabled?: boolean }) {
   const home = countryInSentence(draft.homeCountry);
   const available = scopeAvailability(draft.homeCountry);
   const setHome = (homeCountry: string) => {
@@ -164,8 +198,8 @@ function TripBasics({ draft, onChange }: { draft: RoomDraft; onChange: (draft: R
   return (
     <>
       <div className="grid gap-5 sm:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-        <Field label="Where's the group based?" hint="Sets prices, cities and visa checks">
-          <Select value={draft.homeCountry} onChange={(e) => setHome(e.target.value)}>
+        <Field label="Where's the group based?" hint="Sets prices, cities and visa checks" error={errors.homeCountry}>
+          <Select value={draft.homeCountry} disabled={structuralDisabled} onChange={(e) => setHome(e.target.value)}>
             <optgroup label="Popular">
               {popular.map((c) => (
                 <option key={`p-${c.code}`} value={c.code}>
@@ -182,57 +216,79 @@ function TripBasics({ draft, onChange }: { draft: RoomDraft; onChange: (draft: R
             </optgroup>
           </Select>
         </Field>
-        <Field label="Prices in">
-          <Select value={draft.currency} onChange={(e) => onChange({ ...draft, currency: e.target.value })}>
-            {currencyOptions.map((c) => (
-              <option key={c.code} value={c.code}>
-                {c.label}
-              </option>
-            ))}
-          </Select>
+        <Field label="Prices in" error={errors.currency} hint={`Defaults to ${currencyForCountry(draft.homeCountry) || draft.currency}`}>
+          <Input value={draft.currency} readOnly />
         </Field>
       </div>
+      {!structuralDisabled && (
+        <details className="group rounded-xl bg-surface-muted px-4 py-3">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 [&::-webkit-details-marker]:hidden">
+            Change currency
+            <ChevronRight className="size-4 transition-transform group-open:rotate-90" aria-hidden />
+          </summary>
+          <div className="pb-1 pt-3">
+            <Field label="Search by currency code or name" error={errors.currency}>
+              <Input list="fermat-fiat-currencies" value={draft.currency} onChange={(e) => onChange({ ...draft, currency: e.target.value.toUpperCase() })} />
+            </Field>
+            <datalist id="fermat-fiat-currencies">
+              {fiatCurrencyOptions.map((currency) => <option key={currency.code} value={currency.code}>{currency.label}</option>)}
+            </datalist>
+          </div>
+        </details>
+      )}
       <RadioCards<TripScope>
         legend="What kind of trip?"
         name="trip-scope"
         columns={1}
         value={draft.scope}
-        onChange={(scope) => onChange({ ...draft, scope })}
+        onChange={(scope) => !structuralDisabled && onChange({ ...draft, scope })}
         options={[
           {
             value: 'domestic',
             label: 'In your country',
             description: available.domestic ? `Only places in ${home}. No passports needed.` : `No trips in ${home} yet`,
             icon: icons.destination,
-            disabled: !available.domestic,
+            disabled: structuralDisabled || !available.domestic,
           },
-          { value: 'international', label: 'Abroad', description: 'We check passports and visas', icon: icons.passport, disabled: !available.international },
-          { value: 'any', label: 'Open to both', description: 'See every option', icon: Globe },
+          { value: 'international', label: 'Abroad', description: 'We check passports and visas', icon: icons.passport, disabled: structuralDisabled || !available.international },
+          { value: 'any', label: 'Open to both', description: 'See every option', icon: Globe, disabled: structuralDisabled },
         ]}
       />
+      {errors.scope && <p className="type-small m-0 font-medium text-danger-ink" role="alert">{errors.scope}</p>}
     </>
   );
 }
 
 export function CreateRoomCard({ draft, onChange, onCreate, disabled, busy }: { draft: RoomDraft; onChange: (draft: RoomDraft) => void; onCreate: () => void; disabled: boolean; busy: boolean }) {
   const nights = nightsBetween(draft.startDate, draft.endDate);
+  const errors = validateRoomDraft(draft);
+  const invalid = Object.keys(errors).length > 0;
+  const formRef = useRef<HTMLFormElement>(null);
+  const submit = () => {
+    if (invalid) {
+      requestAnimationFrame(() => formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus());
+      return;
+    }
+    onCreate();
+  };
   return (
     <Card>
       <CardHeader icon={icons.plan} title="Start a trip" description="Pick rough dates. You can invite friends next." />
-      <CardBody className="grid gap-5">
-        <Field label="Trip name">
-          <Input value={draft.name} onChange={(e) => onChange({ ...draft, name: e.target.value })} />
+      <CardBody>
+        <form ref={formRef} className="grid gap-5" noValidate onSubmit={(event) => { event.preventDefault(); submit(); }}>
+        <Field label="Trip name" error={errors.name}>
+          <Input maxLength={81} value={draft.name} onChange={(e) => onChange({ ...draft, name: e.target.value })} />
         </Field>
-        <TripBasics draft={draft} onChange={onChange} />
+        <TripBasics draft={draft} onChange={onChange} errors={errors} />
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="First day">
-            <Input type="date" value={draft.startDate} onChange={(e) => onChange({ ...draft, startDate: e.target.value })} />
+          <Field label="First day" error={errors.startDate}>
+            <Input type="date" max={draft.endDate || undefined} value={draft.startDate} onChange={(e) => onChange({ ...draft, startDate: e.target.value })} />
           </Field>
-          <Field label="Last day">
-            <Input type="date" value={draft.endDate} onChange={(e) => onChange({ ...draft, endDate: e.target.value })} />
+          <Field label="Last day" error={errors.endDate}>
+            <Input type="date" min={addDays(draft.startDate, 1)} max={addDays(draft.startDate, 30)} value={draft.endDate} onChange={(e) => onChange({ ...draft, endDate: e.target.value })} />
           </Field>
         </div>
-        <Field label="How many people" hint="Including you">
+        <Field label="How many people" hint="Including you" error={errors.expectedSize}>
           <Select value={draft.expectedSize} onChange={(e) => onChange({ ...draft, expectedSize: Number(e.target.value) })}>
             {[2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
               <option key={n} value={n}>
@@ -248,10 +304,82 @@ export function CreateRoomCard({ draft, onChange, onCreate, disabled, busy }: { 
             {formatDateRange(draft.startDate, draft.endDate)}
             {nights > 0 && ` · ${plural(nights, 'night')}`} · {plural(draft.expectedSize, 'person', 'people')}
           </p>
-          <Button size="lg" className="w-full sm:w-auto" loading={busy} disabled={disabled} onClick={onCreate}>
+          <Button type="submit" size="lg" className="w-full sm:w-auto" loading={busy} disabled={disabled || invalid}>
             Create trip
           </Button>
         </div>
+        </form>
+      </CardBody>
+    </Card>
+  );
+}
+
+export function EditTripSetupCard({ draft, onChange, onSave, onCancel, disabled, busy, structuralDisabled, reason }: { draft: RoomDraft; onChange: (draft: RoomDraft) => void; onSave: () => void; onCancel: () => void; disabled: boolean; busy: boolean; structuralDisabled: boolean; reason?: string | null }) {
+  const errors = validateRoomDraft(draft);
+  const invalid = Object.keys(errors).length > 0;
+  const formRef = useRef<HTMLFormElement>(null);
+  return (
+    <Card variant="flat">
+      <CardHeader icon={icons.plan} title="Edit trip setup" description="Changes to dates, location, currency or scope ask everyone to confirm their private details again." />
+      <CardBody>
+        <form ref={formRef} className="grid gap-5" noValidate onSubmit={(event) => {
+          event.preventDefault();
+          if (invalid) requestAnimationFrame(() => formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus());
+          else onSave();
+        }}>
+          {reason && <Notice tone="warning">{reason}</Notice>}
+          <Field label="Trip name" error={errors.name}>
+            <Input maxLength={81} value={draft.name} onChange={(e) => onChange({ ...draft, name: e.target.value })} />
+          </Field>
+          <TripBasics draft={draft} onChange={onChange} errors={errors} structuralDisabled={structuralDisabled} />
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Field label="First day" error={errors.startDate}>
+              <Input type="date" disabled={structuralDisabled} max={draft.endDate || undefined} value={draft.startDate} onChange={(e) => onChange({ ...draft, startDate: e.target.value })} />
+            </Field>
+            <Field label="Last day" error={errors.endDate}>
+              <Input type="date" disabled={structuralDisabled} min={addDays(draft.startDate, 1)} max={addDays(draft.startDate, 30)} value={draft.endDate} onChange={(e) => onChange({ ...draft, endDate: e.target.value })} />
+            </Field>
+          </div>
+          <Field label="How many people" hint="Never below the people already approved" error={errors.expectedSize}>
+            <Select disabled={structuralDisabled} value={draft.expectedSize} onChange={(e) => onChange({ ...draft, expectedSize: Number(e.target.value) })}>
+              {[2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => <option key={n} value={n}>{n} people</option>)}
+            </Select>
+          </Field>
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <Button variant="ghost" disabled={busy} onClick={onCancel}>Cancel</Button>
+            <Button type="submit" loading={busy} disabled={disabled || invalid}>Save setup</Button>
+          </div>
+        </form>
+      </CardBody>
+    </Card>
+  );
+}
+
+export interface TripListItem {
+  id: string; name: string; startDate: string; endDate: string; expectedSize: number; joined: number;
+  phase: 'collecting' | 'voting' | 'locked'; membershipStatus: 'approved' | 'pending'; role: 'owner' | 'member' | 'pending';
+}
+
+export function MyTripsCard({ trips, loading, onOpen, onRefresh }: { trips: TripListItem[]; loading: boolean; onOpen: (id: string) => void; onRefresh: () => void }) {
+  return (
+    <Card>
+      <CardHeader icon={icons.destination} title="Your trips" description={trips.length ? `${plural(trips.length, 'trip')} you can return to` : 'Trips you create or join will appear here'} action={<Button size="icon-sm" variant="ghost" aria-label="Refresh trips" title="Refresh trips" icon={RefreshCw} loading={loading} onClick={onRefresh} />} />
+      <CardBody>
+        {loading && !trips.length ? <p className="type-small m-0 text-ink-muted" role="status">Loading your trips…</p> : trips.length ? (
+          <ul className="m-0 grid list-none gap-2 p-0">
+            {trips.map((trip) => (
+              <li key={trip.id}>
+                <button type="button" className="flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border-0 bg-surface-muted px-4 py-3 text-left font-sans text-ink hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500" onClick={() => onOpen(trip.id)}>
+                  <span className="min-w-0 flex-1">
+                    <span className="type-body block truncate font-semibold">{trip.name}</span>
+                    <span className="type-small block text-ink-muted">{formatDateRange(trip.startDate, trip.endDate)} · {trip.joined} of {trip.expectedSize} joined · {trip.membershipStatus === 'pending' ? 'Waiting for approval' : trip.phase === 'locked' ? 'Plan ready' : trip.phase === 'voting' ? 'Voting' : trip.role === 'owner' ? 'You organize' : 'Planning'}</span>
+                  </span>
+                  <ChevronRight className="size-5 shrink-0 text-brand-700" aria-hidden />
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : <p className="type-small m-0 text-ink-muted">No trips yet. Start one below.</p>}
       </CardBody>
     </Card>
   );

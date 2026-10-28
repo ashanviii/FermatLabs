@@ -140,7 +140,7 @@ module.exports = {
         ink: {
           DEFAULT: '#131316', // headings, primary text
           soft: '#3F3F46', // body copy on light surfaces
-          muted: '#6B6B76', // helper text, labels (5.2:1 on white, 4.9:1 on surface-muted)
+          muted: '#4B554F', // meaningful helper text and labels (7.16:1 on canvas, AAA)
           faint: '#A1A1AA', // icons, placeholders, disabled only (NOT for text that must be read)
           inverse: '#FFFFFF',
         },
