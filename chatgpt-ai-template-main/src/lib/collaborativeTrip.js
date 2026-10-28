@@ -111,16 +111,12 @@ function inScope(state, dest) {
 }
 const offeredDestinations = (state) => seeds.destinations.filter((dest) => inScope(state, dest));
 
-function allocateInteger(total, orderedIds) {
-  if (!Number.isSafeInteger(total) || total < 0 || !orderedIds.length) fail('Allocation requires a nonnegative integer and members');
-  const base = Math.floor(total / orderedIds.length);
-  const remainder = total % orderedIds.length;
-  return Object.fromEntries(orderedIds.map((id, index) => [id, base + (index < remainder ? 1 : 0)]));
-}
+const TRIP_SETUP_FIELDS = ['name', 'startDate', 'endDate', 'expectedSize', 'homeCountry', 'currency', 'scope'];
+const SEMANTIC_SETUP_FIELDS = new Set(['startDate', 'endDate', 'homeCountry', 'currency', 'scope']);
 
-function createTripState({ id, ownerUid, name, startDate, endDate, expectedSize, createdAt = null, homeCountry = DEFAULT_HOME_COUNTRY, currency, scope = 'any', destinationIds }) {
+function normalizeTripSetup({ name, startDate, endDate, expectedSize, homeCountry = DEFAULT_HOME_COUNTRY, currency, scope = 'any', destinationIds }) {
   const cleanName = typeof name === 'string' ? name.trim() : '';
-  if (!id || !ownerUid || !cleanName || cleanName.length > 80) fail('Trip id, owner, and a name of at most 80 characters are required');
+  if (!cleanName || cleanName.length > 80) fail('Trip name must be between 1 and 80 characters');
   if (!Number.isInteger(expectedSize) || expectedSize < 2 || expectedSize > 10) fail('Expected size must be 2–10');
   if (!isExactDate(startDate) || !isExactDate(endDate) || endDate < startDate) fail('Valid exact dates are required');
   const tripDays = Math.round((Date.parse(`${endDate}T00:00:00Z`) - Date.parse(`${startDate}T00:00:00Z`)) / DAY) + 1;
@@ -130,10 +126,23 @@ function createTripState({ id, ownerUid, name, startDate, endDate, expectedSize,
   if (!geo.isCurrency(tripCurrency)) fail('Trip currency must be a supported ISO-4217 code like INR or USD');
   if (!SCOPES.includes(scope)) fail(`Trip scope must be one of ${SCOPES.join(', ')}`);
   if (destinationIds !== undefined && (!Array.isArray(destinationIds) || !destinationIds.length || destinationIds.length > 40 || new Set(destinationIds).size !== destinationIds.length || !destinationIds.every((destId) => seeds.destinations.some((dest) => dest.id === destId)))) fail('Destination ids must be 1–40 distinct known destinations');
-  const settings = { homeCountry, currency: tripCurrency, scope, ...(destinationIds ? { destinationIds: [...destinationIds] } : {}) };
-  if (!offeredDestinations(settings).length) fail(scope === 'domestic' ? 'No domestic destinations are available for this home country yet' : 'No destinations match this trip scope');
+  const setup = { name: cleanName, startDate, endDate, expectedSize, homeCountry, currency: tripCurrency, scope, ...(destinationIds ? { destinationIds: [...destinationIds] } : {}) };
+  if (!offeredDestinations(setup).length) fail(scope === 'domestic' ? 'No domestic destinations are available for this home country yet' : 'No destinations match this trip scope');
+  return setup;
+}
+
+function allocateInteger(total, orderedIds) {
+  if (!Number.isSafeInteger(total) || total < 0 || !orderedIds.length) fail('Allocation requires a nonnegative integer and members');
+  const base = Math.floor(total / orderedIds.length);
+  const remainder = total % orderedIds.length;
+  return Object.fromEntries(orderedIds.map((id, index) => [id, base + (index < remainder ? 1 : 0)]));
+}
+
+function createTripState({ id, ownerUid, name, startDate, endDate, expectedSize, createdAt = null, homeCountry = DEFAULT_HOME_COUNTRY, currency, scope = 'any', destinationIds }) {
+  if (!id || !ownerUid) fail('Trip id and owner are required');
+  const setup = normalizeTripSetup({ name, startDate, endDate, expectedSize, homeCountry, currency, scope, destinationIds });
   return {
-    schemaVersion: 1, seedVersion: seeds.version, id, ownerUid, name: cleanName, startDate, endDate, expectedSize, ...settings,
+    schemaVersion: 1, seedVersion: seeds.version, id, ownerUid, ...setup,
     phase: 'collecting', inputRevision: 0, round: 0,
     members: { [ownerUid]: { uid: ownerUid, nickname: 'Organizer', role: 'owner', status: 'approved', joinOrder: 0 } },
     pending: {}, constraints: {}, ballots: {}, publishedTotals: null, lockedDestinationId: null, lockExplanation: null,
@@ -143,7 +152,8 @@ function createTripState({ id, ownerUid, name, startDate, endDate, expectedSize,
 
 function isExactDate(value) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value || '')) return false;
-  return new Date(`${value}T00:00:00Z`).toISOString().slice(0, 10) === value;
+  const date = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }
 
 function approvedIds(state) {
@@ -153,6 +163,13 @@ function ownerOnly(state, uid) { if (state.ownerUid !== uid) fail('Only the orga
 function memberOnly(state, uid) { if (!state.members[uid] || state.members[uid].status !== 'approved') fail('Approved membership required'); }
 function collecting(state) { if (state.phase !== 'collecting') fail('Trip is not collecting inputs'); }
 function invalidate(state) { state.inputRevision += 1; state.phase = 'collecting'; state.ballots = {}; state.publishedTotals = null; state.lockExplanation = null; }
+
+function hasPlanOrMoneyHistory(state) {
+  return Boolean(
+    state.activePlan || state.lockedAt || (state.planVersion || 0) > 0 || (state.supersededPlans || []).length || state.payee ||
+    Object.keys(state.payments || {}).length || Object.keys(state.pledges || {}).length || (state.expenses || []).length || (state.expenseSeq || 0) > 0,
+  );
+}
 
 // Passport nationality: new clients send passportCountry (ISO2); legacy clients send hasIndianPassport: true (= 'IN').
 // When both are present they must agree.
@@ -386,6 +403,17 @@ function demoPeople(state) {
   return DEMO_GLOBAL.map(([name, usd], index) => ({ nickname: `${name} (demo)`, departureCity: cities[index % cities.length].name, budget: roundBudget(geo.convert(usd, 'USD', currency)), preferences: DEMO_PEOPLE[index].preferences, passportCountry: homeCountry }));
 }
 
+function resetConstraintsAfterSetupChange(state) {
+  const demos = Object.values(state.members).filter((member) => member.demo && member.status === 'approved').sort((a, b) => a.joinOrder - b.joinOrder);
+  const people = demoPeople(state);
+  state.constraints = {};
+  demos.forEach((member, index) => {
+    const person = people[index % people.length];
+    const passport = person.passportCountry ? { passportCountry: person.passportCountry } : { hasIndianPassport: true };
+    state.constraints[member.uid] = { departureCity: person.departureCity, budget: person.budget, passportExpiry: '2031-12', visas: Object.keys(seeds.holdableVisas), datesConfirmed: true, preferences: person.preferences, entryCheckAcknowledged: true, isAdult: true, ...passport };
+  });
+}
+
 function addDemoMembers(state) {
   const open = state.expectedSize - approvedIds(state).length; if (open <= 0) fail('Approved roster capacity reached');
   const taken = new Set(Object.values(state.members).map((m) => m.nickname));
@@ -423,6 +451,25 @@ function applyTripCommand(input, command) {
       const nickname = typeof command.nickname === 'string' ? command.nickname.trim() : '';
       if (!nickname || nickname.length > 40) fail('Nickname must be between 1 and 40 characters');
       state.pending[command.uid] = { uid: command.uid, nickname, requestedAt: now, expiresAt: now + 86400000, status: 'pending' }; return state;
+    }
+    case 'updateTripSetup': {
+      ownerOnly(state, command.uid); collecting(state);
+      if (!Number.isInteger(command.expectedInputRevision) || command.expectedInputRevision !== state.inputRevision) fail('Stale input revision');
+      const patch = command.patch;
+      if (!patch || typeof patch !== 'object' || Array.isArray(patch)) fail('Trip setup patch is required');
+      const keys = Object.keys(patch);
+      if (keys.some((key) => !TRIP_SETUP_FIELDS.includes(key))) fail('Unsupported trip setup field');
+      const currentSettings = settingsOf(state);
+      const current = Object.fromEntries(TRIP_SETUP_FIELDS.map((key) => [key, ['homeCountry', 'currency', 'scope'].includes(key) ? currentSettings[key] : state[key]]));
+      const next = normalizeTripSetup({ ...current, ...patch, ...(state.destinationIds ? { destinationIds: state.destinationIds } : {}) });
+      const changed = TRIP_SETUP_FIELDS.filter((key) => next[key] !== current[key]);
+      if (!changed.length) return state;
+      if (changed.some((key) => key !== 'name') && hasPlanOrMoneyHistory(state)) fail('Trip setup cannot change after a plan or money activity has started');
+      if (next.expectedSize < approvedIds(state).length) fail('Expected size cannot be below the approved roster');
+      TRIP_SETUP_FIELDS.forEach((key) => { state[key] = next[key]; });
+      if (changed.some((key) => SEMANTIC_SETUP_FIELDS.has(key))) resetConstraintsAfterSetupChange(state);
+      invalidate(state);
+      return state;
     }
     case 'admitMember': {
       ownerOnly(state, command.uid); collecting(state); const request = state.pending[command.memberUid]; if (!request || request.status !== 'pending' || request.expiresAt <= now) fail('Join request expired or absent');
@@ -560,6 +607,11 @@ function buildTripProjection(state, viewerUid, now = Date.now()) {
   const payments = state.payments || {};
   const base = { schemaVersion: state.schemaVersion, seedVersion: state.seedVersion, id: state.id, name: state.name, ownerUid: state.ownerUid, startDate: state.startDate, endDate: state.endDate, expectedSize: state.expectedSize, phase: state.phase, inputRevision: state.inputRevision, round: state.round, members: clone(state.members), submissionProgress: approvedIds(state).filter((uid) => completeConstraint(state.constraints[uid])).length, ballotProgress: Object.keys(state.ballots).length, publishedTotals: clone(state.publishedTotals), lockedDestinationId: state.lockedDestinationId, activePlan: sharedPlanView(state.activePlan, viewerUid), payee: payeeView(state, viewerUid), paymentProgress: Object.values(payments).filter(Boolean).length,
     homeCountry: settings.homeCountry, currency: settings.currency, scope: settings.scope, destinations: destinationSummaries(state), lockExplanation: clone(state.lockExplanation || null) };
+  if (viewerUid === state.ownerUid) base.setupEdit = {
+    canRename: state.phase === 'collecting',
+    canEditStructure: state.phase === 'collecting' && !hasPlanOrMoneyHistory(state),
+    reason: state.phase !== 'collecting' ? 'Trip setup is locked while voting or planning is active.' : hasPlanOrMoneyHistory(state) ? 'Only the trip name can change after a plan or money activity has started.' : null,
+  };
   const ready = completeConstraint(state.constraints[viewerUid]) && approvedIds(state).length === state.expectedSize && approvedIds(state).every((uid) => completeConstraint(state.constraints[uid]));
   const destinationBoard = []; const myPrivateStatus = [];
   if (ready) {
@@ -585,6 +637,20 @@ function buildTripProjection(state, viewerUid, now = Date.now()) {
   return { ...base, features: features.project(state, viewerUid, featureContext(state), now), membershipStatus: 'approved', myLockedVote: state.phase === 'locked' ? state.ballots[viewerUid]?.destinationId || null : null, myConstraints: state.constraints[viewerUid] ? clone(state.constraints[viewerUid]) : null, myPrivateStatus, destinationBoard, myDropoutImpact, myPayment: Boolean(payments[viewerUid]), myBallot: state.phase === 'voting' ? state.ballots[viewerUid]?.destinationId || null : null, pendingRequests: viewerUid === state.ownerUid ? Object.values(state.pending).filter((request) => request.status === 'pending' && request.expiresAt > now).map(({ uid, nickname, expiresAt }) => ({ uid, nickname, expiresAt })) : undefined };
 }
 
+function buildTripSummary(state, viewerUid, now = Date.now()) {
+  const member = state.members?.[viewerUid];
+  const pending = state.pending?.[viewerUid];
+  const pendingActive = pending?.status === 'pending' && pending.expiresAt > now;
+  if (member?.status !== 'approved' && !pendingActive) fail('Approved membership required');
+  const settings = settingsOf(state);
+  return {
+    id: state.id, name: state.name, startDate: state.startDate, endDate: state.endDate,
+    expectedSize: state.expectedSize, joined: approvedIds(state).length, phase: state.phase,
+    homeCountry: settings.homeCountry, currency: settings.currency, scope: settings.scope,
+    membershipStatus: member?.status === 'approved' ? 'approved' : 'pending', role: member?.role || 'pending',
+  };
+}
+
 // Helpers handed to feature modules in src/lib/features so they never import this file (no cycles).
 // forexFor and documentBlocker are bound to the trip's settings (currency, home country); settings is exposed for display.
 function featureContext(state = {}) {
@@ -597,6 +663,6 @@ function featureContext(state = {}) {
 }
 
 module.exports = {
-  seeds, geo, allocateInteger, createTripState, applyCommand, buildTripProjection, generatePlan, validatePlan,
-  settingsOf, isDomestic, forexFor, journeyFor, SCOPES, FOREX_BASIS_POINTS, DEFAULT_FOREX_BASIS_POINTS,
+  seeds, geo, allocateInteger, createTripState, applyCommand, buildTripProjection, buildTripSummary, generatePlan, validatePlan,
+  settingsOf, isDomestic, forexFor, journeyFor, normalizeTripSetup, SCOPES, FOREX_BASIS_POINTS, DEFAULT_FOREX_BASIS_POINTS,
 };

@@ -17,7 +17,7 @@ import type { IconComponent } from './icons';
  */
 const buttonVariants = cva(
   [
-    'relative inline-flex cursor-pointer select-none items-center justify-center gap-2 whitespace-nowrap rounded-full border border-transparent font-sans font-semibold tracking-[-0.01em] no-underline',
+    'relative inline-flex touch-manipulation cursor-pointer select-none items-center justify-center gap-2 whitespace-nowrap rounded-full border border-transparent font-sans font-semibold tracking-[-0.01em] no-underline',
     // iOS press feedback: a quick shrink and dim, released on the springy Apple curve.
     'transition-[background-color,border-color,color,box-shadow,transform,opacity] duration-200 ease-apple active:scale-[0.97] active:opacity-80',
     // Apple-style focus halo: a soft tinted ring hugging the control, no offset gap.
@@ -39,12 +39,12 @@ const buttonVariants = cva(
         link: 'h-auto rounded-md bg-transparent px-0 text-brand-700 underline-offset-4 hover:underline active:scale-100',
       },
       size: {
-        sm: 'h-9 px-4 text-[0.875rem] [&_svg]:size-4',
+        sm: 'h-9 px-4 text-[0.875rem] [@media(pointer:coarse)]:min-h-11 [&_svg]:size-4',
         md: 'h-11 px-5 text-[0.9375rem] [&_svg]:size-[1.125rem]',
         default: 'h-11 px-5 text-[0.9375rem] [&_svg]:size-[1.125rem]',
         lg: 'h-[3.125rem] px-7 text-[1.0625rem] [&_svg]:size-5',
         icon: 'h-10 w-10 p-0 [&_svg]:size-[1.125rem]',
-        'icon-sm': 'h-8 w-8 p-0 [&_svg]:size-4',
+        'icon-sm': 'h-8 w-8 p-0 [@media(pointer:coarse)]:min-h-11 [@media(pointer:coarse)]:min-w-11 [&_svg]:size-4',
       },
       block: {
         true: 'w-full',

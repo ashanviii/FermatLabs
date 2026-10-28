@@ -1,6 +1,6 @@
 'use client';
 // Frame around the planner: top bar, trip header + stepper, trip summary sidebar and footer.
-import { Ban, RefreshCw } from 'lucide-react';
+import { Ban, Home, RefreshCw } from 'lucide-react';
 import FermatMark from '@/components/landing/FermatMark';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody, CardHeader } from '@/components/ui/card';
@@ -12,7 +12,7 @@ import { icons, type IconComponent } from '@/components/ui/icons';
 import { formatDateRange, nightsBetween, plural } from '@/lib/format';
 import { approvedCount, avatarName, memberList, phaseLabel, planApprovals, scopeLabel, type StepId } from './tripState';
 
-export function TopBar({ trip, action }: { trip?: any; action?: React.ReactNode }) {
+export function TopBar({ trip, action, onHome }: { trip?: any; action?: React.ReactNode; onHome?: () => void }) {
   const names = memberList(trip).map((m: any) => avatarName(m.nickname));
   // Full-width frosted bar, the same as the marketing nav. It lives inside the page column, so the material and
   // hairline bleed to the screen edges (w-screen; .landing clips the overflow-x) while the content stays aligned.
@@ -28,6 +28,11 @@ export function TopBar({ trip, action }: { trip?: any; action?: React.ReactNode 
           <span className="type-h3 text-brand-900">Fermat</span>
         </a>
         <div className="flex items-center gap-3">
+          {trip && onHome && (
+            <Button size="sm" variant="ghost" icon={Home} onClick={onHome}>
+              <span className="hidden sm:inline">All trips</span><span className="sm:hidden">Home</span>
+            </Button>
+          )}
           {names.length > 0 && <AvatarStack names={names} max={4} size="sm" className="hidden sm:flex" aria-label={`${names.length} people in this trip`} />}
           {action}
         </div>
@@ -45,11 +50,12 @@ function Meta({ icon: Icon, children }: { icon: IconComponent; children: React.R
   );
 }
 
-export function TripHeader({ trip, owner, step, onStepClick }: { trip: any; owner: boolean; step: StepId; onStepClick: (id: StepId) => void }) {
+export function TripHeader({ trip, owner, step, onStepClick, action }: { trip: any; owner: boolean; step: StepId; onStepClick: (id: StepId) => void; action?: React.ReactNode }) {
   const nights = nightsBetween(trip.startDate, trip.endDate);
   return (
     <header className="grid gap-6 pb-2 pt-4 sm:pt-8">
-      <div className="grid gap-2">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="grid min-w-0 flex-1 gap-2">
         <p className="type-overline m-0 flex items-center gap-2 text-brand-600">
           {phaseLabel(trip)}
           {owner && (
@@ -72,6 +78,8 @@ export function TripHeader({ trip, owner, step, onStepClick }: { trip: any; owne
           <Meta icon={trip.scope === 'domestic' ? icons.destination : icons.flight}>{scopeLabel(trip)}</Meta>
           {trip.currency && <Meta icon={icons.money}>Prices in {trip.currency}</Meta>}
         </div>
+        </div>
+        {action && <div className="flex shrink-0 items-center gap-2">{action}</div>}
       </div>
       <Stepper current={step} onStepClick={(s) => onStepClick(s.id as StepId)} />
     </header>

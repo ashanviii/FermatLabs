@@ -60,7 +60,7 @@ Never write hex in screens. Use these Tailwind names (`bg-*`, `text-*`, `ring-*`
 | `warm-50 … warm-800` (`warm` = 400) | marigold `#F4B740` | **The one warm accent.** Routes in ASCII art, "Your pick", accents on dark panels. Never for status |
 | `ink` | `#131316` | Headings, primary text |
 | `ink-soft` | `#3F3F46` | Body copy |
-| `ink-muted` | `#6B6B76` | Helper text, labels (5.2:1 on white) |
+| `ink-muted` | `#4B554F` | Meaningful helper text and labels (7.16:1 on canvas; AAA) |
 | `ink-faint` | `#A1A1AA` | Icons, placeholders, dividers, disabled only. Not for readable text |
 | `canvas` | `#FAFAF8` | Page background, a soft off-white so white cards lift off it (the /plan shell sets `bg-canvas`) |
 | `surface` / `surface-muted` / `surface-strong` | `#FFF` / `#F3F3F0` / `#EDEDF0` | Cards and inputs / alternate bands, wells / tracks, pressed |

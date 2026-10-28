@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, Pencil, WifiOff } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Pencil, WifiOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody } from '@/components/ui/card';
@@ -21,7 +21,7 @@ import ShareCards from './features/ShareCards';
 import SilentPrefs from './features/SilentPrefs';
 import Tasks from './features/Tasks';
 import { DestinationPicker, PlanMoney, UpiPanel } from './FermatExtras';
-import { CreateRoomCard, JoinRoomCard, OrganizerIdentityCard, SignInCard, type RoomDraft } from './shell/EntryCards';
+import { CreateRoomCard, EditTripSetupCard, JoinRoomCard, MyTripsCard, OrganizerIdentityCard, SignInCard, type RoomDraft, type TripListItem } from './shell/EntryCards';
 import { InvitePanel, PendingApproval } from './shell/InvitePanel';
 import { PlannerFooter, TopBar, TripHeader, TripSummary, stepEyebrow } from './shell/PlannerChrome';
 import { PrivateDetailsForm, PrivateDetailsSummary, type PrivateInput } from './shell/PrivateDetailsForm';
@@ -84,6 +84,19 @@ function Point({ icon: Icon, title, children }: { icon: IconComponent; title: st
   );
 }
 
+function CoordinationDisclosure({ icon: Icon, title, description, children }: { icon: IconComponent; title: string; description: string; children: React.ReactNode }) {
+  return (
+    <details className="group rounded-2xl bg-surface shadow-card">
+      <summary className="flex min-h-14 cursor-pointer list-none items-center gap-3 px-5 py-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 sm:px-6 [&::-webkit-details-marker]:hidden">
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700"><Icon className="size-5" aria-hidden /></span>
+        <span className="min-w-0 flex-1"><span className="type-h3 block">{title}</span><span className="type-small block text-ink-muted">{description}</span></span>
+        <span className="text-brand-700 group-open:hidden">Open</span><span className="text-brand-700 hidden group-open:inline">Close</span>
+      </summary>
+      <div className="grid gap-5 border-0 border-t border-solid border-line-subtle p-5 sm:p-6">{children}</div>
+    </details>
+  );
+}
+
 function EntryHero() {
   return (
     <div className="grid gap-6 lg:pt-6">
@@ -139,7 +152,14 @@ export default function CollaborativeTripPlanner() {
   const [online, setOnline] = useState(true);
   const [inviteReady, setInviteReady] = useState(false);
   const [privateInputDirty, setPrivateInputDirty] = useState(false);
+  const [privateDraftRevision, setPrivateDraftRevision] = useState<number | null>(null);
   const [editingDetails, setEditingDetails] = useState(false);
+  const [editingSetup, setEditingSetup] = useState(false);
+  const [setupDraft, setSetupDraft] = useState<RoomDraft | null>(null);
+  const [setupDraftRevision, setSetupDraftRevision] = useState<number | null>(null);
+  const [trips, setTrips] = useState<TripListItem[]>([]);
+  const [tripsLoading, setTripsLoading] = useState(false);
+  const [planStepOverride, setPlanStepOverride] = useState<'plan' | 'go' | null>(null);
   const [createKey] = useState(() => `create-${globalThis.crypto?.randomUUID?.() || Date.now()}`);
   const [draft, setDraft] = useState<RoomDraft>({
     name: 'Friends escape',
@@ -157,10 +177,12 @@ export default function CollaborativeTripPlanner() {
   }, []);
   const [privateInput, setPrivateInput] = useState<PrivateInput>(() => startingInput(null));
   const updatePrivateInput = (patch: Partial<PrivateInput>) => {
+    if (!privateInputDirty) setPrivateDraftRevision(trip?.inputRevision ?? null);
     setPrivateInputDirty(true);
     setPrivateInput((current) => ({ ...current, ...patch }));
   };
   const togglePrivateList = (key: 'visas' | 'preferences', value: string) => {
+    if (!privateInputDirty) setPrivateDraftRevision(trip?.inputRevision ?? null);
     setPrivateInputDirty(true);
     setPrivateInput((current) => ({ ...current, [key]: current[key].includes(value) ? current[key].filter((item) => item !== value) : [...current[key], value] }));
   };
@@ -195,10 +217,57 @@ export default function CollaborativeTripPlanner() {
       if (!quiet) setError(cause.message || 'Could not refresh the trip');
     }
   }
+  async function loadTrips() {
+    if (!user || preview || user.isAnonymous || token) return;
+    setTripsLoading(true);
+    try {
+      const auth = await user.getIdToken();
+      const response = await fetch('/api/group-trips', { headers: { authorization: `Bearer ${auth}` } });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
+      setTrips(data.trips || []);
+    } catch (cause: any) {
+      setError(cause.message || 'Could not load your trips');
+    } finally {
+      setTripsLoading(false);
+    }
+  }
+  const openTrip = (tripId: string) => {
+    setError('');
+    const url = new URL(location.href);
+    url.searchParams.set('trip', tripId);
+    url.searchParams.delete('preview');
+    history.pushState(null, '', `${url.pathname}?${url.searchParams.toString()}`);
+    readTrip(tripId);
+  };
+  const goHome = () => {
+    setTrip(undefined);
+    setInvite('');
+    setEditingDetails(false);
+    setEditingSetup(false);
+    setPrivateInputDirty(false);
+    const url = new URL(location.href);
+    url.searchParams.delete('trip');
+    url.searchParams.delete('preview');
+    const query = url.searchParams.toString();
+    history.pushState(null, '', `${url.pathname}${query ? `?${query}` : ''}`);
+    loadTrips();
+  };
   useEffect(() => {
     if (!user || !inviteReady || token) return;
-    const stored = localStorage.getItem(`fermat.shared-trip.${user.uid}`);
-    if (stored) readTrip(stored);
+    const selected = new URLSearchParams(location.search).get('trip');
+    if (selected) readTrip(selected);
+    else loadTrips();
+  }, [user, inviteReady, token]);
+  useEffect(() => {
+    if (!user || !inviteReady || token) return;
+    const onPopState = () => {
+      const selected = new URLSearchParams(location.search).get('trip');
+      if (selected) readTrip(selected);
+      else { setTrip(undefined); loadTrips(); }
+    };
+    addEventListener('popstate', onPopState);
+    return () => removeEventListener('popstate', onPopState);
   }, [user, inviteReady, token]);
   useEffect(() => {
     if (!user || !trip?.id) return;
@@ -216,6 +285,7 @@ export default function CollaborativeTripPlanner() {
     if (key === syncedConstraints.current) return;
     syncedConstraints.current = key;
     setPrivateInput(fromSaved(saved, trip));
+    setPrivateDraftRevision(trip.inputRevision);
   }, [trip?.myConstraints, privateInputDirty]);
   // No saved details yet: start the form from this trip's country, currency and scope.
   const startedFor = useRef('');
@@ -225,6 +295,7 @@ export default function CollaborativeTripPlanner() {
     if (key === startedFor.current) return;
     startedFor.current = key;
     setPrivateInput(startingInput(trip));
+    setPrivateDraftRevision(trip.inputRevision);
   }, [trip?.id, trip?.homeCountry, trip?.currency, trip?.scope, trip?.myConstraints, privateInputDirty]);
   // Private details can only be edited while the group is still collecting inputs.
   useEffect(() => {
@@ -232,6 +303,7 @@ export default function CollaborativeTripPlanner() {
       if (trip?.myConstraints) setPrivateInput(fromSaved(trip.myConstraints, trip));
       setEditingDetails(false);
       setPrivateInputDirty(false);
+      setPrivateDraftRevision(trip?.inputRevision ?? null);
     }
   }, [trip?.phase]);
   async function request(body: any) {
@@ -251,6 +323,11 @@ export default function CollaborativeTripPlanner() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
       setTrip(data.trip);
+      if (data.trip?.id && ['create', 'join'].includes(body.action)) {
+        const url = new URL(location.href);
+        url.searchParams.set('trip', data.trip.id);
+        history.replaceState(null, '', `${url.pathname}?${url.searchParams.toString()}`);
+      }
       if (data.invite) setInvite(data.invite);
       if (body.command?.type === 'revokeInvite') setInvite('');
       return true;
@@ -271,10 +348,15 @@ export default function CollaborativeTripPlanner() {
     const sample = preview && (previewFixtures as any)[preview];
     if (sample && typeof sample === 'object') setTrip(sample);
   }, [preview]);
+  useEffect(() => setPlanStepOverride(null), [trip?.id, trip?.activePlan?.version]);
 
   // Commands (payloads unchanged).
   const saveDetails = async () => {
-    if (await command({ type: 'submitConstraints', expectedInputRevision: trip.inputRevision, constraints: constraintsPayload(privateInput) })) {
+    if (privateDraftRevision !== trip.inputRevision) {
+      setError('The trip changed while you were editing. Review the updated dates and prices, then save again.');
+      return;
+    }
+    if (await command({ type: 'submitConstraints', expectedInputRevision: privateDraftRevision, constraints: constraintsPayload(privateInput) })) {
       setPrivateInputDirty(false);
       setEditingDetails(false);
     }
@@ -288,6 +370,35 @@ export default function CollaborativeTripPlanner() {
     if (trip?.myConstraints) setPrivateInput(fromSaved(trip.myConstraints, trip));
     setPrivateInputDirty(false);
     setEditingDetails(false);
+    setPrivateDraftRevision(trip?.inputRevision ?? null);
+  };
+  const reloadPrivateDraft = () => {
+    setPrivateInput(trip?.myConstraints ? fromSaved(trip.myConstraints, trip) : startingInput(trip));
+    setPrivateDraftRevision(trip?.inputRevision ?? null);
+    setPrivateInputDirty(false);
+    setError('');
+  };
+  const editSetup = () => {
+    if (!owner || trip?.phase !== 'collecting') return;
+    setSetupDraft({ name: trip.name, startDate: trip.startDate, endDate: trip.endDate, expectedSize: trip.expectedSize, homeCountry: trip.homeCountry, currency: trip.currency, scope: trip.scope });
+    setSetupDraftRevision(trip.inputRevision);
+    setEditingSetup(true);
+  };
+  const saveSetup = async () => {
+    if (!setupDraft || setupDraftRevision === null) return;
+    if (setupDraftRevision !== trip.inputRevision) {
+      setError('The trip changed while you were editing its setup. Reopen the editor and try again.');
+      return;
+    }
+    const semanticChange = ['startDate', 'endDate', 'homeCountry', 'currency', 'scope'].some((key) => setupDraft[key as keyof RoomDraft] !== trip[key]);
+    if (await command({ type: 'updateTripSetup', expectedInputRevision: setupDraftRevision, patch: setupDraft })) {
+      setEditingSetup(false);
+      setSetupDraft(null);
+      setPrivateInputDirty(false);
+      setEditingDetails(false);
+      if (semanticChange) setPrivateInput(startingInput(setupDraft));
+      setPrivateDraftRevision(setupDraftRevision + 1);
+    }
   };
   const openVoting = () => command({ type: 'openVoting', expectedInputRevision: trip.inputRevision });
   const vote = (id: string) => command({ type: 'vote', destinationId: id, round: trip.round, inputRevision: trip.inputRevision });
@@ -310,7 +421,17 @@ export default function CollaborativeTripPlanner() {
       </main>
     );
 
-  const step = currentStep(trip, Boolean(me));
+  const stateStep = currentStep(trip, Boolean(me));
+  const step = trip?.activePlan && planStepOverride ? planStepOverride : stateStep;
+  const navigateStep = (id: StepId) => {
+    if (trip?.activePlan && (id === 'plan' || id === 'go')) {
+      if (id === 'go' && stateStep !== 'go') return;
+      setPlanStepOverride(id);
+      requestAnimationFrame(() => scrollToStep(id));
+      return;
+    }
+    scrollToStep(id);
+  };
   const joined = trip ? approvedCount(trip) : 0;
   const requests: any[] = trip?.pendingRequests || [];
   const showInvite = Boolean(me) && trip?.phase === 'collecting' && (joined < trip.expectedSize || (owner && requests.length > 0));
@@ -338,16 +459,23 @@ export default function CollaborativeTripPlanner() {
   );
 
   const detailsForm = (
-    <PrivateDetailsForm
-      trip={trip}
-      value={privateInput}
-      dirty={privateInputDirty}
-      disabled={disabled}
-      busy={pendingCommand === 'submitConstraints'}
-      onChange={updatePrivateInput}
-      onToggle={togglePrivateList}
-      onSave={saveDetails}
-    />
+    <div className="grid gap-4">
+      {privateInputDirty && privateDraftRevision !== trip.inputRevision && (
+        <Notice tone="warning" title="Trip setup changed" action={<Button size="sm" variant="outline" onClick={reloadPrivateDraft}>Review updated details</Button>}>
+          Reload the current dates and prices before saving. Your old answers will not be submitted silently.
+        </Notice>
+      )}
+      <PrivateDetailsForm
+        trip={trip}
+        value={privateInput}
+        dirty={privateInputDirty}
+        disabled={disabled || (privateInputDirty && privateDraftRevision !== trip.inputRevision)}
+        busy={pendingCommand === 'submitConstraints'}
+        onChange={updatePrivateInput}
+        onToggle={togglePrivateList}
+        onSave={saveDetails}
+      />
+    </div>
   );
 
   const showDetailsForm = trip?.phase === 'collecting' && (!trip.myConstraints || step === 'details' || step === 'invite' || editingDetails);
@@ -473,18 +601,23 @@ export default function CollaborativeTripPlanner() {
   );
 
   const planSection = me && trip.activePlan && (
-    <Section key="plan" id="step-plan" className="scroll-mt-6" eyebrow={stepEyebrow('plan')} title="Your plan" description="Check the days, then approve it or ask for changes.">
+    <Section key="plan" id="step-plan" className="scroll-mt-6" eyebrow={stepEyebrow('plan')} title="Your plan" description="Check the days, then approve it or ask for changes." action={stateStep === 'go' ? <Button size="sm" variant="outline" iconRight={ArrowRight} onClick={() => { setPlanStepOverride('go'); requestAnimationFrame(() => scrollToStep('go')); }}>Continue to Go</Button> : undefined}>
       <PlanView trip={trip} uid={user!.uid} owner={owner} disabled={disabled} command={command} onShare={sharePlan} />
       <PlanMoney trip={trip} uid={user!.uid} />
     </Section>
   );
 
   const goSection = me && trip.activePlan && (
-    <Section key="go" id="step-go" className="scroll-mt-6" eyebrow={stepEyebrow('go')} title="Get going" description="Collect the advance, split costs and share the trip.">
-      <UpiPanel trip={trip} uid={user!.uid} owner={owner} disabled={disabled} command={command} />
-      <Pledges {...featureProps} />
-      <SettleUp {...featureProps} />
-      <ShareCards {...featureProps} />
+    <Section key="go" id="step-go" className="scroll-mt-6" eyebrow={stepEyebrow('go')} title="Get going" description="Collect the advance, split costs and share the trip." action={<Button size="sm" variant="outline" icon={ArrowLeft} onClick={() => { setPlanStepOverride('plan'); requestAnimationFrame(() => scrollToStep('plan')); }}>Back to plan</Button>}>
+      <div className="grid gap-4">
+        <CoordinationDisclosure icon={icons.money} title="Money" description="Collect an advance and keep shared expenses straight.">
+          <UpiPanel trip={trip} uid={user!.uid} owner={owner} disabled={disabled} command={command} />
+          <SettleUp {...featureProps} />
+        </CoordinationDisclosure>
+        <CoordinationDisclosure icon={icons.members} title="Commitments" description="Agree on the minimum group and maximum share."><Pledges {...featureProps} /></CoordinationDisclosure>
+        <CoordinationDisclosure icon={icons.check} title="Tasks" description="Assign the practical jobs before you leave."><Tasks {...featureProps} /></CoordinationDisclosure>
+        <CoordinationDisclosure icon={icons.share} title="Sharing" description="Send the plan and useful trip cards."><ShareCards {...featureProps} /></CoordinationDisclosure>
+      </div>
     </Section>
   );
 
@@ -492,8 +625,8 @@ export default function CollaborativeTripPlanner() {
     invite: [inviteSection, detailsSection, chooseSection],
     details: [detailsSection, chooseSection, inviteSection],
     choose: [chooseSection, detailsSection, inviteSection],
-    plan: [planSection, goSection],
-    go: [goSection, planSection],
+    plan: [planSection],
+    go: [goSection],
   };
 
   /* ---------------------------------------------------------------- page */
@@ -501,7 +634,7 @@ export default function CollaborativeTripPlanner() {
   return (
     <main className="bg-canvas pb-6 font-sans text-ink">
       <PageContainer>
-        <TopBar trip={me ? trip : undefined} action={headerAction} />
+        <TopBar trip={me ? trip : undefined} action={headerAction} onHome={trip ? goHome : undefined} />
 
         {(!online || error) && (
           <div className="mt-4 grid gap-3">
@@ -542,7 +675,10 @@ export default function CollaborativeTripPlanner() {
               ) : user.isAnonymous ? (
                 <OrganizerIdentityCard />
               ) : (
-                <CreateRoomCard draft={draft} onChange={setDraft} onCreate={() => request({ action: 'create', idempotencyKey: createKey, trip: draft })} disabled={disabled} busy={pendingCommand === 'create'} />
+                <div className="grid gap-4">
+                  <MyTripsCard trips={trips} loading={tripsLoading} onOpen={openTrip} onRefresh={loadTrips} />
+                  <CreateRoomCard draft={draft} onChange={setDraft} onCreate={() => request({ action: 'create', idempotencyKey: createKey, trip: draft })} disabled={disabled} busy={pendingCommand === 'create'} />
+                </div>
               )}
             </div>
           </div>
@@ -564,12 +700,17 @@ export default function CollaborativeTripPlanner() {
 
         {trip && me && (
           <>
-            <TripHeader trip={trip} owner={owner} step={step} onStepClick={scrollToStep} />
+            <TripHeader trip={trip} owner={owner} step={step} onStepClick={navigateStep} action={owner && trip.phase === 'collecting' ? <Button size="sm" variant="outline" icon={Pencil} onClick={editSetup}>Edit trip</Button> : undefined} />
+            {editingSetup && setupDraft && (
+              <div className="mt-4">
+                <EditTripSetupCard draft={setupDraft} onChange={setSetupDraft} onSave={saveSetup} onCancel={() => { setEditingSetup(false); setSetupDraft(null); }} disabled={disabled} busy={pendingCommand === 'updateTripSetup'} structuralDisabled={trip.setupEdit ? !trip.setupEdit.canEditStructure : false} reason={trip.setupEdit?.reason} />
+              </div>
+            )}
             <div className="mt-10 grid gap-12 lg:grid-cols-12 lg:gap-8">
               <div className="grid min-w-0 content-start gap-12 sm:gap-16 lg:col-span-8">{ordered[step].filter(Boolean)}</div>
               <aside className="grid min-w-0 content-start gap-6 lg:col-span-4" aria-label="Trip overview">
                 <TripSummary trip={trip} uid={user.uid} owner={owner && !showInvite} disabled={disabled} command={command} />
-                <Tasks {...featureProps} />
+                {!trip.activePlan && <Tasks {...featureProps} />}
               </aside>
             </div>
           </>

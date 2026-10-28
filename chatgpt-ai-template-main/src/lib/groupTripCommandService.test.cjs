@@ -53,3 +53,12 @@ test('public projections contain neither raw invite secrets nor private constrai
   assert.equal(payload.includes('constraints'), false);
   assert.equal(payload.includes('ballots'), false);
 });
+
+test('setup edits derive organizer identity server-side and reject stale or forged commands', async () => {
+  const firestore = memoryFirestore();
+  await createTrip({ firestore, uid: 'owner', body: { idempotencyKey: 'create-key-setup', trip: basics }, ...common, makeId: () => 'trip-setup', makeSecret: () => 'secret' });
+  await assert.rejects(() => mutateTrip({ firestore, uid: 'outsider', body: { tripId: 'trip-setup', action: 'command', command: { type: 'updateTripSetup', uid: 'owner', expectedInputRevision: 0, patch: { name: 'Forged' } } }, ...common }), /organizer/i);
+  const updated = await mutateTrip({ firestore, uid: 'owner', body: { tripId: 'trip-setup', action: 'command', command: { type: 'updateTripSetup', expectedInputRevision: 0, patch: { name: 'Safe rename' } } }, ...common });
+  assert.equal(updated.state.name, 'Safe rename');
+  await assert.rejects(() => mutateTrip({ firestore, uid: 'owner', body: { tripId: 'trip-setup', action: 'command', command: { type: 'updateTripSetup', expectedInputRevision: 0, patch: { name: 'Stale rename' } } }, ...common }), /stale/i);
+});

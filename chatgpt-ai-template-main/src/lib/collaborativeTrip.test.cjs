@@ -6,6 +6,7 @@ const {
   createTripState,
   applyCommand,
   buildTripProjection,
+  buildTripSummary,
   generatePlan,
   validatePlan,
 } = require('./collaborativeTrip');
@@ -172,9 +173,62 @@ test('editing a ballot-round constraint invalidates every ballot and returns to 
   assert.deepEqual(trip.ballots, {});
 });
 
+test('organizer setup edits are revisioned, allowlisted, and preserve private inputs only when their meaning is unchanged', () => {
+  let trip = readyTrip(2);
+  const before = structuredClone(trip.constraints);
+  const revision = trip.inputRevision;
+  trip = applyCommand(trip, { type: 'updateTripSetup', uid: 'owner', expectedInputRevision: revision, patch: { name: 'Renamed escape', expectedSize: 3 } });
+  assert.equal(trip.name, 'Renamed escape');
+  assert.equal(trip.expectedSize, 3);
+  assert.deepEqual(trip.constraints, before);
+  assert.equal(trip.inputRevision, revision + 1);
+  assert.throws(() => applyCommand(trip, { type: 'updateTripSetup', uid: 'm2', expectedInputRevision: trip.inputRevision, patch: { name: 'Hijacked' } }), /organizer/i);
+  assert.throws(() => applyCommand(trip, { type: 'updateTripSetup', uid: 'owner', expectedInputRevision: trip.inputRevision, patch: { ownerUid: 'm2' } }), /unsupported/i);
+  assert.throws(() => applyCommand(trip, { type: 'updateTripSetup', uid: 'owner', expectedInputRevision: trip.inputRevision - 1, patch: { name: 'Stale' } }), /stale/i);
+  assert.throws(() => applyCommand(trip, { type: 'updateTripSetup', uid: 'owner', expectedInputRevision: trip.inputRevision, patch: { expectedSize: 1 } }), /2–10|roster/i);
+});
+
+test('semantic setup edits require real members to reconfirm but regenerate safe demo inputs', () => {
+  let trip = readyTrip(2);
+  trip = applyCommand(trip, { type: 'updateTripSetup', uid: 'owner', expectedInputRevision: trip.inputRevision, patch: { startDate: '2027-01-10', endDate: '2027-01-15' } });
+  assert.deepEqual(trip.constraints, {});
+  assert.equal(buildTripProjection(trip, 'owner').submissionProgress, 0);
+  assert.throws(() => applyCommand(trip, { type: 'openVoting', uid: 'owner', expectedInputRevision: trip.inputRevision }), /inputs/i);
+
+  let demo = createTripState({ id: 'demo-edit', ownerUid: 'owner', name: 'Demo', startDate: '2026-12-10', endDate: '2026-12-15', expectedSize: 3 });
+  demo = applyCommand(demo, { type: 'addDemoMembers', uid: 'owner' });
+  const demoIds = Object.values(demo.members).filter((member) => member.demo).map((member) => member.uid);
+  demo = applyCommand(demo, { type: 'updateTripSetup', uid: 'owner', expectedInputRevision: demo.inputRevision, patch: { homeCountry: 'US', currency: 'USD', scope: 'any' } });
+  assert.equal(demo.constraints.owner, undefined);
+  demoIds.forEach((uid) => assert.equal(demo.constraints[uid].passportCountry, 'US'));
+});
+
+test('setup changes never reinterpret plan or money history', () => {
+  let trip = readyTrip(2, 300000);
+  trip = applyCommand(trip, { type: 'openVoting', uid: 'owner', expectedInputRevision: trip.inputRevision });
+  ['owner', 'm2'].forEach((uid) => { trip = applyCommand(trip, { type: 'vote', uid, destinationId: 'bangkok', round: trip.round, inputRevision: trip.inputRevision }); });
+  trip = applyCommand(trip, { type: 'lock', uid: 'owner', round: trip.round, inputRevision: trip.inputRevision, idempotencyKey: 'setup-history-lock' });
+  trip = applyCommand(trip, { type: 'reopen', uid: 'owner' });
+  assert.throws(() => applyCommand(trip, { type: 'updateTripSetup', uid: 'owner', expectedInputRevision: trip.inputRevision, patch: { currency: 'USD' } }), /plan or money/i);
+  const renamed = applyCommand(trip, { type: 'updateTripSetup', uid: 'owner', expectedInputRevision: trip.inputRevision, patch: { name: 'Still renameable' } });
+  assert.equal(renamed.name, 'Still renameable');
+});
+
 test('invalid calendar dates and unauthenticated projections fail closed', () => {
   assert.throws(() => createTripState({ id: 'bad', ownerUid: 'owner', name: 'Bad', startDate: '2026-02-30', endDate: '2026-03-02', expectedSize: 4 }), /date/i);
+  assert.throws(() => createTripState({ id: 'bad-month', ownerUid: 'owner', name: 'Bad', startDate: '2026-99-10', endDate: '2026-99-15', expectedSize: 4 }), /date/i);
   assert.throws(() => buildTripProjection(readyTrip(), 'outsider'), /membership/i);
+});
+
+test('trip-list summaries expose only shared navigation fields', () => {
+  const trip = readyTrip(2);
+  const summary = buildTripSummary(trip, 'm2');
+  assert.equal(summary.id, trip.id);
+  assert.equal(summary.role, 'member');
+  assert.equal(summary.joined, 2);
+  assert.equal(JSON.stringify(summary).includes('constraints'), false);
+  assert.equal(JSON.stringify(summary).includes('ballot'), false);
+  assert.throws(() => buildTripSummary(trip, 'outsider'), /membership/i);
 });
 
 test('private inputs require a real passport month and an explicit preference', () => {

@@ -128,6 +128,9 @@ export const currencyName = (code: string) => {
 export const currencyOptions = Object.keys(rates)
   .sort()
   .map((code) => ({ code, label: `${code} · ${currencyName(code)}` }));
+const countryCurrencies = new Set(homeCountryOptions.map((country) => currencyForCountry(country.code)).filter(Boolean));
+/** Travel-friendly currencies backed by at least one supported home country (keeps crypto/metals out of the main picker). */
+export const fiatCurrencyOptions = currencyOptions.filter((option) => countryCurrencies.has(option.code));
 
 /** "$", "€", "₹"; longer marks ("MX$", "AED") come back as the ISO code so they fit a trailing slot. */
 export function currencyMark(currency: string): { mark: string; short: boolean } {
