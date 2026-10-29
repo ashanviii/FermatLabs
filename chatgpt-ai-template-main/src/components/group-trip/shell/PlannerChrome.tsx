@@ -1,15 +1,18 @@
 'use client';
 // Frame around the planner: top bar, trip header + stepper, trip summary sidebar and footer.
-import { Ban, Home, RefreshCw } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Ban, Home, Pencil, RefreshCw } from 'lucide-react';
 import FermatMark from '@/components/landing/FermatMark';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarStack } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Field } from '@/components/ui/field';
 import { Progress } from '@/components/ui/progress';
 import { Stepper, PLAN_STEPS } from '@/components/ui/stepper';
 import { icons, type IconComponent } from '@/components/ui/icons';
-import { formatDateRange, nightsBetween, plural } from '@/lib/format';
+import { formatDateRange, formatMoney, nightsBetween, plural } from '@/lib/format';
+import { MoneyInput, tripCurrency } from '../features/currency';
 import { approvedCount, avatarName, memberList, phaseLabel, planApprovals, scopeLabel, type StepId } from './tripState';
 
 export function TopBar({ trip, action, onHome }: { trip?: any; action?: React.ReactNode; onHome?: () => void }) {
@@ -100,6 +103,69 @@ function SummaryRow({ label, done, total }: { label: string; done: number; total
   );
 }
 
+function PrivateBudgetEditor({ trip, uid, disabled, command }: { trip: any; uid: string; disabled: boolean; command: (c: any) => Promise<boolean> }) {
+  const budget = trip.myConstraints?.budget;
+  const currency = tripCurrency(trip);
+  const currentPlanTotal = trip.activePlan?.memberTotals?.find((member: any) => member.uid === uid)?.total;
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(budget ? String(budget) : '');
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => { setDraft(budget ? String(budget) : ''); }, [budget]);
+  if (!Number.isSafeInteger(budget)) return null;
+
+  const amount = Number(draft);
+  const error = !draft || !Number.isSafeInteger(amount) || amount <= 0
+    ? 'Enter a positive whole amount.'
+    : trip.phase === 'locked' && Number.isSafeInteger(currentPlanTotal) && amount < currentPlanTotal
+      ? `Keep it at least ${formatMoney(currentPlanTotal, currency)} to cover your current plan.`
+      : undefined;
+  const hint = trip.phase === 'voting'
+    ? 'Saving reopens planning and clears the current votes.'
+    : trip.phase === 'locked' && Number.isSafeInteger(currentPlanTotal)
+      ? `Your current plan is ${formatMoney(currentPlanTotal, currency)}.`
+      : 'Saving refreshes which destinations fit your group.';
+
+  const save = async () => {
+    if (error || amount === budget) return;
+    setSaving(true);
+    const saved = await command({ type: 'updateBudget', expectedInputRevision: trip.inputRevision, budget: amount });
+    setSaving(false);
+    if (saved) setEditing(false);
+  };
+
+  return (
+    <div className="grid gap-3 border-0 border-t border-solid border-line-subtle pt-4">
+      {!editing ? (
+        <div className="flex items-center gap-3">
+          <div className="min-w-0 flex-1">
+            <p className="type-caption m-0 text-ink-muted">Your private budget</p>
+            <p className="type-small type-num m-0 font-semibold text-ink">{formatMoney(budget, currency)}</p>
+          </div>
+          <Button size="sm" variant="ghost" icon={Pencil} disabled={disabled} onClick={() => setEditing(true)}>
+            Edit
+          </Button>
+        </div>
+      ) : (
+        <form className="grid gap-3" onSubmit={(event) => { event.preventDefault(); void save(); }}>
+          <Field label="Your private budget" hint={error ? undefined : hint} error={error}>
+            <MoneyInput currency={currency} step={1} value={draft} disabled={disabled || saving} onChange={(event) => setDraft(event.target.value)} autoFocus />
+          </Field>
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button size="sm" variant="ghost" disabled={saving} onClick={() => { setDraft(String(budget)); setEditing(false); }}>
+              Cancel
+            </Button>
+            <Button size="sm" type="submit" loading={saving} disabled={disabled || Boolean(error) || amount === budget}>
+              Save budget
+            </Button>
+          </div>
+        </form>
+      )}
+      {!editing && <p className="type-caption m-0 text-ink-muted">Only you can see this amount.</p>}
+    </div>
+  );
+}
+
 /** Sidebar on desktop (below the step on mobile): who's coming and anonymous progress. Never per-person status. */
 export function TripSummary({ trip, uid, owner, disabled, command }: { trip: any; uid: string; owner: boolean; disabled: boolean; command: (c: any) => Promise<boolean> }) {
   const members = memberList(trip).filter((m: any) => m.status !== 'pending');
@@ -132,6 +198,7 @@ export function TripSummary({ trip, uid, owner, disabled, command }: { trip: any
           {trip.activePlan && <SummaryRow label="Plan approvals" done={planApprovals(trip)} total={people} />}
           {trip.payee && <SummaryRow label="Advance paid" done={trip.paymentProgress ?? 0} total={people} />}
         </div>
+        <PrivateBudgetEditor trip={trip} uid={uid} disabled={disabled} command={command} />
         {owner && (
           <div className="flex flex-wrap items-center gap-2 border-0 border-t border-solid border-line-subtle pt-4">
             <span className="type-caption mr-auto text-ink-muted">Invite link</span>
