@@ -479,6 +479,27 @@ function applyTripCommand(input, command) {
     }
     case 'rejectMember': ownerOnly(state, command.uid); delete state.pending[command.memberUid]; return state;
     case 'submitConstraints': memberOnly(state, command.uid); if (!['collecting', 'voting'].includes(state.phase)) fail('Trip is not accepting inputs'); if (command.expectedInputRevision !== state.inputRevision) fail('Stale input revision'); state.constraints[command.uid] = validatedConstraint(command.constraints, settingsOf(state)); invalidate(state); return state;
+    case 'updateBudget': {
+      memberOnly(state, command.uid);
+      if (!['collecting', 'voting', 'locked'].includes(state.phase)) fail('Budget cannot be changed right now');
+      if (command.expectedInputRevision !== state.inputRevision) fail('Stale input revision');
+      const constraint = state.constraints[command.uid];
+      if (!completeConstraint(constraint)) fail('Add your trip details before changing your budget');
+      const budget = command.budget;
+      if (!Number.isSafeInteger(budget) || budget <= 0 || budget > maxAmount(settingsOf(state).currency)) fail('Budget is invalid');
+      if (budget === constraint.budget) return state;
+      if (state.phase === 'locked') {
+        const currentTotal = state.activePlan?.memberTotals.find((member) => member.uid === command.uid)?.total;
+        if (!Number.isSafeInteger(currentTotal)) fail('Current plan total is unavailable');
+        if (budget < currentTotal) fail('Budget cannot be below your current plan total');
+        state.constraints[command.uid].budget = budget;
+        state.inputRevision += 1;
+        return state;
+      }
+      state.constraints[command.uid].budget = budget;
+      invalidate(state);
+      return state;
+    }
     case 'openVoting': ownerOnly(state, command.uid); collecting(state); if (command.expectedInputRevision !== state.inputRevision) fail('Stale input revision'); if (approvedIds(state).length !== state.expectedSize || approvedIds(state).some((uid) => !completeConstraint(state.constraints[uid]))) fail('Complete roster and inputs required'); state.phase = 'voting'; state.round += 1; state.ballots = {}; return state;
     case 'vote': memberOnly(state, command.uid); if (state.phase !== 'voting') fail('Voting is not open'); if (command.round !== state.round || command.inputRevision !== state.inputRevision) fail('Stale ballot'); if (!inScope(state, destination(command.destinationId))) fail('That destination is not one of this trip\'s options'); state.ballots[command.uid] = { destinationId: command.destinationId, round: command.round, inputRevision: command.inputRevision }; return state;
     case 'lock': {

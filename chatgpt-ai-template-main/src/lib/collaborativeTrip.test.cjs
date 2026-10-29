@@ -173,6 +173,40 @@ test('editing a ballot-round constraint invalidates every ballot and returns to 
   assert.deepEqual(trip.ballots, {});
 });
 
+test('each member can privately update their own budget and voting safely reopens', () => {
+  let trip = readyTrip();
+  const ownerBudget = trip.constraints.owner.budget;
+  trip = applyCommand(trip, { type: 'openVoting', uid: 'owner', expectedInputRevision: trip.inputRevision });
+  trip = applyCommand(trip, { type: 'vote', uid: 'owner', destinationId: 'bangkok', round: trip.round, inputRevision: trip.inputRevision });
+  const revision = trip.inputRevision;
+  trip = applyCommand(trip, { type: 'updateBudget', uid: 'm2', expectedInputRevision: revision, budget: 175000 });
+  assert.equal(trip.constraints.m2.budget, 175000);
+  assert.equal(trip.constraints.owner.budget, ownerBudget);
+  assert.equal(trip.inputRevision, revision + 1);
+  assert.equal(trip.phase, 'collecting');
+  assert.deepEqual(trip.ballots, {});
+  assert.throws(() => applyCommand(trip, { type: 'updateBudget', uid: 'm2', expectedInputRevision: revision, budget: 180000 }), /stale/i);
+  assert.throws(() => applyCommand(trip, { type: 'updateBudget', uid: 'outsider', expectedInputRevision: trip.inputRevision, budget: 180000 }), /membership/i);
+});
+
+test('a locked plan accepts only budget edits that continue to cover that member share', () => {
+  let trip = readyTrip(2, 1000000);
+  trip = applyCommand(trip, { type: 'openVoting', uid: 'owner', expectedInputRevision: trip.inputRevision });
+  ['owner', 'm2'].forEach((uid) => { trip = applyCommand(trip, { type: 'vote', uid, destinationId: 'bangkok', round: trip.round, inputRevision: trip.inputRevision }); });
+  trip = applyCommand(trip, { type: 'lock', uid: 'owner', round: trip.round, inputRevision: trip.inputRevision, idempotencyKey: 'budget-lock' });
+  const planBefore = structuredClone(trip.activePlan);
+  const ballotsBefore = structuredClone(trip.ballots);
+  const total = trip.activePlan.memberTotals.find((member) => member.uid === 'm2').total;
+  const revision = trip.inputRevision;
+  trip = applyCommand(trip, { type: 'updateBudget', uid: 'm2', expectedInputRevision: revision, budget: total });
+  assert.equal(trip.phase, 'locked');
+  assert.equal(trip.constraints.m2.budget, total);
+  assert.equal(trip.inputRevision, revision + 1);
+  assert.deepEqual(trip.activePlan, planBefore);
+  assert.deepEqual(trip.ballots, ballotsBefore);
+  assert.throws(() => applyCommand(trip, { type: 'updateBudget', uid: 'm2', expectedInputRevision: trip.inputRevision, budget: total - 1 }), /current plan total/i);
+});
+
 test('organizer setup edits are revisioned, allowlisted, and preserve private inputs only when their meaning is unchanged', () => {
   let trip = readyTrip(2);
   const before = structuredClone(trip.constraints);
