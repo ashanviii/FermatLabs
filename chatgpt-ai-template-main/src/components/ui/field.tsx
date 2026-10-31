@@ -317,14 +317,22 @@ export const ToggleChip = React.forwardRef<HTMLButtonElement, ToggleChipProps>((
 ToggleChip.displayName = 'ToggleChip';
 
 /** Wraps ToggleChips: labelled group + wrapping row. */
-export function ChipGroup({ label, hideLabel, className, children }: { label: React.ReactNode; hideLabel?: boolean; className?: string; children: React.ReactNode }) {
+export function ChipGroup({ label, hideLabel, error, className, children }: { label: React.ReactNode; hideLabel?: boolean; error?: React.ReactNode; className?: string; children: React.ReactNode }) {
   const id = `cg${React.useId().replace(/:/g, '')}`;
+  const messageId = `${id}-msg`;
   return (
     <div className={cn('flex min-w-0 flex-col gap-2', className)}>
-      <span id={id} className={cn('type-small font-semibold text-ink', hideLabel && 'sr-only')}>{label}</span>
-      <div role="group" aria-labelledby={id} className="flex flex-wrap gap-2">
+      <span id={id} className={cn('type-small font-semibold', error ? 'text-danger-ink' : 'text-ink', hideLabel && 'sr-only')}>{label}</span>
+      <div
+        role="group"
+        aria-labelledby={id}
+        aria-describedby={error ? messageId : undefined}
+        aria-invalid={error ? true : undefined}
+        className={cn('flex flex-wrap gap-2 rounded-2xl', error && 'bg-danger-soft p-2 ring-2 ring-danger')}
+      >
         {children}
       </div>
+      {error && <p id={messageId} className="type-small m-0 font-medium text-danger-ink" role="alert">{error}</p>}
     </div>
   );
 }
