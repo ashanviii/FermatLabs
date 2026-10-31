@@ -13,6 +13,7 @@ import { PageContainer, Section } from '@/components/ui/section';
 import { icons, type IconComponent } from '@/components/ui/icons';
 import { sharedFirebaseConfigured } from '@/lib/firebase';
 import { CONSENT_KEY, LEGAL } from '@/lib/legal';
+import { plural } from '@/lib/format';
 import previewFixtures from './preview/fixtures.json';
 import PlanView from './PlanView';
 import Pledges from './features/Pledges';
@@ -84,9 +85,9 @@ function Point({ icon: Icon, title, children }: { icon: IconComponent; title: st
   );
 }
 
-function CoordinationDisclosure({ icon: Icon, title, description, children }: { icon: IconComponent; title: string; description: string; children: React.ReactNode }) {
+function CoordinationDisclosure({ icon: Icon, title, description, open, onOpenChange, children }: { icon: IconComponent; title: string; description: string; open: boolean; onOpenChange: (open: boolean) => void; children: React.ReactNode }) {
   return (
-    <details className="group rounded-2xl bg-surface shadow-card">
+    <details className="group rounded-2xl bg-surface shadow-card" open={open} onToggle={(event) => { if (event.currentTarget.open !== open) onOpenChange(event.currentTarget.open); }}>
       <summary className="flex min-h-14 cursor-pointer list-none items-center gap-3 px-5 py-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 sm:px-6 [&::-webkit-details-marker]:hidden">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700"><Icon className="size-5" aria-hidden /></span>
         <span className="min-w-0 flex-1"><span className="type-h3 block">{title}</span><span className="type-small block text-ink-muted">{description}</span></span>
@@ -94,6 +95,19 @@ function CoordinationDisclosure({ icon: Icon, title, description, children }: { 
       </summary>
       <div className="grid gap-5 border-0 border-t border-solid border-line-subtle p-5 sm:p-6">{children}</div>
     </details>
+  );
+}
+
+function StepSummaryRow({ number, title, status, actionLabel, onAction }: { number: number; title: string; status: string; actionLabel: string; onAction: () => void }) {
+  return (
+    <div className="flex items-center gap-3 rounded-2xl bg-surface px-4 py-3 shadow-card sm:px-5">
+      <span className="type-caption flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-50 font-semibold text-brand-700" aria-hidden>{number}</span>
+      <span className="min-w-0 flex-1">
+        <span className="type-body block font-semibold text-ink">{title}</span>
+        <span className="type-small block truncate text-ink-muted">{status}</span>
+      </span>
+      <Button size="sm" variant="ghost" onClick={onAction} aria-label={`${actionLabel}: ${title}`}>{actionLabel}</Button>
+    </div>
   );
 }
 
@@ -158,8 +172,18 @@ export default function CollaborativeTripPlanner() {
   const [setupDraft, setSetupDraft] = useState<RoomDraft | null>(null);
   const [setupDraftRevision, setSetupDraftRevision] = useState<number | null>(null);
   const [trips, setTrips] = useState<TripListItem[]>([]);
-  const [tripsLoading, setTripsLoading] = useState(false);
+  // Start as loading so the first paint never shows a plausible-but-wrong empty list.
+  const [tripsLoading, setTripsLoading] = useState(true);
+  const [draftReady, setDraftReady] = useState(false);
+  // Every fetch/command takes a sequence number; a refresh that started before the latest saved command finished is stale.
+  const fetchSeq = useRef(0);
+  const savedAtSeq = useRef(0);
   const [planStepOverride, setPlanStepOverride] = useState<'plan' | 'go' | null>(null);
+  // Pre-lock steps you've chosen to look at (step bar, Back, Edit). Cleared whenever the trip itself moves on.
+  const [collectStep, setCollectStep] = useState<StepId | null>(null);
+  const [openGo, setOpenGo] = useState<string | null>(null);
+  // Polite screen-reader announcements for async results (replaces stale route-announcer text after renames).
+  const [announcement, setAnnouncement] = useState('');
   const [createKey] = useState(() => `create-${globalThis.crypto?.randomUUID?.() || Date.now()}`);
   const [draft, setDraft] = useState<RoomDraft>({
     name: 'Friends escape',
@@ -174,6 +198,7 @@ export default function CollaborativeTripPlanner() {
   useEffect(() => {
     const detected = detectHomeCountry();
     if (detected && detected !== DEFAULT_HOME_COUNTRY) setDraft((current) => ({ ...current, homeCountry: detected, currency: currencyForCountry(detected) || current.currency }));
+    setDraftReady(true);
   }, []);
   const [privateInput, setPrivateInput] = useState<PrivateInput>(() => startingInput(null));
   const updatePrivateInput = (patch: Partial<PrivateInput>) => {
@@ -209,16 +234,18 @@ export default function CollaborativeTripPlanner() {
     if (!user || preview) return;
     try {
       const auth = await user.getIdToken();
+      const startedAt = ++fetchSeq.current;
       const response = await fetch(`/api/group-trips?tripId=${encodeURIComponent(tripId)}`, { headers: { authorization: `Bearer ${auth}` } });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
+      if (startedAt < savedAtSeq.current) return; // a save landed while this refresh was in flight; its data is older
       setTrip(data.trip);
     } catch (cause: any) {
       if (!quiet) setError(cause.message || 'Could not refresh the trip');
     }
   }
   async function loadTrips() {
-    if (!user || preview || user.isAnonymous || token) return;
+    if (!user || preview || user.isAnonymous || token) { setTripsLoading(false); return; }
     setTripsLoading(true);
     try {
       const auth = await user.getIdToken();
@@ -226,6 +253,7 @@ export default function CollaborativeTripPlanner() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
       setTrips(data.trips || []);
+      setAnnouncement(data.trips?.length ? `${plural(data.trips.length, 'trip')} loaded` : 'No trips yet');
     } catch (cause: any) {
       setError(cause.message || 'Could not load your trips');
     } finally {
@@ -322,6 +350,7 @@ export default function CollaborativeTripPlanner() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
+      savedAtSeq.current = ++fetchSeq.current;
       setTrip(data.trip);
       if (data.trip?.id && ['create', 'join'].includes(body.action)) {
         const url = new URL(location.href);
@@ -359,6 +388,7 @@ export default function CollaborativeTripPlanner() {
     if (await command({ type: 'submitConstraints', expectedInputRevision: privateDraftRevision, constraints: constraintsPayload(privateInput) })) {
       setPrivateInputDirty(false);
       setEditingDetails(false);
+      setCollectStep(null);
     }
   };
   const editDetails = () => {
@@ -370,6 +400,7 @@ export default function CollaborativeTripPlanner() {
     if (trip?.myConstraints) setPrivateInput(fromSaved(trip.myConstraints, trip));
     setPrivateInputDirty(false);
     setEditingDetails(false);
+    setCollectStep(null);
     setPrivateDraftRevision(trip?.inputRevision ?? null);
   };
   const reloadPrivateDraft = () => {
@@ -392,6 +423,7 @@ export default function CollaborativeTripPlanner() {
     }
     const semanticChange = ['startDate', 'endDate', 'homeCountry', 'currency', 'scope'].some((key) => setupDraft[key as keyof RoomDraft] !== trip[key]);
     if (await command({ type: 'updateTripSetup', expectedInputRevision: setupDraftRevision, patch: setupDraft })) {
+      setAnnouncement(`Trip setup saved. The trip is called ${setupDraft.name}.`);
       setEditingSetup(false);
       setSetupDraft(null);
       setPrivateInputDirty(false);
@@ -409,6 +441,10 @@ export default function CollaborativeTripPlanner() {
     request({ action: 'join', tripId, inviteSecret: secret.join('.'), nickname });
   };
 
+  const autoStep = currentStep(trip, Boolean(me));
+  useEffect(() => { document.title = trip?.name ? `${trip.name} · Fermat` : 'Fermat · Plan a group trip'; }, [trip?.name]);
+  useEffect(() => { setCollectStep(null); }, [autoStep, trip?.id]);
+
   if (loading)
     return (
       <main className="relative isolate flex min-h-screen flex-col items-center justify-center gap-6 bg-canvas font-sans">
@@ -421,12 +457,26 @@ export default function CollaborativeTripPlanner() {
       </main>
     );
 
-  const stateStep = currentStep(trip, Boolean(me));
-  const step = trip?.activePlan && planStepOverride ? planStepOverride : stateStep;
+  const stateStep = autoStep;
+  const preLock = !trip?.activePlan && (trip?.phase === 'collecting' || trip?.phase === 'voting');
+  const defaultPreLockStep: StepId = stateStep === 'invite' && me && me.role !== 'owner' && !trip?.myConstraints ? 'details' : stateStep;
+  const step: StepId = trip?.activePlan && planStepOverride
+    ? planStepOverride
+    : preLock && trip?.phase === 'collecting' && editingDetails
+      ? 'details'
+      : preLock && collectStep
+        ? collectStep
+        : preLock ? defaultPreLockStep : stateStep;
   const navigateStep = (id: StepId) => {
     if (trip?.activePlan && (id === 'plan' || id === 'go')) {
       if (id === 'go' && stateStep !== 'go') return;
       setPlanStepOverride(id);
+      requestAnimationFrame(() => scrollToStep(id));
+      return;
+    }
+    if (preLock && (id === 'invite' || id === 'details' || id === 'choose')) {
+      if (id !== 'details') setEditingDetails(false);
+      setCollectStep(id);
       requestAnimationFrame(() => scrollToStep(id));
       return;
     }
@@ -493,7 +543,7 @@ export default function CollaborativeTripPlanner() {
         trip.phase === 'collecting' ? (
           <>
             {owner && showInviteSection && (
-              <Button size="sm" variant="outline" icon={ArrowLeft} onClick={() => scrollToStep('invite')}>
+              <Button size="sm" variant="outline" icon={ArrowLeft} onClick={() => navigateStep('invite')}>
                 Back to invite
               </Button>
             )}
@@ -607,24 +657,51 @@ export default function CollaborativeTripPlanner() {
     </Section>
   );
 
+  const expenses = trip?.features?.settleUp?.expenses?.length ?? 0;
+  const pledges = trip?.features?.pledges;
+  const tasksList: any[] = trip?.features?.tasks?.tasks || [];
+  const goStatus = {
+    money: [trip?.payee ? `${trip.paymentProgress ?? 0} of ${trip.activePlan?.memberTotals?.length || trip?.expectedSize} paid the advance` : 'No advance set yet', expenses ? plural(expenses, 'shared expense') : 'No shared expenses yet'].join(' · '),
+    commitments: pledges?.pledgedCount ? `${pledges.firmlyInCount ?? 0} firmly in · ${pledges.pledgedCount} pledged` : 'Nobody has pledged yet',
+    tasks: tasksList.length ? `${tasksList.filter((task) => task.done).length} of ${tasksList.length} done` : 'No tasks yet',
+  };
+
   const goSection = me && trip.activePlan && (
     <Section key="go" id="step-go" className="scroll-mt-6" eyebrow={stepEyebrow('go')} title="Get going" description="Collect the advance, split costs and share the trip." action={<Button size="sm" variant="outline" icon={ArrowLeft} onClick={() => { setPlanStepOverride('plan'); requestAnimationFrame(() => scrollToStep('plan')); }}>Back to plan</Button>}>
       <div className="grid gap-4">
-        <CoordinationDisclosure icon={icons.money} title="Money" description="Collect an advance and keep shared expenses straight.">
+        <CoordinationDisclosure icon={icons.money} title="Money" description={goStatus.money} open={openGo === 'money'} onOpenChange={(open) => setOpenGo(open ? 'money' : null)}>
           <UpiPanel trip={trip} uid={user!.uid} owner={owner} disabled={disabled} command={command} />
           <SettleUp {...featureProps} />
         </CoordinationDisclosure>
-        <CoordinationDisclosure icon={icons.members} title="Commitments" description="Agree on the minimum group and maximum share."><Pledges {...featureProps} /></CoordinationDisclosure>
-        <CoordinationDisclosure icon={icons.check} title="Tasks" description="Assign the practical jobs before you leave."><Tasks {...featureProps} /></CoordinationDisclosure>
-        <CoordinationDisclosure icon={icons.share} title="Sharing" description="Send the plan and useful trip cards."><ShareCards {...featureProps} /></CoordinationDisclosure>
+        <CoordinationDisclosure icon={icons.members} title="Commitments" description={goStatus.commitments} open={openGo === 'commitments'} onOpenChange={(open) => setOpenGo(open ? 'commitments' : null)}><Pledges {...featureProps} /></CoordinationDisclosure>
+        <CoordinationDisclosure icon={icons.check} title="Tasks" description={goStatus.tasks} open={openGo === 'tasks'} onOpenChange={(open) => setOpenGo(open ? 'tasks' : null)}><Tasks {...featureProps} /></CoordinationDisclosure>
+        <CoordinationDisclosure icon={icons.share} title="Sharing" description="Send the plan and useful trip cards." open={openGo === 'sharing'} onOpenChange={(open) => setOpenGo(open ? 'sharing' : null)}><ShareCards {...featureProps} /></CoordinationDisclosure>
       </div>
     </Section>
   );
 
+  const stepSummaries: Record<'invite' | 'details', React.ReactNode> = {
+    invite: showInviteSection && (
+      <StepSummaryRow key="sum-invite" number={1} title="Invite" status={`${joined} of ${trip?.expectedSize} joined${requests.length ? ` · ${plural(requests.length, 'request')} waiting` : ''}`} actionLabel="View" onAction={() => navigateStep('invite')} />
+    ),
+    details: me && (trip?.phase === 'collecting' || trip?.phase === 'voting') && (
+      <StepSummaryRow
+        key="sum-details"
+        number={2}
+        title="Your details"
+        status={trip?.myConstraints ? (trip.phase === 'voting' ? 'Saved · locked while voting is open' : 'Saved · only you can see them') : 'Not added yet'}
+        actionLabel={trip?.phase === 'collecting' ? (trip?.myConstraints ? 'Edit' : 'Add') : 'View'}
+        onAction={() => (trip?.phase === 'collecting' && trip?.myConstraints ? editDetails() : navigateStep('details'))}
+      />
+    ),
+  };
+  const nextDetailsRow = me && trip?.phase === 'collecting' && !trip?.myConstraints && (
+    <StepSummaryRow key="next-details" number={2} title="Your details" status="Add yours while your friends join" actionLabel="Add details" onAction={() => navigateStep('details')} />
+  );
   const ordered: Record<StepId, React.ReactNode[]> = {
-    invite: [inviteSection, detailsSection, chooseSection],
-    details: [detailsSection, chooseSection, inviteSection],
-    choose: [chooseSection, detailsSection, inviteSection],
+    invite: [inviteSection, nextDetailsRow],
+    details: [stepSummaries.invite, detailsSection],
+    choose: [stepSummaries.invite, stepSummaries.details, chooseSection],
     plan: [planSection],
     go: [goSection],
   };
@@ -677,7 +754,7 @@ export default function CollaborativeTripPlanner() {
               ) : (
                 <div className="grid gap-4">
                   <MyTripsCard trips={trips} loading={tripsLoading} onOpen={openTrip} onRefresh={loadTrips} />
-                  <CreateRoomCard draft={draft} onChange={setDraft} onCreate={() => request({ action: 'create', idempotencyKey: createKey, trip: draft })} disabled={disabled} busy={pendingCommand === 'create'} />
+                  {!draftReady ? <p className="type-small m-0 text-ink-muted" role="status">Getting the trip form ready…</p> : <CreateRoomCard draft={draft} onChange={setDraft} onCreate={() => request({ action: 'create', idempotencyKey: createKey, trip: draft })} disabled={disabled} busy={pendingCommand === 'create'} />}
                 </div>
               )}
             </div>
@@ -707,7 +784,7 @@ export default function CollaborativeTripPlanner() {
               </div>
             )}
             <div className="mt-10 grid gap-12 lg:grid-cols-12 lg:gap-8">
-              <div className="grid min-w-0 content-start gap-12 sm:gap-16 lg:col-span-8">{ordered[step].filter(Boolean)}</div>
+              <div className="grid min-w-0 content-start gap-4 lg:col-span-8">{ordered[step].filter(Boolean)}</div>
               <aside className="grid min-w-0 content-start gap-6 lg:col-span-4" aria-label="Trip overview">
                 <TripSummary trip={trip} uid={user.uid} owner={owner && !showInvite} disabled={disabled} command={command} />
                 {!trip.activePlan && <Tasks {...featureProps} />}
@@ -716,6 +793,7 @@ export default function CollaborativeTripPlanner() {
           </>
         )}
 
+        <p className="sr-only" role="status" aria-live="polite">{announcement}</p>
         <PlannerFooter />
       </PageContainer>
     </main>

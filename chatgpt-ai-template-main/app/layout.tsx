@@ -8,18 +8,15 @@ import '../src/styles/Plugins.css';
 import '../src/styles/MiniCalendar.css';
 import AppWrappers from './AppWrappers';
 import { AuthProvider } from '../src/contexts/AuthContext';
-import { UserContextProvider } from '../src/contexts/UserContextContext';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body id="root">
         <AuthProvider>
-          <UserContextProvider>
-            <AppWrappers>
-              <ChakraProvider theme={theme}>{children}</ChakraProvider>
-            </AppWrappers>
-          </UserContextProvider>
+          <AppWrappers>
+            <ChakraProvider theme={theme}>{children}</ChakraProvider>
+          </AppWrappers>
         </AuthProvider>
       </body>
     </html>
