@@ -2,6 +2,14 @@
 
 Fermat helps small groups choose and plan a trip everyone can actually take. The collaborative MVP gives each traveller a private input form, runs a private ballot, locks one feasible destination, and produces an itemized itinerary and budget that fits every private ceiling.
 
+## Product demo
+
+<a href="./docs/assets/fermat-product-demo.mp4">
+  <img src="./docs/assets/fermat-product-demo-thumbnail.png" alt="Watch the Fermat group trip planner product demo" width="900">
+</a>
+
+[Watch the 32-second product demo](docs/assets/fermat-product-demo.mp4) to see private trip constraints become shared destination matches, an anonymous group vote, and a day-by-day Bali plan.
+
 ## Group trip MVP
 
 The default `/plan` flow is designed for 2–10 adult Indian-passport travellers planning together:
