@@ -432,7 +432,7 @@ export function MyTripsCard({ trips, loading, onOpen, onRefresh }: { trips: Trip
               </li>
             ))}
           </ul>
-        ) : <p className="type-small m-0 text-ink-muted">No trips yet. Start one below.</p>}
+        ) : <p className="type-small m-0 text-ink-muted">No trips yet. Open the New trip tab to start one.</p>}
       </CardBody>
     </Card>
   );

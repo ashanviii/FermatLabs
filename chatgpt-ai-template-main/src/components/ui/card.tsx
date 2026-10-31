@@ -18,12 +18,16 @@ import type { IconComponent } from './icons';
 const cardVariants = cva('relative text-ink', {
   variants: {
     variant: {
-      default: 'rounded-2xl bg-surface shadow-card',
-      raised: 'rounded-2xl bg-surface shadow-raised',
-      flat: 'rounded-2xl bg-surface ring-1 ring-inset ring-line-subtle', // inside other surfaces / dense lists
-      sunken: 'rounded-2xl bg-surface-muted',
-      brand: 'rounded-2xl bg-brand-900 text-white shadow-raised',
-      private: 'rounded-2xl bg-private-soft ring-1 ring-inset ring-private-line',
+      default:
+        'rounded-xl border border-solid border-line bg-surface shadow-sm',
+      raised:
+        'rounded-xl border border-solid border-line bg-surface shadow-raised',
+      flat: 'rounded-xl border border-solid border-line-subtle bg-surface', // inside other surfaces / dense lists
+      sunken: 'rounded-xl bg-surface-muted',
+      brand:
+        'rounded-xl border border-solid border-brand-800 bg-brand-900 text-white shadow-raised',
+      private:
+        'rounded-xl border border-solid border-private-line bg-private-soft',
     },
     interactive: {
       // Lifts on hover and gives slightly under a press, like a tappable iOS card.
@@ -34,14 +38,23 @@ const cardVariants = cva('relative text-ink', {
   defaultVariants: { variant: 'default', interactive: false },
 });
 
-export interface CardProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof cardVariants> {}
+export interface CardProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof cardVariants> {}
 
-const Card = React.forwardRef<HTMLDivElement, CardProps>(({ className, variant, interactive, ...props }, ref) => (
-  <div ref={ref} className={cn(cardVariants({ variant, interactive }), className)} {...props} />
-));
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, variant, interactive, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(cardVariants({ variant, interactive }), className)}
+      {...props}
+    />
+  ),
+);
 Card.displayName = 'Card';
 
-export interface CardHeaderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
+export interface CardHeaderProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   /** Icon shown in a soft tile to the left of the title. */
   icon?: IconComponent;
   /** Tile colour for the icon. */
@@ -54,35 +67,80 @@ export interface CardHeaderProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   as?: 'h2' | 'h3' | 'h4';
 }
 
-const iconToneClass: Record<NonNullable<CardHeaderProps['iconTone']>, string> = {
+const iconToneClass: Record<
+  NonNullable<CardHeaderProps['iconTone']>,
+  string
+> = {
   brand: 'bg-brand-50 text-brand-700',
   warm: 'bg-warm-50 text-warm-700',
-  private: 'bg-private-soft text-private-ink ring-1 ring-inset ring-private-line',
+  private:
+    'bg-private-soft text-private-ink ring-1 ring-inset ring-private-line',
   neutral: 'bg-surface-muted text-ink-soft',
 };
 
 const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
-  ({ className, icon: Icon, iconTone = 'brand', title, description, action, as: Heading = 'h3', children, ...props }, ref) => {
+  (
+    {
+      className,
+      icon: Icon,
+      iconTone = 'brand',
+      title,
+      description,
+      action,
+      as: Heading = 'h3',
+      children,
+      ...props
+    },
+    ref,
+  ) => {
     // Legacy usage: <CardHeader><CardTitle/>...</CardHeader>
     if (title === undefined && !Icon && !action && description === undefined) {
-      return <div ref={ref} className={cn('flex flex-col gap-1.5 p-5 sm:p-6', className)} {...props}>{children}</div>;
+      return (
+        <div
+          ref={ref}
+          className={cn('flex flex-col gap-1.5 p-5 sm:p-6', className)}
+          {...props}
+        >
+          {children}
+        </div>
+      );
     }
     return (
-      <div ref={ref} className={cn('flex flex-wrap items-start gap-x-4 gap-y-3 p-5 sm:p-6', className)} {...props}>
+      <div
+        ref={ref}
+        className={cn(
+          'flex flex-wrap items-start gap-x-4 gap-y-3 p-5 sm:p-6',
+          className,
+        )}
+        {...props}
+      >
         {/* 15rem basis: on narrow cards the action wraps under the title instead of squeezing it. */}
         <div className="flex min-w-0 flex-[1_1_15rem] items-start gap-3">
           {Icon && (
-            <span className={cn('flex size-10 shrink-0 items-center justify-center rounded-xl', iconToneClass[iconTone])}>
+            <span
+              className={cn(
+                'flex size-10 shrink-0 items-center justify-center rounded-lg',
+                iconToneClass[iconTone],
+              )}
+            >
               <Icon className="size-5" strokeWidth={1.75} aria-hidden />
             </span>
           )}
           <div className="min-w-0 flex-1 pt-0.5">
-            {title !== undefined && <Heading className="type-h3 m-0">{title}</Heading>}
-            {description !== undefined && <p className="type-small m-0 mt-0.5 text-ink-muted">{description}</p>}
+            {title !== undefined && (
+              <Heading className="type-h3 m-0">{title}</Heading>
+            )}
+            {description !== undefined && (
+              <p className="type-small m-0 mt-0.5 text-ink-muted">
+                {description}
+              </p>
+            )}
             {children}
           </div>
         </div>
-        {action && <div className="flex shrink-0 items-center gap-2">{action}</div>}
+        {action && (
+          <div className="flex shrink-0 items-center gap-2">{action}</div>
+        )}
       </div>
     );
   },
@@ -90,32 +148,64 @@ const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
 CardHeader.displayName = 'CardHeader';
 
 /** Card content. Use after a CardHeader (no top padding) or alone (pass className="pt-5 sm:pt-6"). */
-const CardBody = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn('px-5 pb-5 sm:px-6 sm:pb-6', className)} {...props} />
+const CardBody = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn('px-5 pb-5 sm:px-6 sm:pb-6', className)}
+    {...props}
+  />
 ));
 CardBody.displayName = 'CardBody';
 
 /** Bottom bar with a hairline: secondary info left, actions right. */
-const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
+const CardFooter = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('flex flex-wrap items-center justify-between gap-3 border-0 border-t border-solid border-line-subtle px-5 py-4 sm:px-6', className)}
+    className={cn(
+      'flex flex-wrap items-center justify-between gap-3 border-0 border-t border-solid border-line-subtle px-5 py-4 sm:px-6',
+      className,
+    )}
     {...props}
   />
 ));
 CardFooter.displayName = 'CardFooter';
 
 /* ---- Legacy shadcn parts (kept for existing imports) ---- */
-const CardTitle = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
+const CardTitle = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
   <div ref={ref} className={cn('type-h3', className)} {...props} />
 ));
 CardTitle.displayName = 'CardTitle';
 
-const CardDescription = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn('type-small text-ink-muted', className)} {...props} />
+const CardDescription = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn('type-small text-ink-muted', className)}
+    {...props}
+  />
 ));
 CardDescription.displayName = 'CardDescription';
 
 const CardContent = CardBody;
 
-export { Card, CardHeader, CardBody, CardFooter, CardTitle, CardDescription, CardContent, cardVariants };
+export {
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  cardVariants,
+};
