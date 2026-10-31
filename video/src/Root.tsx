@@ -6,6 +6,10 @@ import { Composition } from "remotion";
 import { Master } from "./Master";
 import { HookScene } from "./scenes/HookScene";
 import { PrivateDetailsScene } from "./scenes/PrivateDetailsScene";
+import { EligibleTripsScene } from "./scenes/EligibleTripsScene";
+import { VoteScene } from "./scenes/VoteScene";
+import { PlanScene } from "./scenes/PlanScene";
+import { FinaleScene } from "./scenes/FinaleScene";
 import { canvas } from "./theme";
 import { FPS, SCENES, TOTAL_FRAMES } from "./timing";
 
@@ -52,6 +56,38 @@ export const RemotionRoot: React.FC = () => (
       id="Scene-PrivateDetails"
       component={PrivateDetailsScene}
       durationInFrames={SCENES.privateDetails.duration}
+      fps={FPS}
+      width={canvas.width}
+      height={canvas.height}
+    />
+    <Composition
+      id="Scene-EligibleTrips"
+      component={EligibleTripsScene}
+      durationInFrames={SCENES.eligibleTrips.duration}
+      fps={FPS}
+      width={canvas.width}
+      height={canvas.height}
+    />
+    <Composition
+      id="Scene-Vote"
+      component={VoteScene}
+      durationInFrames={SCENES.vote.duration}
+      fps={FPS}
+      width={canvas.width}
+      height={canvas.height}
+    />
+    <Composition
+      id="Scene-Plan"
+      component={PlanScene}
+      durationInFrames={SCENES.plan.duration}
+      fps={FPS}
+      width={canvas.width}
+      height={canvas.height}
+    />
+    <Composition
+      id="Scene-Finale"
+      component={FinaleScene}
+      durationInFrames={SCENES.finale.duration}
       fps={FPS}
       width={canvas.width}
       height={canvas.height}

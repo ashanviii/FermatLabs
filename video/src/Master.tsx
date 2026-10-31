@@ -9,6 +9,10 @@ import { AbsoluteFill, Sequence, interpolate, staticFile, useCurrentFrame } from
 import { SOUNDS, Sfx } from "./components/Sfx";
 import { HookScene } from "./scenes/HookScene";
 import { PrivateDetailsScene } from "./scenes/PrivateDetailsScene";
+import { EligibleTripsScene } from "./scenes/EligibleTripsScene";
+import { VoteScene } from "./scenes/VoteScene";
+import { PlanScene } from "./scenes/PlanScene";
+import { FinaleScene } from "./scenes/FinaleScene";
 import { colors } from "./theme";
 import { MUSIC_VOLUME, AUDIO_TRIM, SCENES, SOUNDTRACK, TOTAL_FRAMES } from "./timing";
 
@@ -63,6 +67,18 @@ export const Master: React.FC<{ sfx?: boolean }> = ({ sfx = true }) => {
       </Sequence>
       <Sequence from={SCENES.privateDetails.start} durationInFrames={SCENES.privateDetails.duration}>
         <PrivateDetailsScene />
+      </Sequence>
+      <Sequence from={SCENES.eligibleTrips.start} durationInFrames={SCENES.eligibleTrips.duration}>
+        <EligibleTripsScene />
+      </Sequence>
+      <Sequence from={SCENES.vote.start} durationInFrames={SCENES.vote.duration}>
+        <VoteScene />
+      </Sequence>
+      <Sequence from={SCENES.plan.start} durationInFrames={SCENES.plan.duration}>
+        <PlanScene />
+      </Sequence>
+      <Sequence from={SCENES.finale.start} durationInFrames={SCENES.finale.duration}>
+        <FinaleScene />
       </Sequence>
     </AbsoluteFill>
   );
