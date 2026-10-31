@@ -31,8 +31,19 @@ export interface StepperProps {
  * State is conveyed by icon/number + aria-current, not colour alone.
  *   <Stepper current="choose" />
  */
-export function Stepper({ steps = PLAN_STEPS, current, onStepClick, className }: StepperProps) {
-  const index = typeof current === 'number' ? current : Math.max(0, steps.findIndex((s) => s.id === current));
+export function Stepper({
+  steps = PLAN_STEPS,
+  current,
+  onStepClick,
+  className,
+}: StepperProps) {
+  const index =
+    typeof current === 'number'
+      ? current
+      : Math.max(
+          0,
+          steps.findIndex((s) => s.id === current),
+        );
   const active = steps[index];
   return (
     <nav aria-label="Trip progress" className={cn('w-full', className)}>
@@ -44,17 +55,45 @@ export function Stepper({ steps = PLAN_STEPS, current, onStepClick, className }:
             Step {index + 1} of {steps.length}
           </p>
         </div>
-        <div className="mt-2 flex gap-1" aria-hidden>
-          {steps.map((step, i) => (
-            <span key={step.id} className={cn('h-1.5 flex-1 rounded-full', i < index ? 'bg-brand-300' : i === index ? 'bg-brand-600' : 'bg-surface-strong')} />
-          ))}
+        <div className="-mx-1 mt-3 flex gap-2 overflow-x-auto px-1 pb-1">
+          {steps.map((step, i) => {
+            const state =
+              i < index ? 'done' : i === index ? 'current' : 'upcoming';
+            const clickable = Boolean(onStepClick) && state === 'done';
+            return (
+              <button
+                key={step.id}
+                type="button"
+                disabled={!clickable}
+                aria-current={state === 'current' ? 'step' : undefined}
+                onClick={() => clickable && onStepClick?.(step, i)}
+                className={cn(
+                  'type-caption inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-lg border border-solid px-3 font-semibold',
+                  state === 'done' &&
+                    'cursor-pointer border-brand-100 bg-brand-50 text-brand-800',
+                  state === 'current' &&
+                    'border-brand-600 bg-brand-600 text-white',
+                  state === 'upcoming' &&
+                    'border-line bg-surface text-ink-muted opacity-65',
+                  clickable &&
+                    'hover:bg-brand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500',
+                )}
+              >
+                {state === 'done' && (
+                  <Check className="size-3.5" strokeWidth={3} aria-hidden />
+                )}
+                {step.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {/* sm and up */}
       <ol className="m-0 hidden list-none items-center p-0 sm:flex">
         {steps.map((step, i) => {
-          const state = i < index ? 'done' : i === index ? 'current' : 'upcoming';
+          const state =
+            i < index ? 'done' : i === index ? 'current' : 'upcoming';
           const clickable = Boolean(onStepClick) && state === 'done';
           const content = (
             <>
@@ -62,20 +101,42 @@ export function Stepper({ steps = PLAN_STEPS, current, onStepClick, className }:
                 className={cn(
                   'flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-colors',
                   state === 'done' && 'bg-brand-100 text-brand-800',
-                  state === 'current' && 'bg-brand-600 text-white ring-4 ring-brand-100',
-                  state === 'upcoming' && 'bg-surface text-ink-muted ring-1 ring-inset ring-line-strong',
+                  state === 'current' &&
+                    'bg-brand-600 text-white ring-4 ring-brand-100',
+                  state === 'upcoming' &&
+                    'bg-surface text-ink-muted ring-1 ring-inset ring-line-strong',
                 )}
               >
-                {state === 'done' ? <Check className="size-3.5" strokeWidth={3} aria-hidden /> : i + 1}
+                {state === 'done' ? (
+                  <Check className="size-3.5" strokeWidth={3} aria-hidden />
+                ) : (
+                  i + 1
+                )}
               </span>
-              <span className={cn('type-small whitespace-nowrap', state === 'current' ? 'font-bold text-ink' : state === 'done' ? 'font-semibold text-ink-soft' : 'font-medium text-ink-muted')}>
+              <span
+                className={cn(
+                  'type-small whitespace-nowrap',
+                  state === 'current'
+                    ? 'font-bold text-ink'
+                    : state === 'done'
+                    ? 'font-semibold text-ink-soft'
+                    : 'font-medium text-ink-muted',
+                )}
+              >
                 {step.label}
                 {state === 'done' && <span className="sr-only"> (done)</span>}
               </span>
             </>
           );
           return (
-            <li key={step.id} className={cn('flex items-center', i < steps.length - 1 && 'flex-1')} aria-current={state === 'current' ? 'step' : undefined}>
+            <li
+              key={step.id}
+              className={cn(
+                'flex items-center',
+                i < steps.length - 1 && 'flex-1',
+              )}
+              aria-current={state === 'current' ? 'step' : undefined}
+            >
               {clickable ? (
                 <button
                   type="button"
@@ -87,7 +148,15 @@ export function Stepper({ steps = PLAN_STEPS, current, onStepClick, className }:
               ) : (
                 <span className="flex items-center gap-2">{content}</span>
               )}
-              {i < steps.length - 1 && <span aria-hidden className={cn('mx-3 h-0.5 min-w-4 flex-1 rounded-full', i < index ? 'bg-brand-300' : 'bg-line')} />}
+              {i < steps.length - 1 && (
+                <span
+                  aria-hidden
+                  className={cn(
+                    'mx-3 h-0.5 min-w-4 flex-1 rounded-full',
+                    i < index ? 'bg-brand-300' : 'bg-line',
+                  )}
+                />
+              )}
             </li>
           );
         })}

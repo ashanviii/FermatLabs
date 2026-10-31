@@ -1,71 +1,40 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { Inter } from 'next/font/google';
-import { ArrowLeft, ArrowRight, Eye, EyeOff, Loader2, MapPin, Sparkles } from 'lucide-react';
+import {
+  ArrowLeft,
+  Check,
+  Eye,
+  EyeOff,
+  Loader2,
+  LockKeyhole,
+  Users,
+} from 'lucide-react';
 
-import { cn } from '@/lib/utils';
 import { useAuth } from '../../contexts/AuthContext';
 import FermatMark from '../landing/FermatMark';
+import { Button } from '../ui/button';
+import { Card, CardBody, CardHeader } from '../ui/card';
+import { Field, Input } from '../ui/field';
+import { Notice } from '../ui/notice';
+import { Tabs, TabsList, TabsTrigger } from '../ui/tabs';
 import '../../../app/(marketing)/landing.css';
-
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
-
-const photo = (id: string) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1400&q=80`;
-
-// Each slide pairs a destination photo with a sample request and what Fermat answers.
-const slides = [
-  {
-    image: photo('1624253321171-1be53e12f5f4'),
-    alt: 'A pagoda rising above a narrow street in Kyoto at golden hour',
-    place: 'Kyoto, Japan',
-    prompt: 'Plan five slow days in Kyoto during cherry blossom season.',
-    reply: 'Temples at sunrise, a ryokan in Gion, and your Japan eVisa checklist. All set.',
-  },
-  {
-    image: photo('1561956021-947f09ae0101'),
-    alt: 'Colourful houses on a cliffside above the sea in Positano',
-    place: 'Positano, Italy',
-    prompt: 'Find me a quiet cliffside stay on the Amalfi Coast under €200.',
-    reply: 'Three stays shortlisted in Praiano, with ferry times from Naples.',
-  },
-  {
-    image: photo('1648669582545-73dc52ba7748'),
-    alt: 'A car on an open road in front of a mountain in Iceland',
-    place: 'Ring Road, Iceland',
-    prompt: 'Road trip around Iceland in June. What do I need to sort out?',
-    reply: 'A 10-day route, campervan options and fuel stops, mapped out.',
-  },
-];
 
 type Mode = 'login' | 'signup';
 
 const copy = {
   login: {
     title: 'Welcome back',
-    subtitle: 'Log in to pick up your trips where you left off.',
+    subtitle: 'Pick up your trips, votes and group plans where you left off.',
     submit: 'Log in',
-    switchPrompt: "Don't have an account?",
-    switchLabel: 'Sign up',
   },
   signup: {
-    title: 'Create your account',
-    subtitle: 'Your AI travel assistant for visas, flights, stays and everything in between.',
+    title: 'Plan better trips together',
+    subtitle:
+      'Create an account to plan, vote and stay inside everyone’s budget.',
     submit: 'Create account',
-    switchPrompt: 'Already have an account?',
-    switchLabel: 'Log in',
   },
-};
-
-const glass = 'bg-black/25 ring-1 ring-white/20 backdrop-blur-md';
-
-const inputClass =
-  'h-11 w-full rounded-xl border bg-card px-3.5 text-sm text-foreground shadow-sm outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-[#5DBB84] focus:ring-4 focus:ring-[#5DBB84]/15';
-
-// Concave corners that make the back-button notch look cut out of the photo.
-const notchCorner: React.CSSProperties = {
-  background: 'radial-gradient(circle at 100% 100%, transparent 20px, hsl(var(--background)) 20.5px)',
 };
 
 function GoogleIcon({ className }: { className?: string }) {
@@ -91,107 +60,87 @@ function GoogleIcon({ className }: { className?: string }) {
   );
 }
 
-function DestinationShowcase() {
-  const [index, setIndex] = useState(0);
-  const slide = slides[index];
-  const go = (step: number) => setIndex((i) => (i + step + slides.length) % slides.length);
-
-  // Restarts whenever the slide changes, so a manual click gets a full turn before auto-advancing.
-  useEffect(() => {
-    const id = setTimeout(() => go(1), 7000);
-    return () => clearTimeout(id);
-  }, [index]);
+function ProductPanel() {
+  const checklist = [
+    'Dates everyone can make',
+    'A destination the group chose',
+    'A plan inside the shared budget',
+  ];
 
   return (
-    <div className="relative hidden overflow-hidden rounded-[28px] bg-[#13392A] lg:block">
-      {slides.map((s, i) => (
-        <img
-          key={s.image}
-          src={s.image}
-          alt={i === index ? s.alt : ''}
-          aria-hidden={i !== index}
-          className={cn(
-            'absolute inset-0 size-full object-cover transition-[opacity,transform] duration-[1400ms] ease-out',
-            i === index ? 'scale-100 opacity-100' : 'scale-105 opacity-0',
-          )}
+    <aside className="relative hidden overflow-hidden rounded-2xl border border-solid border-brand-800 bg-brand-950 p-8 text-white shadow-pop lg:flex lg:flex-col lg:justify-between">
+      <div
+        aria-hidden
+        className="absolute -right-24 -top-24 size-80 rounded-full bg-brand-500/20 blur-3xl"
+      />
+      <div
+        aria-hidden
+        className="absolute -bottom-32 -left-24 size-96 rounded-full bg-warm-400/10 blur-3xl"
+      />
+
+      <div className="relative max-w-lg">
+        <span className="type-overline text-brand-200">
+          Built for group trips
+        </span>
+        <h2 className="type-display mt-5 !text-white">
+          One trip.
+          <br />
+          Everyone heard.
+        </h2>
+        <p className="type-lead mt-5 max-w-md text-white/70">
+          Replace the endless group chat with one clear place to choose dates,
+          vote on destinations and build the plan.
+        </p>
+      </div>
+
+      <Card className="relative mt-10 max-w-xl border-white/10 bg-white/95 text-ink shadow-pop">
+        <CardHeader
+          icon={Users}
+          title="Goa long weekend"
+          description="4 travellers · 3 nights"
+          action={
+            <span className="rounded-md bg-success-soft px-2.5 py-1 text-xs font-semibold text-success-ink">
+              Ready to plan
+            </span>
+          }
         />
-      ))}
-      <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-black/10" />
+        <CardBody className="grid gap-3">
+          {checklist.map((item) => (
+            <div
+              key={item}
+              className="flex items-center gap-3 rounded-lg bg-surface-muted px-3.5 py-3"
+            >
+              <span className="flex size-6 items-center justify-center rounded-full bg-brand-600 text-white">
+                <Check className="size-3.5" strokeWidth={3} aria-hidden />
+              </span>
+              <span className="type-small font-medium text-ink">{item}</span>
+            </div>
+          ))}
+        </CardBody>
+      </Card>
 
-      {/* Back-to-home notch */}
-      <div className="absolute left-0 top-0 rounded-br-[22px] bg-background pb-2.5 pr-2.5">
-        <Link
-          href="/"
-          aria-label="Back to home"
-          className="grid size-12 place-items-center rounded-full border bg-card text-muted-foreground transition-colors hover:border-[#5DBB84] hover:text-foreground"
-        >
-          <ArrowLeft className="size-5" />
-        </Link>
-        <span aria-hidden className="absolute -right-5 top-0 size-5" style={notchCorner} />
-        <span aria-hidden className="absolute -bottom-5 left-0 size-5" style={notchCorner} />
-      </div>
-
-      <div className={cn('absolute right-5 top-5 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-white', glass)}>
-        <MapPin className="size-3.5 text-[#F8E6A0]" />
-        {slide.place}
-      </div>
-
-      <div className="absolute inset-x-5 bottom-5 flex items-end gap-3">
-        <div key={index} className={cn('flex-1 animate-fade-up rounded-2xl p-5 text-white', glass)}>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-[#F8E6A0]">
-            <Sparkles className="size-3" />
-            Ask Fermat
-          </span>
-          <p className="mt-3 text-lg font-medium leading-snug">“{slide.prompt}”</p>
-          <p className="mt-3 flex items-start gap-2 text-sm text-white/75">
-            <FermatMark className="mt-0.5 h-4 text-[#5DBB84]" />
-            {slide.reply}
-          </p>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <button
-            type="button"
-            onClick={() => go(1)}
-            aria-label="Next destination"
-            className={cn('grid size-11 cursor-pointer place-items-center rounded-full text-white transition-colors hover:bg-white/25', glass)}
-          >
-            <ArrowRight className="size-4" />
-          </button>
-          <button
-            type="button"
-            onClick={() => go(-1)}
-            aria-label="Previous destination"
-            className={cn('grid size-11 cursor-pointer place-items-center rounded-full text-white transition-colors hover:bg-white/25', glass)}
-          >
-            <ArrowLeft className="size-4" />
-          </button>
-        </div>
-      </div>
-    </div>
+      <p className="relative mt-8 flex items-center gap-2 text-sm text-white/60">
+        <LockKeyhole className="size-4" aria-hidden /> Your personal budget
+        stays private.
+      </p>
+    </aside>
   );
 }
 
-function Field({ label, aside, children }: { label: string; aside?: React.ReactNode; children: React.ReactNode }) {
-  return (
-    <label className="block text-left">
-      <span className="mb-1.5 flex items-center justify-between text-xs font-medium">
-        {label}
-        {aside}
-      </span>
-      {children}
-    </label>
-  );
-}
-
-export default function LoginScreen({ onGoogleSignIn }: { onGoogleSignIn: () => Promise<void> }) {
+export default function LoginScreen({
+  onGoogleSignIn,
+}: {
+  onGoogleSignIn: () => Promise<void>;
+}) {
   const { signInWithEmail, signUpWithEmail, resetPassword } = useAuth();
   const [mode, setMode] = useState<Mode>('login');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [pending, setPending] = useState<'email' | 'google' | 'reset' | null>(null);
+  const [pending, setPending] = useState<'email' | 'google' | 'reset' | null>(
+    null,
+  );
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const t = copy[mode];
@@ -202,24 +151,29 @@ export default function LoginScreen({ onGoogleSignIn }: { onGoogleSignIn: () => 
     setNotice('');
   };
 
-  const run = async (kind: 'email' | 'google' | 'reset', action: () => Promise<void>) => {
+  const run = async (
+    kind: 'email' | 'google' | 'reset',
+    action: () => Promise<void>,
+  ) => {
     setPending(kind);
     setError('');
     setNotice('');
     try {
       await action();
     } catch (e: any) {
-      // Google errors are already shown as a toast by the page.
-      if (kind !== 'google') setError(e?.message || 'Something went wrong. Please try again.');
+      if (kind !== 'google')
+        setError(e?.message || 'Something went wrong. Please try again.');
     } finally {
       setPending(null);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
     run('email', () =>
-      mode === 'signup' ? signUpWithEmail(name.trim(), email.trim(), password) : signInWithEmail(email.trim(), password),
+      mode === 'signup'
+        ? signUpWithEmail(name.trim(), email.trim(), password)
+        : signInWithEmail(email.trim(), password),
     );
   };
 
@@ -235,54 +189,47 @@ export default function LoginScreen({ onGoogleSignIn }: { onGoogleSignIn: () => 
   };
 
   return (
-    // Fixed overlay so the dashboard shell (sidebar, navbar) stays hidden until the user is signed in.
-    <div className={cn('landing fixed inset-0 z-[1500] overflow-y-auto', inter.variable)}>
-      <div className="grid min-h-full gap-3 p-3 lg:grid-cols-[1fr_1.15fr]">
-        <div className="flex flex-col px-3 py-4 sm:px-6">
-          <header>
-            <Link href="/" className="inline-flex items-center gap-2 font-semibold tracking-tight text-foreground no-underline">
-              <FermatMark className="h-6" />
+    <div className="landing fixed inset-0 z-[1500] overflow-y-auto bg-canvas">
+      <div className="grid min-h-full gap-4 p-4 lg:grid-cols-[minmax(420px,0.78fr)_1.22fr]">
+        <section className="flex min-h-[calc(100dvh-2rem)] flex-col rounded-2xl border border-solid border-line bg-surface px-5 py-5 shadow-sm sm:px-9 sm:py-7">
+          <header className="flex items-center justify-between">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-lg font-semibold tracking-tight text-ink no-underline"
+            >
+              <FermatMark className="h-7 text-brand-900" />
               Fermat
             </Link>
+            <Button asChild variant="ghost" size="sm" icon={ArrowLeft}>
+              <Link href="/">Home</Link>
+            </Button>
           </header>
 
-          <main className="mx-auto flex w-full max-w-[360px] flex-1 flex-col justify-center py-12 text-center">
-            <span className="mx-auto grid size-12 animate-fade-up place-items-center rounded-2xl bg-foreground text-[#5DBB84] shadow-[0_12px_30px_-14px_hsl(160_40%_15%/0.6)]">
-              <FermatMark className="h-6" />
-            </span>
-
-            <h1 className="mt-5 text-3xl font-semibold tracking-tight">{t.title}</h1>
-            <p className="mt-2 text-sm text-muted-foreground">{t.subtitle}</p>
-
-            <div
-              role="tablist"
-              aria-label="Log in or sign up"
-              className="mt-7 grid grid-cols-2 rounded-xl bg-muted p-1 text-sm font-medium"
-            >
-              {(['login', 'signup'] as Mode[]).map((m) => (
-                <button
-                  key={m}
-                  type="button"
-                  role="tab"
-                  aria-selected={mode === m}
-                  onClick={() => switchMode(m)}
-                  className={cn(
-                    'h-9 cursor-pointer rounded-lg transition-all duration-200',
-                    mode === m ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground',
-                  )}
-                >
-                  {m === 'login' ? 'Log in' : 'Sign up'}
-                </button>
-              ))}
+          <main className="mx-auto flex w-full max-w-[390px] flex-1 flex-col justify-center py-10 text-left">
+            <div className="mb-8">
+              <h1 className="type-h1 m-0">{t.title}</h1>
+              <p className="type-body mb-0 mt-2 text-ink-muted">{t.subtitle}</p>
             </div>
+
+            <Tabs
+              value={mode}
+              onValueChange={(value) => switchMode(value as Mode)}
+            >
+              <TabsList
+                className="grid w-full grid-cols-2"
+                aria-label="Log in or sign up"
+              >
+                <TabsTrigger value="login">Log in</TabsTrigger>
+                <TabsTrigger value="signup">Sign up</TabsTrigger>
+              </TabsList>
+            </Tabs>
 
             <form onSubmit={handleSubmit} className="mt-6 space-y-4">
               {mode === 'signup' && (
                 <Field label="Name">
-                  <input
-                    className={inputClass}
+                  <Input
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(event) => setName(event.target.value)}
                     placeholder="What should we call you?"
                     autoComplete="name"
                     required
@@ -291,11 +238,10 @@ export default function LoginScreen({ onGoogleSignIn }: { onGoogleSignIn: () => 
               )}
 
               <Field label="Email">
-                <input
+                <Input
                   type="email"
-                  className={inputClass}
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(event) => setEmail(event.target.value)}
                   placeholder="you@example.com"
                   autoComplete="email"
                   required
@@ -305,102 +251,97 @@ export default function LoginScreen({ onGoogleSignIn }: { onGoogleSignIn: () => 
               <Field
                 label="Password"
                 aside={
-                  mode === 'login' && (
+                  mode === 'login' ? (
                     <button
                       type="button"
                       onClick={handleReset}
                       disabled={pending !== null}
-                      className="cursor-pointer text-xs font-medium text-[#3D9163] hover:underline disabled:opacity-60"
+                      className="cursor-pointer border-0 bg-transparent p-0 font-sans text-xs font-semibold text-brand-700 hover:underline disabled:opacity-60"
                     >
                       {pending === 'reset' ? 'Sending…' : 'Forgot password?'}
                     </button>
-                  )
+                  ) : undefined
                 }
               >
                 <span className="relative block">
-                  <input
+                  <Input
                     type={showPassword ? 'text' : 'password'}
-                    className={cn(inputClass, 'pr-11')}
+                    className="pr-11"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder={mode === 'signup' ? 'At least 6 characters' : 'Your password'}
-                    autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+                    onChange={(event) => setPassword(event.target.value)}
+                    placeholder={
+                      mode === 'signup'
+                        ? 'At least 6 characters'
+                        : 'Your password'
+                    }
+                    autoComplete={
+                      mode === 'signup' ? 'new-password' : 'current-password'
+                    }
                     minLength={mode === 'signup' ? 6 : undefined}
                     required
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword((v) => !v)}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    className="absolute inset-y-0 right-0 grid w-11 cursor-pointer place-items-center text-muted-foreground hover:text-foreground"
+                    onClick={() => setShowPassword((value) => !value)}
+                    aria-label={
+                      showPassword ? 'Hide password' : 'Show password'
+                    }
+                    className="absolute inset-y-0 right-0 grid w-11 cursor-pointer place-items-center border-0 bg-transparent text-ink-muted hover:text-ink"
                   >
-                    {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                    {showPassword ? (
+                      <EyeOff className="size-4" />
+                    ) : (
+                      <Eye className="size-4" />
+                    )}
                   </button>
                 </span>
               </Field>
 
-              {error && (
-                <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-left text-xs text-red-700">
-                  {error}
-                </p>
-              )}
-              {notice && (
-                <p role="status" className="rounded-lg bg-[#E4F4EA] px-3 py-2 text-left text-xs text-[#1F5A3F]">
-                  {notice}
-                </p>
-              )}
+              {error && <Notice tone="danger">{error}</Notice>}
+              {notice && <Notice tone="success">{notice}</Notice>}
 
-              <button
+              <Button
                 type="submit"
+                block
+                loading={pending === 'email'}
                 disabled={pending !== null}
-                className="flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-foreground text-sm font-medium text-white shadow-[0_10px_24px_-14px_hsl(160_40%_10%/0.8)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-70"
               >
-                {pending === 'email' && <Loader2 className="size-4 animate-spin" />}
                 {t.submit}
-              </button>
+              </Button>
             </form>
 
-            <div className="my-5 flex items-center gap-3 text-xs text-muted-foreground">
-              <span className="h-px flex-1 bg-border" />
-              or
-              <span className="h-px flex-1 bg-border" />
+            <div className="my-5 flex items-center gap-3 text-xs text-ink-muted">
+              <span className="h-px flex-1 bg-line" />
+              or continue with
+              <span className="h-px flex-1 bg-line" />
             </div>
 
-            <button
+            <Button
               type="button"
+              variant="outline"
+              block
               onClick={() => run('google', onGoogleSignIn)}
               disabled={pending !== null}
-              className="flex h-11 w-full cursor-pointer items-center justify-center gap-2.5 rounded-xl border bg-card text-sm font-medium text-foreground shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-[#5DBB84] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-70"
             >
               {pending === 'google' ? (
-                <Loader2 className="size-4 animate-spin text-[#3D9163]" />
+                <Loader2 className="size-4 animate-spin" />
               ) : (
                 <GoogleIcon className="size-4" />
               )}
-              {pending === 'google' ? 'Opening Google…' : 'Continue with Google'}
-            </button>
+              {pending === 'google' ? 'Opening Google…' : 'Google'}
+            </Button>
 
-            <p className="mt-6 text-xs text-muted-foreground">
-              {t.switchPrompt}{' '}
-              <button
-                type="button"
-                onClick={() => switchMode(mode === 'login' ? 'signup' : 'login')}
-                className="cursor-pointer font-semibold text-foreground hover:underline"
-              >
-                {t.switchLabel}
-              </button>
+            <p className="type-caption mb-0 mt-6 text-center text-ink-muted">
+              By continuing, you agree to Fermat’s terms and privacy policy.
             </p>
           </main>
 
-          <footer className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>© {new Date().getFullYear()} Fermat</span>
-            <Link href="/" className="text-muted-foreground no-underline transition-colors hover:text-foreground">
-              Back to home
-            </Link>
+          <footer className="type-caption text-ink-muted">
+            © {new Date().getFullYear()} Fermat
           </footer>
-        </div>
+        </section>
 
-        <DestinationShowcase />
+        <ProductPanel />
       </div>
     </div>
   );

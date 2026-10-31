@@ -1,7 +1,5 @@
 'use client';
 import React, { ReactNode } from 'react';
-import { ChakraProvider } from '@chakra-ui/react';
-import theme from '../src/theme/theme';
 import '../src/styles/App.css';
 import '../src/styles/Contact.css';
 import '../src/styles/Plugins.css';
@@ -14,9 +12,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body id="root">
         <AuthProvider>
-          <AppWrappers>
-            <ChakraProvider theme={theme}>{children}</ChakraProvider>
-          </AppWrappers>
+          <AppWrappers>{children}</AppWrappers>
         </AuthProvider>
       </body>
     </html>
