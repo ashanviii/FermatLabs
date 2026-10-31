@@ -51,6 +51,21 @@ const decisionMeta: Record<string, { label: string; Icon: IconComponent; classNa
   waiting: { label: 'Waiting', Icon: icons.pending, className: 'text-ink-muted' },
 };
 
+const toMinutes = (time: string) => { const [hour, minute] = String(time).split(':').map(Number); return hour * 60 + minute; };
+const clock = (minutes: number) => `${String(Math.floor(minutes / 60) % 24).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
+
+/** Overlapping items per day (same rule as the engine's schedule check), so the warning can name them. */
+function scheduleConflicts(plan: any) {
+  const conflicts: { day: number; date: string; first: any; second: any; firstEnd: number; secondEnd: number }[] = [];
+  for (const day of plan.itinerary || []) {
+    const timed = day.items.map((item: any) => ({ item, start: toMinutes(item.time), end: toMinutes(item.time) + item.durationMinutes })).sort((a: any, b: any) => a.start - b.start);
+    for (let i = 1; i < timed.length; i += 1) {
+      if (timed[i].start < timed[i - 1].end) conflicts.push({ day: day.day, date: day.date, first: timed[i - 1].item, second: timed[i].item, firstEnd: timed[i - 1].end, secondEnd: timed[i].end });
+    }
+  }
+  return conflicts;
+}
+
 function ItemEditor({ item, currency, onSave, onCancel, disabled }: { item: any; currency: string; onSave: (patch: any) => Promise<boolean>; onCancel: () => void; disabled: boolean }) {
   const [draft, setDraft] = useState({ title: item.title, time: item.time, durationMinutes: item.durationMinutes, location: item.location, estimatedCost: item.estimatedCost, verificationAction: item.verificationAction });
   const [saving, setSaving] = useState(false);
@@ -120,6 +135,8 @@ export default function PlanView({ trip, uid, owner, disabled, command, onShare 
   const multiStop = stops.length > 1;
   const members: any[] = Object.values(trip.members || {});
   const needsReview = plan.status === 'needsReview';
+  const conflicts = needsReview ? scheduleConflicts(plan) : [];
+  const editItem = (id: string) => { setEditing(id); requestAnimationFrame(() => document.getElementById(`plan-item-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })); };
 
   return (
     <div className="flex min-w-0 flex-col gap-6">
@@ -173,6 +190,26 @@ export default function PlanView({ trip, uid, owner, disabled, command, onShare 
           </div>
         </div>
       </div>
+
+      {conflicts.length > 0 && (
+        <Notice tone="warning" title={conflicts.length === 1 ? 'Two stops overlap' : `${conflicts.length} overlaps to fix`}>
+          <ul className="m-0 grid list-none gap-2 p-0">
+            {conflicts.map((c) => (
+              <li key={`${c.first.id}-${c.second.id}`} className="flex flex-wrap items-center justify-between gap-2">
+                <span>
+                  Day {c.day}: <b>{c.first.title}</b> ({c.first.time}–{clock(c.firstEnd)}) runs into <b>{c.second.title}</b> ({c.second.time}–{clock(c.secondEnd)}).
+                </span>
+                {owner && (
+                  <Button size="sm" variant="outline" icon={Pencil} onClick={() => editItem(c.second.id)} aria-label={`Edit ${c.second.title}`}>
+                    Edit
+                  </Button>
+                )}
+              </li>
+            ))}
+          </ul>
+          <p className="m-0 mt-2">{owner ? 'Fix the times, then everyone can approve.' : 'The organizer needs to fix the times before anyone can approve.'}</p>
+        </Notice>
+      )}
 
       {/* How the vote went: anonymous tally, verdict, and (private) why the viewer's pick did or didn't win */}
       <VoteResults trip={trip} />
@@ -242,7 +279,7 @@ export default function PlanView({ trip, uid, owner, disabled, command, onShare 
                   const skipping = item.iAttend === false;
                   const transport = type === 'flight' || type === 'road';
                   return (
-                    <li key={item.id} className="relative flex gap-3 pb-4 last:pb-0 sm:gap-4">
+                    <li key={item.id} id={`plan-item-${item.id}`} className="relative flex scroll-mt-24 gap-3 pb-4 last:pb-0 sm:gap-4">
                       <span className={cn('relative z-[1] flex size-10 shrink-0 items-center justify-center rounded-full ring-4 ring-surface', meta.tile)}>
                         <meta.Icon className="size-[1.125rem]" strokeWidth={1.75} aria-hidden />
                         <span className="sr-only">{meta.label}</span>
@@ -350,10 +387,11 @@ export default function PlanView({ trip, uid, owner, disabled, command, onShare 
           className="flex-1 sm:flex-none"
           variant={myDecision === 'approved' ? 'secondary' : 'primary'}
           icon={icons.check}
-          disabled={disabled}
+          disabled={disabled || needsReview}
+          title={needsReview ? 'Fix the overlapping stops first' : undefined}
           onClick={() => command({ type: 'approvePlan', ...base, decision: 'approved' })}
         >
-          {myDecision === 'approved' ? 'You approved' : 'Approve plan'}
+          {needsReview ? 'Fix overlaps to approve' : myDecision === 'approved' ? 'You approved' : 'Approve plan'}
         </Button>
         <Button variant="outline" className="min-w-0 flex-1 px-4 sm:flex-none sm:px-5" disabled={disabled} onClick={() => command({ type: 'approvePlan', ...base, decision: 'changesRequested' })}>
           <MessageSquareText className="hidden size-4 sm:block" strokeWidth={2} aria-hidden />

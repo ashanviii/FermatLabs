@@ -110,9 +110,6 @@ export const signUpWithEmail = async (name: string, email: string, password: str
   try {
     const { user } = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(user, { displayName: name });
-    // The user document is created on the auth state change, usually before the name is set; fill it in.
-    // updateDoc (not a merge) so this never creates a partial document ahead of createUserDocument.
-    await updateDoc(doc(db, 'users', user.uid), { displayName: name }).catch(() => {});
     return user;
   } catch (error: any) {
     throw emailAuthError(error);

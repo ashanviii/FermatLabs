@@ -8,6 +8,7 @@ import { Card, CardBody, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarStack } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Field } from '@/components/ui/field';
+import { Notice } from '@/components/ui/notice';
 import { Progress } from '@/components/ui/progress';
 import { Stepper, PLAN_STEPS } from '@/components/ui/stepper';
 import { icons, type IconComponent } from '@/components/ui/icons';
@@ -57,9 +58,10 @@ export function TripHeader({ trip, owner, step, onStepClick, action }: { trip: a
   const nights = nightsBetween(trip.startDate, trip.endDate);
   return (
     <header className="grid gap-6 pb-2 pt-4 sm:pt-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+      {/* On phones the action drops below the trip details so it never overlaps the badge or title. */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="grid min-w-0 flex-1 gap-2">
-        <p className="type-overline m-0 flex items-center gap-2 text-brand-600">
+        <p className="type-overline m-0 flex flex-wrap items-center gap-2 text-brand-600">
           {phaseLabel(trip)}
           {owner && (
             <Badge size="sm" tone="brand" icon={icons.organizer}>
@@ -110,8 +112,14 @@ function PrivateBudgetEditor({ trip, uid, disabled, command }: { trip: any; uid:
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(budget ? String(budget) : '');
   const [saving, setSaving] = useState(false);
+  // During voting, saving clears everyone's ballots, so it takes a second, explicit step.
+  const [confirming, setConfirming] = useState(false);
+  const [announcement, setAnnouncement] = useState('');
+  const votesCast = trip.ballotProgress ?? 0;
+  const clearsVotes = trip.phase === 'voting' && votesCast > 0;
 
   useEffect(() => { setDraft(budget ? String(budget) : ''); }, [budget]);
+  useEffect(() => { setConfirming(false); }, [draft, trip.phase]);
   if (!Number.isSafeInteger(budget)) return null;
 
   const amount = Number(draft);
@@ -126,12 +134,17 @@ function PrivateBudgetEditor({ trip, uid, disabled, command }: { trip: any; uid:
       ? `Your current plan is ${formatMoney(currentPlanTotal, currency)}.`
       : 'Saving refreshes which destinations fit your group.';
 
-  const save = async () => {
+  const save = async (confirmed = false) => {
     if (error || amount === budget) return;
+    if (clearsVotes && !confirmed) { setConfirming(true); return; }
     setSaving(true);
     const saved = await command({ type: 'updateBudget', expectedInputRevision: trip.inputRevision, budget: amount });
     setSaving(false);
-    if (saved) setEditing(false);
+    if (saved) {
+      setEditing(false);
+      setConfirming(false);
+      setAnnouncement(clearsVotes ? 'Budget saved. Votes were cleared and options updated.' : 'Budget saved. Options updated.');
+    }
   };
 
   return (
@@ -151,17 +164,32 @@ function PrivateBudgetEditor({ trip, uid, disabled, command }: { trip: any; uid:
           <Field label="Your private budget" hint={error ? undefined : hint} error={error}>
             <MoneyInput currency={currency} step={1} value={draft} disabled={disabled || saving} onChange={(event) => setDraft(event.target.value)} autoFocus />
           </Field>
-          <div className="flex flex-wrap justify-end gap-2">
-            <Button size="sm" variant="ghost" disabled={saving} onClick={() => { setDraft(String(budget)); setEditing(false); }}>
-              Cancel
-            </Button>
-            <Button size="sm" type="submit" loading={saving} disabled={disabled || Boolean(error) || amount === budget}>
-              Save budget
-            </Button>
-          </div>
+          {confirming ? (
+            <Notice tone="warning" title={`Saving clears ${plural(votesCast, 'vote')}`}>
+              <p className="m-0">Everyone, including you, will need to vote again. Nobody will see that it was your change.</p>
+              <div className="mt-3 flex flex-wrap justify-end gap-2">
+                <Button size="sm" variant="secondary" autoFocus disabled={saving} onClick={() => setConfirming(false)}>
+                  Keep editing
+                </Button>
+                <Button size="sm" variant="danger" loading={saving} disabled={disabled} onClick={() => void save(true)}>
+                  Save and clear votes
+                </Button>
+              </div>
+            </Notice>
+          ) : (
+            <div className="flex flex-wrap justify-end gap-2">
+              <Button size="sm" variant="ghost" disabled={saving} onClick={() => { setDraft(String(budget)); setEditing(false); }}>
+                Cancel
+              </Button>
+              <Button size="sm" type="submit" loading={saving} disabled={disabled || Boolean(error) || amount === budget}>
+                Save budget
+              </Button>
+            </div>
+          )}
         </form>
       )}
       {!editing && <p className="type-caption m-0 text-ink-muted">Only you can see this amount.</p>}
+      <p className="sr-only" role="status" aria-live="polite">{announcement}</p>
     </div>
   );
 }

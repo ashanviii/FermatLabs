@@ -1,6 +1,6 @@
 'use client';
 // Screens before you're inside a trip: sign in, switch to a recoverable account, create a trip, join by invite.
-import { useRef, useState } from 'react';
+import { useRef, useState, type SyntheticEvent } from 'react';
 import { ChevronRight, Globe, LogIn, Mail, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -259,12 +259,77 @@ function TripBasics({ draft, onChange, errors, structuralDisabled = false }: { d
   );
 }
 
+type DateField = 'startDate' | 'endDate';
+
+/**
+ * Date inputs can show a value the browser considers invalid (out of range, half-typed) without React's draft
+ * changing. These helpers keep the rendered fields as the single source of truth: every keystroke and blur syncs
+ * the draft, and submit re-reads the fields and refuses anything the browser flags.
+ */
+function readDateFields(form: HTMLFormElement | null) {
+  const field = (name: DateField) => form?.querySelector<HTMLInputElement>(`input[name="${name}"]`) || null;
+  return (['startDate', 'endDate'] as DateField[]).map((name) => ({ name, input: field(name) }));
+}
+
+function browserDateError(input: HTMLInputElement, name: DateField) {
+  const v = input.validity;
+  if (v.badInput || (!input.value && input.required)) return name === 'startDate' ? 'Finish typing the first day.' : 'Finish typing the last day.';
+  if (v.rangeUnderflow) return name === 'endDate' ? 'Choose a last day after the first day.' : 'Choose a later first day.';
+  if (v.rangeOverflow) return name === 'endDate' ? 'Trips can be at most 31 days.' : 'Choose a first day before the last day.';
+  return v.valid ? undefined : 'Check this date.';
+}
+
+/** Returns true when the visible fields match the draft and are valid; otherwise syncs, flags and focuses. */
+function checkVisibleDates(form: HTMLFormElement | null, draft: RoomDraft, onChange: (draft: RoomDraft) => void, setDateErrors: (errors: Partial<Record<DateField, string>>) => void) {
+  const fields = readDateFields(form);
+  const visible: Partial<RoomDraft> = {};
+  const browserErrors: Partial<Record<DateField, string>> = {};
+  for (const { name, input } of fields) {
+    if (!input) continue;
+    visible[name] = input.value;
+    const problem = browserDateError(input, name);
+    if (problem) browserErrors[name] = problem;
+  }
+  setDateErrors(browserErrors);
+  const drifted = fields.some(({ name, input }) => input && input.value !== draft[name]);
+  if (drifted) onChange({ ...draft, ...visible });
+  if (drifted || Object.keys(browserErrors).length) {
+    const first = fields.find(({ name, input }) => input && (browserErrors[name] || input.value !== draft[name]))?.input;
+    requestAnimationFrame(() => first?.focus());
+    return false;
+  }
+  return true;
+}
+
+function DateRangeFields({ draft, onChange, errors, dateErrors, setDateErrors, disabled }: { draft: RoomDraft; onChange: (draft: RoomDraft) => void; errors: RoomDraftErrors; dateErrors: Partial<Record<DateField, string>>; setDateErrors: (errors: Partial<Record<DateField, string>>) => void; disabled?: boolean }) {
+  // Re-check both fields on every change: moving one date can make the other in or out of range.
+  const sync = (name: DateField) => (event: SyntheticEvent<HTMLInputElement>) => {
+    const input = event.currentTarget;
+    const next: Partial<Record<DateField, string>> = {};
+    for (const { name: other, input: field } of readDateFields(input.form)) if (field) next[other] = browserDateError(field, other);
+    setDateErrors(next);
+    if (input.value !== draft[name]) onChange({ ...draft, [name]: input.value });
+  };
+  return (
+    <div className="grid gap-5 sm:grid-cols-2">
+      <Field label="First day" error={dateErrors.startDate || errors.startDate}>
+        <Input type="date" name="startDate" required disabled={disabled} max={draft.endDate || undefined} value={draft.startDate} onChange={sync('startDate')} onInput={sync('startDate')} onBlur={sync('startDate')} />
+      </Field>
+      <Field label="Last day" error={dateErrors.endDate || errors.endDate}>
+        <Input type="date" name="endDate" required disabled={disabled} min={addDays(draft.startDate, 1)} max={addDays(draft.startDate, 30)} value={draft.endDate} onChange={sync('endDate')} onInput={sync('endDate')} onBlur={sync('endDate')} />
+      </Field>
+    </div>
+  );
+}
+
 export function CreateRoomCard({ draft, onChange, onCreate, disabled, busy }: { draft: RoomDraft; onChange: (draft: RoomDraft) => void; onCreate: () => void; disabled: boolean; busy: boolean }) {
   const nights = nightsBetween(draft.startDate, draft.endDate);
   const errors = validateRoomDraft(draft);
-  const invalid = Object.keys(errors).length > 0;
+  const [dateErrors, setDateErrors] = useState<Partial<Record<DateField, string>>>({});
+  const invalid = Object.keys(errors).length > 0 || Object.values(dateErrors).some(Boolean);
   const formRef = useRef<HTMLFormElement>(null);
   const submit = () => {
+    if (!checkVisibleDates(formRef.current, draft, onChange, setDateErrors)) return;
     if (invalid) {
       requestAnimationFrame(() => formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus());
       return;
@@ -280,14 +345,7 @@ export function CreateRoomCard({ draft, onChange, onCreate, disabled, busy }: { 
           <Input maxLength={81} value={draft.name} onChange={(e) => onChange({ ...draft, name: e.target.value })} />
         </Field>
         <TripBasics draft={draft} onChange={onChange} errors={errors} />
-        <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="First day" error={errors.startDate}>
-            <Input type="date" max={draft.endDate || undefined} value={draft.startDate} onChange={(e) => onChange({ ...draft, startDate: e.target.value })} />
-          </Field>
-          <Field label="Last day" error={errors.endDate}>
-            <Input type="date" min={addDays(draft.startDate, 1)} max={addDays(draft.startDate, 30)} value={draft.endDate} onChange={(e) => onChange({ ...draft, endDate: e.target.value })} />
-          </Field>
-        </div>
+        <DateRangeFields draft={draft} onChange={onChange} errors={errors} dateErrors={dateErrors} setDateErrors={setDateErrors} />
         <Field label="How many people" hint="Including you" error={errors.expectedSize}>
           <Select value={draft.expectedSize} onChange={(e) => onChange({ ...draft, expectedSize: Number(e.target.value) })}>
             {[2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
@@ -297,7 +355,7 @@ export function CreateRoomCard({ draft, onChange, onCreate, disabled, busy }: { 
             ))}
           </Select>
         </Field>
-        <DateFinder startDate={draft.startDate} endDate={draft.endDate} onPick={(startDate, endDate) => onChange({ ...draft, startDate, endDate })} homeCountry={draft.homeCountry} />
+        <DateFinder startDate={draft.startDate} endDate={draft.endDate} onPick={(startDate, endDate) => { setDateErrors({}); onChange({ ...draft, startDate, endDate }); }} homeCountry={draft.homeCountry} />
         <div className="flex flex-col gap-3 border-0 border-t border-solid border-line-subtle pt-5 sm:flex-row sm:items-center sm:justify-between">
           <p className="type-small m-0 flex items-center gap-2 text-ink-muted">
             <icons.calendar className="size-4 shrink-0 text-ink-faint" strokeWidth={1.75} aria-hidden />
@@ -316,7 +374,8 @@ export function CreateRoomCard({ draft, onChange, onCreate, disabled, busy }: { 
 
 export function EditTripSetupCard({ draft, onChange, onSave, onCancel, disabled, busy, structuralDisabled, reason }: { draft: RoomDraft; onChange: (draft: RoomDraft) => void; onSave: () => void; onCancel: () => void; disabled: boolean; busy: boolean; structuralDisabled: boolean; reason?: string | null }) {
   const errors = validateRoomDraft(draft);
-  const invalid = Object.keys(errors).length > 0;
+  const [dateErrors, setDateErrors] = useState<Partial<Record<DateField, string>>>({});
+  const invalid = Object.keys(errors).length > 0 || Object.values(dateErrors).some(Boolean);
   const formRef = useRef<HTMLFormElement>(null);
   return (
     <Card variant="flat">
@@ -324,6 +383,7 @@ export function EditTripSetupCard({ draft, onChange, onSave, onCancel, disabled,
       <CardBody>
         <form ref={formRef} className="grid gap-5" noValidate onSubmit={(event) => {
           event.preventDefault();
+          if (!structuralDisabled && !checkVisibleDates(formRef.current, draft, onChange, setDateErrors)) return;
           if (invalid) requestAnimationFrame(() => formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus());
           else onSave();
         }}>
@@ -332,14 +392,7 @@ export function EditTripSetupCard({ draft, onChange, onSave, onCancel, disabled,
             <Input maxLength={81} value={draft.name} onChange={(e) => onChange({ ...draft, name: e.target.value })} />
           </Field>
           <TripBasics draft={draft} onChange={onChange} errors={errors} structuralDisabled={structuralDisabled} />
-          <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="First day" error={errors.startDate}>
-              <Input type="date" disabled={structuralDisabled} max={draft.endDate || undefined} value={draft.startDate} onChange={(e) => onChange({ ...draft, startDate: e.target.value })} />
-            </Field>
-            <Field label="Last day" error={errors.endDate}>
-              <Input type="date" disabled={structuralDisabled} min={addDays(draft.startDate, 1)} max={addDays(draft.startDate, 30)} value={draft.endDate} onChange={(e) => onChange({ ...draft, endDate: e.target.value })} />
-            </Field>
-          </div>
+          <DateRangeFields draft={draft} onChange={onChange} errors={errors} dateErrors={dateErrors} setDateErrors={setDateErrors} disabled={structuralDisabled} />
           <Field label="How many people" hint="Never below the people already approved" error={errors.expectedSize}>
             <Select disabled={structuralDisabled} value={draft.expectedSize} onChange={(e) => onChange({ ...draft, expectedSize: Number(e.target.value) })}>
               {[2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => <option key={n} value={n}>{n} people</option>)}
@@ -363,7 +416,7 @@ export interface TripListItem {
 export function MyTripsCard({ trips, loading, onOpen, onRefresh }: { trips: TripListItem[]; loading: boolean; onOpen: (id: string) => void; onRefresh: () => void }) {
   return (
     <Card>
-      <CardHeader icon={icons.destination} title="Your trips" description={trips.length ? `${plural(trips.length, 'trip')} you can return to` : 'Trips you create or join will appear here'} action={<Button size="icon-sm" variant="ghost" aria-label="Refresh trips" title="Refresh trips" icon={RefreshCw} loading={loading} onClick={onRefresh} />} />
+      <CardHeader icon={icons.destination} title="Your trips" description={trips.length ? `${plural(trips.length, 'trip')} you can return to` : loading ? 'Loading…' : 'Trips you create or join will appear here'} action={<Button size="icon-sm" variant="ghost" aria-label="Refresh trips" title="Refresh trips" icon={RefreshCw} loading={loading} onClick={onRefresh} />} />
       <CardBody>
         {loading && !trips.length ? <p className="type-small m-0 text-ink-muted" role="status">Loading your trips…</p> : trips.length ? (
           <ul className="m-0 grid list-none gap-2 p-0">

@@ -433,7 +433,7 @@ function actForDemoMembers(state) {
     const choice = offeredDestinations(state).reduce((best, dest) => (fit(dest) > fit(best) ? dest : best));
     state.ballots[uid] = { destinationId: choice.id, round: state.round, inputRevision: state.inputRevision };
   });
-  if (state.activePlan) demos.filter((uid) => !state.activePlan.approvals[uid]).forEach((uid) => { state.activePlan.approvals[uid] = 'approved'; });
+  if (state.activePlan && state.activePlan.status !== 'needsReview') demos.filter((uid) => !state.activePlan.approvals[uid]).forEach((uid) => { state.activePlan.approvals[uid] = 'approved'; });
   if (state.activePlan) demos.filter((uid) => state.pledges?.[uid]?.planVersion !== state.activePlan.version).forEach((uid) => {
     state.pledges = { ...(state.pledges || {}), [uid]: { minGoing: 2, maxShare: state.constraints[uid].budget, deadline: null, planVersion: state.activePlan.version, at: 0 } };
   });
@@ -508,7 +508,7 @@ function applyTripCommand(input, command) {
       state.planVersion = Number.isSafeInteger(state.planVersion) ? state.planVersion + 1 : Math.max(0, ...state.supersededPlans.map((plan) => plan.version || 0), state.activePlan?.version || 0) + 1;
       state.activePlan = generatePlan(state, winner, { version: state.planVersion, now }); state.payments = {}; state.lockedAt = now; state.phase = 'locked'; state.lockedDestinationId = winner; state.publishedTotals = totals; state.lockExplanation = explanation; state.idempotency[command.idempotencyKey] = { kind: 'lock', destinationId: winner }; return state;
     }
-    case 'approvePlan': memberOnly(state, command.uid); if (!state.activePlan || command.planVersion !== state.activePlan.version || command.planRevision !== state.activePlan.revision) fail('Stale plan version or revision'); if (!['approved', 'changesRequested'].includes(command.decision)) fail('Invalid decision'); state.activePlan.approvals[command.uid] = command.decision; return state;
+    case 'approvePlan': memberOnly(state, command.uid); if (!state.activePlan || command.planVersion !== state.activePlan.version || command.planRevision !== state.activePlan.revision) fail('Stale plan version or revision'); if (!['approved', 'changesRequested'].includes(command.decision)) fail('Invalid decision'); if (command.decision === 'approved' && state.activePlan.status === 'needsReview') fail('Fixing the overlapping stops is required before approving'); state.activePlan.approvals[command.uid] = command.decision; return state;
     case 'editPlanItem': {
       ownerOnly(state, command.uid); if (!state.activePlan || command.planVersion !== state.activePlan.version || command.planRevision !== state.activePlan.revision) fail('Stale plan version or revision');
       const allowed = new Set(['title', 'time', 'durationMinutes', 'location', 'estimatedCost', 'verificationAction']);

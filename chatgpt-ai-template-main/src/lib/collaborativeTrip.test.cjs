@@ -438,3 +438,22 @@ test('demo travellers pledge automatically so a solo organizer can see who is fi
 
 // Trips from any country (settings, currency, scope, visas, fares, lock explanation, payees).
 require('./globalTrips.test.cjs');
+
+test('a plan with overlapping stops cannot be approved until fixed, but changes can still be requested', () => {
+  let trip = readyTrip(4, 1000000);
+  trip = applyCommand(trip, { type: 'openVoting', uid: 'owner', expectedInputRevision: trip.inputRevision });
+  ids.forEach((uid) => { trip = applyCommand(trip, { type: 'vote', uid, destinationId: 'bangkok', round: trip.round, inputRevision: trip.inputRevision }); });
+  trip = applyCommand(trip, { type: 'lock', uid: 'owner', round: trip.round, inputRevision: trip.inputRevision, idempotencyKey: 'lock-overlap' });
+  const day = trip.activePlan.itinerary.find((d) => d.items.some((item) => item.templateId));
+  const activity = day.items.find((item) => item.templateId);
+  const base = { planVersion: trip.activePlan.version, planRevision: trip.activePlan.revision };
+  trip = applyCommand(trip, { type: 'editPlanItem', uid: 'owner', ...base, itemId: activity.id, patch: { time: '12:30', durationMinutes: 150 } });
+  assert.equal(trip.activePlan.status, 'needsReview');
+  const next = { planVersion: trip.activePlan.version, planRevision: trip.activePlan.revision };
+  assert.throws(() => applyCommand(trip, { type: 'approvePlan', uid: 'm2', ...next, decision: 'approved' }), /overlapping stops/);
+  assert.doesNotThrow(() => applyCommand(trip, { type: 'approvePlan', uid: 'm2', ...next, decision: 'changesRequested' }));
+  trip = applyCommand(trip, { type: 'editPlanItem', uid: 'owner', ...next, itemId: activity.id, patch: { time: '10:00', durationMinutes: activity.durationMinutes } });
+  assert.notEqual(trip.activePlan.status, 'needsReview');
+  const fixed = { planVersion: trip.activePlan.version, planRevision: trip.activePlan.revision };
+  assert.doesNotThrow(() => applyCommand(trip, { type: 'approvePlan', uid: 'm2', ...fixed, decision: 'approved' }));
+});
