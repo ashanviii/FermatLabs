@@ -31,7 +31,7 @@ export default function ClosingCta() {
             </p>
           </div>
           <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-            <Button asChild size="lg" className="bg-white text-brand-900 hover:bg-brand-50 focus-visible:ring-offset-brand-900">
+            <Button asChild size="lg" className="rounded-full bg-white text-brand-900 hover:bg-brand-50 focus-visible:ring-offset-brand-900">
               <Link href="/plan">
                 Start a group trip
                 <ArrowRight className="size-5" strokeWidth={2} aria-hidden />
@@ -41,7 +41,7 @@ export default function ClosingCta() {
               asChild
               size="lg"
               variant="ghost"
-              className="text-white ring-1 ring-inset ring-white/30 hover:bg-white/10 hover:text-white focus-visible:ring-offset-brand-900"
+              className="rounded-full text-white ring-1 ring-inset ring-white/30 hover:bg-white/10 hover:text-white focus-visible:ring-offset-brand-900"
             >
               <Link href="/plan?preview=locked">See an example plan</Link>
             </Button>
