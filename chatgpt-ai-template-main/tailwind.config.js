@@ -39,40 +39,32 @@ const warm = {
 const tone = (DEFAULT, soft, ink, line) => ({ DEFAULT, soft, ink, line });
 
 const INK = '#131316';
-const displayFont =
-  'var(--font-display), var(--font-sans), ui-sans-serif, system-ui, sans-serif';
-const monoFont =
-  'var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace';
+const displayFont = "var(--font-display), var(--font-sans), ui-sans-serif, system-ui, sans-serif";
+const serifFont = "var(--font-serif), ui-serif, Georgia, serif";
+const monoFont = "var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace";
 
 /*
- * Type scale. Geist keeps product and marketing surfaces in one crisp, contemporary system.
+ * Type scale. Editorial and calm: medium-weight headlines set tight, an italic serif for the one accent phrase,
+ * and small monospaced caps for labels. All sizes are rem, so text follows the browser's text-size setting.
  */
 const typeScale = () => ({
   '.type-display': {
     fontFamily: displayFont,
     fontSize: '2.375rem',
     lineHeight: '2.625rem',
-    fontWeight: '650',
+    fontWeight: '500',
     letterSpacing: '-0.04em',
     color: INK,
-    '@media (min-width: 768px)': {
-      fontSize: '4rem',
-      lineHeight: '4.125rem',
-      letterSpacing: '-0.045em',
-    },
+    '@media (min-width: 768px)': { fontSize: '4rem', lineHeight: '4.125rem', letterSpacing: '-0.045em' },
   },
   '.type-h1': {
     fontFamily: displayFont,
     fontSize: '1.875rem',
     lineHeight: '2.25rem',
-    fontWeight: '650',
+    fontWeight: '500',
     letterSpacing: '-0.035em',
     color: INK,
-    '@media (min-width: 768px)': {
-      fontSize: '2.625rem',
-      lineHeight: '2.875rem',
-      letterSpacing: '-0.04em',
-    },
+    '@media (min-width: 768px)': { fontSize: '2.625rem', lineHeight: '2.875rem', letterSpacing: '-0.04em' },
   },
   '.type-h2': {
     fontFamily: displayFont,
@@ -91,29 +83,10 @@ const typeScale = () => ({
     letterSpacing: '-0.02em',
     color: INK,
   },
-  '.type-lead': {
-    fontSize: '1.1875rem',
-    lineHeight: '1.875rem',
-    fontWeight: '400',
-    letterSpacing: '-0.015em',
-  },
-  '.type-body': {
-    fontSize: '1rem',
-    lineHeight: '1.625rem',
-    fontWeight: '400',
-    letterSpacing: '-0.01em',
-  },
-  '.type-small': {
-    fontSize: '0.875rem',
-    lineHeight: '1.25rem',
-    fontWeight: '400',
-    letterSpacing: '-0.005em',
-  },
-  '.type-caption': {
-    fontSize: '0.75rem',
-    lineHeight: '1rem',
-    fontWeight: '500',
-  },
+  '.type-lead': { fontSize: '1.1875rem', lineHeight: '1.875rem', fontWeight: '400', letterSpacing: '-0.015em' },
+  '.type-body': { fontSize: '1rem', lineHeight: '1.625rem', fontWeight: '400', letterSpacing: '-0.01em' },
+  '.type-small': { fontSize: '0.875rem', lineHeight: '1.25rem', fontWeight: '400', letterSpacing: '-0.005em' },
+  '.type-caption': { fontSize: '0.75rem', lineHeight: '1rem', fontWeight: '500' },
   // Small monospaced caps: "THIS WEEK", "STEP 3 OF 5".
   '.type-overline': {
     fontFamily: monoFont,
@@ -123,19 +96,16 @@ const typeScale = () => ({
     letterSpacing: '0.1em',
     textTransform: 'uppercase',
   },
-  // Accent phrases stay in the same family: colour and weight create emphasis without a second visual language.
+  // The one italic serif phrase in a headline: <span className="type-accent">actually take.</span>
   '.type-accent': {
-    fontFamily: displayFont,
-    fontStyle: 'normal',
-    fontWeight: '650',
-    letterSpacing: '-0.04em',
-    fontSize: '1em',
+    fontFamily: serifFont,
+    fontStyle: 'italic',
+    fontWeight: '400',
+    letterSpacing: '-0.01em',
+    fontSize: '1.08em',
     color: '#2E7650',
   },
-  '.type-num': {
-    fontVariantNumeric: 'tabular-nums',
-    fontFeatureSettings: '"tnum" 1',
-  },
+  '.type-num': { fontVariantNumeric: 'tabular-nums', fontFeatureSettings: '"tnum" 1' },
 });
 
 module.exports = {
@@ -156,23 +126,11 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        // Set in app/(marketing)/layout.tsx: Geist Sans + Geist Mono.
+        // Set in app/(marketing)/layout.tsx: Manrope (sans/display), Instrument Serif (accent), JetBrains Mono (mono).
         sans: ['var(--font-sans)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        display: [
-          'var(--font-display)',
-          'var(--font-sans)',
-          'ui-sans-serif',
-          'system-ui',
-          'sans-serif',
-        ],
-        serif: ['var(--font-sans)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        mono: [
-          'var(--font-mono)',
-          'ui-monospace',
-          'SFMono-Regular',
-          'Menlo',
-          'monospace',
-        ],
+        display: ['var(--font-display)', 'var(--font-sans)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-serif)', 'ui-serif', 'Georgia', 'serif'],
+        mono: ['var(--font-mono)', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
       colors: {
         /* ---- Fermat semantic tokens (use these) ---- */
