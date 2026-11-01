@@ -243,13 +243,6 @@ export default function HeroGlobe({ className, dome = false }: HeroGlobeProps) {
     draw: (_now?: number) => {},
   });
 
-  // Preload the place photos so a card never pops up empty.
-  React.useEffect(() => {
-    CITIES.forEach((city) => {
-      if (city.photo) new Image().src = photoUrl(city.photo);
-    });
-  }, []);
-
   // Load the country shapes lazily so the hero paints first.
   React.useEffect(() => {
     let cancelled = false;
@@ -606,8 +599,11 @@ export default function HeroGlobe({ className, dome = false }: HeroGlobeProps) {
     let raf = 0;
     let running = false;
     let lastT = 0;
+    let animationReady = false;
     const tick = (now: number) => {
       raf = requestAnimationFrame(tick);
+      // 30fps keeps the globe fluid while leaving the main thread available for the page and input.
+      if (now - lastT < 1000 / 30) return;
       const dt = Math.min(0.05, (now - lastT) / 1000 || 0.016);
       lastT = now;
       if (!s.dragging) {
@@ -620,7 +616,7 @@ export default function HeroGlobe({ className, dome = false }: HeroGlobeProps) {
       draw(now);
     };
     const sync = (onScreen: boolean) => {
-      const shouldRun = !reduced && onScreen && document.visibilityState === 'visible';
+      const shouldRun = animationReady && !reduced && onScreen && document.visibilityState === 'visible';
       if (shouldRun && !running) {
         running = true;
         lastT = performance.now();
@@ -641,9 +637,15 @@ export default function HeroGlobe({ className, dome = false }: HeroGlobeProps) {
     const ro = new ResizeObserver(resize);
     ro.observe(wrap);
     resize();
+    // Let the server-rendered headline paint before the decorative animation starts doing work.
+    const startTimer = window.setTimeout(() => {
+      animationReady = true;
+      sync(onScreen);
+    }, 700);
     sync(onScreen);
 
     return () => {
+      window.clearTimeout(startTimer);
       cancelAnimationFrame(raf);
       io.disconnect();
       ro.disconnect();
@@ -806,6 +808,8 @@ export default function HeroGlobe({ className, dome = false }: HeroGlobeProps) {
                     <img
                       src={photoUrl(cardCity.photo)}
                       alt=""
+                      loading="lazy"
+                      decoding="async"
                       draggable={false}
                       className="size-11 shrink-0 rounded-[0.625rem] bg-surface-strong object-cover"
                     />

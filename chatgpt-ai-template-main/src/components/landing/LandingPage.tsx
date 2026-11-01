@@ -217,7 +217,7 @@ export default function LandingPage() {
               </p>
               <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-center sm:gap-5">
                 <Button asChild size="lg" className="rounded-full">
-                  <Link href="/plan">
+                  <Link href="/plan" prefetch={false}>
                     Start a group trip
                     <ArrowRight className="size-5" strokeWidth={2} aria-hidden />
                   </Link>

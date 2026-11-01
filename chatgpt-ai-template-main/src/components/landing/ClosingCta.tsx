@@ -32,7 +32,7 @@ export default function ClosingCta() {
           </div>
           <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
             <Button asChild size="lg" className="rounded-full bg-white text-brand-900 hover:bg-brand-50 focus-visible:ring-offset-brand-900">
-              <Link href="/plan">
+              <Link href="/plan" prefetch={false}>
                 Start a group trip
                 <ArrowRight className="size-5" strokeWidth={2} aria-hidden />
               </Link>
@@ -43,7 +43,7 @@ export default function ClosingCta() {
               variant="ghost"
               className="rounded-full text-white ring-1 ring-inset ring-white/30 hover:bg-white/10 hover:text-white focus-visible:ring-offset-brand-900"
             >
-              <Link href="/plan?preview=locked">See an example plan</Link>
+              <Link href="/plan?preview=locked" prefetch={false}>See an example plan</Link>
             </Button>
           </div>
         </div>
@@ -81,6 +81,7 @@ export function SiteFooter() {
             <Link
               key={link.href}
               href={link.href}
+              prefetch={link.href.startsWith('/plan') ? false : undefined}
               className="type-small rounded font-semibold text-ink-soft no-underline underline-offset-4 hover:text-brand-800 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
             >
               {link.label}
@@ -96,7 +97,7 @@ export function SiteFooter() {
         </p>
       </div>
       {/* Signature: the wordmark in ASCII, scaled to the column width. */}
-      <AsciiArt art={asciiArt.wordmark} className="mt-10 text-[3.6vw] leading-[1.05] text-brand-200 lg:text-[2.6rem]" />
+      <AsciiArt art={asciiArt.wordmark} className="mt-10 text-[3.6vw] leading-[1.05] text-brand-700 lg:text-[2.6rem]" />
     </footer>
   );
 }

@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { AuthProvider } from '@/contexts/AuthContext';
 
 const sans = Geist({ subsets: ['latin'], variable: '--font-plan-sans', display: 'swap' });
 const mono = Geist_Mono({ subsets: ['latin'], variable: '--font-plan-mono', display: 'swap' });
@@ -17,7 +18,7 @@ export default function PlanLayout({ children }: { children: ReactNode }) {
         } as React.CSSProperties
       }
     >
-      {children}
+      <AuthProvider>{children}</AuthProvider>
     </div>
   );
 }

@@ -722,19 +722,24 @@ export default function CollaborativeTripPlanner() {
 
   if (loading)
     return (
-      <main className="relative isolate flex min-h-screen flex-col items-center justify-center gap-6 bg-canvas font-sans">
-        <div aria-hidden className="bg-grid absolute inset-0 -z-10" />
-        <AsciiArt
-          art={asciiArt.suitcase}
-          className="text-[0.8125rem] text-brand-600"
-        />
-        <p
-          className="type-overline m-0 flex items-center gap-3 text-ink-muted"
-          role="status"
-        >
-          <AsciiSpinner className="text-brand-600" />
-          Opening your trip
-        </p>
+      <main className="min-h-screen bg-canvas pb-6 font-sans text-ink">
+        <PageContainer>
+          <TopBar />
+          <div className="mx-auto grid max-w-content gap-6 py-6 sm:py-10 lg:max-w-none lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:gap-6 lg:py-12">
+            <EntryHero />
+            <div className="grid content-start gap-4 rounded-2xl border border-solid border-line bg-surface p-3 shadow-sm sm:p-5">
+              <Card aria-busy="true">
+                <CardBody className="grid min-h-64 place-items-center gap-4 text-center">
+                  <AsciiArt art={asciiArt.suitcase} className="text-[0.75rem] text-brand-600" />
+                  <p className="type-small m-0 flex items-center gap-3 text-ink-muted" role="status">
+                    <AsciiSpinner className="text-brand-600" />
+                    Opening your trip workspace…
+                  </p>
+                </CardBody>
+              </Card>
+            </div>
+          </div>
+        </PageContainer>
       </main>
     );
 
