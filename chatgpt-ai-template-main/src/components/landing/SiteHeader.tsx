@@ -36,7 +36,7 @@ export default function SiteHeader({ links = defaultLinks }: { links?: HeaderLin
           ))}
         </nav>
         <Button asChild size="md" className="rounded-full">
-          <Link href="/plan">Start a trip</Link>
+          <Link href="/plan" prefetch={false}>Start a trip</Link>
         </Button>
       </div>
     </header>

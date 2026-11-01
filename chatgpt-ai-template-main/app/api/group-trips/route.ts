@@ -1,9 +1,73 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createHash } from 'node:crypto';
 import { firebaseAdmin } from '@/lib/firebaseAdmin';
 
 const domain = require('@/lib/collaborativeTrip');
 const service = require('@/lib/groupTripCommandService');
 const { FieldPath, FieldValue } = require('firebase-admin/firestore');
+
+class RateLimitError extends Error {
+  retryAfterSeconds: number;
+
+  constructor(retryAfterSeconds: number) {
+    super('Too many requests. Please wait a moment and try again.');
+    this.name = 'RateLimitError';
+    this.retryAfterSeconds = retryAfterSeconds;
+  }
+}
+
+class PayloadError extends Error {}
+
+async function jsonBody(request: NextRequest) {
+  const declaredLength = Number(request.headers.get('content-length') || 0);
+  if (declaredLength > 128 * 1024) throw new PayloadError('Request is too large.');
+  const text = await request.text();
+  if (text.length > 128 * 1024) throw new PayloadError('Request is too large.');
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new PayloadError('Request body must be valid JSON.');
+  }
+}
+
+const millis = (value: any) =>
+  typeof value?.toMillis === 'function' ? value.toMillis() : Number(value || 0);
+
+/**
+ * A small Firestore-backed fixed-window limit. Admin-only documents keep the
+ * limit consistent across Vercel instances without exposing IP addresses.
+ */
+async function enforceRateLimit(
+  firestore: any,
+  uid: string,
+  scope: string,
+  limit: number,
+  windowMs: number,
+) {
+  const id = createHash('sha256').update(`${uid}:${scope}`).digest('hex');
+  const ref = firestore.doc(`_rateLimits/${id}`);
+  const now = Date.now();
+
+  await firestore.runTransaction(async (transaction: any) => {
+    const snapshot = await transaction.get(ref);
+    const data = snapshot.data() || {};
+    const existingReset = millis(data.resetAt);
+    const active = existingReset > now;
+    const count = active ? Number(data.count || 0) : 0;
+    const resetAt = active ? existingReset : now + windowMs;
+
+    if (count >= limit) {
+      throw new RateLimitError(Math.max(1, Math.ceil((resetAt - now) / 1000)));
+    }
+
+    transaction.set(ref, {
+      count: count + 1,
+      resetAt: new Date(resetAt),
+      // Can be connected to a Firestore TTL policy without changing the API.
+      expiresAt: new Date(resetAt + 24 * 60 * 60 * 1000),
+    });
+  });
+}
 
 async function identity(request: NextRequest) {
   const header = request.headers.get('authorization') || '';
@@ -17,8 +81,11 @@ async function identity(request: NextRequest) {
 
 function errorResponse(error: unknown) {
   const message = error instanceof Error ? error.message : 'Unexpected shared-planning error';
-  const status = message === 'AUTH_REQUIRED' ? 401 : /not configured|credentials|project ID/i.test(message) ? 503 : /not found/i.test(message) ? 404 : /required|stale|capacity|expired|absent|allowed|unknown|incomplete|budget|membership|organizer|voting|invite|idempotency/i.test(message) ? 409 : 500;
-  return NextResponse.json({ error: message }, { status });
+  const status = error instanceof RateLimitError ? 429 : error instanceof PayloadError ? 413 : message === 'AUTH_REQUIRED' ? 401 : /not configured|credentials|project ID/i.test(message) ? 503 : /not found/i.test(message) ? 404 : /required|stale|capacity|expired|absent|allowed|unknown|incomplete|budget|membership|organizer|voting|invite|idempotency/i.test(message) ? 409 : 500;
+  const headers = error instanceof RateLimitError
+    ? { 'Retry-After': String(error.retryAfterSeconds) }
+    : undefined;
+  return NextResponse.json({ error: message }, { status, headers });
 }
 
 export async function GET(request: NextRequest) {
@@ -47,11 +114,16 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const token = await identity(request); const body = await request.json(); const { firestore } = firebaseAdmin();
+    const token = await identity(request); const body = await jsonBody(request); const { firestore } = firebaseAdmin();
+    await enforceRateLimit(firestore, token.uid, 'mutations-minute', 60, 60 * 1000);
     if (body.action === 'create') {
+      await enforceRateLimit(firestore, token.uid, 'create-hour', 10, 60 * 60 * 1000);
       if (token.firebase?.sign_in_provider === 'anonymous') throw new Error('A recoverable organizer identity is required');
       const result = await service.createTrip({ firestore, uid: token.uid, body, serverTimestamp: () => FieldValue.serverTimestamp() });
       return NextResponse.json({ trip: domain.buildTripProjection(result.state, token.uid), ...(result.invite ? { invite: result.invite } : {}) });
+    }
+    if (body.action === 'join') {
+      await enforceRateLimit(firestore, token.uid, 'join-ten-minutes', 20, 10 * 60 * 1000);
     }
     const result = await service.mutateTrip({ firestore, uid: token.uid, body, serverTimestamp: () => FieldValue.serverTimestamp() });
     return NextResponse.json({ trip: domain.buildTripProjection(result.state, token.uid), ...(result.invite ? { invite: result.invite } : {}) });

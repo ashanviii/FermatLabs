@@ -60,6 +60,9 @@ export const OpenAIStream = async (
   key: string | undefined,
   conversationHistory?: string,
 ) => {
+  if (!key?.trim()) {
+    throw new Error('An OpenAI API key must be supplied at runtime.');
+  }
   const prompt = createPrompt(inputCode, conversationHistory);
 
   const system = { role: 'system', content: prompt };
@@ -67,7 +70,7 @@ export const OpenAIStream = async (
   const res = await fetch(`https://api.openai.com/v1/chat/completions`, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${key || process.env.NEXT_PUBLIC_OPENAI_API_KEY}`,
+      Authorization: `Bearer ${key.trim()}`,
     },
     method: 'POST',
     body: JSON.stringify({

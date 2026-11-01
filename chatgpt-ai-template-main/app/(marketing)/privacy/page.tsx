@@ -1,5 +1,12 @@
+import type { Metadata } from 'next';
 import LegalPage, { Section } from '@/components/legal/LegalPage';
 import { LEGAL } from '@/lib/legal';
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy',
+  description: 'How Fermat collects, protects and uses account, trip and private planning information.',
+  alternates: { canonical: '/privacy' },
+};
 
 export default function PrivacyPage() {
   return <LegalPage title="Privacy Policy" intro={`${LEGAL.company} ("Fermat", "we") helps groups choose and plan a trip together while keeping each person's budget and documents private. This policy explains what we collect, why, who can see it, and the choices you have.`}>

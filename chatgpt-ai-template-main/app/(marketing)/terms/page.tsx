@@ -1,5 +1,12 @@
+import type { Metadata } from 'next';
 import LegalPage, { Section } from '@/components/legal/LegalPage';
 import { LEGAL } from '@/lib/legal';
+
+export const metadata: Metadata = {
+  title: 'Terms of Use',
+  description: 'The terms for using the Fermat group-trip planner.',
+  alternates: { canonical: '/terms' },
+};
 
 export default function TermsPage() {
   return <LegalPage title="Terms of Use" intro={`These terms are an agreement between you and ${LEGAL.company} ("Fermat", "we") for using the Fermat website and planner. By creating an account, joining a trip or continuing as a guest, you agree to them. If you don't agree, please don't use Fermat.`}>

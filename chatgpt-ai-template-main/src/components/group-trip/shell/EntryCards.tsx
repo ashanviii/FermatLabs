@@ -81,6 +81,7 @@ export function SignInCard({ invited, consented, onConsent }: { invited: boolean
   return (
     <Card>
       <CardHeader
+        as="h2"
         icon={invited ? icons.invite : LogIn}
         title={invited ? "Join your friends' trip" : 'Sign in to start planning'}
         description={invited ? 'No account needed. You can join as a guest.' : 'Use Google or email so you can come back to your trip later.'}
@@ -126,7 +127,7 @@ export function OrganizerIdentityCard() {
   const { signInWithGoogle } = useAuth();
   return (
     <Card>
-      <CardHeader icon={icons.organizer} title="Sign in to start your own trip" description="Guest accounts can join trips but can't create one." />
+      <CardHeader as="h2" icon={icons.organizer} title="Sign in to start your own trip" description="Guest accounts can join trips but can't create one." />
       <CardBody>
         <Button block size="lg" icon={LogIn} onClick={signInWithGoogle}>
           Continue with Google
@@ -338,7 +339,7 @@ export function CreateRoomCard({ draft, onChange, onCreate, disabled, busy }: { 
   };
   return (
     <Card>
-      <CardHeader icon={icons.plan} title="Start a trip" description="Pick rough dates. You can invite friends next." />
+      <CardHeader as="h2" icon={icons.plan} title="Start a trip" description="Pick rough dates. You can invite friends next." />
       <CardBody>
         <form ref={formRef} className="grid gap-5" noValidate onSubmit={(event) => { event.preventDefault(); submit(); }}>
         <Field label="Trip name" error={errors.name}>
@@ -379,7 +380,7 @@ export function EditTripSetupCard({ draft, onChange, onSave, onCancel, disabled,
   const formRef = useRef<HTMLFormElement>(null);
   return (
     <Card variant="flat">
-      <CardHeader icon={icons.plan} title="Edit trip setup" description="Changes to dates, location, currency or scope ask everyone to confirm their private details again." />
+      <CardHeader as="h2" icon={icons.plan} title="Edit trip setup" description="Changes to dates, location, currency or scope ask everyone to confirm their private details again." />
       <CardBody>
         <form ref={formRef} className="grid gap-5" noValidate onSubmit={(event) => {
           event.preventDefault();
@@ -416,7 +417,7 @@ export interface TripListItem {
 export function MyTripsCard({ trips, loading, onOpen, onRefresh }: { trips: TripListItem[]; loading: boolean; onOpen: (id: string) => void; onRefresh: () => void }) {
   return (
     <Card>
-      <CardHeader icon={icons.destination} title="Your trips" description={trips.length ? `${plural(trips.length, 'trip')} you can return to` : loading ? 'Loading…' : 'Trips you create or join will appear here'} action={<Button size="icon-sm" variant="ghost" aria-label="Refresh trips" title="Refresh trips" icon={RefreshCw} loading={loading} onClick={onRefresh} />} />
+      <CardHeader as="h2" icon={icons.destination} title="Your trips" description={trips.length ? `${plural(trips.length, 'trip')} you can return to` : loading ? 'Loading…' : 'Trips you create or join will appear here'} action={<Button size="icon-sm" variant="ghost" aria-label="Refresh trips" title="Refresh trips" icon={RefreshCw} loading={loading} onClick={onRefresh} />} />
       <CardBody>
         {loading && !trips.length ? <p className="type-small m-0 text-ink-muted" role="status">Loading your trips…</p> : trips.length ? (
           <ul className="m-0 grid list-none gap-2 p-0">
@@ -441,7 +442,7 @@ export function MyTripsCard({ trips, loading, onOpen, onRefresh }: { trips: Trip
 export function JoinRoomCard({ nickname, onNickname, onJoin, disabled, busy }: { nickname: string; onNickname: (value: string) => void; onJoin: () => void; disabled: boolean; busy: boolean }) {
   return (
     <Card>
-      <CardHeader icon={icons.invite} title="Join this trip" description="The organizer lets each person in, so they know who's coming." />
+      <CardHeader as="h2" icon={icons.invite} title="Join this trip" description="The organizer lets each person in, so they know who's coming." />
       <CardBody>
         <form
           className="grid gap-5"
