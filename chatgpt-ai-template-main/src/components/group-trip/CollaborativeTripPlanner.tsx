@@ -53,6 +53,7 @@ import {
   PlannerFooter,
   TopBar,
   TripHeader,
+  TripJourneyNav,
   TripSummary,
   stepEyebrow,
 } from './shell/PlannerChrome';
@@ -118,20 +119,44 @@ const scrollToStep = (id: StepId) =>
 function Point({
   icon: Icon,
   title,
+  inverse = false,
   children,
 }: {
   icon: IconComponent;
   title: string;
+  inverse?: boolean;
   children: React.ReactNode;
 }) {
   return (
-    <li className="flex gap-3">
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+    <li className="flex gap-3 rounded-xl border border-solid border-white/10 bg-white/[0.06] p-3.5">
+      <span
+        className={
+          inverse
+            ? 'flex size-10 shrink-0 items-center justify-center rounded-lg bg-white/10 text-brand-100'
+            : 'flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700'
+        }
+      >
         <Icon className="size-5" strokeWidth={1.75} aria-hidden />
       </span>
       <span className="min-w-0 pt-0.5">
-        <span className="type-body block font-semibold text-ink">{title}</span>
-        <span className="type-small block text-ink-muted">{children}</span>
+        <span
+          className={
+            inverse
+              ? 'type-body block font-semibold text-white'
+              : 'type-body block font-semibold text-ink'
+          }
+        >
+          {title}
+        </span>
+        <span
+          className={
+            inverse
+              ? 'type-small block text-white/65'
+              : 'type-small block text-ink-muted'
+          }
+        >
+          {children}
+        </span>
       </span>
     </li>
   );
@@ -220,28 +245,37 @@ function StepSummaryRow({
 
 function EntryHero() {
   return (
-    <div className="grid gap-6 lg:pt-6">
-      <div className="grid gap-3">
-        <p className="type-overline m-0 text-brand-600">Group trips, sorted</p>
-        <h1 className="type-display m-0 text-balance">
-          Find a trip your whole group can actually take
-        </h1>
-        <p className="type-lead m-0 max-w-prose text-ink-soft">
-          Everyone adds their budget and passport privately. Fermat shows what
-          works for the group and turns the vote into a day-by-day plan.
-        </p>
+    <div className="relative isolate grid overflow-hidden rounded-2xl border border-solid border-brand-800 bg-brand-950 p-6 text-white shadow-raised sm:p-8 lg:sticky lg:top-24 lg:p-10">
+      <div aria-hidden className="bg-grid absolute inset-0 -z-10 opacity-10" />
+      <div
+        aria-hidden
+        className="absolute -right-20 -top-20 -z-10 size-72 rounded-full bg-brand-500/30 blur-3xl"
+      />
+      <div className="grid content-start gap-8">
+        <div className="grid gap-4">
+          <p className="type-overline m-0 text-brand-200">
+            Your trip workspace
+          </p>
+          <h1 className="type-display m-0 max-w-[13ch] text-balance !text-white">
+            Find a trip your whole group can actually take
+          </h1>
+          <p className="type-lead m-0 max-w-prose text-white/70">
+            One organized workspace for private budgets, group decisions and the
+            final day-by-day plan.
+          </p>
+        </div>
+        <ul className="m-0 grid list-none gap-3 p-0">
+          <Point inverse icon={icons.private} title="Budgets stay private">
+            The group sees the blocker, never whose budget it is.
+          </Point>
+          <Point inverse icon={icons.vote} title="Decisions stay clear">
+            Everyone votes privately. The winning logic stays visible.
+          </Point>
+          <Point inverse icon={icons.plan} title="The plan stays actionable">
+            Days, personal costs, tasks and settle-up in one place.
+          </Point>
+        </ul>
       </div>
-      <ul className="m-0 hidden list-none gap-5 p-0 sm:grid">
-        <Point icon={icons.private} title="Budgets stay private">
-          The group sees &ldquo;2 budgets short&rdquo;, never whose.
-        </Point>
-        <Point icon={icons.vote} title="Vote in secret">
-          Only places everyone can go are able to win.
-        </Point>
-        <Point icon={icons.plan} title="Get a real plan">
-          Days, cost per person and who&rsquo;s doing what.
-        </Point>
-      </ul>
     </div>
   );
 }
@@ -1250,9 +1284,9 @@ export default function CollaborativeTripPlanner() {
         )}
 
         {!trip && (
-          <div className="mx-auto grid max-w-content gap-8 pt-6 sm:pt-10 lg:max-w-none lg:grid-cols-2 lg:items-start lg:gap-16 lg:pt-16">
+          <div className="mx-auto grid max-w-content gap-6 py-6 sm:py-10 lg:max-w-none lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:gap-6 lg:py-12">
             <EntryHero />
-            <div className="grid gap-4">
+            <div className="grid content-start gap-4 rounded-2xl border border-solid border-line bg-surface p-3 shadow-sm sm:p-5">
               {!sharedFirebaseConfigured && !preview ? (
                 <Notice tone="warning" title="Shared trips aren't set up here.">
                   This copy of Fermat is missing its Firebase settings
@@ -1400,7 +1434,7 @@ export default function CollaborativeTripPlanner() {
                 </DialogContent>
               )}
             </Dialog>
-            <div className="mt-6 grid gap-4 lg:hidden">
+            <div className="mt-6 grid gap-4 xl:hidden">
               <Sheet>
                 <SheetTrigger asChild>
                   <Button block variant="outline" icon={icons.members}>
@@ -1425,12 +1459,18 @@ export default function CollaborativeTripPlanner() {
               </Sheet>
               {!trip.activePlan && <Tasks {...featureProps} />}
             </div>
-            <div className="mt-10 grid gap-12 lg:grid-cols-12 lg:gap-8">
-              <div className="grid min-w-0 content-start gap-4 lg:col-span-8">
+            <div className="mt-6 grid gap-6 lg:grid-cols-[15rem_minmax(0,1fr)] xl:grid-cols-[15rem_minmax(0,1fr)_20rem]">
+              <aside
+                className="hidden min-w-0 lg:block"
+                aria-label="Trip steps"
+              >
+                <TripJourneyNav current={step} onStepClick={navigateStep} />
+              </aside>
+              <div className="grid min-w-0 content-start gap-4">
                 {ordered[step].filter(Boolean)}
               </div>
               <aside
-                className="hidden min-w-0 content-start gap-6 lg:col-span-4 lg:grid"
+                className="hidden min-w-0 content-start gap-6 xl:grid"
                 aria-label="Trip overview"
               >
                 <TripSummary

@@ -1,7 +1,14 @@
 'use client';
 // Frame around the planner: top bar, trip header + stepper, trip summary sidebar and footer.
 import { useEffect, useState } from 'react';
-import { Ban, Home, Pencil, RefreshCw } from 'lucide-react';
+import {
+  Ban,
+  Check,
+  ChevronRight,
+  Home,
+  Pencil,
+  RefreshCw,
+} from 'lucide-react';
 import FermatMark from '@/components/landing/FermatMark';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody, CardHeader } from '@/components/ui/card';
@@ -12,6 +19,7 @@ import { Notice } from '@/components/ui/notice';
 import { Progress } from '@/components/ui/progress';
 import { Stepper, PLAN_STEPS } from '@/components/ui/stepper';
 import { icons, type IconComponent } from '@/components/ui/icons';
+import { cn } from '@/lib/utils';
 import {
   formatDateRange,
   formatMoney,
@@ -47,7 +55,7 @@ export function TopBar({
         aria-hidden
         className="material-bar pointer-events-none absolute inset-y-0 left-1/2 w-screen -translate-x-1/2 border-0 border-b border-solid border-line-subtle"
       />
-      <div className="relative flex h-16 items-center justify-between gap-3">
+      <div className="relative flex h-[4.5rem] items-center justify-between gap-3">
         <a
           href="/"
           className="flex items-center gap-2 rounded-md text-ink no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
@@ -57,7 +65,7 @@ export function TopBar({
         </a>
         <div className="flex items-center gap-3">
           {trip && onHome && (
-            <Button size="sm" variant="ghost" icon={Home} onClick={onHome}>
+            <Button size="sm" variant="outline" icon={Home} onClick={onHome}>
               <span className="hidden sm:inline">All trips</span>
               <span className="sm:hidden">Home</span>
             </Button>
@@ -78,25 +86,6 @@ export function TopBar({
   );
 }
 
-function Meta({
-  icon: Icon,
-  children,
-}: {
-  icon: IconComponent;
-  children: React.ReactNode;
-}) {
-  return (
-    <span className="type-small inline-flex items-center gap-1.5 text-ink-soft">
-      <Icon
-        className="size-4 shrink-0 text-ink-faint"
-        strokeWidth={1.75}
-        aria-hidden
-      />
-      {children}
-    </span>
-  );
-}
-
 export function TripHeader({
   trip,
   owner,
@@ -112,50 +101,166 @@ export function TripHeader({
 }) {
   const nights = nightsBetween(trip.startDate, trip.endDate);
   return (
-    <header className="grid gap-6 pb-2 pt-4 sm:pt-8">
-      {/* On phones the action drops below the trip details so it never overlaps the badge or title. */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="grid min-w-0 flex-1 gap-2">
-          <p className="type-overline m-0 flex flex-wrap items-center gap-2 text-brand-600">
-            {phaseLabel(trip)}
-            {owner && (
-              <Badge size="sm" tone="brand" icon={icons.organizer}>
-                You're the organizer
-              </Badge>
-            )}
-          </p>
-          <h1 className="type-h1 m-0 text-balance">{trip.name}</h1>
-          <div className="flex flex-wrap gap-x-5 gap-y-1.5">
-            <Meta icon={icons.calendar}>
+    <header className="relative mt-5 overflow-hidden rounded-2xl border border-solid border-line bg-surface p-5 shadow-sm sm:p-7">
+      <div
+        aria-hidden
+        className="absolute -right-16 -top-20 size-64 rounded-full bg-brand-100/70 blur-3xl"
+      />
+      <div className="relative grid gap-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="grid min-w-0 flex-1 gap-2">
+            <p className="type-overline m-0 flex flex-wrap items-center gap-2 text-brand-700">
+              {phaseLabel(trip)}
+              {owner && (
+                <Badge size="sm" tone="brand" icon={icons.organizer}>
+                  You're the organizer
+                </Badge>
+              )}
+            </p>
+            <h1 className="type-h1 m-0 text-balance">{trip.name}</h1>
+            <p className="type-small m-0 text-ink-muted">
+              Everything your group needs, from first invite to final settle-up.
+            </p>
+          </div>
+          {action && (
+            <div className="flex shrink-0 items-center gap-2">{action}</div>
+          )}
+        </div>
+        <dl className="m-0 grid grid-cols-2 gap-2.5 lg:grid-cols-4">
+          <div className="rounded-xl border border-solid border-line-subtle bg-canvas/80 p-3.5">
+            <dt className="type-caption flex items-center gap-1.5 text-ink-muted">
+              <icons.calendar className="size-3.5" aria-hidden />
+              Dates
+            </dt>
+            <dd className="type-small m-0 mt-1 font-semibold text-ink">
               {formatDateRange(trip.startDate, trip.endDate)}
               {nights > 0 && ` · ${plural(nights, 'night')}`}
-            </Meta>
-            {trip.members && (
-              <Meta icon={icons.members}>
-                {approvedCount(trip)} of {trip.expectedSize} joined
-              </Meta>
-            )}
-            <Meta
-              icon={
-                trip.scope === 'domestic' ? icons.destination : icons.flight
-              }
-            >
-              {scopeLabel(trip)}
-            </Meta>
-            {trip.currency && (
-              <Meta icon={icons.money}>Prices in {trip.currency}</Meta>
-            )}
+            </dd>
           </div>
-        </div>
-        {action && (
-          <div className="flex shrink-0 items-center gap-2">{action}</div>
-        )}
+          <div className="rounded-xl border border-solid border-line-subtle bg-canvas/80 p-3.5">
+            <dt className="type-caption flex items-center gap-1.5 text-ink-muted">
+              <icons.members className="size-3.5" aria-hidden />
+              Group
+            </dt>
+            <dd className="type-small m-0 mt-1 font-semibold text-ink">
+              {approvedCount(trip)} of {trip.expectedSize} joined
+            </dd>
+          </div>
+          <div className="rounded-xl border border-solid border-line-subtle bg-canvas/80 p-3.5">
+            <dt className="type-caption flex items-center gap-1.5 text-ink-muted">
+              <icons.route className="size-3.5" aria-hidden />
+              Trip type
+            </dt>
+            <dd className="type-small m-0 mt-1 font-semibold text-ink">
+              {scopeLabel(trip)}
+            </dd>
+          </div>
+          <div className="rounded-xl border border-solid border-line-subtle bg-canvas/80 p-3.5">
+            <dt className="type-caption flex items-center gap-1.5 text-ink-muted">
+              <icons.money className="size-3.5" aria-hidden />
+              Currency
+            </dt>
+            <dd className="type-small m-0 mt-1 font-semibold text-ink">
+              Prices in {trip.currency}
+            </dd>
+          </div>
+        </dl>
+        <Stepper
+          className="lg:hidden"
+          current={step}
+          onStepClick={(s) => onStepClick(s.id as StepId)}
+        />
       </div>
-      <Stepper
-        current={step}
-        onStepClick={(s) => onStepClick(s.id as StepId)}
-      />
     </header>
+  );
+}
+
+const journeyIcons: Record<StepId, IconComponent> = {
+  invite: icons.invite,
+  details: icons.private,
+  choose: icons.vote,
+  plan: icons.plan,
+  go: icons.departure,
+};
+
+/** Desktop application-shell navigation. Mobile uses the compact Stepper above. */
+export function TripJourneyNav({
+  current,
+  onStepClick,
+}: {
+  current: StepId;
+  onStepClick: (id: StepId) => void;
+}) {
+  const currentIndex = stepIndex(current);
+  return (
+    <nav
+      aria-label="Trip journey"
+      className="sticky top-24 rounded-xl border border-solid border-line bg-surface p-3 shadow-sm"
+    >
+      <div className="px-2 pb-3 pt-1">
+        <p className="type-overline m-0 text-brand-700">Trip journey</p>
+        <p className="type-caption m-0 mt-1 text-ink-muted">
+          From first invite to takeoff.
+        </p>
+      </div>
+      <ol className="m-0 grid list-none gap-1 p-0">
+        {PLAN_STEPS.map((item, index) => {
+          const Icon = journeyIcons[item.id as StepId];
+          const active = index === currentIndex;
+          const done = index < currentIndex;
+          const available = index <= currentIndex;
+          return (
+            <li key={item.id}>
+              <button
+                type="button"
+                disabled={!available}
+                aria-current={active ? 'step' : undefined}
+                onClick={() => available && onStepClick(item.id as StepId)}
+                className={cn(
+                  'group flex min-h-12 w-full items-center gap-3 rounded-lg border-0 px-3 py-2 text-left font-sans transition-colors',
+                  active
+                    ? 'cursor-default bg-brand-900 text-white shadow-sm'
+                    : done
+                    ? 'cursor-pointer bg-transparent text-ink hover:bg-brand-50'
+                    : 'cursor-not-allowed bg-transparent text-ink-muted opacity-55',
+                )}
+              >
+                <span
+                  className={cn(
+                    'flex size-8 shrink-0 items-center justify-center rounded-md',
+                    active
+                      ? 'bg-white/15 text-white'
+                      : done
+                      ? 'bg-brand-50 text-brand-700'
+                      : 'bg-surface-muted text-ink-muted',
+                  )}
+                >
+                  {done ? (
+                    <Check className="size-4" strokeWidth={2.5} aria-hidden />
+                  ) : (
+                    <Icon className="size-4" strokeWidth={1.8} aria-hidden />
+                  )}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="type-caption block opacity-70">
+                    Step {index + 1}
+                  </span>
+                  <span className="type-small block font-semibold">
+                    {item.label}
+                  </span>
+                </span>
+                {available && !active && (
+                  <ChevronRight
+                    className="size-4 text-ink-faint transition-transform group-hover:translate-x-0.5"
+                    aria-hidden
+                  />
+                )}
+              </button>
+            </li>
+          );
+        })}
+      </ol>
+    </nav>
   );
 }
 
