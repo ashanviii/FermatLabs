@@ -197,9 +197,8 @@ function SectionHeading({ id, eyebrow, title, lead, center }: { id: string; eyeb
 
 export default function LandingPage() {
   return (
-    // Neutral page: the italic accent phrases go grey instead of green, so green is left for the main actions.
     // overflow-x-clip (not hidden) keeps the sticky header working while slide-ins are offset off screen.
-    <LandingMotion className="flex min-h-screen flex-col overflow-x-clip bg-canvas font-sans text-ink [&_.type-accent]:text-ink-soft">
+    <LandingMotion className="flex min-h-screen flex-col overflow-x-clip bg-canvas font-sans text-ink">
       <a
         href="#main"
         className="type-small sr-only z-50 rounded-full bg-ink px-4 py-2 font-semibold text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-3"
@@ -215,14 +214,17 @@ export default function LandingPage() {
       ]} />
 
       {/* Pulled up under the sticky nav (4rem tall) so the hero grid runs behind the frosted bar. */}
-      <main id="main" className="-mt-16 flex flex-col gap-20 pb-8 sm:gap-28">
+      <main id="main" className="-mt-16 flex flex-col gap-20 sm:gap-28">
         {/* Hero: the globe as a dome (top half) centred above centred copy, all on the faint grid. */}
         <section data-hero-section aria-labelledby="hero-title" className="relative isolate">
           <div aria-hidden className="bg-grid absolute inset-0 -z-10" />
+          {/* A soft blue glow behind the globe, so the first screen has some colour. */}
+          <div aria-hidden className="absolute inset-x-0 top-0 -z-10 h-[40rem] bg-[radial-gradient(ellipse_60%_55%_at_50%_10%,rgba(63,94,173,0.12),transparent_70%)]" />
           {/* Dithered hills rolling along the bottom of the hero, fading out toward the centre. */}
           <DitherField
             pattern="horizon"
-            alpha={0.1}
+            rgb={[63, 94, 173]}
+            alpha={0.16}
             cell={4}
             speed={0.8}
             intensity={0.8}
@@ -234,10 +236,12 @@ export default function LandingPage() {
               <HeroGlobe dome />
             </div>
             <div className="relative -mt-4 flex flex-col items-center sm:-mt-8">
-              <p data-hero="item" className="type-small m-0 inline-flex flex-wrap items-center justify-center gap-x-1.5 rounded-full bg-surface px-3.5 py-1.5 font-medium text-ink-soft shadow-card">
-                Group trip planner for 2 to 10 friends.
-                <span className="font-semibold text-ink">Budgets stay private.</span>
-              </p>
+              <div data-hero="item" className="frost-frame rounded-full p-1.5">
+                <p className="type-small m-0 inline-flex flex-wrap items-center justify-center gap-x-1.5 rounded-full bg-surface px-3.5 py-1.5 font-medium text-ink-soft shadow-card">
+                  Group trip planner for 2 to 10 friends.
+                  <span className="font-semibold text-ink">Budgets stay private.</span>
+                </p>
+              </div>
               <h1 data-hero="item" id="hero-title" className="type-display m-0 mt-6 max-w-[16ch] text-balance">
                 One trip everyone can <span className="type-accent whitespace-nowrap">actually take.</span>
               </h1>
@@ -460,7 +464,8 @@ export default function LandingPage() {
           <div data-reveal className="relative isolate grid gap-10 overflow-hidden rounded-3xl bg-surface-muted p-6 ring-1 ring-inset ring-line-subtle sm:p-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16 lg:p-12">
             <DitherField
               pattern="waves"
-              alpha={0.13}
+              rgb={[63, 94, 173]}
+              alpha={0.16}
               cell={4}
               speed={0.6}
               className="absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_80%_90%_at_0%_100%,black_20%,transparent_75%)]"

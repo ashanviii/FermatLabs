@@ -6,21 +6,21 @@
   .landing {
     /* Legacy shadcn variables, kept so older markup still renders. New screens use the Fermat tokens
        (canvas, ink, brand, ...) from tailwind.config.js; see src/components/ui/DESIGN.md. */
-    --background: 100 20% 98.5%;
-    --foreground: 160 25% 10%;
+    --background: 220 45% 97.5%;
+    --foreground: 240 7% 8%;
     --card: 0 0% 100%;
-    --card-foreground: 160 25% 10%;
-    --primary: 145 40% 55%;
-    --primary-foreground: 150 40% 10%;
-    --secondary: 142 35% 94%;
-    --secondary-foreground: 150 30% 16%;
-    --muted: 120 12% 95%;
-    --muted-foreground: 160 6% 40%;
-    --accent: 142 35% 93%;
-    --accent-foreground: 150 35% 18%;
-    --border: 140 12% 88%;
-    --input: 140 12% 88%;
-    --ring: 145 40% 40%;
+    --card-foreground: 240 7% 8%;
+    --primary: 223 46% 46%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 223 50% 95%;
+    --secondary-foreground: 223 40% 30%;
+    --muted: 222 35% 95%;
+    --muted-foreground: 225 8% 40%;
+    --accent: 223 50% 94%;
+    --accent-foreground: 223 40% 30%;
+    --border: 225 20% 88%;
+    --input: 225 20% 88%;
+    --ring: 223 46% 46%;
     --radius: 1rem;
 
     min-height: 100vh;
@@ -54,9 +54,22 @@
 }
 
 @layer components {
+  /* Frosted glass frame: a translucent, blurred rim around a card or chip. Pad the wrapper to set the rim width. */
+  .frost-frame {
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.85), rgba(227, 233, 247, 0.45) 55%, rgba(255, 255, 255, 0.6));
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 1),
+      inset 0 -1px 0 rgba(63, 94, 173, 0.08),
+      0 0 0 1px rgba(63, 94, 173, 0.14),
+      0 20px 50px -20px rgba(36, 53, 95, 0.3);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    backdrop-filter: blur(14px) saturate(160%);
+  }
+
   /* Frosted white bar material for floating/sticky chrome (the nav pill, the /plan top bar). */
   .material-bar {
-    background-color: rgba(250, 250, 248, 0.8);
+    background-color: rgba(245, 247, 251, 0.8);
     -webkit-backdrop-filter: saturate(180%) blur(18px);
     backdrop-filter: saturate(180%) blur(18px);
   }
@@ -71,8 +84,8 @@
   /* Faint graph-paper grid behind hero and feature bands. Fades out towards the edges. */
   .bg-grid {
     background-image:
-      linear-gradient(to right, rgba(19, 19, 22, 0.05) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(19, 19, 22, 0.05) 1px, transparent 1px);
+      linear-gradient(to right, rgba(43, 64, 118, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(43, 64, 118, 0.06) 1px, transparent 1px);
     background-size: 44px 44px;
     background-position: center top;
     -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 40%, transparent 100%);
@@ -99,6 +112,12 @@
 
 /* Reduce Transparency: solid bars instead of blur. */
 @media (prefers-reduced-transparency: reduce) {
+  .landing .frost-frame {
+    background: rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
   .landing .material-bar {
     background-color: #fafaf8;
     -webkit-backdrop-filter: none;

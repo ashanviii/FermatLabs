@@ -129,13 +129,14 @@ const C = {
   pinDark: '#B31412',
 };
 
-// 1-bit dither for the sphere: one cell is this many CSS pixels, dots are ink at DITHER_ALPHA.
+// 1-bit dither for the sphere: one cell is this many CSS pixels, dots are DITHER_RGB (brand-800 denim) at DITHER_ALPHA.
 // Darkness (1 - luminance) is multiplied by DITHER_GAIN before thresholding. The `land` path fill lands on the sea
 // with this atlas (the smooth globe looks the same way), so the result is clean continents on a halftone sea, with
 // the shaded rim a little denser.
 const DITHER_CELL = 3;
 const DITHER_GAIN = 1.55;
-const DITHER_ALPHA = 0.5;
+const DITHER_ALPHA = 0.55;
+const DITHER_RGB = [43, 64, 118];
 const DITHER_LAND = 'rgba(130, 130, 140, 0.6)';
 // Classic 8x8 Bayer matrix, as 0..1 thresholds.
 const BAYER = [
@@ -414,9 +415,9 @@ export default function HeroGlobe({ className, dome = false, dither = true }: He
           }
           const lum = (px[i] * 0.299 + px[i + 1] * 0.587 + px[i + 2] * 0.114) / 255;
           const on = (1 - lum) * DITHER_GAIN > BAYER[(y & 7) * 8 + (x & 7)];
-          px[i] = 19;
-          px[i + 1] = 19;
-          px[i + 2] = 22;
+          px[i] = DITHER_RGB[0];
+          px[i + 1] = DITHER_RGB[1];
+          px[i + 2] = DITHER_RGB[2];
           px[i + 3] = on ? a : 0;
         }
       }
@@ -870,42 +871,45 @@ export default function HeroGlobe({ className, dome = false, dither = true }: He
             );
           })}
 
-          {/* Place card: a compact map preview (thumbnail + name + details) on a frosted surface, with a pointer to
-              the pin. Springs from the pin; opens below it near the top edge. */}
+          {/* Place card: a compact map preview (thumbnail + name + details) in a frosted-glass rim, with a pointer to
+              the pin. Springs from the pin; opens below it near the top edge. No CSS filter here: it would stop the
+              rim's backdrop blur from seeing the globe. */}
           <div
             ref={cardRef}
             data-below="false"
-            className="group absolute left-0 top-0 z-20 flex w-max max-w-[15rem] origin-bottom flex-col items-center opacity-0 will-change-transform data-[below=true]:origin-top [filter:drop-shadow(0_0_0.6px_rgba(19,19,22,0.28))_drop-shadow(0_6px_14px_rgba(19,19,22,0.14))]"
+            className="group absolute left-0 top-0 z-20 flex w-max max-w-[15rem] origin-bottom flex-col items-center opacity-0 will-change-transform data-[below=true]:origin-top"
           >
             {cardCity && (
               <>
-                <div className="flex items-center gap-2.5 rounded-2xl bg-surface p-1.5 pr-4 text-left">
-                  {cardCity.photo && (
-                    <img
-                      src={photoUrl(cardCity.photo)}
-                      alt=""
-                      loading="lazy"
-                      decoding="async"
-                      draggable={false}
-                      className="size-11 shrink-0 rounded-[0.625rem] bg-surface-strong object-cover"
-                    />
-                  )}
-                  <div className="min-w-0">
-                    <p className="m-0 truncate text-[0.8125rem] font-semibold leading-tight tracking-[-0.01em] text-ink">{cardCity.name}</p>
-                    <p className="m-0 mt-0.5 truncate text-[0.6875rem] leading-tight text-ink-muted">
-                      {cardCity.country}
-                      {cardCity.tag ? ` · ${cardCity.tag}` : ''}
-                    </p>
-                    {card?.from && (
-                      <p className="m-0 mt-1 inline-flex items-center gap-1 rounded-full bg-surface-muted px-1.5 py-px font-mono text-[0.5625rem] font-medium uppercase tracking-[0.08em] text-ink-soft">
-                        From {byCode[card.from].name}
-                      </p>
+                <div className="frost-frame rounded-[1.375rem] p-1">
+                  <div className="flex items-center gap-2.5 rounded-2xl bg-surface p-1.5 pr-4 text-left">
+                    {cardCity.photo && (
+                      <img
+                        src={photoUrl(cardCity.photo)}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                        className="size-11 shrink-0 rounded-[0.625rem] bg-surface-strong object-cover"
+                      />
                     )}
+                    <div className="min-w-0">
+                      <p className="m-0 truncate text-[0.8125rem] font-semibold leading-tight tracking-[-0.01em] text-ink">{cardCity.name}</p>
+                      <p className="m-0 mt-0.5 truncate text-[0.6875rem] leading-tight text-ink-muted">
+                        {cardCity.country}
+                        {cardCity.tag ? ` · ${cardCity.tag}` : ''}
+                      </p>
+                      {card?.from && (
+                        <p className="m-0 mt-1 inline-flex items-center gap-1 rounded-full bg-surface-muted px-1.5 py-px font-mono text-[0.5625rem] font-medium uppercase tracking-[0.08em] text-ink-soft">
+                          From {byCode[card.from].name}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <svg
                   viewBox="0 0 14 7"
-                  className="-mt-px block h-[7px] w-3.5 fill-surface group-data-[below=true]:order-first group-data-[below=true]:-mb-px group-data-[below=true]:mt-0 group-data-[below=true]:rotate-180"
+                  className="-mt-px block h-[7px] w-3.5 fill-white/90 group-data-[below=true]:order-first group-data-[below=true]:-mb-px group-data-[below=true]:mt-0 group-data-[below=true]:rotate-180"
                 >
                   <path d="M0 0H14L7.9 6.3C7.4 6.8 6.6 6.8 6.1 6.3Z" />
                 </svg>
