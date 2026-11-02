@@ -8,10 +8,13 @@ import { Audio } from "@remotion/media";
 import { AbsoluteFill, Sequence, interpolate, staticFile, useCurrentFrame } from "remotion";
 import { SOUNDS, Sfx } from "./components/Sfx";
 import { HookScene } from "./scenes/HookScene";
+import { RoomScene } from "./scenes/RoomScene";
 import { PrivateDetailsScene } from "./scenes/PrivateDetailsScene";
 import { EligibleTripsScene } from "./scenes/EligibleTripsScene";
 import { VoteScene } from "./scenes/VoteScene";
+import { VoteResultsScene } from "./scenes/VoteResultsScene";
 import { PlanScene } from "./scenes/PlanScene";
+import { CoordinationScene } from "./scenes/CoordinationScene";
 import { FinaleScene } from "./scenes/FinaleScene";
 import { colors } from "./theme";
 import { MUSIC_VOLUME, AUDIO_TRIM, SCENES, SOUNDTRACK, TOTAL_FRAMES } from "./timing";
@@ -65,6 +68,9 @@ export const Master: React.FC<{ sfx?: boolean }> = ({ sfx = true }) => {
       <Sequence from={SCENES.hook.start} durationInFrames={SCENES.hook.duration}>
         <HookScene />
       </Sequence>
+      <Sequence from={SCENES.room.start} durationInFrames={SCENES.room.duration}>
+        <RoomScene />
+      </Sequence>
       <Sequence from={SCENES.privateDetails.start} durationInFrames={SCENES.privateDetails.duration}>
         <PrivateDetailsScene />
       </Sequence>
@@ -74,8 +80,14 @@ export const Master: React.FC<{ sfx?: boolean }> = ({ sfx = true }) => {
       <Sequence from={SCENES.vote.start} durationInFrames={SCENES.vote.duration}>
         <VoteScene />
       </Sequence>
+      <Sequence from={SCENES.voteResults.start} durationInFrames={SCENES.voteResults.duration}>
+        <VoteResultsScene />
+      </Sequence>
       <Sequence from={SCENES.plan.start} durationInFrames={SCENES.plan.duration}>
         <PlanScene />
+      </Sequence>
+      <Sequence from={SCENES.coordination.start} durationInFrames={SCENES.coordination.duration}>
+        <CoordinationScene />
       </Sequence>
       <Sequence from={SCENES.finale.start} durationInFrames={SCENES.finale.duration}>
         <FinaleScene />

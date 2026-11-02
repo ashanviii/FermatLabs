@@ -5,10 +5,13 @@ import { loadFont as loadMono } from "@remotion/google-fonts/JetBrainsMono";
 import { Composition } from "remotion";
 import { Master } from "./Master";
 import { HookScene } from "./scenes/HookScene";
+import { RoomScene } from "./scenes/RoomScene";
 import { PrivateDetailsScene } from "./scenes/PrivateDetailsScene";
 import { EligibleTripsScene } from "./scenes/EligibleTripsScene";
 import { VoteScene } from "./scenes/VoteScene";
+import { VoteResultsScene } from "./scenes/VoteResultsScene";
 import { PlanScene } from "./scenes/PlanScene";
+import { CoordinationScene } from "./scenes/CoordinationScene";
 import { FinaleScene } from "./scenes/FinaleScene";
 import { canvas } from "./theme";
 import { FPS, SCENES, TOTAL_FRAMES } from "./timing";
@@ -53,6 +56,14 @@ export const RemotionRoot: React.FC = () => (
       height={canvas.height}
     />
     <Composition
+      id="Scene-Room"
+      component={RoomScene}
+      durationInFrames={SCENES.room.duration}
+      fps={FPS}
+      width={canvas.width}
+      height={canvas.height}
+    />
+    <Composition
       id="Scene-PrivateDetails"
       component={PrivateDetailsScene}
       durationInFrames={SCENES.privateDetails.duration}
@@ -77,9 +88,25 @@ export const RemotionRoot: React.FC = () => (
       height={canvas.height}
     />
     <Composition
+      id="Scene-VoteResults"
+      component={VoteResultsScene}
+      durationInFrames={SCENES.voteResults.duration}
+      fps={FPS}
+      width={canvas.width}
+      height={canvas.height}
+    />
+    <Composition
       id="Scene-Plan"
       component={PlanScene}
       durationInFrames={SCENES.plan.duration}
+      fps={FPS}
+      width={canvas.width}
+      height={canvas.height}
+    />
+    <Composition
+      id="Scene-Coordination"
+      component={CoordinationScene}
+      durationInFrames={SCENES.coordination.duration}
       fps={FPS}
       width={canvas.width}
       height={canvas.height}

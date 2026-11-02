@@ -1,65 +1,59 @@
-# Fermat product demo - brief
+# Fermat product demo - wave 2 brief
 
 ## Inputs
 
-- **Format:** 16:9 (1920x1080), about 32 seconds
-- **Logo:** `video/public/fermat-mark.png`, 383x455 RGBA raster; keep below native dimensions
+- **Format:** 16:9, 1920x1080, 30 fps, 49.667 seconds
+- **Logo:** `video/public/fermat-mark.png`, kept below native size
 - **Colors:** primary `#2E7650`, deep green `#153524`, canvas `#FAFAF8`, surface `#FFFFFF`, ink `#131316`, marigold `#F4B740`
-- **Fonts:** display and UI `Manrope 400-800`; overlines `JetBrains Mono 500-600`
-- **Soundtrack:** `video/public/soundtrack.mp3`, "Talent in the Air" by Diego Nava, 122.52 BPM, 114.1 seconds, grid reliability good
-- **Beat sync:** yes, scene cuts land on detected backbeats. The detector heard a variable grid, so events use tracked frames rather than an even BPM calculation.
-- **References:** `references/linear-for-agents.md`
+- **Fonts:** Manrope 400-800 for display and UI; JetBrains Mono 500-600 for overlines
+- **Soundtrack:** `video/public/soundtrack.mp3`, "Talent in the Air" by Diego Nava, 122.52 BPM
+- **Beat sync:** yes. Every scene boundary uses the tracked backbeat grid.
+- **Baseline:** accepted 31.979-second v1 at `docs/assets/fermat-product-demo.mp4`
 
-## Look
+## Look and argument
 
-Warm, precise and optimistic. Fermat's cream canvas and deep green carry the film, with the real product rebuilt large enough to read in a feed. Display copy rises by word, while UI moves as a single physical surface and then settles completely for reading. The opening is intentionally dense, the product scenes become progressively calmer, and the close releases into a clean brand field.
+Warm, precise and optimistic. Cream and deep green carry a product story reconstructed large enough for a feed. Display copy uses one restrained word-rise language; product surfaces arrive as complete cards and settle for reading.
 
-- **Transitions in use:** hard editorial cut, shared rounded-card push, restrained pull-back into product UI
-- **Signature moves:** private constraints compress into one anonymous eligibility bar; the winning destination card expands into a day-by-day plan
-- **Pacing:** dense, medium, medium, medium, deliberate, resolved; average scene about 5.3 seconds
-- **Visual argument:** four private constraints collapse into a shared set of viable trips, making Fermat's fairness and coordination value visible without exposing anyone's numbers.
+**Visual argument:** private constraints become anonymous shared feasibility, a private ballot becomes an explainable fair result, and the result becomes both a trip plan and a group workspace.
+
+- **Transitions:** hard editorial cuts plus three soft picture handoffs
+- **Signature moves:** private data collapses into anonymous blocker pills; the higher-voted blocked option resolves into the feasible winner; the winner expands into the plan
+- **Energy:** dense problem, orient, private input, reveal, operate, proof, resolve, extend, release
+- **Voice:** music and on-screen copy, no narration
 
 ## Script and scenes
 
-| # | Ends on | On screen (exact words) | What moves | Transition out |
-|---|---|---|---|---|
-| 1 | backbeat 5 (4.9s) | "Trips die in the group chat"; "15-19 Dec works"; "₹45k max"; "Visa?"; "Flying from Delhi" | The headline is present on the cut. Conflicting message chips arrive around it, then gather toward one private-details card. | shared rounded-card push |
-| 2 | backbeat 11 (10.8s) | "Everyone adds what works for them"; "Budget. Dates. Passport. All private." | A faithful private-details form pulls back into view. Location, budget and passport fields settle one at a time. | hard cut |
-| 3 | backbeat 17 (16.5s) | "Only trips that work for everyone make the ballot" | Destination cards resolve from uncertain to eligible; only truthful all-traveller matches remain. | hard cut |
-| 4 | backbeat 23 (22.4s) | "Vote in private"; "The group sees counts. Never names." | Ballot choices enter, a vote confirms, and only aggregate counts update. | match on winning card |
-| 5 | backbeat 29 (28.1s) | "The winning trip becomes a real plan"; "Bali"; "₹82,873 each" | The Bali winner expands into the real day-by-day plan and group cost summary. | deep-green field wipe |
-| 6 | backbeat 33 (32.0s) | "Plan the trip everyone can actually take"; "fermatlabs.org"; "Start a group trip" | Logo and line land, hold, then music and picture resolve together. | fade out |
+| # | Ends on | Principal on-screen copy | Product proof |
+|---|---|---|---|
+| 1 | backbeat 5, 4.900s | `Trips die in the group chat`; `15-19 Dec works`; `₹45k max`; `Visa?`; `Flying from Delhi` | Conflicting group-chat constraints gather into one Fermat action. |
+| 2 | backbeat 11, 10.800s | `Start one trip room`; `Friends escape`; `Invite friends`; `4 of 4 joined`; `Everyone is in` | One organizer creates a room and the group joins through the invite flow. |
+| 3 | backbeat 17, 16.467s | `Everyone adds what works for them`; `Budget. Dates. Passport. All private.` | The existing private-details reconstruction shows only the viewer's location, budget, dates and passport month. |
+| 4 | backbeat 23, 22.367s | `See what works and what doesn't`; `Everyone can go`; `1 budget short`; `Visa timing`; `The group sees the blocker, never whose budget it is.` | Anonymous feasibility explains the shared result without names or raw private values. |
+| 5 | backbeat 29, 28.133s | `Vote in private`; `3 of 4 voted`; `4 of 4 voted`; `No names. No numbers. Votes stay hidden until the trip is locked.` | The viewer selects Bali; only completion progress is visible while voting remains open. |
+| 6 | backbeat 35, 33.933s | `The winner has to work for everyone`; `Why Bali won`; `Tokyo - 3 votes`; `Most votes, but 1 budget short`; `Bali - 1 vote`; `Won: top pick that fits everyone` | Post-lock totals explain why the raw vote leader could not win and the feasible option did. |
+| 7 | backbeat 41, 39.833s | `The winning trip becomes a real plan`; `Bali`; `₹82,873`; `4 people`; day-by-day itinerary | The winning option expands into costs and an itinerary. |
+| 8 | backbeat 47, 45.733s | `Keep the trip moving`; `Money`; `Commitments`; `Tasks`; `Sharing` | The approved plan continues into advance tracking, pledges, tasks and share cards. |
+| 9 | backbeat 51, 49.667s | `Plan the trip everyone can actually take`; `Start a group trip`; `fermatlabs.org` | Clean promise and call to action. |
 
-## Product UI shown
+## Product truth and privacy
 
-- **Private details:** faithful reconstruction of the current Fermat form with Delhi, ₹150,000 and passport expiry; sample data from the public preview.
-- **Eligible trips:** rebuilt destination cards using current product vocabulary; capability claim is limited to group eligibility.
-- **Private vote:** rebuilt ballot showing aggregate counts only, matching the current privacy model.
-- **Locked plan:** faithful reconstruction of the Bali preview, 10-15 Dec, four travellers, ₹82,873 each and ₹3.5L group total.
+- Open voting shows overall completion only. Destination vote totals stay hidden until the trip is locked.
+- After lock, the group can see anonymous totals and plain reasons an option could not win. Voter identities remain private.
+- The winner is the most-voted in-scope option that every approved member can take under the current deterministic model.
+- The film never shows another traveller's raw budget, passport month or ballot.
+- Money, commitments, tasks and sharing are real current Fermat surfaces. Their sample counts are staged UI data.
 
-## Assumptions
+## Assumptions and sample data
 
-### Story and output
+- The accepted India-to-Bali story remains the film's narrative rather than switching to the landing page's New York-to-Lisbon example.
+- Tokyo receives three votes but is one anonymous budget short; Bali receives one vote and wins because it works for all four travellers. This is valid under the current lock algorithm.
+- Costs, dates, member names and coordination counts are illustrative sample data.
+- The existing soundtrack and closing CTA remain unchanged.
+- V1 remains intact as the comparison baseline. Wave 2 is a separate render and asset.
 
-- Chose 32 seconds because the strongest product story fits six musical phrases without rushing the real UI.
-- Chose text and music with no voiceover because none was supplied and the film must work muted in a feed.
-- Chose the CTA "Plan your next trip together" as the intent, expressed on screen as "Plan the trip everyone can actually take" to match Fermat's existing positioning.
-- Chose one 16:9 master, one thumbnail and an editable Remotion project. Vertical adaptation is out of scope until the master is approved.
+## Output
 
-### Brand and product
-
-- Rebuilt product UI in code rather than screen-recording so labels remain sharp and private fields can be staged truthfully.
-- Used the live public preview and repository source captured on 1 Nov 2026 as the product reference.
-- Used only sample data already visible in Fermat's preview fixtures or public preview.
-- Kept the supplied raster logo below its native size. A vector or higher-resolution mark should replace it before a 4K export.
-
-### Music and motion
-
-- Picked "Talent in the Air" by Diego Nava from Mixkit because no track was supplied. It is covered by the Mixkit Stock Music Free License.
-- Chose the opening 32 seconds because its energy falls under the private-input explanation and lifts again into the result and close.
-- Used a clean, editorial product cadence inspired by Linear's official "Linear for Agents" reel; no audio from that reference was reviewed or copied.
-- Sounds: none in checkpoint v1. The music-only master makes the interaction understandable without requiring audio.
-
-## Open questions
-
-The checkpoint asks only whether the look, words and movement with music feel right. All assumptions above are vetoable there.
+- Review source: `video/out/fermat-product-demo-wave2-final.mp4`
+- Repository delivery: `docs/assets/fermat-product-demo-wave2.mp4`
+- Thumbnail: `docs/assets/fermat-product-demo-wave2-thumbnail.png`
+- 4K is deferred until the owner accepts the HD render.
