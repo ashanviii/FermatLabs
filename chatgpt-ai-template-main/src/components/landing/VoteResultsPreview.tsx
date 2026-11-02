@@ -24,74 +24,77 @@ export default function VoteResultsPreview({ className }: { className?: string }
       role="img"
       aria-label="Example vote results: Tokyo got 3 votes but one budget was short, so Lisbon, with 2 votes and room in everyone's budget, won. Cancún got 1 vote. Your own vote was Tokyo, shown only to you."
     >
-      <Card variant="raised" aria-hidden className="rounded-3xl p-4 sm:p-5">
-        <div className="flex flex-wrap items-start justify-between gap-3 px-1">
-          <div className="min-w-0">
-            <p className="type-overline m-0 text-ink-muted">Trip locked</p>
-            <p className="type-h3 m-0 mt-0.5">Why Lisbon won</p>
+      {/* Frosted glass rim around the card. */}
+      <div className="frost-frame rounded-[2rem] p-2">
+        <Card variant="raised" aria-hidden className="rounded-3xl border-white p-4 sm:p-5">
+          <div className="flex flex-wrap items-start justify-between gap-3 px-1">
+            <div className="min-w-0">
+              <p className="type-overline m-0 text-ink-muted">Trip locked</p>
+              <p className="type-h3 m-0 mt-0.5">Why Lisbon won</p>
+            </div>
+            <Badge size="sm" icon={icons.members}>
+              Everyone sees this
+            </Badge>
           </div>
-          <Badge size="sm" icon={icons.members}>
-            Everyone sees this
-          </Badge>
-        </div>
 
-        <ul className="m-0 mt-4 flex list-none flex-col gap-2 p-0">
-          {rows.map((row) => (
-            <li
-              key={row.name}
-              className={cn(
-                'flex flex-col gap-2 rounded-2xl px-4 py-3',
-                row.result === 'won' ? 'bg-surface shadow-card ring-2 ring-ink' : 'bg-surface-muted',
-              )}
-            >
-              <div className="flex items-center justify-between gap-3">
-                <span className="type-body flex items-center gap-2 font-semibold text-ink">
-                  <icons.destination className="size-4 text-ink-faint" strokeWidth={1.75} aria-hidden />
-                  {row.name}
-                </span>
-                <span className="type-small type-num font-semibold text-ink-soft">
-                  {row.votes} {row.votes === 1 ? 'vote' : 'votes'}
-                </span>
-              </div>
-              <div className="h-1.5 overflow-hidden rounded-full bg-surface-strong">
-                <div
-                  data-bar
-                  className={cn('h-full rounded-full', row.result === 'won' ? 'bg-ink' : 'bg-line-strong')}
-                  style={{ width: `${(row.votes / totalVotes) * 100}%` }}
-                />
-              </div>
-              <div className="flex flex-wrap items-center gap-2">
-                {row.result === 'won' && (
-                  <StatusPill status="ok" size="sm" className={mono.okPill}>
-                    Won: top pick that fits everyone
-                  </StatusPill>
+          <ul className="m-0 mt-4 flex list-none flex-col gap-2 p-0">
+            {rows.map((row) => (
+              <li
+                key={row.name}
+                className={cn(
+                  'flex flex-col gap-2 rounded-2xl px-4 py-3',
+                  row.result === 'won' ? 'bg-surface shadow-card ring-2 ring-ink' : 'bg-surface-muted',
                 )}
-                {row.result === 'missed' && (
-                  <StatusPill status="warning" icon={icons.budget} size="sm" className={mono.pill}>
-                    Most votes, but {row.note}
-                  </StatusPill>
-                )}
-                {row.result === 'fits' && (
-                  <StatusPill status="info" size="sm" className={mono.pill}>
-                    {row.note}
-                  </StatusPill>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <span className="type-body flex items-center gap-2 font-semibold text-ink">
+                    <icons.destination className="size-4 text-ink-faint" strokeWidth={1.75} aria-hidden />
+                    {row.name}
+                  </span>
+                  <span className="type-small type-num font-semibold text-ink-soft">
+                    {row.votes} {row.votes === 1 ? 'vote' : 'votes'}
+                  </span>
+                </div>
+                <div className="h-1.5 overflow-hidden rounded-full bg-surface-strong">
+                  <div
+                    data-bar
+                    className={cn('h-full rounded-full', row.result === 'won' ? 'bg-ink' : 'bg-line-strong')}
+                    style={{ width: `${(row.votes / totalVotes) * 100}%` }}
+                  />
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  {row.result === 'won' && (
+                    <StatusPill status="ok" size="sm" className={mono.okPill}>
+                      Won: top pick that fits everyone
+                    </StatusPill>
+                  )}
+                  {row.result === 'missed' && (
+                    <StatusPill status="warning" icon={icons.budget} size="sm" className={mono.pill}>
+                      Most votes, but {row.note}
+                    </StatusPill>
+                  )}
+                  {row.result === 'fits' && (
+                    <StatusPill status="info" size="sm" className={mono.pill}>
+                      {row.note}
+                    </StatusPill>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
 
-        <div className={cn("mt-3 flex flex-col gap-2 rounded-xl px-3 py-2.5", mono.privatePanel)}>
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className="type-small flex items-center gap-2 font-semibold">
-              <icons.private className="size-4" strokeWidth={1.75} aria-hidden />
-              You voted Tokyo
-            </span>
-            <PrivateBadge size="sm" className={mono.solid} />
+          <div className={cn("mt-3 flex flex-col gap-2 rounded-xl px-3 py-2.5", mono.privatePanel)}>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="type-small flex items-center gap-2 font-semibold">
+                <icons.private className="size-4" strokeWidth={1.75} aria-hidden />
+                You voted Tokyo
+              </span>
+              <PrivateBadge size="sm" className={mono.solid} />
+            </div>
+            <p className="type-small m-0 text-ink-soft">It had the most votes, but one budget fell short, so it couldn’t be picked.</p>
           </div>
-          <p className="type-small m-0 text-ink-soft">It had the most votes, but one budget fell short, so it couldn’t be picked.</p>
-        </div>
-      </Card>
+        </Card>
+      </div>
     </figure>
   );
 }

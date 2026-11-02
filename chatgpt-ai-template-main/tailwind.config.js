@@ -7,19 +7,20 @@ const plugin = require('tailwindcss/plugin');
  * The legacy shadcn names (primary, muted, accent, card, background, foreground, border) still resolve to the
  * CSS variables in app/(marketing)/landing.css so older markup keeps working; new code should use the semantic names.
  */
+// Calm denim blue. 600 is the button colour; 700+ for text and hover.
 const brand = {
-  50: '#EEF6F1',
-  100: '#D7EBDF',
-  200: '#B0D6C0',
-  300: '#82BC9A',
-  400: '#5AA67A',
-  500: '#3D9163',
-  600: '#2E7650',
-  700: '#235C3F',
-  800: '#1A4530',
-  900: '#153524',
-  950: '#0C2116',
-  DEFAULT: '#153524',
+  50: '#F1F4FB',
+  100: '#E3E9F7',
+  200: '#C7D2EE',
+  300: '#9FB1E0',
+  400: '#7590D0',
+  500: '#5574C2',
+  600: '#3F5EAD',
+  700: '#344E91',
+  800: '#2B4076',
+  900: '#24355F',
+  950: '#172240',
+  DEFAULT: '#24355F',
 };
 
 // The ONE warm accent (marigold). Use sparingly: highlights, the selected/"your pick" state, hero moments.
@@ -103,7 +104,7 @@ const typeScale = () => ({
     fontWeight: '400',
     letterSpacing: '-0.01em',
     fontSize: '1.08em',
-    color: '#2E7650',
+    color: '#3F5EAD',
   },
   '.type-num': { fontVariantNumeric: 'tabular-nums', fontFeatureSettings: '"tnum" 1' },
 });
@@ -136,7 +137,7 @@ module.exports = {
         /* ---- Fermat semantic tokens (use these) ---- */
         brand,
         warm,
-        // Cool, near-neutral greys on a white canvas. Fermat green is the only accent.
+        // Cool greys on a blue-tinted white canvas. Fermat denim blue is the only accent.
         ink: {
           DEFAULT: '#131316', // headings, primary text
           soft: '#3F3F46', // body copy on light surfaces
@@ -144,11 +145,11 @@ module.exports = {
           faint: '#A1A1AA', // icons, placeholders, disabled only (NOT for text that must be read)
           inverse: '#FFFFFF',
         },
-        canvas: '#FAFAF8', // page background: a soft off-white, so white cards lift off it (sections can sit on .bg-grid)
+        canvas: '#F5F7FB', // page background: a cool, slightly blue white, so white cards lift off it (sections can sit on .bg-grid)
         surface: {
           DEFAULT: '#FFFFFF', // cards, inputs
-          muted: '#F3F3F0', // alternate section bands, sunken wells, inactive chips
-          strong: '#EDEDF0', // pressed / skeleton / tracks
+          muted: '#EEF1F7', // alternate section bands, sunken wells, inactive chips
+          strong: '#E4E8F1', // pressed / skeleton / tracks
         },
         // Translucent grey fills: grey buttons, chips and segmented tracks on any surface.
         fill: {

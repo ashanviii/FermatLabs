@@ -18,7 +18,7 @@ const BAYER = [
   19, 59, 27, 49, 17, 57, 25, 15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55, 23, 61, 29, 53, 21,
 ].map((v) => (v + 0.5) / 64);
 
-export type DitherPattern = 'waves' | 'orbs' | 'horizon';
+export type DitherPattern = 'waves' | 'orbs' | 'horizon' | 'fade';
 
 /** Brightness 0..1 at cell (x, y), time t (seconds). w/h are the grid size in cells. */
 function sample(pattern: DitherPattern, x: number, y: number, w: number, h: number, t: number) {
@@ -34,6 +34,11 @@ function sample(pattern: DitherPattern, x: number, y: number, w: number, h: numb
     const da = Math.hypot((u - ax) * aspect, v - ay);
     const db = Math.hypot((u - bx) * aspect, v - by);
     return Math.min(1, Math.exp(-da * da * 6) + 0.85 * Math.exp(-db * db * 8));
+  }
+  if (pattern === 'fade') {
+    // A wavy edge near the top that ramps to solid at the bottom: the page dithering into a dark section below.
+    const edge = 0.08 + 0.06 * Math.sin(u * 5 + t * 0.45) + 0.03 * Math.sin(u * 13 - t * 0.7);
+    return Math.min(1, Math.max(0, (v - edge) / (0.95 - edge)));
   }
   if (pattern === 'horizon') {
     // Rolling hills that get denser toward the bottom edge.
