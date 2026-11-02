@@ -71,11 +71,14 @@ export const isBackbeat = (frame: number, tolerance = 1): boolean =>
 // ---------------------------------------------------------------------------
 const SCENE_ENDS = {
   hook: backbeatFrame(5),
-  privateDetails: backbeatFrame(11),
-  eligibleTrips: backbeatFrame(17),
-  vote: backbeatFrame(23),
-  plan: backbeatFrame(29),
-  finale: backbeatFrame(33),
+  room: backbeatFrame(11),
+  privateDetails: backbeatFrame(17),
+  eligibleTrips: backbeatFrame(23),
+  vote: backbeatFrame(29),
+  voteResults: backbeatFrame(35),
+  plan: backbeatFrame(41),
+  coordination: backbeatFrame(47),
+  finale: backbeatFrame(51),
 };
 
 export type SceneName = keyof typeof SCENE_ENDS;

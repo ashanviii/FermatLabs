@@ -4,11 +4,11 @@ Fermat helps small groups choose and plan a trip everyone can actually take. The
 
 ## Product demo
 
-<a href="./docs/assets/fermat-product-demo.mp4">
-  <img src="./docs/assets/fermat-product-demo-thumbnail.png" alt="Watch the Fermat group trip planner product demo" width="900">
+<a href="./docs/assets/fermat-product-demo-wave2.mp4">
+  <img src="./docs/assets/fermat-product-demo-wave2-thumbnail.png" alt="Watch the Fermat group trip planner product demo" width="900">
 </a>
 
-[Watch the 32-second product demo](docs/assets/fermat-product-demo.mp4) to see private trip constraints become shared destination matches, an anonymous group vote, and a day-by-day Bali plan.
+[Watch the 50-second product demo](docs/assets/fermat-product-demo-wave2.mp4) to see friends join one trip room, add private constraints, understand anonymous blockers, vote privately, see why the feasible winner won, and keep the trip moving with money, commitments, tasks, and sharing.
 
 ## Group trip MVP
 
