@@ -2,13 +2,14 @@
 
 import React from 'react';
 
-import { AvatarStack } from '@/components/ui/avatar';
 import { Badge, PrivateBadge, StatusPill } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { icons, type IconComponent } from '@/components/ui/icons';
 import { segmentedItem, segmentedTrack } from '@/components/ui/segmented';
 import { formatApproxMoney, formatMoney } from '@/lib/format';
 import { cn } from '@/lib/utils';
+import { FaceStack } from './Face';
+import { mono } from './mono';
 
 type OtherOption = { name: string; line: string; status: 'warning' | 'blocked'; icon: IconComponent; label: string };
 
@@ -119,30 +120,30 @@ export default function HeroPreview({ className }: { className?: string }) {
           aria-hidden
           className="absolute -bottom-14 -left-8 z-10 hidden rotate-[-2deg] items-center gap-3 py-3 pl-3 pr-4 lg:flex xl:-left-14"
         >
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-private-soft text-private-ink ring-1 ring-inset ring-private-line">
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-surface-muted text-ink ring-1 ring-inset ring-line">
             <icons.budget className="size-5" strokeWidth={1.75} aria-hidden />
           </span>
           <div className="min-w-0">
             <p className="type-caption m-0 text-ink-muted">Your budget</p>
-            <p className="type-h3 type-num m-0 text-private-ink">{formatMoney(example.budget, example.currency)}</p>
+            <p className="type-h3 type-num m-0 text-ink">{formatMoney(example.budget, example.currency)}</p>
           </div>
-          <PrivateBadge size="sm" className="ml-2" />
+          <PrivateBadge size="sm" className={cn("ml-2", mono.solid)} />
         </Card>
 
         <Card variant="raised" aria-hidden className="relative rounded-3xl p-3 sm:p-4">
           {/* Room header */}
           <div className="flex items-center justify-between gap-3 px-2 pb-3 pt-1 sm:px-3">
             <div className="min-w-0">
-              <p className="type-overline m-0 text-brand-600">
+              <p className="type-overline m-0 text-ink-muted">
                 {example.occasion} · {example.scope}
               </p>
               <p className="type-h3 m-0 mt-0.5 text-[0.9375rem] sm:text-[1.0625rem]">Where should we go?</p>
             </div>
-            <AvatarStack names={example.friends} max={3} size="md" />
+            <FaceStack names={example.friends} max={3} />
           </div>
 
           {/* Featured destination, selected */}
-          <div className="rounded-2xl bg-surface shadow-card ring-2 ring-brand-700">
+          <div className="rounded-2xl bg-surface shadow-card ring-2 ring-ink">
             <div className="flex flex-col gap-3 p-4 sm:p-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -152,7 +153,7 @@ export default function HeroPreview({ className }: { className?: string }) {
                     {example.pick.line}
                   </p>
                 </div>
-                <Badge tone="warm" size="sm" icon={icons.check}>
+                <Badge size="sm" icon={icons.check} className={mono.solid}>
                   Your pick
                 </Badge>
               </div>
@@ -163,10 +164,10 @@ export default function HeroPreview({ className }: { className?: string }) {
                   </Badge>
                 ))}
               </div>
-              <StatusPill status="ok" className="self-start">
+              <StatusPill status="ok" className={cn("self-start", mono.okPill)}>
                 Everyone can go
               </StatusPill>
-              <div className="flex items-center justify-between gap-3 rounded-xl bg-private-soft px-3 py-2.5 text-private-ink">
+              <div className={cn("flex items-center justify-between gap-3 rounded-xl px-3 py-2.5", mono.privatePanel)}>
                 <span className="type-small flex items-center gap-2 font-semibold">
                   <icons.private className="size-4" strokeWidth={1.75} aria-hidden />
                   Fits your budget
@@ -176,7 +177,7 @@ export default function HeroPreview({ className }: { className?: string }) {
             </div>
             <div className="flex items-center justify-between gap-3 border-0 border-t border-solid border-line-subtle px-4 py-3 sm:px-5">
               <span className="type-caption text-ink-muted">4 of 6 voted</span>
-              <span className="type-small inline-flex h-8 items-center gap-1.5 rounded-full bg-brand-50 px-3 font-semibold text-brand-800">
+              <span className="type-small inline-flex h-8 items-center gap-1.5 rounded-full bg-surface-muted px-3 font-semibold text-ink">
                 <icons.check className="size-4" strokeWidth={2} aria-hidden />
                 Voted
               </span>
@@ -191,7 +192,7 @@ export default function HeroPreview({ className }: { className?: string }) {
                   <p className="type-body m-0 font-semibold text-ink">{row.name}</p>
                   <p className="type-caption m-0 text-ink-muted">{row.line}</p>
                 </div>
-                <StatusPill status={row.status} icon={row.icon} size="sm">
+                <StatusPill status={row.status} icon={row.icon} size="sm" className={mono.pill}>
                   {row.label}
                 </StatusPill>
               </li>

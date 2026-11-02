@@ -129,6 +129,20 @@ const C = {
   pinDark: '#B31412',
 };
 
+// 1-bit dither for the sphere: one cell is this many CSS pixels, dots are ink at DITHER_ALPHA.
+// Darkness (1 - luminance) is multiplied by DITHER_GAIN before thresholding. The `land` path fill lands on the sea
+// with this atlas (the smooth globe looks the same way), so the result is clean continents on a halftone sea, with
+// the shaded rim a little denser.
+const DITHER_CELL = 3;
+const DITHER_GAIN = 1.55;
+const DITHER_ALPHA = 0.5;
+const DITHER_LAND = 'rgba(130, 130, 140, 0.6)';
+// Classic 8x8 Bayer matrix, as 0..1 thresholds.
+const BAYER = [
+  0, 32, 8, 40, 2, 34, 10, 42, 48, 16, 56, 24, 50, 18, 58, 26, 12, 44, 4, 36, 14, 46, 6, 38, 60, 28, 52, 20, 62, 30, 54, 22, 3, 35, 11, 43, 1, 33, 9, 41, 51,
+  19, 59, 27, 49, 17, 57, 25, 15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55, 23, 61, 29, 53, 21,
+].map((v) => (v + 0.5) / 64);
+
 const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
 const easeInOutSine = (t: number) => -(Math.cos(Math.PI * t) - 1) / 2;
 const smoothstep = (edge0: number, edge1: number, x: number) => {
@@ -201,9 +215,11 @@ export interface HeroGlobeProps {
   className?: string;
   /** Show only the top half (a dome cut at the equator line), with a soft fade at the cut. */
   dome?: boolean;
+  /** Draw the sphere and land as a 1-bit ordered dither (pins, flights and cards stay smooth). */
+  dither?: boolean;
 }
 
-export default function HeroGlobe({ className, dome = false }: HeroGlobeProps) {
+export default function HeroGlobe({ className, dome = false, dither = true }: HeroGlobeProps) {
   const wrapRef = React.useRef<HTMLDivElement>(null);
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const cardRef = React.useRef<HTMLDivElement>(null);
@@ -230,7 +246,14 @@ export default function HeroGlobe({ className, dome = false }: HeroGlobeProps) {
     landStart: 0,
     size: 0,
     dpr: 1,
-    layers: null as null | { base: HTMLCanvasElement; shade: HTMLCanvasElement; pin: HTMLCanvasElement; glow: HTMLCanvasElement },
+    layers: null as null | {
+      base: HTMLCanvasElement;
+      shade: HTMLCanvasElement;
+      pin: HTMLCanvasElement;
+      glow: HTMLCanvasElement;
+      // Low-res buffer for the dithered sphere: drawn at 1/DITHER_CELL scale, then thresholded in place.
+      dither: { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D; w: number } | null;
+    },
     screen: CITIES.map(() => ({ x: 0, y: 0, vis: 0 })),
     pins: CITIES.map((): Pop => ({ shown: false, at: 0 })),
     bubbles: CITIES.map((): Pop => ({ shown: false, at: 0 })),
@@ -348,7 +371,59 @@ export default function HeroGlobe({ className, dome = false }: HeroGlobeProps) {
         g.fillStyle = grad;
         g.fillRect(0, 0, 28, 28);
       });
-      s.layers = { base, shade, pin, glow };
+      let ditherBuf: { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D; w: number } | null = null;
+      if (dither) {
+        const w = Math.ceil(size / DITHER_CELL);
+        const c = document.createElement('canvas');
+        c.width = w;
+        c.height = w;
+        const dctx = c.getContext('2d', { willReadFrequently: true });
+        if (dctx) ditherBuf = { canvas: c, ctx: dctx, w };
+      }
+      s.layers = { base, shade, pin, glow, dither: ditherBuf };
+    };
+
+    /** Sphere + land + shading, drawn small, then turned into ink dots by luminance against the Bayer matrix. */
+    const drawDithered = (now: number) => {
+      const { size } = geometry();
+      const buf = s.layers?.dither;
+      if (!buf) return;
+      const { ctx: d, canvas: dc, w } = buf;
+      d.setTransform(1 / DITHER_CELL, 0, 0, 1 / DITHER_CELL, 0, 0);
+      d.clearRect(0, 0, size, size);
+      d.drawImage(s.layers!.base, 0, 0, size, size);
+      if (s.land) {
+        d.globalAlpha = reduced ? 1 : clamp01((now - s.landStart) / 900);
+        d.beginPath();
+        geoPath(projection, d)(s.land);
+        d.fillStyle = DITHER_LAND;
+        d.fill();
+        d.globalAlpha = 1;
+      }
+      d.drawImage(s.layers!.shade, 0, 0, size, size);
+
+      const image = d.getImageData(0, 0, w, w);
+      const px = image.data;
+      const a = Math.round(DITHER_ALPHA * 255);
+      for (let y = 0; y < w; y++) {
+        for (let x = 0; x < w; x++) {
+          const i = (y * w + x) * 4;
+          if (px[i + 3] < 128) {
+            px[i + 3] = 0;
+            continue;
+          }
+          const lum = (px[i] * 0.299 + px[i + 1] * 0.587 + px[i + 2] * 0.114) / 255;
+          const on = (1 - lum) * DITHER_GAIN > BAYER[(y & 7) * 8 + (x & 7)];
+          px[i] = 19;
+          px[i + 1] = 19;
+          px[i + 2] = 22;
+          px[i + 3] = on ? a : 0;
+        }
+      }
+      d.putImageData(image, 0, 0);
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(dc, 0, 0, w * DITHER_CELL, w * DITHER_CELL);
+      ctx.imageSmoothingEnabled = true;
     };
 
     const resize = () => {
@@ -425,9 +500,10 @@ export default function HeroGlobe({ className, dome = false }: HeroGlobeProps) {
 
       ctx.setTransform(s.dpr, 0, 0, s.dpr, 0, 0);
       ctx.clearRect(0, 0, size, size);
-      ctx.drawImage(s.layers.base, 0, 0, size, size);
+      if (s.layers.dither) drawDithered(now);
+      else ctx.drawImage(s.layers.base, 0, 0, size, size);
 
-      if (s.land) {
+      if (s.land && !s.layers.dither) {
         ctx.globalAlpha = reduced ? 1 : clamp01((now - s.landStart) / 900);
         ctx.beginPath();
         path(s.land);
@@ -440,7 +516,7 @@ export default function HeroGlobe({ className, dome = false }: HeroGlobeProps) {
         ctx.stroke();
         ctx.globalAlpha = 1;
       }
-      ctx.drawImage(s.layers.shade, 0, 0, size, size);
+      if (!s.layers.dither) ctx.drawImage(s.layers.shade, 0, 0, size, size);
 
       // Landing ripples: a ring that spreads across the surface and fades.
       s.ripples = s.ripples.filter((rp) => now - rp.t0 < RIPPLE_MS);
@@ -651,7 +727,7 @@ export default function HeroGlobe({ className, dome = false }: HeroGlobeProps) {
       ro.disconnect();
       document.removeEventListener('visibilitychange', onVisibility);
     };
-  }, [reduced, dome, baseTilt]);
+  }, [reduced, dome, baseTilt, dither]);
 
   /** The visible pin under a point (relative to the globe), if any. */
   const pinAt = (clientX: number, clientY: number) => {
@@ -821,7 +897,7 @@ export default function HeroGlobe({ className, dome = false }: HeroGlobeProps) {
                       {cardCity.tag ? ` · ${cardCity.tag}` : ''}
                     </p>
                     {card?.from && (
-                      <p className="m-0 mt-1 inline-flex items-center gap-1 rounded-full bg-brand-50 px-1.5 py-px font-mono text-[0.5625rem] font-medium uppercase tracking-[0.08em] text-brand-700">
+                      <p className="m-0 mt-1 inline-flex items-center gap-1 rounded-full bg-surface-muted px-1.5 py-px font-mono text-[0.5625rem] font-medium uppercase tracking-[0.08em] text-ink-soft">
                         From {byCode[card.from].name}
                       </p>
                     )}

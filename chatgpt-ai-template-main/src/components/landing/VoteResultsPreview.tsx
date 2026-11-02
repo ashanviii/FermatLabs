@@ -4,6 +4,7 @@ import { Badge, PrivateBadge, StatusPill } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { icons } from '@/components/ui/icons';
 import { cn } from '@/lib/utils';
+import { mono } from './mono';
 
 /**
  * A picture of the lock explanation (trip.lockExplanation): anonymous vote counts per option, why any higher-voted
@@ -26,7 +27,7 @@ export default function VoteResultsPreview({ className }: { className?: string }
       <Card variant="raised" aria-hidden className="rounded-3xl p-4 sm:p-5">
         <div className="flex flex-wrap items-start justify-between gap-3 px-1">
           <div className="min-w-0">
-            <p className="type-overline m-0 text-brand-600">Trip locked</p>
+            <p className="type-overline m-0 text-ink-muted">Trip locked</p>
             <p className="type-h3 m-0 mt-0.5">Why Lisbon won</p>
           </div>
           <Badge size="sm" icon={icons.members}>
@@ -40,7 +41,7 @@ export default function VoteResultsPreview({ className }: { className?: string }
               key={row.name}
               className={cn(
                 'flex flex-col gap-2 rounded-2xl px-4 py-3',
-                row.result === 'won' ? 'bg-surface shadow-card ring-2 ring-brand-700' : 'bg-surface-muted',
+                row.result === 'won' ? 'bg-surface shadow-card ring-2 ring-ink' : 'bg-surface-muted',
               )}
             >
               <div className="flex items-center justify-between gap-3">
@@ -54,23 +55,24 @@ export default function VoteResultsPreview({ className }: { className?: string }
               </div>
               <div className="h-1.5 overflow-hidden rounded-full bg-surface-strong">
                 <div
-                  className={cn('h-full rounded-full', row.result === 'won' ? 'bg-brand-700' : 'bg-line-strong')}
+                  data-bar
+                  className={cn('h-full rounded-full', row.result === 'won' ? 'bg-ink' : 'bg-line-strong')}
                   style={{ width: `${(row.votes / totalVotes) * 100}%` }}
                 />
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 {row.result === 'won' && (
-                  <StatusPill status="ok" size="sm">
+                  <StatusPill status="ok" size="sm" className={mono.okPill}>
                     Won: top pick that fits everyone
                   </StatusPill>
                 )}
                 {row.result === 'missed' && (
-                  <StatusPill status="warning" icon={icons.budget} size="sm">
+                  <StatusPill status="warning" icon={icons.budget} size="sm" className={mono.pill}>
                     Most votes, but {row.note}
                   </StatusPill>
                 )}
                 {row.result === 'fits' && (
-                  <StatusPill status="info" size="sm">
+                  <StatusPill status="info" size="sm" className={mono.pill}>
                     {row.note}
                   </StatusPill>
                 )}
@@ -79,15 +81,15 @@ export default function VoteResultsPreview({ className }: { className?: string }
           ))}
         </ul>
 
-        <div className="mt-3 flex flex-col gap-2 rounded-xl bg-private-soft px-3 py-2.5 text-private-ink">
+        <div className={cn("mt-3 flex flex-col gap-2 rounded-xl px-3 py-2.5", mono.privatePanel)}>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="type-small flex items-center gap-2 font-semibold">
               <icons.private className="size-4" strokeWidth={1.75} aria-hidden />
               You voted Tokyo
             </span>
-            <PrivateBadge size="sm" className="bg-surface" />
+            <PrivateBadge size="sm" className={mono.solid} />
           </div>
-          <p className="type-small m-0">It had the most votes, but one budget fell short, so it couldn’t be picked.</p>
+          <p className="type-small m-0 text-ink-soft">It had the most votes, but one budget fell short, so it couldn’t be picked.</p>
         </div>
       </Card>
     </figure>

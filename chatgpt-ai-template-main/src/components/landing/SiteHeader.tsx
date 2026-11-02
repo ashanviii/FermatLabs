@@ -22,7 +22,7 @@ export default function SiteHeader({ links = defaultLinks }: { links?: HeaderLin
           className="inline-flex items-center gap-2 rounded-lg text-ink no-underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/35"
         >
           <FermatMark className="h-6 text-brand-600" />
-          <span className="type-h3 text-brand-900">Fermat</span>
+          <span className="type-h3 text-ink">Fermat</span>
         </Link>
         <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
           {links.map((link) => (

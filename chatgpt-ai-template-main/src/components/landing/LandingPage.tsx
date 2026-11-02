@@ -2,15 +2,27 @@ import React from 'react';
 import Link from 'next/link';
 import { ArrowRight, ChevronDown, ShieldCheck } from 'lucide-react';
 
-import { AsciiArt, asciiArt } from '@/components/ui/ascii';
 import { Badge, PrivateBadge, StatusPill } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { icons, type IconComponent } from '@/components/ui/icons';
 import { formatMoney } from '@/lib/format';
 import ClosingCta, { SiteFooter } from './ClosingCta';
+import DitherField from './DitherField';
 import HeroGlobe from './HeroGlobe';
+import LandingMotion from './LandingMotion';
+import { mono } from './mono';
 import HeroPreview from './HeroPreview';
+import {
+  CalendarIllustration,
+  ChooseIllustration,
+  IllustrationFrame,
+  InviteIllustration,
+  PlanIllustration,
+  PledgeIllustration,
+  PrivateDetailsIllustration,
+  SettleIllustration,
+} from './Illustrations';
 import SiteHeader from './SiteHeader';
 import VoteResultsPreview from './VoteResultsPreview';
 
@@ -25,15 +37,29 @@ const steps: { icon: IconComponent; title: string; body: string }[] = [
   { icon: icons.plan, title: 'Plan, pledge and pay', body: 'Lock the top pick that fits all of you, see why it won, and get a day-by-day plan with each person’s cost.' },
 ];
 
-// One ASCII piece per step, in step order.
-const stepArt = [asciiArt.envelope, asciiArt.passport, asciiArt.ballot, asciiArt.route];
+// One animated scene per step, in step order.
+const stepArt = [InviteIllustration, PrivateDetailsIllustration, ChooseIllustration, PlanIllustration];
 
-const features: { icon: IconComponent; title: string; body: string }[] = [
+// The three features that get a picture; the rest stay in the list below them.
+const highlights: { art: React.ComponentType; title: string; body: string }[] = [
   {
-    icon: icons.pledge,
+    art: PledgeIllustration,
     title: 'Private pledges',
     body: `“I’m in if at least five of us go and my share stays under ${formatMoney(40000, 'INR', { compact: true })}.” The group sees only how many are in.`,
   },
+  {
+    art: CalendarIllustration,
+    title: 'Long-weekend finder',
+    body: 'Find dates that wrap around weekends and your country’s public holidays, so everyone uses fewer days off.',
+  },
+  {
+    art: SettleIllustration,
+    title: 'Free settle-up',
+    body: 'Log shared costs and get the fewest payments to square up, with UPI, PayPal, Venmo or Revolut links.',
+  },
+];
+
+const features: { icon: IconComponent; title: string; body: string }[] = [
   {
     icon: icons.vote,
     title: 'See exactly why it won',
@@ -50,19 +76,9 @@ const features: { icon: IconComponent; title: string; body: string }[] = [
     body: 'Each person picks their own passport. Fermat checks entry rules and how early to apply, and tells only them.',
   },
   {
-    icon: icons.money,
-    title: 'Free settle-up',
-    body: 'Log shared costs and get the fewest payments to square up, with UPI, PayPal, Venmo or Revolut links.',
-  },
-  {
     icon: icons.meal,
     title: 'Silent preferences',
     body: 'Vegetarian, no alcohol, skipping the trek. The plan works around it and nobody knows whose it was.',
-  },
-  {
-    icon: icons.calendar,
-    title: 'Long-weekend finder',
-    body: 'Find dates that wrap around weekends and your country’s public holidays, so everyone uses fewer days off.',
   },
   {
     icon: icons.route,
@@ -154,8 +170,8 @@ function IconTile({ icon: Icon, tone = 'brand' }: { icon: IconComponent; tone?: 
     <span
       className={
         tone === 'inverse'
-          ? 'flex size-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-brand-100'
-          : 'flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700'
+          ? 'flex size-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-white'
+          : 'flex size-10 shrink-0 items-center justify-center rounded-xl bg-surface text-ink shadow-card'
       }
     >
       <Icon className="size-5" strokeWidth={1.75} aria-hidden />
@@ -165,7 +181,7 @@ function IconTile({ icon: Icon, tone = 'brand' }: { icon: IconComponent; tone?: 
 
 function SectionHeading({ id, eyebrow, title, lead, center }: { id: string; eyebrow: string; title: React.ReactNode; lead?: string; center?: boolean }) {
   return (
-    <div className={center ? 'mx-auto max-w-prose text-center' : 'max-w-prose'}>
+    <div data-reveal className={center ? 'mx-auto max-w-prose text-center' : 'max-w-prose'}>
       <p className="type-overline m-0 text-ink-muted">{eyebrow}</p>
       <h2 id={id} className="type-h1 m-0 mt-3">
         {title}
@@ -181,10 +197,12 @@ function SectionHeading({ id, eyebrow, title, lead, center }: { id: string; eyeb
 
 export default function LandingPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-canvas font-sans text-ink">
+    // Neutral page: the italic accent phrases go grey instead of green, so green is left for the main actions.
+    // overflow-x-clip (not hidden) keeps the sticky header working while slide-ins are offset off screen.
+    <LandingMotion className="flex min-h-screen flex-col overflow-x-clip bg-canvas font-sans text-ink [&_.type-accent]:text-ink-soft">
       <a
         href="#main"
-        className="type-small sr-only z-50 rounded-full bg-brand-900 px-4 py-2 font-semibold text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-3"
+        className="type-small sr-only z-50 rounded-full bg-ink px-4 py-2 font-semibold text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-3"
       >
         Skip to content
       </a>
@@ -199,23 +217,35 @@ export default function LandingPage() {
       {/* Pulled up under the sticky nav (4rem tall) so the hero grid runs behind the frosted bar. */}
       <main id="main" className="-mt-16 flex flex-col gap-20 pb-8 sm:gap-28">
         {/* Hero: the globe as a dome (top half) centred above centred copy, all on the faint grid. */}
-        <section aria-labelledby="hero-title" className="relative isolate">
+        <section data-hero-section aria-labelledby="hero-title" className="relative isolate">
           <div aria-hidden className="bg-grid absolute inset-0 -z-10" />
+          {/* Dithered hills rolling along the bottom of the hero, fading out toward the centre. */}
+          <DitherField
+            pattern="horizon"
+            alpha={0.1}
+            cell={4}
+            speed={0.8}
+            intensity={0.8}
+            className="absolute inset-x-0 bottom-0 -z-10 !h-80 [mask-image:radial-gradient(ellipse_55%_60%_at_50%_70%,black_25%,transparent_75%)]"
+          />
           <div className="mx-auto flex w-full max-w-page flex-col items-center px-4 pb-4 pt-24 text-center sm:px-6 sm:pt-28 lg:px-8">
-            <HeroGlobe dome />
+            {/* Flex column so the globe keeps its 2:1 dome box, as it had as a direct child of the column above. */}
+            <div data-hero="globe" className="flex w-full flex-col items-center">
+              <HeroGlobe dome />
+            </div>
             <div className="relative -mt-4 flex flex-col items-center sm:-mt-8">
-              <p className="type-small m-0 inline-flex flex-wrap items-center justify-center gap-x-1.5 rounded-full bg-surface px-3.5 py-1.5 font-medium text-ink-soft shadow-card">
+              <p data-hero="item" className="type-small m-0 inline-flex flex-wrap items-center justify-center gap-x-1.5 rounded-full bg-surface px-3.5 py-1.5 font-medium text-ink-soft shadow-card">
                 Group trip planner for 2 to 10 friends.
-                <span className="font-semibold text-brand-600">Budgets stay private.</span>
+                <span className="font-semibold text-ink">Budgets stay private.</span>
               </p>
-              <h1 id="hero-title" className="type-display m-0 mt-6 max-w-[16ch] text-balance">
+              <h1 data-hero="item" id="hero-title" className="type-display m-0 mt-6 max-w-[16ch] text-balance">
                 One trip everyone can <span className="type-accent whitespace-nowrap">actually take.</span>
               </h1>
-              <p className="type-lead m-0 mt-6 max-w-prose text-ink-soft">
+              <p data-hero="item" className="type-lead m-0 mt-6 max-w-prose text-ink-soft">
                 Everyone adds their budget, city and passport in private. Fermat shows which trips, at home or abroad, work
                 for all of you. Then you vote, lock it in and get the plan.
               </p>
-              <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-center sm:gap-5">
+              <div data-hero="item" className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-center sm:gap-5">
                 <Button asChild size="lg" className="rounded-full">
                   <Link href="/plan" prefetch={false}>
                     Start a group trip
@@ -224,20 +254,20 @@ export default function LandingPage() {
                 </Button>
                 <a
                   href="#how"
-                  className="type-body inline-flex items-center justify-center gap-1.5 rounded-full px-2 py-2 font-semibold text-brand-700 no-underline hover:text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/35"
+                  className="type-body inline-flex items-center justify-center gap-1.5 rounded-full px-2 py-2 font-semibold text-ink no-underline hover:text-ink-soft focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/35"
                 >
                   See how it works
                   <ArrowRight className="size-4" strokeWidth={2} aria-hidden />
                 </a>
               </div>
-              <p className="type-small m-0 mt-4 text-ink-muted">Free for the whole group. No card, any country, any currency.</p>
+              <p data-hero="item" className="type-small m-0 mt-4 text-ink-muted">Free for the whole group. No card, any country, any currency.</p>
             </div>
           </div>
         </section>
 
         {/* Live example: what the group sees on the Choose step. */}
         <section aria-labelledby="example-title" className="mx-auto w-full max-w-page px-4 sm:px-6 lg:px-8">
-          <div className="grid items-center gap-10 rounded-3xl bg-surface-muted p-6 ring-1 ring-inset ring-line-subtle sm:p-10 lg:grid-cols-[0.8fr_1fr] lg:gap-16 lg:p-12">
+          <div data-reveal className="grid items-center gap-10 rounded-3xl bg-surface-muted p-6 ring-1 ring-inset ring-line-subtle sm:p-10 lg:grid-cols-[0.8fr_1fr] lg:gap-16 lg:p-12">
             <div>
               <p className="type-overline m-0 text-ink-muted">Live example / choose step</p>
               <h2 id="example-title" className="type-h1 m-0 mt-3">
@@ -253,32 +283,37 @@ export default function LandingPage() {
                   { icon: icons.whatsapp, text: 'Share on WhatsApp' },
                 ].map(({ icon: Icon, text }) => (
                   <li key={text} className="type-small flex items-center gap-2 font-medium text-ink-soft">
-                    <Icon className="size-4 text-brand-600" strokeWidth={2} aria-hidden />
+                    <Icon className="size-4 text-ink-soft" strokeWidth={2} aria-hidden />
                     {text}
                   </li>
                 ))}
               </ul>
             </div>
-            <HeroPreview className="mx-auto w-full max-w-md lg:max-w-none" />
+            <div data-slide="right" className="mx-auto w-full max-w-md lg:max-w-none">
+              <HeroPreview />
+            </div>
           </div>
         </section>
 
         {/* How it works: one hand-drawn ASCII piece per step. */}
         <section id="how" aria-labelledby="how-title" className="mx-auto w-full max-w-page scroll-mt-24 px-4 sm:px-6 lg:px-8">
           <SectionHeading id="how-title" eyebrow="How it works" title={<>From group chat to a plan <span className="type-accent">in four steps.</span></>} />
-          <ol className="m-0 mt-10 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4">
-            {steps.map((step, index) => (
-              <li key={step.title} className="flex flex-col overflow-hidden rounded-2xl bg-surface shadow-card">
-                <div className="flex h-40 items-center justify-center border-0 border-b border-solid border-line-subtle bg-surface-muted">
-                  <AsciiArt art={stepArt[index]} className="text-[0.6875rem] text-brand-700" />
-                </div>
+          <ol data-stagger className="m-0 mt-10 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4">
+            {steps.map((step, index) => {
+              const Art = stepArt[index];
+              return (
+              <li key={step.title} className="group flex flex-col overflow-hidden rounded-2xl bg-surface shadow-card transition-[box-shadow,transform] duration-300 ease-apple hover:-translate-y-0.5 hover:shadow-raised">
+                <IllustrationFrame className="border-0 border-b border-solid border-line-subtle">
+                  <Art />
+                </IllustrationFrame>
                 <div className="min-w-0 p-5 sm:p-6">
                   <p className="type-overline m-0 text-ink-muted">Step 0{index + 1}</p>
                   <h3 className="type-h3 m-0 mt-2">{step.title}</h3>
                   <p className="type-small m-0 mt-2 text-ink-soft">{step.body}</p>
                 </div>
               </li>
-            ))}
+              );
+            })}
           </ol>
         </section>
 
@@ -290,7 +325,20 @@ export default function LandingPage() {
             title={<>The awkward parts, <span className="type-accent">handled.</span></>}
             lead="Money, dates and dietary needs are where group trips fall apart. Fermat keeps them private and fair."
           />
-          <ul className="m-0 mt-10 grid list-none gap-x-10 gap-y-9 p-0 sm:grid-cols-2 lg:grid-cols-3">
+          <ul data-stagger className="m-0 mt-10 grid list-none gap-4 p-0 md:grid-cols-3">
+            {highlights.map(({ art: Art, title, body }) => (
+              <li key={title} className="flex flex-col overflow-hidden rounded-2xl bg-surface shadow-card transition-[box-shadow,transform] duration-300 ease-apple hover:-translate-y-0.5 hover:shadow-raised">
+                <IllustrationFrame className="h-52 border-0 border-b border-solid border-line-subtle">
+                  <Art />
+                </IllustrationFrame>
+                <div className="min-w-0 p-5 sm:p-6">
+                  <h3 className="type-h3 m-0">{title}</h3>
+                  <p className="type-small m-0 mt-2 text-ink-soft">{body}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <ul data-stagger className="m-0 mt-12 grid list-none gap-x-10 gap-y-9 p-0 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((feature) => (
               <li key={feature.title} className="flex gap-4">
                 <IconTile icon={feature.icon} />
@@ -313,20 +361,22 @@ export default function LandingPage() {
                 title={<>See exactly <span className="type-accent">why it won.</span></>}
                 lead="The winner is the most-voted trip that works for everyone. When it’s locked, the group sees how the votes fell and why a more popular pick missed out."
               />
-              <ul className="m-0 mt-6 flex list-none flex-col gap-3 p-0">
+              <ul data-stagger className="m-0 mt-6 flex list-none flex-col gap-3 p-0">
                 {[
                   { icon: icons.vote, text: 'Vote counts for every option, with no names attached' },
                   { icon: icons.info, text: 'Plain reasons a pick couldn’t win: budget, visa timing, passport or trip length' },
                   { icon: icons.private, text: 'Only you see which option you voted for' },
                 ].map(({ icon: Icon, text }) => (
                   <li key={text} className="type-body flex items-start gap-3 text-ink-soft">
-                    <Icon className="mt-0.5 size-5 shrink-0 text-brand-600" strokeWidth={1.75} aria-hidden />
+                    <Icon className="mt-0.5 size-5 shrink-0 text-ink-soft" strokeWidth={1.75} aria-hidden />
                     {text}
                   </li>
                 ))}
               </ul>
             </div>
-            <VoteResultsPreview className="mx-auto w-full max-w-md lg:max-w-none" />
+            <div data-slide="right" className="mx-auto w-full max-w-md lg:max-w-none">
+              <VoteResultsPreview />
+            </div>
           </div>
         </section>
 
@@ -338,17 +388,17 @@ export default function LandingPage() {
             title={<>Your budget <span className="type-accent">stays yours.</span></>}
             lead="Fermat checks every option against everyone’s details, then shows the group only the answer."
           />
-          <div className="mt-10 grid gap-4 lg:grid-cols-2">
-            <Card variant="private" className="p-5 sm:p-6">
+          <div data-stagger className="mt-10 grid gap-4 lg:grid-cols-2">
+            <Card variant="private" className={`p-5 sm:p-6 ${mono.privatePanel}`}>
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <h3 className="type-h3 m-0 text-private-ink">What you enter</h3>
-                <PrivateBadge size="sm" className="bg-surface" />
+                <h3 className="type-h3 m-0">What you enter</h3>
+                <PrivateBadge size="sm" className={mono.solid} />
               </div>
               <dl className="m-0 mt-4 flex flex-col gap-2">
                 {youSee.map(({ icon: Icon, label, value }) => (
                   <div key={label} className="flex items-center justify-between gap-3 rounded-xl bg-surface px-3 py-2.5">
                     <dt className="type-small flex items-center gap-2 text-ink-soft">
-                      <Icon className="size-4 text-private" strokeWidth={1.75} aria-hidden />
+                      <Icon className="size-4 text-ink-muted" strokeWidth={1.75} aria-hidden />
                       {label}
                     </dt>
                     <dd className="type-small type-num m-0 font-semibold text-ink">{value}</dd>
@@ -366,10 +416,10 @@ export default function LandingPage() {
               </div>
               <ul className="m-0 mt-4 flex list-none flex-col gap-2 p-0">
                 {[
-                  { name: 'Goa', pill: <StatusPill status="ok" size="sm">Everyone can go</StatusPill> },
-                  { name: 'Bali', pill: <StatusPill status="warning" icon={icons.budget} size="sm">2 budgets short</StatusPill> },
-                  { name: 'Paris', pill: <StatusPill status="warning" icon={icons.visa} size="sm">Visa timing</StatusPill> },
-                  { name: 'Manali', pill: <StatusPill status="blocked" icon={icons.duration} size="sm">Trip too short</StatusPill> },
+                  { name: 'Goa', pill: <StatusPill status="ok" size="sm" className={mono.okPill}>Everyone can go</StatusPill> },
+                  { name: 'Bali', pill: <StatusPill status="warning" icon={icons.budget} size="sm" className={mono.pill}>2 budgets short</StatusPill> },
+                  { name: 'Paris', pill: <StatusPill status="warning" icon={icons.visa} size="sm" className={mono.pill}>Visa timing</StatusPill> },
+                  { name: 'Manali', pill: <StatusPill status="blocked" icon={icons.duration} size="sm" className={mono.pill}>Trip too short</StatusPill> },
                 ].map((row) => (
                   <li key={row.name} className="flex items-center justify-between gap-3 rounded-xl bg-surface-muted px-3 py-2.5">
                     <span className="type-small flex items-center gap-2 font-semibold text-ink">
@@ -390,14 +440,14 @@ export default function LandingPage() {
             <ul className="m-0 flex list-none flex-col gap-3 p-0 sm:flex-row sm:flex-wrap sm:gap-x-6">
               {promises.map(({ icon: Icon, text }) => (
                 <li key={text} className="type-small flex items-center gap-2 font-medium text-ink-soft">
-                  <Icon className="size-4 text-brand-600" strokeWidth={1.75} aria-hidden />
+                  <Icon className="size-4 text-ink-soft" strokeWidth={1.75} aria-hidden />
                   {text}
                 </li>
               ))}
             </ul>
             <Link
               href="/privacy"
-              className="type-small inline-flex items-center gap-1 self-start rounded font-semibold text-brand-700 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+              className="type-small inline-flex items-center gap-1 self-start rounded font-semibold text-ink underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
             >
               Read the privacy policy
               <ArrowRight className="size-4" strokeWidth={2} aria-hidden />
@@ -407,8 +457,14 @@ export default function LandingPage() {
 
         {/* Any country, India first */}
         <section id="anywhere" aria-labelledby="anywhere-title" className="mx-auto w-full max-w-page px-4 sm:px-6 lg:px-8">
-          <div className="relative isolate grid gap-10 overflow-hidden rounded-3xl bg-surface-muted p-6 ring-1 ring-inset ring-line-subtle sm:p-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16 lg:p-12">
-            <div aria-hidden className="bg-grid absolute inset-0 -z-10" />
+          <div data-reveal className="relative isolate grid gap-10 overflow-hidden rounded-3xl bg-surface-muted p-6 ring-1 ring-inset ring-line-subtle sm:p-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16 lg:p-12">
+            <DitherField
+              pattern="waves"
+              alpha={0.13}
+              cell={4}
+              speed={0.6}
+              className="absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_80%_90%_at_0%_100%,black_20%,transparent_75%)]"
+            />
             <div>
               <p className="type-overline m-0 text-ink-muted">Any home country</p>
               <h2 id="anywhere-title" className="type-h1 m-0 mt-2">
@@ -419,10 +475,10 @@ export default function LandingPage() {
                 holidays and UPI built in from day one.
               </p>
             </div>
-            <ul className="m-0 grid list-none gap-x-8 gap-y-6 p-0 sm:grid-cols-2">
+            <ul data-stagger className="m-0 grid list-none gap-x-8 gap-y-6 p-0 sm:grid-cols-2">
               {globalFacts.map((fact) => (
                 <li key={fact.title} className="flex gap-4 sm:flex-col sm:gap-3">
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-surface text-brand-700 shadow-card">
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-surface text-ink shadow-card">
                     <fact.icon className="size-5" strokeWidth={1.75} aria-hidden />
                   </span>
                   <div>
@@ -438,7 +494,7 @@ export default function LandingPage() {
         {/* FAQ */}
         <section id="faq" aria-labelledby="faq-title" className="mx-auto w-full max-w-content scroll-mt-20 px-4 sm:px-6 lg:px-8">
           <SectionHeading id="faq-title" eyebrow="FAQ" title={<>Questions groups <span className="type-accent">ask.</span></>} center />
-          <Card className="mt-10 overflow-hidden">
+          <Card data-reveal className="mt-10 overflow-hidden">
             {faqs.map((item, index) => (
               <details
                 key={item.q}
@@ -467,6 +523,6 @@ export default function LandingPage() {
       </main>
 
       <SiteFooter />
-    </div>
+    </LandingMotion>
   );
 }
