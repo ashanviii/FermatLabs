@@ -40,6 +40,9 @@
   .landing *,
   .landing ::before,
   .landing ::after {
+    /* Preflight is off (see tailwind.config.js), so restore border-box here: without it every
+       `w-full px-4` box is 100% + padding wide and the page overflows on phones. */
+    box-sizing: border-box;
     border-color: hsl(var(--border));
   }
 
