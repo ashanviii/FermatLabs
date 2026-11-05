@@ -62,13 +62,16 @@ function EmailSignIn({ disabled = false }: { disabled?: boolean }) {
           {error}
         </Notice>
       )}
-      <div className="flex flex-wrap gap-2">
-        <Button type="submit" variant="secondary" icon={Mail} loading={busy === 'signIn'} disabled={blocked}>
+      <div className="grid gap-3">
+        <Button type="submit" variant="outline" block icon={Mail} loading={busy === 'signIn'} disabled={blocked}>
           Sign in with email
         </Button>
-        <Button variant="ghost" loading={busy === 'signUp'} disabled={blocked} onClick={() => submit('signUp')}>
-          Create an account
-        </Button>
+        <p className="type-small m-0 text-center text-ink-muted">
+          New to Fermat?{' '}
+          <Button type="button" variant="link" className="text-[length:inherit]" loading={busy === 'signUp'} disabled={blocked} onClick={() => submit('signUp')}>
+            Create an account
+          </Button>
+        </p>
       </div>
     </form>
   );

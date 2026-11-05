@@ -46,6 +46,22 @@
     border-color: hsl(var(--border));
   }
 
+  /* Preflight's button reset, scoped here: no grey fill or bevelled border unless a class asks for one.
+     :where() keeps it at element specificity, so any utility class (border, bg-*) on a button still wins. */
+  :where(.landing) button {
+    background-color: transparent;
+    /* Longhands, so the border colour from `.landing *` above still applies. */
+    border-width: 0;
+    border-style: solid;
+  }
+
+  /* A grid with no column template gets one `auto` column, which grows to its widest child's min-content (a
+     scrolling strip, a long word) and pushes the card past the phone screen. Default to a column that can shrink.
+     :where() keeps this at zero specificity, so any grid-cols-* utility, responsive ones included, still wins. */
+  :where(.landing .grid) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .landing ::selection {
     background: theme('colors.brand.100');
     color: theme('colors.brand.900');
@@ -54,6 +70,24 @@
   html:has(.landing) {
     scroll-behavior: smooth;
   }
+}
+
+/* FlightRoute (src/components/ui/flight-route.tsx): the line draws while the plane glides, once, on the same curve.
+   The resting styles are the arrived state, so Reduce Motion and the end of the animation look identical. */
+@keyframes fr-draw {
+  from { transform: translateY(-1px) scaleX(0); }
+  to { transform: translateY(-1px) scaleX(1); }
+}
+@keyframes fr-fly {
+  from { left: 0.875rem; opacity: 0; }
+  12% { opacity: 1; }
+  to { left: calc(100% - 0.875rem); opacity: 1; }
+}
+.fr-draw { animation: fr-draw 1.8s cubic-bezier(0.65, 0, 0.35, 1) 0.25s both; }
+/* Stops half a plane short of each end, so it never touches the badges. */
+.fr-fly { left: calc(100% - 0.875rem); animation: fr-fly 1.8s cubic-bezier(0.65, 0, 0.35, 1) 0.25s both; }
+@media (prefers-reduced-motion: reduce) {
+  .fr-draw, .fr-fly { animation: none; }
 }
 
 @layer components {
@@ -68,6 +102,14 @@
       0 20px 50px -20px rgba(36, 53, 95, 0.3);
     -webkit-backdrop-filter: blur(14px) saturate(160%);
     backdrop-filter: blur(14px) saturate(160%);
+  }
+
+  /* Horizontal chip strips on phones: still swipeable, without a thick scrollbar under them. */
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 
   /* Frosted white bar material for floating/sticky chrome (the nav pill, the /plan top bar). */

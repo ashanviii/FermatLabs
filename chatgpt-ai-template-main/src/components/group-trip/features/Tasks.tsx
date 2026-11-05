@@ -5,7 +5,6 @@ import { Avatar } from '@/components/ui/avatar';
 import { Badge, StatusPill } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody, CardHeader } from '@/components/ui/card';
-import { asciiArt } from '@/components/ui/ascii';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Input, controlClass } from '@/components/ui/field';
 import { icons, type IconComponent } from '@/components/ui/icons';
@@ -113,6 +112,31 @@ function Extra({ icon: Icon, title, children, actions }: { icon: IconComponent; 
 }
 
 // Shared to-dos plus anonymous nudges. Never names who is running late.
+/** Empty-state picture: a small checklist card, one item ticked and two still open. */
+function ChecklistSketch() {
+  const rows = [
+    { done: true, width: 'w-20' },
+    { done: false, width: 'w-24' },
+    { done: false, width: 'w-16' },
+  ];
+  return (
+    <div className="flex w-40 flex-col gap-2 rounded-xl bg-surface p-3 shadow-card ring-1 ring-inset ring-line-subtle">
+      {rows.map((row, i) => (
+        <div key={i} className="flex items-center gap-2">
+          {row.done ? (
+            <span className="flex size-4 shrink-0 items-center justify-center rounded-[0.3125rem] bg-brand-600 text-white">
+              <Check className="size-3" strokeWidth={3} />
+            </span>
+          ) : (
+            <span className="size-4 shrink-0 rounded-[0.3125rem] bg-surface ring-1 ring-inset ring-line-strong" />
+          )}
+          <span className={cn('h-1.5 rounded-full', row.width, row.done ? 'bg-line' : 'bg-surface-strong')} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function Tasks({ trip, uid, owner, disabled, command }: FeatureProps) {
   const data = trip?.features?.tasks || {};
   const tasks: Task[] = data.tasks || [];
@@ -175,7 +199,7 @@ export default function Tasks({ trip, uid, owner, disabled, command }: FeaturePr
         )}
 
         {ordered.length === 0 ? (
-          <EmptyState size="sm" icon={icons.tasks} art={asciiArt.clipboard} title="No tasks yet" description="Add one, like booking the airport cab." />
+          <EmptyState size="sm" icon={icons.tasks} illustration={<ChecklistSketch />} title="No tasks yet" description="Add one, like booking the airport cab." />
         ) : (
           <div className="grid gap-2">
             <div className="flex items-baseline justify-between">
