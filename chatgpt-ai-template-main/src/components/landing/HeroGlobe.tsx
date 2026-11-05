@@ -816,7 +816,8 @@ export default function HeroGlobe({ className, dome = false, dither = true }: He
       className={cn(
         'relative mx-auto w-full select-none',
         // Dome: show the top half only. Clip just the bottom edge, so cards and bubbles can rise above and to the sides.
-        dome ? 'aspect-[2/1] max-w-[46rem] [clip-path:inset(-100vmax_-100vmax_0_-100vmax)]' : 'max-w-[36rem]',
+        // min-h-0: otherwise aspect-ratio grows to fit the square globe inside and the dome becomes a full circle.
+        dome ? 'aspect-[2/1] min-h-0 max-w-[46rem] [clip-path:inset(-100vmax_-100vmax_0_-100vmax)]' : 'max-w-[36rem]',
         className,
       )}
     >

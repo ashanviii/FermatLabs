@@ -8,6 +8,8 @@ export interface EmptyStateProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   icon: IconComponent;
   /** ASCII art (from `asciiArt`) shown instead of the icon tile. */
   art?: string[];
+  /** A small drawn picture shown instead of the art or icon tile. Decorative. */
+  illustration?: React.ReactNode;
   title: React.ReactNode;
   description?: React.ReactNode;
   /** Usually one Button. */
@@ -19,7 +21,7 @@ export interface EmptyStateProps extends Omit<React.HTMLAttributes<HTMLDivElemen
  * Nothing here yet. Say what will appear and the one thing to do next.
  *   <EmptyState icon={icons.tasks} art={asciiArt.clipboard} title="No tasks yet" description="Add one, like booking the airport cab." />
  */
-export function EmptyState({ icon: Icon, art, title, description, action, size = 'md', className, ...props }: EmptyStateProps) {
+export function EmptyState({ icon: Icon, art, illustration, title, description, action, size = 'md', className, ...props }: EmptyStateProps) {
   return (
     <div
       className={cn(
@@ -29,7 +31,11 @@ export function EmptyState({ icon: Icon, art, title, description, action, size =
       )}
       {...props}
     >
-      {art ? (
+      {illustration ? (
+        <div aria-hidden className="mb-1">
+          {illustration}
+        </div>
+      ) : art ? (
         <AsciiArt art={art} className={cn('text-brand-600', size === 'md' ? 'mb-1 text-[0.8125rem]' : 'text-[0.6875rem]')} />
       ) : (
         <span className={cn('flex items-center justify-center rounded-2xl bg-surface text-brand-700 shadow-card', size === 'md' ? 'size-12' : 'size-10')}>

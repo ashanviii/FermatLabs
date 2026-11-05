@@ -127,7 +127,7 @@ export function DateFinder({ startDate, endDate, onPick, homeCountry }: { startD
                   {w.leave === 0 ? (india ? 'No leave' : 'No time off') : plural(w.leave, india ? 'leave day' : 'day off', india ? 'leave days' : 'days off')}
                 </span>
               </span>
-              <span className="type-small block w-full truncate text-ink-muted">
+              <span className="type-small block w-full text-ink-muted sm:truncate">
                 {weekday(w.start)} to {weekday(w.end)}
                 {w.holiday && <span className="text-brand-700"> · {w.holiday}</span>}
               </span>

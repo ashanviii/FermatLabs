@@ -5,7 +5,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody } from '@/components/ui/card';
 import { AsciiArt, asciiArt } from '@/components/ui/ascii';
-import { AsciiSpinner } from '@/components/ui/ascii-motion';
+import { AsciiField, AsciiSpinner } from '@/components/ui/ascii-motion';
+import { StatusPill } from '@/components/ui/badge';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Notice } from '@/components/ui/notice';
 import { Progress } from '@/components/ui/progress';
@@ -116,49 +117,38 @@ const scrollToStep = (id: StepId) =>
     .getElementById(`step-${id}`)
     ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-function Point({
-  icon: Icon,
-  title,
-  inverse = false,
-  children,
-}: {
-  icon: IconComponent;
-  title: string;
-  inverse?: boolean;
-  children: React.ReactNode;
-}) {
+// What the group sees on the Choose step: a static peek at the product, rising from the bottom of the sign-in panel.
+const peekRows: { name: string; line: string; status: 'ok' | 'warning'; label: string; icon?: IconComponent }[] = [
+  { name: 'Goa', line: 'India · 4 nights', status: 'ok', label: 'Everyone can go' },
+  { name: 'Bali', line: 'Indonesia · 5 nights', status: 'warning', label: '2 budgets short', icon: icons.budget },
+  { name: 'Paris', line: 'France · 6 nights', status: 'warning', label: 'Visa timing', icon: icons.visa },
+];
+
+function EntryPeek() {
   return (
-    <li className="flex gap-3 rounded-xl border border-solid border-white/10 bg-white/[0.06] p-3.5">
-      <span
-        className={
-          inverse
-            ? 'flex size-10 shrink-0 items-center justify-center rounded-lg bg-white/10 text-brand-100'
-            : 'flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700'
-        }
-      >
-        <Icon className="size-5" strokeWidth={1.75} aria-hidden />
-      </span>
-      <span className="min-w-0 pt-0.5">
-        <span
-          className={
-            inverse
-              ? 'type-body block font-semibold text-white'
-              : 'type-body block font-semibold text-ink'
-          }
-        >
-          {title}
-        </span>
-        <span
-          className={
-            inverse
-              ? 'type-small block text-white/65'
-              : 'type-small block text-ink-muted'
-          }
-        >
-          {children}
-        </span>
-      </span>
-    </li>
+    // -mb-*: cancels the panel's bottom padding so the card runs off the panel's edge and is cropped there.
+    // frost-frame (landing.css): the glassy rim also used on the landing hero. No bottom rim, the card runs off the edge.
+    <div aria-hidden className="frost-frame relative mt-auto -mb-6 select-none rounded-t-[1.375rem] border-b-0 p-1.5 pb-0 sm:-mb-8">
+      <div className="rounded-t-2xl bg-surface p-3 pb-0 text-ink">
+        <div className="flex items-center justify-between gap-3 px-1.5 pb-2.5 pt-0.5">
+          <span className="type-caption font-semibold text-ink">Where should we go?</span>
+          <span className="type-caption text-ink-muted">4 of 6 voted</span>
+        </div>
+        <ul className="m-0 grid list-none gap-1.5 p-0">
+          {peekRows.map((row) => (
+            <li key={row.name} className="flex items-center justify-between gap-3 rounded-xl bg-surface-muted px-3 py-2.5">
+              <span className="min-w-0">
+                <span className="type-small block font-semibold text-ink">{row.name}</span>
+                <span className="type-caption block truncate text-ink-muted">{row.line}</span>
+              </span>
+              <StatusPill status={row.status} icon={row.icon} size="sm">
+                {row.label}
+              </StatusPill>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
 }
 
@@ -243,20 +233,29 @@ function StepSummaryRow({
   );
 }
 
+
 function EntryHero() {
   return (
-    <div className="relative isolate grid overflow-hidden rounded-2xl border border-solid border-brand-800 bg-brand-950 p-6 text-white shadow-raised sm:p-8 lg:sticky lg:top-24 lg:p-10">
-      <div aria-hidden className="bg-grid absolute inset-0 -z-10 opacity-10" />
+    // lg:max-h: still stretches to match the sign-in card (~567px), but stops there beside the long New trip form,
+    // and sticks while that form scrolls.
+    <div className="relative isolate grid overflow-hidden rounded-2xl border border-solid border-brand-800 bg-brand-950 p-6 text-white shadow-raised sm:p-8 lg:sticky lg:top-24 lg:max-h-[36rem]">
       <div
         aria-hidden
         className="absolute -right-20 -top-20 -z-10 size-72 rounded-full bg-brand-500/30 blur-3xl"
       />
-      <div className="grid content-start gap-8">
+      {/* Faint drifting ASCII, kept to the top-right glow and bottom-left corner so it stays clear of the copy. */}
+      <AsciiField
+        color="rgba(197, 212, 245, 0.32)"
+        className="absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_75%_55%_at_100%_0%,black_15%,transparent_70%),radial-gradient(ellipse_70%_40%_at_0%_100%,black_5%,transparent_70%)]"
+      />
+      {/* The panel stretches to the sign-in card's height; mt-auto keeps the peek on its bottom edge. */}
+      <div className="flex flex-col gap-6">
         <div className="grid gap-4">
           <p className="type-overline m-0 text-brand-200">
             Your trip workspace
           </p>
-          <h1 className="type-display m-0 max-w-[13ch] text-balance !text-white">
+          {/* One step down from the landing hero size on desktop, where it shares the row with the sign-in form. */}
+          <h1 className="type-display m-0 max-w-[16ch] text-balance !text-white lg:!text-[3rem] lg:!leading-[3.25rem]">
             Find a trip your whole group can actually take
           </h1>
           <p className="type-lead m-0 max-w-prose text-white/70">
@@ -264,17 +263,7 @@ function EntryHero() {
             final day-by-day plan.
           </p>
         </div>
-        <ul className="m-0 grid list-none gap-3 p-0">
-          <Point inverse icon={icons.private} title="Budgets stay private">
-            The group sees the blocker, never whose budget it is.
-          </Point>
-          <Point inverse icon={icons.vote} title="Decisions stay clear">
-            Everyone votes privately. The winning logic stays visible.
-          </Point>
-          <Point inverse icon={icons.plan} title="The plan stays actionable">
-            Days, personal costs, tasks and settle-up in one place.
-          </Point>
-        </ul>
+        <EntryPeek />
       </div>
     </div>
   );
@@ -471,6 +460,22 @@ export default function CollaborativeTripPlanner() {
     const query = url.searchParams.toString();
     history.pushState(null, '', `${url.pathname}${query ? `?${query}` : ''}`);
     loadTrips();
+  };
+  // Back to the sign-in screen: sign out, then drop any open trip so the next person starts clean.
+  const signOut = async () => {
+    try {
+      await auth.logOut();
+    } catch (cause: any) {
+      setError(cause?.message || 'Could not sign out');
+      return;
+    }
+    setTrip(undefined);
+    setTrips([]);
+    setError('');
+    const url = new URL(location.href);
+    url.searchParams.delete('trip');
+    const query = url.searchParams.toString();
+    history.replaceState(null, '', `${url.pathname}${query ? `?${query}` : ''}`);
   };
   useEffect(() => {
     if (!user || !inviteReady || token) return;
@@ -725,9 +730,10 @@ export default function CollaborativeTripPlanner() {
       <main className="min-h-screen bg-canvas pb-6 font-sans text-ink">
         <PageContainer>
           <TopBar />
-          <div className="mx-auto grid max-w-content gap-6 py-6 sm:py-10 lg:max-w-none lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:gap-6 lg:py-12">
+          <div className="mx-auto grid max-w-content gap-6 py-6 sm:py-10 lg:max-w-none lg:grid-cols-[0.9fr_1.1fr] lg:items-stretch lg:gap-6 lg:py-12">
             <EntryHero />
-            <div className="grid content-start gap-4 rounded-2xl border border-solid border-line bg-surface p-3 shadow-sm sm:p-5">
+            {/* No box of its own: the card inside is the surface, and its grid row stretches it to the panel's height. */}
+            <div className="grid gap-4">
               <Card aria-busy="true">
                 <CardBody className="grid min-h-64 place-items-center gap-4 text-center">
                   <AsciiArt art={asciiArt.suitcase} className="text-[0.75rem] text-brand-600" />
@@ -815,6 +821,17 @@ export default function CollaborativeTripPlanner() {
       </Button>
     ) : null;
 
+  // One Back link above every step: to the previous step you can still open, otherwise to the trip list.
+  const back: { label: string; onClick: () => void } | null = !trip || !me
+    ? null
+    : step === 'go'
+    ? { label: 'Back to plan', onClick: () => navigateStep('plan') }
+    : step === 'choose' && trip.phase === 'collecting' && trip.myConstraints
+    ? { label: 'Back to your details', onClick: editDetails }
+    : step === 'details' && owner && showInviteSection
+    ? { label: 'Back to invite', onClick: () => navigateStep('invite') }
+    : { label: 'Back to all trips', onClick: goHome };
+
   /* ---------------------------------------------------------------- sections */
 
   const inviteSection = showInviteSection && (
@@ -896,16 +913,6 @@ export default function CollaborativeTripPlanner() {
         action={
           trip.phase === 'collecting' ? (
             <>
-              {owner && showInviteSection && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  icon={ArrowLeft}
-                  onClick={() => navigateStep('invite')}
-                >
-                  Back to invite
-                </Button>
-              )}
               {trip.myConstraints &&
                 (showDetailsForm ? (
                   editingDetails && (
@@ -1028,18 +1035,6 @@ export default function CollaborativeTripPlanner() {
           ? "Your vote is secret. A place someone can't afford or enter can't win."
           : 'Everyone sees the same list. Only you see your own fit.'
       }
-      action={
-        trip.phase === 'collecting' && trip.myConstraints ? (
-          <Button
-            size="sm"
-            variant="outline"
-            icon={ArrowLeft}
-            onClick={editDetails}
-          >
-            Back to your details
-          </Button>
-        ) : undefined
-      }
     >
       {chooseBar}
       {hasBoard ? (
@@ -1123,19 +1118,6 @@ export default function CollaborativeTripPlanner() {
       eyebrow={stepEyebrow('go')}
       title="Get going"
       description="Collect the advance, split costs and share the trip."
-      action={
-        <Button
-          size="sm"
-          variant="outline"
-          icon={ArrowLeft}
-          onClick={() => {
-            setPlanStepOverride('plan');
-            requestAnimationFrame(() => scrollToStep('plan'));
-          }}
-        >
-          Back to plan
-        </Button>
-      }
     >
       <div className="grid gap-4">
         <CoordinationDisclosure
@@ -1257,6 +1239,7 @@ export default function CollaborativeTripPlanner() {
           trip={me ? trip : undefined}
           action={headerAction}
           onHome={trip ? goHome : undefined}
+          onSignOut={auth.user && !preview ? signOut : undefined}
         />
 
         {(!online || error) && (
@@ -1289,9 +1272,10 @@ export default function CollaborativeTripPlanner() {
         )}
 
         {!trip && (
-          <div className="mx-auto grid max-w-content gap-6 py-6 sm:py-10 lg:max-w-none lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:gap-6 lg:py-12">
+          <div className="mx-auto grid max-w-content gap-6 py-6 sm:py-10 lg:max-w-none lg:grid-cols-[0.9fr_1.1fr] lg:items-stretch lg:gap-6 lg:py-12">
             <EntryHero />
-            <div className="grid content-start gap-4 rounded-2xl border border-solid border-line bg-surface p-3 shadow-sm sm:p-5">
+            {/* No box of its own: the card inside is the surface, and its grid row stretches it to the panel's height. */}
+            <div className="grid gap-4">
               {!sharedFirebaseConfigured && !preview ? (
                 <Notice tone="warning" title="Shared trips aren't set up here.">
                   This copy of Fermat is missing its Firebase settings
@@ -1366,6 +1350,11 @@ export default function CollaborativeTripPlanner() {
 
         {trip && !me && (
           <div className="mx-auto grid max-w-content gap-6 pt-8 sm:pt-12">
+            <div>
+              <Button size="sm" variant="ghost" icon={ArrowLeft} className="-ml-3" onClick={goHome}>
+                Back to all trips
+              </Button>
+            </div>
             <div className="grid gap-1 text-center">
               <p className="type-overline m-0 text-brand-600">
                 You asked to join
@@ -1462,7 +1451,6 @@ export default function CollaborativeTripPlanner() {
                   />
                 </SheetContent>
               </Sheet>
-              {!trip.activePlan && <Tasks {...featureProps} />}
             </div>
             <div className="mt-6 grid gap-6 lg:grid-cols-[15rem_minmax(0,1fr)] xl:grid-cols-[15rem_minmax(0,1fr)_20rem]">
               <aside
@@ -1472,6 +1460,13 @@ export default function CollaborativeTripPlanner() {
                 <TripJourneyNav current={step} onStepClick={navigateStep} />
               </aside>
               <div className="grid min-w-0 content-start gap-4">
+                {back && (
+                  <div>
+                    <Button size="sm" variant="ghost" icon={ArrowLeft} className="-ml-3" onClick={back.onClick}>
+                      {back.label}
+                    </Button>
+                  </div>
+                )}
                 {ordered[step].filter(Boolean)}
               </div>
               <aside
@@ -1488,6 +1483,12 @@ export default function CollaborativeTripPlanner() {
                 {!trip.activePlan && <Tasks {...featureProps} />}
               </aside>
             </div>
+            {/* Phones and tablets: the step comes first, the shared to-do list after it. */}
+            {!trip.activePlan && (
+              <div className="mt-6 xl:hidden lg:ml-[calc(15rem+1.5rem)]">
+                <Tasks {...featureProps} />
+              </div>
+            )}
           </>
         )}
 

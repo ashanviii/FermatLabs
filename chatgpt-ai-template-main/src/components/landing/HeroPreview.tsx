@@ -104,7 +104,9 @@ export default function HeroPreview({ className }: { className?: string }) {
                 className={segmentedItem(selected)}
               >
                 <icons.departure strokeWidth={1.75} aria-hidden />
-                Friends in {item.city}
+                {/* Just the city on phones, so both tabs fit on one line. */}
+                <span className="sr-only sm:not-sr-only">Friends in</span>
+                {item.city}
               </button>
             );
           })}
@@ -139,7 +141,10 @@ export default function HeroPreview({ className }: { className?: string }) {
               </p>
               <p className="type-h3 m-0 mt-0.5 text-[0.9375rem] sm:text-[1.0625rem]">Where should we go?</p>
             </div>
-            <FaceStack names={example.friends} max={3} />
+            {/* Hidden on phones: it squeezes the room title into four lines. */}
+            <div className="hidden shrink-0 sm:block">
+              <FaceStack names={example.friends} max={3} />
+            </div>
           </div>
 
           {/* Featured destination, selected */}

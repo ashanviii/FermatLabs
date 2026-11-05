@@ -17,7 +17,8 @@ import type { IconComponent } from './icons';
  */
 const buttonVariants = cva(
   [
-    'relative inline-flex touch-manipulation cursor-pointer select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-transparent font-sans font-semibold tracking-[-0.01em] no-underline',
+    // border-solid: Tailwind's preflight is off, so without it buttons fall back to the browser's bevelled "outset" border.
+    'relative inline-flex touch-manipulation cursor-pointer select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-solid border-transparent font-sans font-semibold tracking-[-0.01em] no-underline',
     // iOS press feedback: a quick shrink and dim, released on the springy Apple curve.
     'transition-[background-color,border-color,color,box-shadow,transform,opacity] duration-200 ease-apple active:scale-[0.985] active:opacity-90',
     // Apple-style focus halo: a soft tinted ring hugging the control, no offset gap.

@@ -6,6 +6,7 @@ import {
   Check,
   ChevronRight,
   Home,
+  LogOut,
   Pencil,
   RefreshCw,
 } from 'lucide-react';
@@ -41,10 +42,13 @@ export function TopBar({
   trip,
   action,
   onHome,
+  onSignOut,
 }: {
   trip?: any;
   action?: React.ReactNode;
   onHome?: () => void;
+  /** Shown while someone is signed in; takes them back to the sign-in screen. */
+  onSignOut?: () => void;
 }) {
   const names = memberList(trip).map((m: any) => avatarName(m.nickname));
   // Full-width frosted bar, the same as the marketing nav. It lives inside the page column, so the material and
@@ -80,6 +84,11 @@ export function TopBar({
             />
           )}
           {action}
+          {onSignOut && (
+            <Button size="sm" variant="ghost" icon={LogOut} onClick={onSignOut} aria-label="Sign out">
+              <span className="hidden sm:inline">Sign out</span>
+            </Button>
+          )}
         </div>
       </div>
     </div>

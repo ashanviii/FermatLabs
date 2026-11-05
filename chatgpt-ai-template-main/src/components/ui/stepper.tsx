@@ -55,7 +55,7 @@ export function Stepper({
             Step {index + 1} of {steps.length}
           </p>
         </div>
-        <div className="-mx-1 mt-3 flex gap-2 overflow-x-auto px-1 pb-1">
+        <div className="no-scrollbar -mx-1 mt-3 flex snap-x gap-2 overflow-x-auto scroll-px-1 px-1 pb-1">
           {steps.map((step, i) => {
             const state =
               i < index ? 'done' : i === index ? 'current' : 'upcoming';
@@ -63,12 +63,23 @@ export function Stepper({
             return (
               <button
                 key={step.id}
+                // Bring the current chip into view inside the strip (not the page) on narrow phones.
+                ref={
+                  state === 'current'
+                    ? (el) => {
+                        const strip = el?.parentElement;
+                        if (el && strip && strip.scrollWidth > strip.clientWidth) {
+                          strip.scrollLeft = Math.max(0, el.offsetLeft - strip.offsetLeft - (strip.clientWidth - el.offsetWidth) / 2);
+                        }
+                      }
+                    : undefined
+                }
                 type="button"
                 disabled={!clickable}
                 aria-current={state === 'current' ? 'step' : undefined}
                 onClick={() => clickable && onStepClick?.(step, i)}
                 className={cn(
-                  'type-caption inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-lg border border-solid px-3 font-semibold',
+                  'type-caption inline-flex min-h-9 shrink-0 snap-start items-center gap-1.5 rounded-lg border border-solid px-3 font-semibold',
                   state === 'done' &&
                     'cursor-pointer border-brand-100 bg-brand-50 text-brand-800',
                   state === 'current' &&

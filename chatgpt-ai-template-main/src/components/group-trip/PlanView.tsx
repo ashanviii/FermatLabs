@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { MessageSquareText, Pencil, Printer, RotateCcw } from 'lucide-react';
 
 import { Avatar } from '@/components/ui/avatar';
-import { AsciiRoute } from '@/components/ui/ascii-motion';
+import { FlightRoute } from '@/components/ui/flight-route';
 import { Badge, StatusPill } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader } from '@/components/ui/card';
@@ -150,12 +150,7 @@ export default function PlanView({ trip, uid, owner, disabled, command, onShare 
           <p className="type-overline m-0 text-brand-200">Where you're going</p>
           <h3 className="type-display m-0 mt-2 text-white">{plan.destinationName}</h3>
           {/* The trip is locked: the route draws itself from home to the destination. */}
-          <AsciiRoute
-            from="YOU"
-            to={plan.destinationName.toUpperCase()}
-            length={16}
-            className="mt-4 max-w-full overflow-hidden text-[0.6875rem] text-warm-300 sm:text-[0.8125rem]"
-          />
+          <FlightRoute from="You" to={plan.destinationName} className="mt-5" />
           <ul className="type-body m-0 mt-4 flex list-none flex-wrap gap-x-5 gap-y-2 p-0 text-white/85">
             <li className="flex items-center gap-2">
               <icons.calendar className="size-4 text-brand-200" strokeWidth={1.75} aria-hidden />
