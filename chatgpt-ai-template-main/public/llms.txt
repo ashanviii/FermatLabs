@@ -1,0 +1,21 @@
+# Fermat
+
+> Fermat helps groups of 2–10 friends choose a trip that works across private budgets, dates, departure cities and travel constraints. The group can compare feasible options, vote privately and turn the winner into a shared plan. Fermat does not book travel or hold customer money.
+
+Website: https://www.fermatlabs.org/
+Start a trip: https://www.fermatlabs.org/plan
+Planning guides: https://www.fermatlabs.org/guides
+Privacy: https://www.fermatlabs.org/privacy
+Terms: https://www.fermatlabs.org/terms
+
+## Planning guides
+
+- https://www.fermatlabs.org/guides/plan-a-group-trip-with-friends
+- https://www.fermatlabs.org/guides/group-trip-budget-planner
+- https://www.fermatlabs.org/guides/trip-voting-app-for-friends
+- https://www.fermatlabs.org/guides/private-budget-group-trip-planning
+- https://www.fermatlabs.org/guides/group-trip-planning-checklist
+- https://www.fermatlabs.org/guides/choose-a-group-trip-destination
+- https://www.fermatlabs.org/guides/group-trip-planner-for-indian-friends
+- https://www.fermatlabs.org/guides/group-trip-planning-app-comparison
+
