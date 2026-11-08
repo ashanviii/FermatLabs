@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import React, { ReactNode } from 'react';
+import { Analytics } from '@vercel/analytics/next';
 import '../src/styles/App.css';
 
 const description =
@@ -45,6 +46,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body id="root">
         {children}
+        <Analytics />
       </body>
     </html>
   );
