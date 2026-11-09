@@ -154,6 +154,8 @@ export interface RoomDraft {
   scope: TripScope;
 }
 
+const groupSizeOptions = Array.from({ length: 19 }, (_, index) => index + 2);
+
 export type RoomDraftErrors = Partial<Record<keyof RoomDraft, string>>;
 
 const exactDate = (value: string) => {
@@ -180,7 +182,7 @@ export function validateRoomDraft(draft: RoomDraft): RoomDraftErrors {
     if (days < 2) errors.endDate = 'Choose a last day after the first day.';
     else if (days > 31) errors.endDate = 'Trips can be at most 31 days.';
   }
-  if (!Number.isInteger(draft.expectedSize) || draft.expectedSize < 2 || draft.expectedSize > 10) errors.expectedSize = 'Choose between 2 and 10 people.';
+  if (!Number.isInteger(draft.expectedSize) || draft.expectedSize < 2 || draft.expectedSize > 20) errors.expectedSize = 'Choose between 2 and 20 people.';
   if (!homeCountryOptions.some((country) => country.code === draft.homeCountry)) errors.homeCountry = 'Choose a supported home country.';
   if (!currencyOptions.some((currency) => currency.code === draft.currency)) errors.currency = 'Choose a supported travel currency.';
   const available = scopeAvailability(draft.homeCountry);
@@ -342,7 +344,7 @@ export function CreateRoomCard({ draft, onChange, onCreate, disabled, busy }: { 
   };
   return (
     <Card>
-      <CardHeader as="h2" icon={icons.plan} title="Start a trip" description="Pick rough dates. You can invite friends next." />
+      <CardHeader as="h2" icon={icons.plan} title="Plan something together" description="Start with the group, dates and rough direction. You can invite friends next." />
       <CardBody>
         <form ref={formRef} className="grid gap-5" noValidate onSubmit={(event) => { event.preventDefault(); submit(); }}>
         <Field label="Trip name" error={errors.name}>
@@ -352,7 +354,7 @@ export function CreateRoomCard({ draft, onChange, onCreate, disabled, busy }: { 
         <DateRangeFields draft={draft} onChange={onChange} errors={errors} dateErrors={dateErrors} setDateErrors={setDateErrors} />
         <Field label="How many people" hint="Including you" error={errors.expectedSize}>
           <Select value={draft.expectedSize} onChange={(e) => onChange({ ...draft, expectedSize: Number(e.target.value) })}>
-            {[2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+            {groupSizeOptions.map((n) => (
               <option key={n} value={n}>
                 {n} people
               </option>
@@ -367,7 +369,7 @@ export function CreateRoomCard({ draft, onChange, onCreate, disabled, busy }: { 
             {nights > 0 && ` · ${plural(nights, 'night')}`} · {plural(draft.expectedSize, 'person', 'people')}
           </p>
           <Button type="submit" size="lg" className="w-full sm:w-auto" loading={busy} disabled={disabled || invalid}>
-            Create trip
+            Start planning
           </Button>
         </div>
         </form>
@@ -399,7 +401,7 @@ export function EditTripSetupCard({ draft, onChange, onSave, onCancel, disabled,
           <DateRangeFields draft={draft} onChange={onChange} errors={errors} dateErrors={dateErrors} setDateErrors={setDateErrors} disabled={structuralDisabled} />
           <Field label="How many people" hint="Never below the people already approved" error={errors.expectedSize}>
             <Select disabled={structuralDisabled} value={draft.expectedSize} onChange={(e) => onChange({ ...draft, expectedSize: Number(e.target.value) })}>
-              {[2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => <option key={n} value={n}>{n} people</option>)}
+              {groupSizeOptions.map((n) => <option key={n} value={n}>{n} people</option>)}
             </Select>
           </Field>
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">

@@ -117,7 +117,7 @@ const SEMANTIC_SETUP_FIELDS = new Set(['startDate', 'endDate', 'homeCountry', 'c
 function normalizeTripSetup({ name, startDate, endDate, expectedSize, homeCountry = DEFAULT_HOME_COUNTRY, currency, scope = 'any', destinationIds }) {
   const cleanName = typeof name === 'string' ? name.trim() : '';
   if (!cleanName || cleanName.length > 80) fail('Trip name must be between 1 and 80 characters');
-  if (!Number.isInteger(expectedSize) || expectedSize < 2 || expectedSize > 10) fail('Expected size must be 2–10');
+  if (!Number.isInteger(expectedSize) || expectedSize < 2 || expectedSize > 20) fail('Expected size must be 2–20');
   if (!isExactDate(startDate) || !isExactDate(endDate) || endDate < startDate) fail('Valid exact dates are required');
   const tripDays = Math.round((Date.parse(`${endDate}T00:00:00Z`) - Date.parse(`${startDate}T00:00:00Z`)) / DAY) + 1;
   if (tripDays < 2 || tripDays > 31) fail('Trip length must be between 2 and 31 days');
@@ -320,8 +320,8 @@ function generatePlan(state, destinationId, options = {}) {
   const byDay = new Map(scheduled.map((slot) => [slot.index, slot]));
   const itinerary = dates.map((date, index) => {
     const stop = stops[stopOfDay[index]]; const city = stop.name;
-    if (index === 0) return { day: index + 1, date, city, items: [{ id: `arrival-${date}`, title: `Arrive in ${city} and check in`, time: '16:00', durationMinutes: 120, location: 'Hotel area', attendees: ids, estimatedCost: 0, costBasis: 'included', verificationAction: 'Confirm after flights are selected' }] };
-    if (index === dates.length - 1) return { day: index + 1, date, city, items: [{ id: `departure-${date}`, title: `Check out and fly home from ${city}`, time: '09:00', durationMinutes: 120, location: 'Hotel area', attendees: ids, estimatedCost: 0, costBasis: 'included', verificationAction: 'Confirm after flights are selected' }] };
+    if (index === 0) return { day: index + 1, date, city, items: [{ id: `arrival-${date}`, title: `Arrive in ${city} and check in`, time: '16:00', durationMinutes: 120, location: 'Stay area', attendees: ids, estimatedCost: 0, costBasis: 'included', verificationAction: 'Confirm after travel is selected' }] };
+    if (index === dates.length - 1) return { day: index + 1, date, city, items: [{ id: `departure-${date}`, title: `Check out and travel home from ${city}`, time: '09:00', durationMinutes: 120, location: 'Stay area', attendees: ids, estimatedCost: 0, costBasis: 'included', verificationAction: 'Confirm after travel is selected' }] };
     if (transferDays.has(index)) {
       const transfer = transfers[stopOfDay[index] - 1];
       return { day: index + 1, date, city, items: [{ id: `transfer-${date}`, title: transfer.title, time: '09:00', durationMinutes: transfer.durationMinutes, location: city, attendees: ids, estimatedCost: 0, costBasis: `${transfer.costPerPerson} per traveller, counted in transfers`, verificationAction: transfer.mode === 'flight' ? 'Book the flight once dates are final' : 'Book a cab or train once dates are final' }, { id: `meal-${date}`, title: 'Meal and check-in buffer', time: '13:30', durationMinutes: 120, location: city, attendees: ids, estimatedCost: 0, costBasis: 'food allowance already included', verificationAction: 'Choose locally' }] };

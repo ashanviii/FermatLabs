@@ -138,7 +138,7 @@ export function PrivateDetailsForm({ trip, value, dirty, disabled, busy, onChang
             </p>
           )}
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Leaving from" hint="Nearest big airport" error={errors.departureCity}>
+            <Field label="Leaving from" hint="Your city or nearest travel hub" error={errors.departureCity}>
               <Select value={value.departureCity} onChange={(e) => onChange({ departureCity: e.target.value })}>
                 {departureCityGroups(home, value.departureCity).map((group) => (
                   <optgroup key={group.code || 'saved'} label={group.name}>

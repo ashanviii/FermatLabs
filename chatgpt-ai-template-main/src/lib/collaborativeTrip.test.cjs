@@ -80,8 +80,13 @@ test('two members can collect, vote, and atomically lock one budgeted plan', () 
 test('one-person trips remain outside the supported group-size boundary', () => {
   assert.throws(
     () => createTripState({ id: 'solo', ownerUid: 'owner', name: 'Solo', startDate: '2026-12-10', endDate: '2026-12-15', expectedSize: 1 }),
-    /2–10/,
+    /2–20/,
   );
+});
+
+test('groups of twenty are supported', () => {
+  const trip = createTripState({ id: 'large-group', ownerUid: 'owner', name: 'Office outing', startDate: '2026-12-10', endDate: '2026-12-11', expectedSize: 20 });
+  assert.equal(trip.expectedSize, 20);
 });
 
 test('integer allocation reconciles for every group size from two through ten', () => {
@@ -219,7 +224,7 @@ test('organizer setup edits are revisioned, allowlisted, and preserve private in
   assert.throws(() => applyCommand(trip, { type: 'updateTripSetup', uid: 'm2', expectedInputRevision: trip.inputRevision, patch: { name: 'Hijacked' } }), /organizer/i);
   assert.throws(() => applyCommand(trip, { type: 'updateTripSetup', uid: 'owner', expectedInputRevision: trip.inputRevision, patch: { ownerUid: 'm2' } }), /unsupported/i);
   assert.throws(() => applyCommand(trip, { type: 'updateTripSetup', uid: 'owner', expectedInputRevision: trip.inputRevision - 1, patch: { name: 'Stale' } }), /stale/i);
-  assert.throws(() => applyCommand(trip, { type: 'updateTripSetup', uid: 'owner', expectedInputRevision: trip.inputRevision, patch: { expectedSize: 1 } }), /2–10|roster/i);
+  assert.throws(() => applyCommand(trip, { type: 'updateTripSetup', uid: 'owner', expectedInputRevision: trip.inputRevision, patch: { expectedSize: 1 } }), /2–20|roster/i);
 });
 
 test('semantic setup edits require real members to reconfirm but regenerate safe demo inputs', () => {

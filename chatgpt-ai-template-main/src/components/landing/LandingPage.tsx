@@ -238,12 +238,12 @@ export default function LandingPage() {
             <div className="relative -mt-4 flex flex-col items-center sm:-mt-8">
               <div data-hero="item" className="frost-frame rounded-full p-1.5">
                 <p className="type-small m-0 inline-flex flex-wrap items-center justify-center gap-x-1.5 rounded-full bg-surface px-3.5 py-1.5 font-medium text-ink-soft shadow-card">
-                  Group trip planner for 2 to 10 friends.
+                  Private group planning for 2 to 20 friends.
                   <span className="font-semibold text-ink">Budgets stay private.</span>
                 </p>
               </div>
               <h1 data-hero="item" id="hero-title" className="type-display m-0 mt-6 max-w-[16ch] text-balance">
-                One trip everyone can <span className="type-accent whitespace-nowrap">actually take.</span>
+                One plan everyone can <span className="type-accent whitespace-nowrap">actually join.</span>
               </h1>
               <p data-hero="item" className="type-lead m-0 mt-6 max-w-prose text-ink-soft">
                 Everyone adds their budget, city and passport in private. Fermat shows which trips, at home or abroad, work
