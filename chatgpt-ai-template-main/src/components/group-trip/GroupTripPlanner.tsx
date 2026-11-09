@@ -136,7 +136,7 @@ export default function GroupTripPlanner({ onExit }: { onExit?: () => void } = {
   };
 
   const addTraveller = () => {
-    if (draft.travellers.length >= 10) return;
+    if (draft.travellers.length >= 20) return;
     const id = `traveller-${Date.now()}`;
     patchDraft({
       travellers: [...draft.travellers, { id, name: `Traveller ${draft.travellers.length + 1}`, departureCity: '', passportExpiry: '', visas: [] }],
@@ -278,9 +278,9 @@ export default function GroupTripPlanner({ onExit }: { onExit?: () => void } = {
                 <CardHeader
                   icon={icons.members}
                   title={`Who's coming · ${draft.travellers.length}`}
-                  description="2 to 10 people. Nicknames only, never passport numbers."
+                  description="2 to 20 people. Nicknames only, never passport numbers."
                   action={
-                    <Button variant="outline" size="sm" icon={Plus} onClick={addTraveller} disabled={draft.travellers.length >= 10}>
+                    <Button variant="outline" size="sm" icon={Plus} onClick={addTraveller} disabled={draft.travellers.length >= 20}>
                       Add traveller
                     </Button>
                   }

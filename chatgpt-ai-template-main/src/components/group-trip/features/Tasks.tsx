@@ -48,9 +48,9 @@ function countryName(code: string) {
 // Bank and visa reminders only make sense abroad; India keeps its forex-card tip.
 function lockedSuggestions(trip: any, home: string) {
   const dest = trip?.destinations?.find((d: any) => d.id === trip?.activePlan?.destinationId);
-  if (dest?.domestic) return ['Book stays', 'Compare flights', 'Buy travel insurance'];
+  if (dest?.domestic) return ['Book stays', 'Compare travel options', 'Buy travel insurance'];
   const bank = home === 'IN' ? 'Sort a forex card' : home === 'US' ? "Tell your bank you're traveling" : "Tell your bank you're travelling";
-  return ['Book stays', 'Compare flights', 'Check visa rules', 'Buy travel insurance', bank];
+  return ['Book stays', 'Compare travel options', 'Check visa rules', 'Buy travel insurance', bank];
 }
 const ACTIONS: [keyof Waiting, string][] = [['inputs', 'add their trip details'], ['votes', 'vote'], ['approvals', 'approve the plan']];
 
