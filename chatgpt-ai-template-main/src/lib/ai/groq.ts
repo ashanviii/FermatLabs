@@ -1,23 +1,11 @@
-const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+import 'server-only';
+import { assertServerOnly, completeJson, providerError } from './providers/groq';
 
-export class AIConfigurationError extends Error {
-  constructor(message = 'Fermat AI is not configured.') {
-    super(message);
-    this.name = 'AIConfigurationError';
-  }
-}
+export { AIConfigurationError, AIProviderError } from './providers/groq';
 
-export class AIProviderError extends Error {
-  status: number;
+assertServerOnly();
 
-  constructor(message: string, status = 502) {
-    super(message);
-    this.name = 'AIProviderError';
-    this.status = status;
-  }
-}
-
-type JsonCompletionOptions = {
+export type JsonCompletionOptions = {
   system: string;
   user: string;
   temperature?: number;
@@ -26,53 +14,21 @@ type JsonCompletionOptions = {
 };
 
 export async function groqJsonCompletion<T>({
-  system,
   user,
   temperature = 0.2,
-  maxTokens = 1_800,
+  maxTokens = 1600,
   signal,
 }: JsonCompletionOptions): Promise<T> {
-  const apiKey = process.env.GROQ_API_KEY?.trim();
-  if (!apiKey) throw new AIConfigurationError();
-
-  const response = await fetch(GROQ_API_URL, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: process.env.GROQ_MODEL || 'openai/gpt-oss-20b',
-      messages: [
-        { role: 'system', content: system },
-        { role: 'user', content: user },
-      ],
-      response_format: { type: 'json_object' },
-      temperature,
-      max_completion_tokens: maxTokens,
-    }),
-    signal,
-  });
-
-  if (!response.ok) {
-    // Do not write provider bodies to application logs: JSON validation errors
-    // can contain generated text derived from private trip context.
-    console.error('Groq request failed', response.status);
-    if (response.status === 429) {
-      throw new AIProviderError('The free AI allowance is busy. Please try again shortly.', 429);
-    }
-    throw new AIProviderError('Fermat AI could not generate suggestions right now.');
+  assertServerOnly();
+  if (typeof user !== 'string') throw providerError('AI_INVALID_CONTEXT', 400);
+  if (Buffer.byteLength(user, 'utf8') > 32 * 1024) {
+    throw providerError('AI_INPUT_TOO_LARGE', 413);
   }
-
-  const body = await response.json();
-  const content = body?.choices?.[0]?.message?.content;
-  if (typeof content !== 'string') {
-    throw new AIProviderError('Fermat AI returned an incomplete response.');
-  }
-
+  let context: unknown;
   try {
-    return JSON.parse(content) as T;
+    context = JSON.parse(user);
   } catch {
-    throw new AIProviderError('Fermat AI returned an invalid response.');
+    throw providerError('AI_INVALID_CONTEXT', 400);
   }
+  return completeJson(context, process.env, {}, { temperature, maxTokens, signal }) as Promise<T>;
 }

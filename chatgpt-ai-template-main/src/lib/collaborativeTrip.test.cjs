@@ -9,6 +9,7 @@ const {
   buildTripSummary,
   generatePlan,
   validatePlan,
+  planActivityOptions,
 } = require('./collaborativeTrip');
 
 const ids = ['owner', 'm2', 'm3', 'm4'];
@@ -154,6 +155,86 @@ test('edits create a new plan revision and clear previous approvals', () => {
   });
   assert.equal(trip.activePlan.revision, 2);
   assert.deepEqual(trip.activePlan.approvals, {});
+});
+
+function suggestionTrip() {
+  let trip = readyTrip(4, 300000);
+  trip = applyCommand(trip, { type: 'openVoting', uid: 'owner', expectedInputRevision: trip.inputRevision });
+  ids.forEach((uid) => { trip = applyCommand(trip, { type: 'vote', uid, destinationId: 'bangkok', round: trip.round, inputRevision: trip.inputRevision }); });
+  return applyCommand(trip, { type: 'lock', uid: 'owner', round: trip.round, inputRevision: trip.inputRevision, idempotencyKey: 'suggestion-lock' });
+}
+
+function suggestionCommand(trip, operations) {
+  return { type: 'applyPlanSuggestion', uid: 'owner', planVersion: trip.activePlan.version, planRevision: trip.activePlan.revision, inputRevision: trip.inputRevision, operations };
+}
+
+test('plan suggestions apply atomically, reconcile actual costs and reset approvals once', () => {
+  const trip = suggestionTrip();
+  trip.activePlan.approvals.m2 = 'approved';
+  const activities = trip.activePlan.itinerary.flatMap((day) => day.items).filter((item) => item.templateId);
+  const before = structuredClone(trip);
+  const result = applyCommand(trip, suggestionCommand(trip, [
+    { kind: 'remove', itemId: activities[0].id },
+    { kind: 'reschedule', itemId: activities[1].id, time: '09:00', durationMinutes: 60 },
+  ]));
+  assert.deepEqual(trip, before);
+  assert.equal(result.activePlan.revision, trip.activePlan.revision + 1);
+  assert.deepEqual(result.activePlan.approvals, {});
+  assert.deepEqual(validatePlan(result.activePlan), []);
+  assert.equal(result.activePlan.categories.activities, trip.activePlan.categories.activities - activities[0].estimatedCost);
+  assert.ok(result.activePlan.groupTotal < trip.activePlan.groupTotal);
+  assert.equal(result.lockedDestinationId, trip.lockedDestinationId);
+  assert.deepEqual(result.ballots, trip.ballots);
+});
+
+test('plan suggestions reject unauthorized, stale, structural and conflicting changes without mutation', () => {
+  const trip = suggestionTrip();
+  const activity = trip.activePlan.itinerary.flatMap((day) => day.items).find((item) => item.templateId);
+  const remove = { kind: 'remove', itemId: activity.id };
+  const before = structuredClone(trip);
+  assert.throws(() => applyCommand(trip, { ...suggestionCommand(trip, [remove]), uid: 'm2' }), /owner|organizer/i);
+  assert.throws(() => applyCommand(trip, { ...suggestionCommand(trip, [remove]), planRevision: 0 }), /stale/i);
+  assert.throws(() => applyCommand(trip, { ...suggestionCommand(trip, [remove]), inputRevision: 0 }), /stale/i);
+  assert.throws(() => applyCommand(trip, suggestionCommand(trip, [{ kind: 'remove', itemId: trip.activePlan.itinerary[0].items[0].id }])), /catalog activities/i);
+  assert.throws(() => applyCommand(trip, suggestionCommand(trip, [{ ...remove, estimatedCost: -100 }])), /unsupported/i);
+  assert.throws(() => applyCommand(trip, suggestionCommand(trip, [remove, remove])), /only once/i);
+  assert.throws(() => applyCommand(trip, suggestionCommand(trip, [{ kind: 'reschedule', itemId: activity.id, time: '13:30', durationMinutes: 60 }])), /overlap/i);
+  assert.throws(() => applyCommand(trip, suggestionCommand(trip, [{ kind: 'reschedule', itemId: activity.id, time: '23:30', durationMinutes: 60 }])), /invalid/i);
+  assert.deepEqual(trip, before);
+});
+
+test('plan suggestions reject no-op changes and replay without resetting approvals', () => {
+  const trip = suggestionTrip();
+  trip.activePlan.approvals.m2 = 'approved';
+  const activity = trip.activePlan.itinerary.flatMap((day) => day.items).find((item) => item.templateId);
+  const original = structuredClone(trip);
+  assert.throws(() => applyCommand(trip, suggestionCommand(trip, [{ kind: 'reschedule', itemId: activity.id, time: activity.time, durationMinutes: activity.durationMinutes }])), /must change/i);
+  assert.deepEqual(trip, original);
+  const command = suggestionCommand(trip, [{ kind: 'remove', itemId: activity.id }]);
+  const changed = applyCommand(trip, command);
+  const approved = applyCommand(changed, { type: 'approvePlan', uid: 'm2', planVersion: changed.activePlan.version, planRevision: changed.activePlan.revision, decision: 'approved' });
+  assert.throws(() => applyCommand(approved, command), /stale/i);
+  assert.equal(approved.activePlan.approvals.m2, 'approved');
+});
+
+test('plan suggestions replace only available catalog activities and recompute prices', () => {
+  const trip = suggestionTrip();
+  trip.activePlan = generatePlan(trip, 'bangkok', { maxActivities: 1 });
+  const activity = trip.activePlan.itinerary.flatMap((day) => day.items).find((item) => item.templateId);
+  const candidate = planActivityOptions(trip, activity).find((item) => item.durationMinutes <= 180);
+  assert.ok(candidate);
+  const result = applyCommand(trip, suggestionCommand(trip, [{ kind: 'replace', itemId: activity.id, templateId: candidate.templateId }]));
+  const replacement = result.activePlan.itinerary.flatMap((day) => day.items).find((item) => item.id === activity.id);
+  assert.equal(replacement.title, candidate.title);
+  assert.equal(replacement.estimatedCost, candidate.costPerPerson * activity.attendees.length);
+  assert.deepEqual(validatePlan(result.activePlan), []);
+  assert.throws(() => applyCommand(trip, suggestionCommand(trip, [{ kind: 'replace', itemId: activity.id, templateId: 'made-up-place' }])), /catalog/i);
+  const tight = applyCommand(trip, { type: 'editPlanItem', uid: 'owner', planVersion: trip.activePlan.version, planRevision: trip.activePlan.revision, itemId: activity.id, patch: { estimatedCost: 0 } });
+  tight.activePlan.memberTotals.forEach((member) => { tight.constraints[member.uid].budget = member.total; });
+  const expensive = planActivityOptions(tight, activity).find((item) => item.groupCost > 0 && item.durationMinutes <= 180);
+  assert.ok(expensive);
+  assert.throws(() => applyCommand(tight, suggestionCommand(tight, [{ kind: 'replace', itemId: activity.id, templateId: expensive.templateId }])), /budget/i);
+  assert.equal(trip.activePlan.revision, 1);
 });
 
 test('cost edits reconcile totals and schedule conflicts mark the revision for review', () => {
@@ -409,13 +490,16 @@ test('a trip too short for every stop makes that route ineligible with a clear r
   assert.equal(board.eligible, false); assert.match(board.reason, /at least 4 days/);
 });
 
-test('demo travellers hold valid passports and visas so international trips are open to them', () => {
+test('demo travellers have valid passports and known visas without bypassing other entry requirements', () => {
   let trip = createTripState({ id: 'trip-intl', ownerUid: 'owner', name: 'Intl test', startDate: '2026-11-05', endDate: '2026-11-10', expectedSize: 4 });
   trip = applyCommand(trip, { type: 'addDemoMembers', uid: 'owner' });
-  trip = applyCommand(trip, { type: 'submitConstraints', uid: 'owner', expectedInputRevision: trip.inputRevision, constraints: completeConstraint(0, 1000000) });
+  trip = applyCommand(trip, { type: 'submitConstraints', uid: 'owner', expectedInputRevision: trip.inputRevision, constraints: { ...completeConstraint(0, 1000000), visas: Object.keys(require('./collaborativeTrip').seeds.holdableVisas) } });
   const board = buildTripProjection(trip, 'owner', Date.parse('2026-10-25T00:00:00Z')).destinationBoard;
-  board.forEach((d) => { assert.equal(d.passport, 0, d.destinationId); assert.equal(d.visaTiming, 0, d.destinationId); });
+  board.forEach((d) => { assert.equal(d.passport, 0, d.destinationId); });
   ['bangkok', 'dubai', 'bali', 'hanoi', 'thailand-duo'].forEach((id) => assert.equal(board.find((d) => d.destinationId === id).eligible, true, id));
+  const needsMoreTime = board.find((destination) => destination.destinationId === 'istanbul');
+  assert.ok(needsMoreTime.visaTiming > 0);
+  assert.equal(needsMoreTime.eligible, false);
 });
 
 test('shared plans show attendee counts and the viewer\'s own attendance, never who skipped', () => {

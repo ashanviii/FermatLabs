@@ -48,3 +48,5 @@ firebase-debug.log
 .env
 *service-account*.json
 fermat-sa.json
+/data/cities.json
+/data/cities.json.tmp

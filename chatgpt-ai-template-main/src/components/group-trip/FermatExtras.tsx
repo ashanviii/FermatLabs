@@ -19,7 +19,7 @@ import { approxMoney, compactMoney, currencySymbol, tripCurrency, tripHome } fro
 
 const DAY = 86400000;
 /** In-scope destination summary from the engine projection (trip.destinations). */
-type Dest = { id: string; name: string; country: string; countryCode?: string; domestic: boolean; tags: string[]; kind?: 'city' | 'route'; stops?: string[] };
+type Dest = { id: string; name: string; country: string; countryCode?: string; domestic: boolean; tags: string[]; kind?: 'city' | 'route'; stops?: string[]; provenance?: { kind: string; summary: string; generatedAt: number } };
 /** trip.destinations, or for projections from before it existed, the Indian default shortlist from the seeds. */
 function destinationsOf(trip: any): Dest[] {
   if (Array.isArray(trip?.destinations)) return trip.destinations;
@@ -154,14 +154,14 @@ type PrivateRow = { destinationId: string; total: number | null; fits: boolean; 
 type GroupStatus = { status: Status; icon?: IconComponent; label: string };
 
 /** Anonymous group status for a destination: counts only, never names. */
-function groupStatus(row: BoardRow | undefined): GroupStatus[] {
+function groupStatus(row: BoardRow | undefined, generated = false): GroupStatus[] {
   if (!row) return [];
-  if (row.eligible) return [{ status: 'ok', label: 'Everyone can go' }];
+  if (row.eligible) return [{ status: generated ? 'warning' : 'ok', label: generated ? 'Budgets fit estimate' : 'Everyone can go' }];
   const out: GroupStatus[] = [];
   if (row.budgetShort) out.push({ status: 'warning', icon: icons.budget, label: `${plural(row.budgetShort, 'budget')} short` });
   if (row.passport) out.push({ status: 'blocked', icon: icons.passport, label: plural(row.passport, 'passport issue') });
   if (row.visaTiming) out.push({ status: 'warning', icon: icons.visa, label: 'Visa timing' });
-  if (!out.length) out.push(/Trip too short/i.test(row.reason || '') ? { status: 'blocked', icon: icons.duration, label: 'Trip too short' } : { status: 'blocked', icon: icons.route, label: 'Route not available' });
+  if (!out.length) out.push(/Trip too short/i.test(row.reason || '') ? { status: 'blocked', icon: icons.duration, label: 'Trip too short' } : { status: 'blocked', icon: icons.route, label: 'Travel estimate missing' });
   return out;
 }
 
@@ -210,7 +210,7 @@ function DestinationCard({
 }: { dest: Dest; board?: BoardRow; mine?: PrivateRow; nudge?: string; voting: boolean; selected: boolean; disabled: boolean; onVote: (id: string) => void; currency: string; compareSelected: boolean; compareDisabled: boolean; onCompare: (id: string) => void }) {
   const { title, line, multi } = describe(dest);
   const blocked = Boolean(board && !board.eligible);
-  const statuses = groupStatus(board);
+  const statuses = groupStatus(board, dest.provenance?.kind === 'ai-estimate');
   const fit = privateFit(mine, currency);
   const tags = (dest.tags || []).slice(0, 3);
   const extraTags = (dest.tags || []).length - tags.length;
@@ -250,6 +250,7 @@ function DestinationCard({
         {tags.map((tag) => <Badge key={tag} size="sm" tone={blocked ? 'outline' : 'neutral'}>{capitalise(tag)}</Badge>)}
         {extraTags > 0 && <Badge size="sm" tone="outline" aria-label={`${extraTags} more: ${dest.tags.slice(tags.length).join(', ')}`}>+{extraTags}</Badge>}
       </div>
+      {dest.provenance && <p className="type-small m-0 mt-3 px-5 text-ink-muted">AI estimate, not a quote. Routes, prices and opening hours need verification.</p>}
 
       {(fit || (!voting && pills)) && (
         <div className="mt-4 flex flex-col gap-2 px-5">

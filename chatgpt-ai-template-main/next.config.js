@@ -4,6 +4,11 @@ const nextConfig = {
   // A separate distDir lets a dev server run beside the production build (NEXT_DIST_DIR=.next-dev).
   distDir: process.env.NEXT_DIST_DIR || '.next',
   reactStrictMode: false,
+  outputFileTracingIncludes: {
+    '/api/places': ['./data/cities.json'],
+    '/api/group-trips': ['./data/cities.json'],
+    '/api/group-trips/destinations': ['./data/cities.json'],
+  },
   basePath: process.env.NEXT_PUBLIC_BASE_PATH,
   assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH,
   images: {
