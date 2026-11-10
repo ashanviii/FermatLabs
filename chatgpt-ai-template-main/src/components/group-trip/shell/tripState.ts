@@ -7,12 +7,18 @@ import { formatMoney } from '@/lib/format';
 
 export type StepId = 'invite' | 'details' | 'choose' | 'plan' | 'go';
 
-/** The 13 Indian departure cities with a curated fare table (the offline demo still uses this list). */
-export const departureCities = Object.keys(seeds.departureCities);
+export const departureCities = cityData.cities.map((city) => city.name);
 /** Interests the server accepts (every catalog tag). The form narrows this to the trip's own options. */
 export const preferenceOptions = Array.from(new Set(seeds.destinations.flatMap((d) => d.tags)));
 /** Visas the server accepts, with short labels ("UAE", "Schengen", ...). One chip per visa, no duplicates. */
 export const visaOptions = Object.entries(seeds.holdableVisas as Record<string, string>);
+
+export const transportOptions = [
+  { value: 'train', label: 'Train' },
+  { value: 'bus', label: 'Bus' },
+  { value: 'car', label: 'Car/cab' },
+  { value: 'flight', label: 'Flight' },
+];
 
 export const memberList = (trip: any): any[] =>
   Object.values(trip?.members || {}).sort((a: any, b: any) => (a.joinOrder ?? 0) - (b.joinOrder ?? 0));
@@ -72,9 +78,10 @@ export const inviteMessage = (tripName: string, url: string) =>
   `Join our trip "${tripName}" on Fermat. Add your budget privately and vote on where we go: ${url}`;
 
 /** What's still missing before the details can be saved (mirrors what the server checks, for a friendly hint). */
-export function missingDetails(input: any): string[] {
+export function missingDetails(input: any, requireTransport = false): string[] {
   const missing: string[] = [];
   if (!input.departureCity) missing.push('where you leave from');
+  if (requireTransport && !transportOptions.some((mode) => input.transportModes?.includes(mode.value))) missing.push('at least one transport choice');
   if (!Number.isSafeInteger(input.budget) || input.budget <= 0) missing.push('your budget');
   if (!(input.passportExpiry === 'none' || /^\d{4}-(0[1-9]|1[0-2])$/.test(input.passportExpiry || ''))) missing.push('passport expiry month and year');
   if (!input.preferences?.length) missing.push('at least one interest');
@@ -162,8 +169,7 @@ const isDomesticFor = (dest: any, home: string) => {
 };
 /** Before a trip exists: which scopes have at least one option for this home country (so the create form can say so). */
 export function scopeAvailability(home: string): { domestic: number; international: number } {
-  const shortlist = (seeds as any).defaultShortlists?.[home] as string[] | undefined;
-  const offered = shortlist ? seeds.destinations.filter((d: any) => shortlist.includes(d.id)) : seeds.destinations;
+  const offered = seeds.destinations;
   const domestic = offered.filter((d) => isDomesticFor(d, home)).length;
   return { domestic, international: offered.length - domestic };
 }
@@ -176,37 +182,9 @@ export function scopeLabel(trip: any): string {
   return `${countryName(code)} or abroad`;
 }
 
-/* ------------------------------------------------------------------ departure cities */
-
-type City = { name: string; countryCode: string; iata?: string };
-const cities = cityData.cities as City[];
-export interface CityGroup {
-  code: string;
-  name: string;
-  cities: City[];
-}
-/** Departure cities grouped by country: the home country first, then A to Z. Keeps an unknown saved name visible. */
-export function departureCityGroups(home: string, current?: string): CityGroup[] {
-  const byCountry = new Map<string, City[]>();
-  cities.forEach((city) => byCountry.set(city.countryCode, [...(byCountry.get(city.countryCode) || []), city]));
-  const groups = Array.from(byCountry, ([code, list]) => ({ code, name: countryName(code), cities: list }));
-  groups.sort((a, b) => (a.code === home ? -1 : b.code === home ? 1 : a.name.localeCompare(b.name)));
-  if (current && !cities.some((city) => city.name === current)) groups.unshift({ code: '', name: 'Saved', cities: [{ name: current, countryCode: '' }] });
-  return groups;
-}
-/** First departure city in the home country (Delhi for India), else the first listed. */
-export const defaultDepartureCity = (home: string) => (cities.find((city) => city.countryCode === home) || cities[0]).name;
-
-/** A sensible starting budget: ₹1,50,000 for INR trips (unchanged), the same value in other currencies, to 2 significant figures. */
-export function defaultBudget(currency: string): number {
-  if (currency === 'INR' || !rates[currency] || !rates.INR) return 150000;
-  const value = (150000 / rates.INR) * rates[currency];
-  const magnitude = 10 ** Math.max(0, Math.floor(Math.log10(value)) - 1);
-  return Math.round(value / magnitude) * magnitude;
-}
-
 /** Interests to offer: tags on this trip's own options (plus anything already picked), in catalog order. */
 export function tripPreferenceOptions(trip: any, picked: string[] = []): string[] {
+  if (trip?.planningMode === 'ai') return preferenceOptions;
   const own = new Set<string>([...(trip?.destinations || []).flatMap((d: any) => d.tags || []), ...picked]);
   return own.size ? preferenceOptions.filter((tag) => own.has(tag)) : preferenceOptions;
 }

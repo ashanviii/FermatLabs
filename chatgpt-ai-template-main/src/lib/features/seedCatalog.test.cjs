@@ -61,7 +61,6 @@ test('imported city packs carry provenance and leave visa timing and entry fees 
   }
   // Imported after the existing options, which keep their seed order (the last tie-break).
   assert.deepEqual(seeds.destinations.slice(0, 13).map((dest) => dest.id), ORIGINAL_IN);
-  assert.deepEqual(seeds.defaultShortlists.IN, ORIGINAL_IN, 'Indian trips keep the original 13 options by default');
 });
 
 test('every imported destination plans and validates from departure cities across countries, with documents checked', () => {
@@ -112,10 +111,10 @@ test('Indian packs are domestic for Indian groups, US packs for US groups, and b
   assert.ok(usDomestic.destinations.every((d) => d.countryCode === 'US'));
 
   const usAny = buildTripProjection(roster({ homeCountry: 'US' }, (index) => member('Boston', 'US', { currency: 'USD' })), 'owner', now);
-  assert.equal(usAny.destinations.length, seeds.destinations.length, 'groups without a shortlist see the whole catalog');
+  assert.equal(usAny.destinations.length, seeds.destinations.length, 'groups without an explicit selection see the whole catalog');
   assert.ok(usAny.destinations.find((d) => d.id === 'hampi').domestic === false);
   const indianDefault = buildTripProjection(roster({ homeCountry: 'IN' }, (index) => member('Delhi', 'IN')), 'owner', now);
-  assert.deepEqual(indianDefault.destinations.map((d) => d.id), ORIGINAL_IN);
+  assert.deepEqual(indianDefault.destinations.map((d) => d.id), seeds.destinations.map((destination) => destination.id));
 });
 
 test('pack visa rules follow the passport: Indian passports need UK and Schengen visas unless they hold one', () => {

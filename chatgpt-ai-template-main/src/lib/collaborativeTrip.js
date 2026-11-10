@@ -6,9 +6,10 @@ const payments = require('./payments');
 const DAY = 86400000;
 const clone = (value) => JSON.parse(JSON.stringify(value));
 const fail = (message) => { throw new Error(message); };
-const destination = (id) => seeds.destinations.find((item) => item.id === id) || fail(`Unknown destination: ${id}`);
+const destination = (id, state) => state?.dynamicDestinations?.[id] || seeds.destinations.find((item) => item.id === id) || fail(`Unknown destination: ${id}`);
 const preferenceKeys = new Set(seeds.destinations.flatMap((item) => item.tags));
 const visaKeys = new Set(Object.keys(seeds.holdableVisas));
+const transportModes = ['train', 'bus', 'car', 'flight'];
 
 // Trip settings. States created before these existed are Indian trips priced in rupees with every option open.
 const SCOPES = ['any', 'domestic', 'international'];
@@ -62,7 +63,7 @@ function convertCosts(item, from, to) {
 }
 function localize(dest, currency) {
   const key = `${dest.id}\0${currency}`;
-  if (localized.has(key)) return localized.get(key);
+  if (!dest.provenance && localized.has(key)) return localized.get(key);
   const from = dest.costCurrency || seeds.currency;
   const out = convertCosts(dest, from, currency);
   if (dest.stops) {
@@ -73,16 +74,27 @@ function localize(dest, currency) {
     });
     out.transfers = (dest.transfers || []).map((transfer) => ({ ...transfer, costPerPerson: geo.convert(transfer.costPerPerson, from, currency) }));
   }
-  localized.set(key, out);
+  if (!dest.provenance) localized.set(key, out);
   return out;
 }
 
 // Return fare per traveller: the explicit Indian fare table when it has the pair (converted from seeds.currency),
 // otherwise the labelled great-circle distance-band model in src/lib/geo (open jaw for routes).
-function journeyFor(settings, cityName, dest) {
-  const table = seeds.departureCities[cityName]?.[dest.id];
+function journeyFor(settings, cityName, dest, departurePlace, traveller = {}) {
+  if (dest.provenance?.kind === 'ai-estimate') {
+    const quote = dest.journeyQuotes?.[traveller.uid];
+    const origin = departurePlace?.id || cityName;
+    if (!quote || quote.origin !== origin || !Number.isSafeInteger(quote.amount) || quote.amount < 0 ||
+      !Number.isSafeInteger(quote.oneWayMinutes) || quote.oneWayMinutes < 1 ||
+      !traveller.transportModes?.includes(quote.mode) || dest.costCurrency !== settings.currency) return null;
+    const { origin: _origin, ...fare } = quote;
+    return fare;
+  }
+  if (traveller.transportModes !== undefined) return null;
+  const resolved = validDeparturePlace(departurePlace);
+  const table = resolved ? undefined : seeds.departureCities[cityName]?.[dest.id];
   if (Number.isSafeInteger(table)) return { amount: geo.convert(table, seeds.currency, settings.currency), basis: 'table' };
-  const city = geo.departureCity(cityName);
+  const city = resolved ? departurePlace : geo.departureCity(cityName);
   const first = dest.stops ? dest.stops[0] : dest; const last = dest.stops ? dest.stops[dest.stops.length - 1] : dest;
   if (!city || ![first.lat, first.lon, last.lat, last.lon].every(Number.isFinite)) return null;
   const estimate = geo.estimateReturnFareUsd(city, first, last);
@@ -97,11 +109,9 @@ function entryAllowanceFor(dest, passport, settings) {
   return geo.convert(Math.max(0, ...countriesOf(dest).map((code) => geo.entryFeeUsd(passport, code))), 'USD', settings.currency);
 }
 
-// The options a trip offers: its own destinationIds, else the home country's default shortlist, else the whole catalog;
-// then filtered by scope. Seed order is kept (it is the last tie-break).
 function shortlistIds(state) {
-  const { homeCountry } = settingsOf(state);
-  return state.destinationIds || seeds.defaultShortlists?.[homeCountry] || seeds.destinations.map((dest) => dest.id);
+  if (state.planningMode === 'ai') return state.dynamicDestinationIds || [];
+  return state.destinationIds || seeds.destinations.map((dest) => dest.id);
 }
 function inScope(state, dest) {
   const { homeCountry, scope } = settingsOf(state);
@@ -109,12 +119,12 @@ function inScope(state, dest) {
   if (scope === 'any') return true;
   return isDomestic(dest, homeCountry) === (scope === 'domestic');
 }
-const offeredDestinations = (state) => seeds.destinations.filter((dest) => inScope(state, dest));
+const offeredDestinations = (state) => [...seeds.destinations, ...Object.values(state.dynamicDestinations || {})].filter((dest) => inScope(state, dest));
 
 const TRIP_SETUP_FIELDS = ['name', 'startDate', 'endDate', 'expectedSize', 'homeCountry', 'currency', 'scope'];
 const SEMANTIC_SETUP_FIELDS = new Set(['startDate', 'endDate', 'homeCountry', 'currency', 'scope']);
 
-function normalizeTripSetup({ name, startDate, endDate, expectedSize, homeCountry = DEFAULT_HOME_COUNTRY, currency, scope = 'any', destinationIds }) {
+function normalizeTripSetup({ name, startDate, endDate, expectedSize, homeCountry = DEFAULT_HOME_COUNTRY, currency, scope = 'any', destinationIds, planningMode = 'catalog' }) {
   const cleanName = typeof name === 'string' ? name.trim() : '';
   if (!cleanName || cleanName.length > 80) fail('Trip name must be between 1 and 80 characters');
   if (!Number.isInteger(expectedSize) || expectedSize < 2 || expectedSize > 20) fail('Expected size must be 2–20');
@@ -125,9 +135,10 @@ function normalizeTripSetup({ name, startDate, endDate, expectedSize, homeCountr
   const tripCurrency = currency === undefined || currency === null || currency === '' ? geo.currencyForCountry(homeCountry) : currency;
   if (!geo.isCurrency(tripCurrency)) fail('Trip currency must be a supported ISO-4217 code like INR or USD');
   if (!SCOPES.includes(scope)) fail(`Trip scope must be one of ${SCOPES.join(', ')}`);
+  if (!['catalog', 'ai'].includes(planningMode)) fail('Unsupported planning mode');
   if (destinationIds !== undefined && (!Array.isArray(destinationIds) || !destinationIds.length || destinationIds.length > 40 || new Set(destinationIds).size !== destinationIds.length || !destinationIds.every((destId) => seeds.destinations.some((dest) => dest.id === destId)))) fail('Destination ids must be 1–40 distinct known destinations');
-  const setup = { name: cleanName, startDate, endDate, expectedSize, homeCountry, currency: tripCurrency, scope, ...(destinationIds ? { destinationIds: [...destinationIds] } : {}) };
-  if (!offeredDestinations(setup).length) fail(scope === 'domestic' ? 'No domestic destinations are available for this home country yet' : 'No destinations match this trip scope');
+  const setup = { name: cleanName, startDate, endDate, expectedSize, homeCountry, currency: tripCurrency, scope, planningMode, ...(destinationIds ? { destinationIds: [...destinationIds] } : {}) };
+  if (planningMode !== 'ai' && !offeredDestinations(setup).length) fail(scope === 'domestic' ? 'No domestic destinations are available for this home country yet' : 'No destinations match this trip scope');
   return setup;
 }
 
@@ -138,9 +149,9 @@ function allocateInteger(total, orderedIds) {
   return Object.fromEntries(orderedIds.map((id, index) => [id, base + (index < remainder ? 1 : 0)]));
 }
 
-function createTripState({ id, ownerUid, name, startDate, endDate, expectedSize, createdAt = null, homeCountry = DEFAULT_HOME_COUNTRY, currency, scope = 'any', destinationIds }) {
+function createTripState({ id, ownerUid, name, startDate, endDate, expectedSize, createdAt = null, homeCountry = DEFAULT_HOME_COUNTRY, currency, scope = 'any', destinationIds, planningMode = 'catalog' }) {
   if (!id || !ownerUid) fail('Trip id and owner are required');
-  const setup = normalizeTripSetup({ name, startDate, endDate, expectedSize, homeCountry, currency, scope, destinationIds });
+  const setup = normalizeTripSetup({ name, startDate, endDate, expectedSize, homeCountry, currency, scope, destinationIds, planningMode });
   return {
     schemaVersion: 1, seedVersion: seeds.version, id, ownerUid, ...setup,
     phase: 'collecting', inputRevision: 0, round: 0,
@@ -162,7 +173,13 @@ function approvedIds(state) {
 function ownerOnly(state, uid) { if (state.ownerUid !== uid) fail('Only the organizer can do that'); }
 function memberOnly(state, uid) { if (!state.members[uid] || state.members[uid].status !== 'approved') fail('Approved membership required'); }
 function collecting(state) { if (state.phase !== 'collecting') fail('Trip is not collecting inputs'); }
-function invalidate(state) { state.inputRevision += 1; state.phase = 'collecting'; state.ballots = {}; state.publishedTotals = null; state.lockExplanation = null; }
+function invalidate(state) {
+  state.inputRevision += 1; state.phase = 'collecting'; state.ballots = {}; state.publishedTotals = null; state.lockExplanation = null;
+  if (state.planningMode === 'ai') {
+    state.dynamicDestinationIds = [];
+    state.dynamicDestinations = Object.fromEntries(Object.entries(state.dynamicDestinations || {}).filter(([id]) => id === state.activePlan?.destinationId));
+  }
+}
 
 function hasPlanOrMoneyHistory(state) {
   return Boolean(
@@ -180,8 +197,20 @@ function validPassport(value) {
 
 const knownDepartureCity = (name) => typeof name === 'string' && Boolean(seeds.departureCities[name] || geo.departureCity(name));
 
+function validDeparturePlace(place) {
+  return Boolean(place && place.source === 'GeoNames' && typeof place.id === 'string' && /^geonames:\d{1,12}$/.test(place.id) &&
+    typeof place.label === 'string' && place.label.length > 0 && place.label.length <= 400 && geo.isCountry(place.countryCode) &&
+    Number.isFinite(place.lat) && Math.abs(place.lat) <= 90 && Number.isFinite(place.lon) && Math.abs(place.lon) <= 180);
+}
+
 function completeConstraint(value) {
-  return value && knownDepartureCity(value.departureCity) && Number.isSafeInteger(value.budget) && value.budget > 0 &&
+  const validDeparture = value?.departurePlaceId !== undefined
+    ? validDeparturePlace(value.departurePlace) && value.departurePlace.id === value.departurePlaceId && value.departureCity === value.departurePlace.label
+    : knownDepartureCity(value?.departureCity);
+  return value && validDeparture && Number.isSafeInteger(value.budget) && value.budget > 0 &&
+    (value.transportModes === undefined || (Array.isArray(value.transportModes) && value.transportModes.length > 0 &&
+      value.transportModes.length <= transportModes.length && new Set(value.transportModes).size === value.transportModes.length && value.transportModes.every((mode) => transportModes.includes(mode)))) &&
+    (value.aiPlanningConsent === undefined || typeof value.aiPlanningConsent === 'boolean') &&
     value.datesConfirmed === true && value.isAdult === true && validPassport(value) &&
     (value.passportExpiry === 'none' || /^\d{4}-(0[1-9]|1[0-2])$/.test(value.passportExpiry || '')) && Array.isArray(value.preferences) &&
     value.preferences.length > 0 && value.preferences.length <= preferenceKeys.size && new Set(value.preferences).size === value.preferences.length && value.preferences.every((item) => preferenceKeys.has(item)) &&
@@ -189,7 +218,7 @@ function completeConstraint(value) {
 }
 
 function validatedConstraint(value, settings = settingsOf({})) {
-  const allowed = ['departureCity', 'budget', 'passportExpiry', 'visas', 'datesConfirmed', 'preferences', 'entryCheckAcknowledged', 'isAdult', 'hasIndianPassport', 'passportCountry'];
+  const allowed = ['departureCity', 'departurePlaceId', 'departurePlace', 'transportModes', 'aiPlanningConsent', 'budget', 'passportExpiry', 'visas', 'datesConfirmed', 'preferences', 'entryCheckAcknowledged', 'isAdult', 'hasIndianPassport', 'passportCountry'];
   if (!value || Object.keys(value).some((key) => !allowed.includes(key)) || !completeConstraint(value) || value.budget > maxAmount(settings.currency)) fail('Required private input is incomplete or invalid');
   // Optional keys (hasIndianPassport, passportCountry) are stored only when sent, so legacy inputs round-trip unchanged.
   return Object.fromEntries(allowed.filter((key) => value[key] !== undefined).map((key) => [key, clone(value[key])]));
@@ -255,9 +284,31 @@ function splitNights(nights, stops) {
   return result;
 }
 
+function catalogActivities(state) {
+  const dest = localize(destination(state.activePlan.destinationId, state), settingsOf(state).currency);
+  return stopsFor(dest).stops.flatMap((stop) => (stop.activities || []).map((activity) => ({
+    ...activity, templateId: `${stop.prefix}${activity.id}`, stopPrefix: stop.prefix,
+  })));
+}
+
+function planActivityOptions(state, item) {
+  const catalog = catalogActivities(state);
+  const current = catalog.find((activity) => activity.templateId === item.templateId);
+  if (!current) return [];
+  const used = new Set(state.activePlan.itinerary.flatMap((day) => day.items).map((activity) => activity.templateId));
+  const attendees = item.attendees || approvedIds(state);
+  return catalog.filter((activity) => activity.stopPrefix === current.stopPrefix && !used.has(activity.templateId) &&
+    Number.isSafeInteger(activity.costPerPerson) && activity.costPerPerson >= 0 && attendees.every((uid) => {
+      const prefs = state.privatePrefs?.[uid];
+      return !prefs || (!(prefs.alcohol === 'avoid' && activity.tags?.includes('nightlife')) &&
+        !(prefs.skipTags || []).some((tag) => activity.tags?.includes(tag)));
+    })).map((activity) => ({ ...activity, groupCost: activity.costPerPerson * attendees.length }));
+}
+
 function generatePlan(state, destinationId, options = {}) {
   const settings = settingsOf(state);
-  const dest = localize(destination(destinationId), settings.currency);
+  const dest = localize(destination(destinationId, state), settings.currency);
+  if (dest.provenance && !shortlistIds(state).includes(destinationId)) fail('Generated destination is stale');
   const ids = approvedIds(state);
   if (ids.length !== state.expectedSize) fail('Roster is incomplete');
   ids.forEach((uid) => { if (!completeConstraint(state.constraints[uid])) fail('Required private input is incomplete'); });
@@ -276,8 +327,9 @@ function generatePlan(state, destinationId, options = {}) {
   const transfersPerPerson = transfers.reduce((sum, transfer) => sum + transfer.costPerPerson, 0);
   ids.forEach((uid) => {
     const constraint = state.constraints[uid];
-    const fare = journeyFor(settings, constraint.departureCity, dest);
+    const fare = journeyFor(settings, constraint.departureCity, dest, constraint.departurePlace, { uid, transportModes: dest.provenance ? constraint.transportModes || (state.members[uid].demo ? transportModes : undefined) : undefined });
     if (!fare) fail('Unsupported departure route');
+    if (fare.oneWayMinutes && fare.oneWayMinutes * 2 >= days * 1440) fail('Trip too short for the estimated return journey');
     const journey = fare.amount;
     const blocker = options.skipDocumentChecks ? null : documentBlocker(dest, constraint, state.startDate, state.endDate, options.now, settings.homeCountry);
     if (blocker === 'passport') fail('Known passport insufficiency');
@@ -334,6 +386,7 @@ function generatePlan(state, destinationId, options = {}) {
   });
   const groupTotal = memberTotals.reduce((sum, item) => sum + item.total, 0);
   const plan = { version: options.version || 1, revision: 1, seedVersion: seeds.version, destinationId, destinationName: dest.name, timeZone: dest.timeZone, currency: settings.currency, startDate: state.startDate, endDate: state.endDate, stops: stops.map((stop, s) => ({ id: stop.id, name: stop.name, nights: stopNights[s] })), status: 'ready', memberTotals, categories, groupTotal, itinerary, approvals: {} };
+  if (dest.provenance) { plan.provenance = clone(dest.provenance); plan.seedVersion = 'ai-draft'; }
   return features.adjustPlan(plan, state, featureContext(state));
 }
 
@@ -461,7 +514,7 @@ function applyTripCommand(input, command) {
       if (keys.some((key) => !TRIP_SETUP_FIELDS.includes(key))) fail('Unsupported trip setup field');
       const currentSettings = settingsOf(state);
       const current = Object.fromEntries(TRIP_SETUP_FIELDS.map((key) => [key, ['homeCountry', 'currency', 'scope'].includes(key) ? currentSettings[key] : state[key]]));
-      const next = normalizeTripSetup({ ...current, ...patch, ...(state.destinationIds ? { destinationIds: state.destinationIds } : {}) });
+      const next = normalizeTripSetup({ ...current, ...patch, planningMode: state.planningMode || 'catalog', ...(state.destinationIds ? { destinationIds: state.destinationIds } : {}) });
       const changed = TRIP_SETUP_FIELDS.filter((key) => next[key] !== current[key]);
       if (!changed.length) return state;
       if (changed.some((key) => key !== 'name') && hasPlanOrMoneyHistory(state)) fail('Trip setup cannot change after a plan or money activity has started');
@@ -500,8 +553,24 @@ function applyTripCommand(input, command) {
       invalidate(state);
       return state;
     }
-    case 'openVoting': ownerOnly(state, command.uid); collecting(state); if (command.expectedInputRevision !== state.inputRevision) fail('Stale input revision'); if (approvedIds(state).length !== state.expectedSize || approvedIds(state).some((uid) => !completeConstraint(state.constraints[uid]))) fail('Complete roster and inputs required'); state.phase = 'voting'; state.round += 1; state.ballots = {}; return state;
-    case 'vote': memberOnly(state, command.uid); if (state.phase !== 'voting') fail('Voting is not open'); if (command.round !== state.round || command.inputRevision !== state.inputRevision) fail('Stale ballot'); if (!inScope(state, destination(command.destinationId))) fail('That destination is not one of this trip\'s options'); state.ballots[command.uid] = { destinationId: command.destinationId, round: command.round, inputRevision: command.inputRevision }; return state;
+    case 'addGeneratedDestination': {
+      ownerOnly(state, command.uid); collecting(state);
+      if (command.expectedInputRevision !== state.inputRevision) fail('Stale input revision');
+      const draft = command.destination;
+      if (!draft || !/^ai-[a-f0-9]{1,64}$/.test(draft.id) || draft.provenance?.kind !== 'ai-estimate' || draft.provenance.verified !== false ||
+        draft.costCurrency !== settingsOf(state).currency || !geo.isCountry(draft.countryCode) || !Array.isArray(draft.activities) || !draft.journeyQuotes) fail('Invalid generated destination');
+      if (state.scope !== 'any' && isDomestic(draft, settingsOf(state).homeCountry) !== (state.scope === 'domestic')) fail('Destination is outside the trip scope');
+      if (approvedIds(state).length !== state.expectedSize || approvedIds(state).some((uid) => !completeConstraint(state.constraints[uid]) || (!state.members[uid].demo && state.constraints[uid].aiPlanningConsent !== true))) fail('Complete roster and AI consent required');
+      const previous = (state.dynamicDestinationIds || []).filter((id) => state.dynamicDestinations[id].placeId !== draft.placeId);
+      if (previous.length >= 12) fail('This trip already has twelve generated drafts');
+      const retained = Object.fromEntries(previous.map((id) => [id, state.dynamicDestinations[id]]));
+      state.planningMode = 'ai'; invalidate(state);
+      state.dynamicDestinations = { ...retained, [draft.id]: clone(draft) };
+      state.dynamicDestinationIds = [...previous, draft.id];
+      return state;
+    }
+    case 'openVoting': ownerOnly(state, command.uid); collecting(state); if (command.expectedInputRevision !== state.inputRevision) fail('Stale input revision'); if (approvedIds(state).length !== state.expectedSize || approvedIds(state).some((uid) => !completeConstraint(state.constraints[uid]))) fail('Complete roster and inputs required'); if (!offeredDestinations(state).length) fail('Add a destination draft before opening voting'); state.phase = 'voting'; state.round += 1; state.ballots = {}; return state;
+    case 'vote': memberOnly(state, command.uid); if (state.phase !== 'voting') fail('Voting is not open'); if (command.round !== state.round || command.inputRevision !== state.inputRevision) fail('Stale ballot'); if (!inScope(state, destination(command.destinationId, state))) fail('That destination is not one of this trip\'s options'); state.ballots[command.uid] = { destinationId: command.destinationId, round: state.round, inputRevision: command.inputRevision }; return state;
     case 'lock': {
       ownerOnly(state, command.uid); if (!command.idempotencyKey) fail('Lock idempotency key is required'); if (state.idempotency[command.idempotencyKey]?.kind === 'lock') return state; if (state.phase !== 'voting') fail('Voting is not open'); if ('destinationId' in command) fail('Organizer override is not allowed'); if (command.round !== state.round || command.inputRevision !== state.inputRevision) fail('Stale lock');
       const explanation = explainLock(state, now); const winner = explanation.winner; const totals = clone(explanation.totals);
@@ -509,6 +578,66 @@ function applyTripCommand(input, command) {
       state.activePlan = generatePlan(state, winner, { version: state.planVersion, now }); state.payments = {}; state.lockedAt = now; state.phase = 'locked'; state.lockedDestinationId = winner; state.publishedTotals = totals; state.lockExplanation = explanation; state.idempotency[command.idempotencyKey] = { kind: 'lock', destinationId: winner }; return state;
     }
     case 'approvePlan': memberOnly(state, command.uid); if (!state.activePlan || command.planVersion !== state.activePlan.version || command.planRevision !== state.activePlan.revision) fail('Stale plan version or revision'); if (!['approved', 'changesRequested'].includes(command.decision)) fail('Invalid decision'); if (command.decision === 'approved' && state.activePlan.status === 'needsReview') fail('Fixing the overlapping stops is required before approving'); state.activePlan.approvals[command.uid] = command.decision; return state;
+    case 'applyPlanSuggestion': {
+      ownerOnly(state, command.uid);
+      const plan = state.activePlan;
+      if (state.phase !== 'locked' || !plan || command.planVersion !== plan.version || command.planRevision !== plan.revision || command.inputRevision !== state.inputRevision) fail('Stale plan version, revision or trip inputs');
+      const operations = command.operations;
+      if (!Array.isArray(operations) || operations.length < 1 || operations.length > 8) fail('A suggestion needs 1–8 activity changes');
+      const changed = new Set(); const ids = approvedIds(state);
+      const reductions = Object.fromEntries(ids.map((uid) => [uid, 0]));
+      let costReduction = 0;
+      operations.forEach((operation) => {
+        if (!operation || typeof operation !== 'object' || Array.isArray(operation)) fail('Invalid suggestion operation');
+        const allowed = operation.kind === 'remove' ? ['kind', 'itemId'] : operation.kind === 'replace' ? ['kind', 'itemId', 'templateId'] : ['kind', 'itemId', 'time', 'durationMinutes'];
+        if (!['remove', 'reschedule', 'replace'].includes(operation.kind) || Object.keys(operation).some((key) => !allowed.includes(key))) fail('Unsupported suggestion operation');
+        if (typeof operation.itemId !== 'string' || changed.has(operation.itemId)) fail('Each activity may change only once');
+        changed.add(operation.itemId);
+        const day = plan.itinerary.find((entry) => entry.items.some((item) => item.id === operation.itemId));
+        const item = day?.items.find((entry) => entry.id === operation.itemId);
+        if (!item?.templateId) fail('Suggestions may change only catalog activities, not travel or meal buffers');
+        if (operation.kind === 'reschedule') {
+          const next = { ...item, time: operation.time, durationMinutes: operation.durationMinutes };
+          if (!validScheduleItem(next)) fail('Suggested local time or duration is invalid');
+          if (next.time === item.time && next.durationMinutes === item.durationMinutes) fail('Suggestion must change the activity');
+          day.items = day.items.map((entry) => entry.id === item.id ? next : entry);
+        } else {
+          const replacement = operation.kind === 'replace' ? planActivityOptions(state, item).find((candidate) => candidate.templateId === operation.templateId) : null;
+          if (operation.kind === 'replace' && !replacement) fail('Replacement must be an available compatible catalog activity');
+          const attending = (item.attendees || ids).filter((uid) => ids.includes(uid));
+          const payers = attending.length ? attending : ids;
+          const oldSplit = allocateInteger(item.estimatedCost, payers);
+          const newCost = replacement ? replacement.costPerPerson * payers.length : 0;
+          const nextSplit = allocateInteger(newCost, payers);
+          ids.forEach((uid) => { reductions[uid] += (oldSplit[uid] || 0) - (nextSplit[uid] || 0); });
+          costReduction += item.estimatedCost - newCost;
+          day.items = replacement ? day.items.map((entry) => entry.id !== item.id ? entry : {
+            ...item, templateId: replacement.templateId, title: replacement.title, location: replacement.location,
+            durationMinutes: replacement.durationMinutes, estimatedCost: newCost,
+            costBasis: `${replacement.costPerPerson} per traveller; catalog estimate`,
+            verificationAction: 'Check opening hours and current price before booking',
+          }) : day.items.filter((entry) => entry.id !== item.id);
+        }
+      });
+      plan.memberTotals = plan.memberTotals.map((member) => {
+        const reduction = reductions[member.uid] || 0;
+        const inDestination = member.inDestination === undefined ? undefined : member.inDestination - reduction;
+        const forex = inDestination === undefined ? member.forex || 0 : forexFor(destination(plan.destinationId, state), inDestination, settingsOf(state));
+        const subtotal = member.subtotal - (member.forex || 0) - reduction + forex;
+        const contingency = Math.ceil(subtotal / 10); const total = subtotal + contingency;
+        if (!Number.isSafeInteger(total) || subtotal < 0 || total > state.constraints[member.uid].budget) fail('One or more private budgets are exceeded');
+        return { ...member, subtotal, contingency, total, ...(inDestination === undefined ? {} : { inDestination, forex }) };
+      });
+      plan.categories.activities -= costReduction;
+      if (plan.categories.forex !== undefined) plan.categories.forex = plan.memberTotals.reduce((sum, member) => sum + (member.forex || 0), 0);
+      plan.categories.contingency = plan.memberTotals.reduce((sum, member) => sum + member.contingency, 0);
+      plan.groupTotal = plan.memberTotals.reduce((sum, member) => sum + member.total, 0);
+      const errors = validatePlan(plan);
+      if (errors.length) fail(errors.join('; '));
+      plan.itinerary.forEach((day) => { day.items.sort((left, right) => left.time.localeCompare(right.time)); });
+      plan.status = 'ready'; plan.revision += 1; plan.approvals = {};
+      return state;
+    }
     case 'editPlanItem': {
       ownerOnly(state, command.uid); if (!state.activePlan || command.planVersion !== state.activePlan.version || command.planRevision !== state.activePlan.revision) fail('Stale plan version or revision');
       const allowed = new Set(['title', 'time', 'durationMinutes', 'location', 'estimatedCost', 'verificationAction']);
@@ -526,7 +655,7 @@ function applyTripCommand(input, command) {
       const oldSplit = allocateInteger(oldCost, splitAmong); const nextSplit = allocateInteger(newCost, splitAmong);
       state.activePlan.memberTotals = state.activePlan.memberTotals.map((member) => {
         const inDestination = member.inDestination === undefined ? undefined : member.inDestination - (oldSplit[member.uid] || 0) + (nextSplit[member.uid] || 0);
-        const forex = inDestination === undefined ? member.forex || 0 : forexFor(destination(state.activePlan.destinationId), inDestination, settingsOf(state));
+        const forex = inDestination === undefined ? member.forex || 0 : forexFor(destination(state.activePlan.destinationId, state), inDestination, settingsOf(state));
         const subtotal = member.subtotal - (member.forex || 0) - (oldSplit[member.uid] || 0) + (nextSplit[member.uid] || 0) + forex; const contingency = Math.ceil(subtotal / 10); const total = subtotal + contingency;
         if (total > state.constraints[member.uid].budget) fail('One or more private budgets are exceeded');
         return { ...member, subtotal, contingency, total, ...(inDestination === undefined ? {} : { inDestination, forex }) };
@@ -604,6 +733,7 @@ function destinationSummaries(state) {
   return offeredDestinations(state).map((dest) => ({
     id: dest.id, name: dest.name, country: dest.country, countryCode: dest.countryCode || null, domestic: isDomestic(dest, homeCountry), tags: [...dest.tags],
     kind: dest.stops ? 'route' : 'city', ...(dest.stops ? { stops: dest.stops.map((stop) => stop.name) } : {}),
+    ...(dest.provenance ? { provenance: clone(dest.provenance) } : {}),
     timeZone: dest.timeZone, officialUrl: dest.officialUrl, reviewedAt: dest.reviewedAt, visaKey: dest.visaKey || null, passportMonths: dest.passportMonths,
   }));
 }
@@ -627,7 +757,7 @@ function buildTripProjection(state, viewerUid, now = Date.now()) {
   if (pending) return { schemaVersion: state.schemaVersion, id: state.id, name: state.name, startDate: state.startDate, endDate: state.endDate, expectedSize: state.expectedSize, homeCountry: settings.homeCountry, currency: settings.currency, scope: settings.scope, membershipStatus: 'pending', pendingRequest: { nickname: pendingRequest.nickname, expiresAt: pendingRequest.expiresAt } };
   const payments = state.payments || {};
   const base = { schemaVersion: state.schemaVersion, seedVersion: state.seedVersion, id: state.id, name: state.name, ownerUid: state.ownerUid, startDate: state.startDate, endDate: state.endDate, expectedSize: state.expectedSize, phase: state.phase, inputRevision: state.inputRevision, round: state.round, members: clone(state.members), submissionProgress: approvedIds(state).filter((uid) => completeConstraint(state.constraints[uid])).length, ballotProgress: Object.keys(state.ballots).length, publishedTotals: clone(state.publishedTotals), lockedDestinationId: state.lockedDestinationId, activePlan: sharedPlanView(state.activePlan, viewerUid), payee: payeeView(state, viewerUid), paymentProgress: Object.values(payments).filter(Boolean).length,
-    homeCountry: settings.homeCountry, currency: settings.currency, scope: settings.scope, destinations: destinationSummaries(state), lockExplanation: clone(state.lockExplanation || null) };
+    homeCountry: settings.homeCountry, currency: settings.currency, scope: settings.scope, planningMode: state.planningMode || 'catalog', destinations: destinationSummaries(state), lockExplanation: clone(state.lockExplanation || null) };
   if (viewerUid === state.ownerUid) base.setupEdit = {
     canRename: state.phase === 'collecting',
     canEditStructure: state.phase === 'collecting' && !hasPlanOrMoneyHistory(state),
@@ -646,8 +776,8 @@ function buildTripProjection(state, viewerUid, now = Date.now()) {
         const baselineTotal = baseline.memberTotals.find((member) => member.uid === viewerUid).total;
         const blocker = documentBlocker(dest, mine, state.startDate, state.endDate, now, settings.homeCountry);
         const unlockAmount = Math.max(0, baselineTotal - ceiling);
-        const fare = journeyFor(settings, mine.departureCity, localize(dest, settings.currency));
-        myPrivateStatus.push({ destinationId: dest.id, total, baselineTotal, fits: !blocker && unlockAmount === 0, shortfall: unlockAmount, unlockAmount, blocker, journey: fare.amount, fareBasis: fare.basis === 'table' ? { kind: 'table' } : { kind: 'distance', km: fare.km, label: fare.label }, visa: visaSummary(dest, mine, settings) });
+        const fare = journeyFor(settings, mine.departureCity, localize(dest, settings.currency), mine.departurePlace, { uid: viewerUid, transportModes: dest.provenance ? mine.transportModes || (state.members[viewerUid].demo ? transportModes : undefined) : undefined });
+        myPrivateStatus.push({ destinationId: dest.id, total, baselineTotal, fits: !blocker && unlockAmount === 0, shortfall: unlockAmount, unlockAmount, blocker, journey: fare.amount, fareBasis: fare.basis === 'ai-estimate' ? { kind: 'ai-estimate', mode: fare.mode, low: fare.low, high: fare.high, oneWayMinutes: fare.oneWayMinutes, label: fare.label, verified: false } : fare.basis === 'table' ? { kind: 'table' } : { kind: 'distance', km: fare.km, label: fare.label }, visa: visaSummary(dest, mine, settings) });
       } catch (error) {
         destinationBoard.push({ destinationId: dest.id, eligible: false, budgetShort: 0, passport: 0, visaTiming: 0, reason: /Trip too short/.test(error.message) ? error.message : 'Route or input issue' });
         myPrivateStatus.push({ destinationId: dest.id, total: null, fits: false, shortfall: null, action: 'Check passport or route assumptions' });
@@ -677,7 +807,7 @@ function buildTripSummary(state, viewerUid, now = Date.now()) {
 function featureContext(state = {}) {
   const settings = settingsOf(state);
   return {
-    DAY, seeds, fail, clone, approvedIds, ownerOnly, memberOnly, collecting, invalidate, generatePlan, validatePlan, allocateInteger, destination, completeConstraint, dateRange, settings, maxAmount: maxAmount(settings.currency),
+    DAY, seeds, fail, clone, approvedIds, ownerOnly, memberOnly, collecting, invalidate, generatePlan, validatePlan, allocateInteger, destination: (id) => destination(id, state), completeConstraint, dateRange, settings, maxAmount: maxAmount(settings.currency),
     documentBlocker: (dest, constraint, startDate, endDate, now) => documentBlocker(dest, constraint, startDate, endDate, now, settings.homeCountry),
     forexFor: (dest, inDestination) => forexFor(dest, inDestination, settings),
   };
@@ -685,5 +815,6 @@ function featureContext(state = {}) {
 
 module.exports = {
   seeds, geo, allocateInteger, createTripState, applyCommand, buildTripProjection, buildTripSummary, generatePlan, validatePlan,
+  catalogActivities, planActivityOptions,
   settingsOf, isDomestic, forexFor, journeyFor, normalizeTripSetup, SCOPES, FOREX_BASIS_POINTS, DEFAULT_FOREX_BASIS_POINTS,
 };

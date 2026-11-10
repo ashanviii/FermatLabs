@@ -1,6 +1,7 @@
 const { createHash, randomBytes, randomUUID } = require('node:crypto');
 const domain = require('./collaborativeTrip');
 const features = require('./features');
+const { resolveCity } = require('./geo/cityDirectory.server');
 
 const digest = (value) => createHash('sha256').update(value).digest('hex');
 const commandTypes = new Set(['admitMember', 'rejectMember', 'submitConstraints', 'updateBudget', 'updateTripSetup', 'openVoting', 'vote', 'lock', 'approvePlan', 'editPlanItem', 'reopen', 'rotateInvite', 'revokeInvite', 'setPayee', 'markPaid', 'addDemoMembers', ...features.commandTypes]);
@@ -9,7 +10,7 @@ async function createTrip({ firestore, uid, body, serverTimestamp, now = Date.no
   const idempotencyKey = String(body.idempotencyKey || '');
   if (idempotencyKey.length < 8 || idempotencyKey.length > 200) throw new Error('Create idempotency key is required');
   const tripId = makeId(); const inviteSecret = makeSecret();
-  const state = domain.createTripState({ ...body.trip, id: tripId, ownerUid: uid, createdAt: now() });
+  const state = domain.createTripState({ ...body.trip, planningMode: body.trip?.planningMode ?? 'ai', id: tripId, ownerUid: uid, createdAt: now() });
   const requestRef = firestore.doc(`groupTripCreateRequests/${digest(`${uid}\0${idempotencyKey}`)}`);
   const result = await firestore.runTransaction(async (transaction) => {
     const requestSnap = await transaction.get(requestRef);
@@ -26,7 +27,7 @@ async function createTrip({ firestore, uid, body, serverTimestamp, now = Date.no
   return { tripId: result.tripId, state: result.state, ...(result.created ? { invite: `${result.tripId}.${inviteSecret}` } : {}) };
 }
 
-async function mutateTrip({ firestore, uid, body, serverTimestamp, now = Date.now, makeSecret = () => randomBytes(24).toString('base64url') }) {
+async function mutateTrip({ firestore, uid, body, serverTimestamp, now = Date.now, makeSecret = () => randomBytes(24).toString('base64url'), resolveDeparture = resolveCity }) {
   const tripId = String(body.tripId || ''); if (!tripId) throw new Error('Trip ID is required');
   if (!['join', 'command'].includes(body.action)) throw new Error('Unsupported trip action');
   if (body.action === 'command' && !commandTypes.has(body.command?.type)) throw new Error('Unsupported trip command');
@@ -43,7 +44,16 @@ async function mutateTrip({ firestore, uid, body, serverTimestamp, now = Date.no
         ? { inviteHash: digest(replacementSecret), inviteExpiresAt: now() + 7 * 86400000, updatedAt: serverTimestamp() }
         : { inviteHash: null, inviteExpiresAt: 0, updatedAt: serverTimestamp() });
     } else {
-      next = domain.applyCommand(next, { ...body.command, uid, now: now() });
+      let command = body.command;
+      if (command.type === 'submitConstraints') {
+        const constraints = command.constraints;
+        if (constraints && Object.hasOwn(constraints, 'departurePlace')) throw new Error('Client-supplied departure coordinates are not allowed');
+        if (constraints?.departurePlaceId !== undefined) {
+          const departurePlace = resolveDeparture(constraints.departurePlaceId);
+          command = { ...command, constraints: { ...constraints, departureCity: departurePlace.label, departurePlaceId: departurePlace.id, departurePlace } };
+        }
+      }
+      next = domain.applyCommand(next, { ...command, uid, now: now() });
       transaction.update(ref, { state: next, updatedAt: serverTimestamp() });
     }
     return next;

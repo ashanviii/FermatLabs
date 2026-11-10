@@ -40,3 +40,12 @@ test('browsers cannot read or write authoritative trip and idempotency records',
   await assertFails(setDoc(doc(alice, 'groupTrips/trip-1'), { ownerUid: 'alice' }));
   await assertFails(setDoc(doc(alice, 'groupTripCreateRequests/request-1'), { uid: 'alice' }));
 });
+
+test('AI records and private search usage counters are never browser-accessible', async () => {
+  for (const context of [environment.authenticatedContext('alice'), environment.unauthenticatedContext()]) {
+    for (const collection of ['_aiProposals', '_aiLeases', '_aiUsage', '_placeSearchLimits']) {
+      await assertFails(getDoc(doc(context.firestore(), `${collection}/test`)));
+      await assertFails(setDoc(doc(context.firestore(), `${collection}/test`), { uid: 'alice', status: 'ready' }));
+    }
+  }
+});

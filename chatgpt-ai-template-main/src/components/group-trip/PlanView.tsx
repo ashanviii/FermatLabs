@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { MessageSquareText, Pencil, Printer, RotateCcw } from 'lucide-react';
 
 import { Avatar } from '@/components/ui/avatar';
-import { FlightRoute } from '@/components/ui/flight-route';
 import { Badge, StatusPill } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader } from '@/components/ui/card';
@@ -16,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { formatDate, formatDateRange, formatMoney, nightsBetween, plural } from '@/lib/format';
 import { currencySymbol, tripCurrency } from './results/money';
 import { VoteResults } from './results/VoteResults';
+import TripAssistant from './TripAssistant';
 
 type ItemKind = 'flight' | 'road' | 'arrival' | 'departure' | 'meal' | 'free' | 'activity';
 
@@ -117,7 +117,7 @@ function ItemEditor({ item, currency, onSave, onCancel, disabled }: { item: any;
   );
 }
 
-export default function PlanView({ trip, uid, owner, disabled, command, onShare }: { trip: any; uid: string; owner: boolean; disabled: boolean; command: (c: any) => Promise<boolean>; onShare: () => void }) {
+export default function PlanView({ trip, uid, owner, disabled, command, onShare, onAssistantApplied }: { trip: any; uid: string; owner: boolean; disabled: boolean; command: (c: any) => Promise<boolean>; onShare: () => void; onAssistantApplied?: () => Promise<void> }) {
   const [editing, setEditing] = useState<string | null>(null);
   const plan = trip.activePlan;
   const people = plan.memberTotals.length;
@@ -150,7 +150,7 @@ export default function PlanView({ trip, uid, owner, disabled, command, onShare 
           <p className="type-overline m-0 text-brand-200">Where you're going</p>
           <h3 className="type-display m-0 mt-2 text-white">{plan.destinationName}</h3>
           {/* The trip is locked: the route draws itself from home to the destination. */}
-          <FlightRoute from="You" to={plan.destinationName} className="mt-5" />
+          <div className="mt-5 flex min-w-0 items-center gap-3 text-white/85"><icons.route className="size-6 shrink-0" aria-hidden /><span className="type-small">Outbound and return travel</span></div>
           <ul className="type-body m-0 mt-4 flex list-none flex-wrap gap-x-5 gap-y-2 p-0 text-white/85">
             <li className="flex items-center gap-2">
               <icons.calendar className="size-4 text-brand-200" strokeWidth={1.75} aria-hidden />
@@ -176,7 +176,7 @@ export default function PlanView({ trip, uid, owner, disabled, command, onShare 
               </StatusPill>
             ) : (
               <StatusPill status="ok" size="lg">
-                Fits everyone's budget
+                {plan.provenance ? 'Budgets fit the AI estimate' : "Fits everyone's budget"}
               </StatusPill>
             )}
             <Badge size="lg" className="bg-white/10 text-white">
@@ -185,6 +185,8 @@ export default function PlanView({ trip, uid, owner, disabled, command, onShare 
           </div>
         </div>
       </div>
+
+      {plan.provenance && <Notice tone="warning" title="AI-generated draft, not a booking quote">Budget checks use upper-end generated estimates plus contingency. Routes, fares, availability, arrival times and opening hours remain unverified. Confirm them before booking.</Notice>}
 
       {conflicts.length > 0 && (
         <Notice tone="warning" title={conflicts.length === 1 ? 'Two stops overlap' : `${conflicts.length} overlaps to fix`}>
@@ -235,6 +237,7 @@ export default function PlanView({ trip, uid, owner, disabled, command, onShare 
       )}
 
       {/* Day by day */}
+      {owner && onAssistantApplied && <TripAssistant key={trip.id} trip={trip} disabled={disabled} onApplied={onAssistantApplied} />}
       <Card>
         <CardHeader icon={icons.plan} title="Day by day" description={`${plural(days, 'day')} in ${multiStop ? stops.map((s) => s.name).join(' and ') : plan.destinationName}.`} className="pb-4 sm:pb-4" />
         <nav aria-label="Jump to day" className="-mt-1 flex gap-2 overflow-x-auto px-5 pb-5 sm:px-6 print:hidden">

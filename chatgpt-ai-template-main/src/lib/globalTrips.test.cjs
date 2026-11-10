@@ -82,6 +82,14 @@ test('a US group runs end to end in dollars with US passports and US departure c
   assert.equal(view.features.settleUp.currency, 'USD');
 });
 
+test('default options use the whole catalog instead of a country-specific hardcoded shortlist', () => {
+  const trip = createTripState({ id: 'catalog-trip', ownerUid: 'owner', name: 'Open options', startDate: '2026-12-10', endDate: '2026-12-15', expectedSize: 2, homeCountry: 'IN' });
+  const options = buildTripProjection(trip, 'owner', now).destinations;
+  assert.deepEqual(options.map((destination) => destination.id), seeds.destinations.map((destination) => destination.id));
+  const narrowed = createTripState({ ...trip, destinationIds: ['goa'] });
+  assert.deepEqual(buildTripProjection(narrowed, 'owner', now).destinations.map((destination) => destination.id), ['goa']);
+});
+
 test('costs convert from each destination currency through the fx snapshot, rounding to integers', () => {
   assert.equal(geo.convert(34000, 'INR', 'INR'), 34000);
   assert.equal(geo.convert(100, 'USD', 'INR'), Math.round(100 * geo.fx.rates.INR));
@@ -143,13 +151,14 @@ test('forex applies when the local currency differs from the trip currency, at 4
 test('scope: domestic shows only home-country options, international only the rest; out-of-scope votes fail and never win', () => {
   const domestic = roster({ scope: 'domestic' });
   const view = buildTripProjection(domestic, 'owner', now);
-  assert.deepEqual(view.destinations.map((d) => d.id), ['goa', 'manali', 'kerala-trio', 'rajasthan-duo']);
-  assert.deepEqual(view.destinationBoard.map((d) => d.destinationId), ['goa', 'manali', 'kerala-trio', 'rajasthan-duo']);
-  assert.deepEqual(view.myPrivateStatus.map((d) => d.destinationId), ['goa', 'manali', 'kerala-trio', 'rajasthan-duo']);
+  const domesticIds = seeds.destinations.filter((destination) => engine.isDomestic(destination, 'IN')).map((destination) => destination.id);
+  assert.deepEqual(view.destinations.map((d) => d.id), domesticIds);
+  assert.deepEqual(view.destinationBoard.map((d) => d.destinationId), domesticIds);
+  assert.deepEqual(view.myPrivateStatus.map((d) => d.destinationId), domesticIds);
   let voting = applyCommand(domestic, { type: 'openVoting', uid: 'owner', expectedInputRevision: domestic.inputRevision, now });
   assert.throws(() => applyCommand(voting, { type: 'vote', uid: 'owner', destinationId: 'bangkok', round: voting.round, inputRevision: voting.inputRevision, now }), /not one of this trip/);
   const international = buildTripProjection(roster({ scope: 'international' }), 'owner', now);
-  assert.ok(international.destinations.length === 9 && international.destinations.every((d) => !d.domestic));
+  assert.ok(international.destinations.length === seeds.destinations.length - domesticIds.length && international.destinations.every((d) => !d.domestic));
   assert.ok(!international.destinationBoard.some((d) => ['goa', 'manali'].includes(d.destinationId)));
   const usDomestic = buildTripProjection(roster({ homeCountry: 'US', scope: 'domestic' }, (index) => usConstraint(index)), 'owner', now);
   // Every US option in the catalog, in seed order (grows as city packs are imported).
@@ -161,8 +170,7 @@ test('scope: domestic shows only home-country options, international only the re
   assert.throws(() => applyCommand(usIntl, { type: 'vote', uid: 'owner', destinationId: 'new-york', round: usIntl.round, inputRevision: usIntl.inputRevision, now }), /not one of this trip/);
   const locked = lock(usIntl, 'intl');
   assert.ok(['lisbon', 'tokyo'].includes(locked.lockedDestinationId));
-  // India keeps exactly the original 13 options by default.
-  assert.equal(buildTripProjection(roster(), 'owner', now).destinationBoard.length, 13);
+  assert.equal(buildTripProjection(roster(), 'owner', now).destinationBoard.length, seeds.destinations.length);
 });
 
 test('passport nationality: passportCountry for new clients, hasIndianPassport for old ones, and they must agree', () => {

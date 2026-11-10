@@ -1,1 +1,9 @@
-{ "indexes": [], "fieldOverrides": [] }
+{
+	"indexes": [],
+	"fieldOverrides": [
+		{ "collectionGroup": "_aiProposals", "fieldPath": "deleteAfter", "ttl": true, "indexes": [] },
+		{ "collectionGroup": "_aiLeases", "fieldPath": "expiresAt", "ttl": true, "indexes": [] },
+		{ "collectionGroup": "_aiUsage", "fieldPath": "expiresAt", "ttl": true, "indexes": [] },
+		{ "collectionGroup": "_placeSearchLimits", "fieldPath": "expiresAt", "ttl": true, "indexes": [] }
+	]
+}

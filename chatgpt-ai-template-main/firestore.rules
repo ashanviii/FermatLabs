@@ -19,6 +19,10 @@ service cloud.firestore {
 
     match /groupTrips/{document=**} { allow read, write: if false; }
     match /groupTripCreateRequests/{document=**} { allow read, write: if false; }
+    match /_aiProposals/{document=**} { allow read, write: if false; }
+    match /_aiLeases/{document=**} { allow read, write: if false; }
+    match /_aiUsage/{document=**} { allow read, write: if false; }
+    match /_placeSearchLimits/{document=**} { allow read, write: if false; }
 
     match /{document=**} { allow read, write: if false; }
   }

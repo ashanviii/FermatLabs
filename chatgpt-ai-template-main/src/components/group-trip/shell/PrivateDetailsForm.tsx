@@ -1,10 +1,12 @@
 'use client';
 // Step 2: the viewer's private details. Nothing here is shown to the group.
 import { useRef, useState } from 'react';
+import { BusFront, Car, Plane, Sparkles, TrainFront } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody, CardFooter, CardHeader } from '@/components/ui/card';
 import { ChipGroup, Checkbox, Field, Input, Select, ToggleChip } from '@/components/ui/field';
 import { MonthYearSelect } from '@/components/ui/month-year-select';
+import DepartureCitySearch from './DepartureCitySearch';
 import { PrivateBadge, StatusPill } from '@/components/ui/badge';
 import { icons } from '@/components/ui/icons';
 import { formatDateRange, formatMoney, formatMonthYear, formatList, plural } from '@/lib/format';
@@ -13,15 +15,18 @@ import {
   countryInSentence,
   countryName,
   currencyMark,
-  departureCityGroups,
   homeCountryOptions,
   missingDetails,
+  transportOptions,
   tripPreferenceOptions,
   visaOptions,
 } from './tripState';
 
 export interface PrivateInput {
   departureCity: string;
+  departurePlaceId?: string;
+  transportModes?: string[];
+  aiPlanningConsent?: boolean;
   budget: number;
   passportExpiry: string;
   visas: string[];
@@ -47,13 +52,16 @@ interface PrivateDetailsFormProps {
 }
 
 const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+const transportIcons = { train: TrainFront, bus: BusFront, car: Car, flight: Plane };
 
 export function PrivateDetailsForm({ trip, value, dirty, disabled, busy, onChange, onToggle, onSave }: PrivateDetailsFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [showErrors, setShowErrors] = useState(false);
   const noPassport = value.passportExpiry === 'none';
   const saved = Boolean(trip.myConstraints) && !dirty;
-  const missing = missingDetails(value);
+  const requireTransport = trip.planningMode === 'ai';
+  const missing = missingDetails(value, requireTransport);
+  const transportModes = value.transportModes || [];
   const home = trip.homeCountry || DEFAULT_HOME_COUNTRY;
   const homeName = countryInSentence(home);
   const currency = trip.currency || 'INR';
@@ -67,6 +75,7 @@ export function PrivateDetailsForm({ trip, value, dirty, disabled, busy, onChang
   const passportCountries = homeCountryOptions.some((c) => c.code === home) ? homeCountryOptions : [{ code: home, name: countryName(home) }, ...homeCountryOptions];
   const errors = showErrors ? {
     departureCity: value.departureCity ? undefined : "Choose where you're leaving from.",
+    transportModes: !requireTransport || transportOptions.some((mode) => transportModes.includes(mode.value)) ? undefined : 'Choose at least one transport option.',
     budget: Number.isSafeInteger(value.budget) && value.budget > 0 ? undefined : 'Enter a budget greater than zero.',
     passportCountry: domesticOnly || value.passportCountry || value.hasIndianPassport ? undefined : 'Choose your passport country.',
     passportExpiry: domesticOnly || noPassport || /^\d{4}-(0[1-9]|1[0-2])$/.test(value.passportExpiry || '') ? undefined : 'Choose the expiry month and year, or select no passport.',
@@ -124,7 +133,7 @@ export function PrivateDetailsForm({ trip, value, dirty, disabled, busy, onChang
           onSubmit={(e) => {
             e.preventDefault();
             if (disabled) return;
-            if (missingDetails(value).length) {
+            if (missing.length) {
               revealErrors();
               return;
             }
@@ -138,18 +147,8 @@ export function PrivateDetailsForm({ trip, value, dirty, disabled, busy, onChang
             </p>
           )}
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Leaving from" hint="Your city or nearest travel hub" error={errors.departureCity}>
-              <Select value={value.departureCity} onChange={(e) => onChange({ departureCity: e.target.value })}>
-                {departureCityGroups(home, value.departureCity).map((group) => (
-                  <optgroup key={group.code || 'saved'} label={group.name}>
-                    {group.cities.map((city) => (
-                      <option key={city.name} value={city.name}>
-                        {city.iata ? `${city.name} (${city.iata})` : city.name}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </Select>
+            <Field label="Leaving from" hint="Select a city or town from the search results" error={errors.departureCity}>
+              <DepartureCitySearch key={trip.id} value={value.departureCity} placeId={value.departurePlaceId} country={home} disabled={disabled || busy} onSelect={onChange} />
             </Field>
             <Field label="Your budget" hint={`Per person in ${currency}, everything included`} error={errors.budget}>
               <Input
@@ -163,6 +162,35 @@ export function PrivateDetailsForm({ trip, value, dirty, disabled, busy, onChang
               />
             </Field>
           </div>
+
+          <fieldset className="m-0 grid min-w-0 gap-3 border-0 p-0" disabled={disabled || busy} aria-describedby={errors.transportModes ? 'private-transport-error' : undefined}>
+            {trip.planningMode !== 'ai' && <p className="type-small m-0 text-ink-muted">Transport choices apply to new AI drafts. Existing catalog estimates are legacy fares and do not reflect these choices.</p>}
+            <legend className="type-small mb-2 p-0 font-semibold text-ink">Transport choices</legend>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {transportOptions.map((mode) => {
+                const Icon = transportIcons[mode.value as keyof typeof transportIcons];
+                return (
+                  <Checkbox
+                    key={mode.value}
+                    label={<span className="inline-flex items-center gap-2"><Icon className="size-4 shrink-0" aria-hidden />{mode.label}</span>}
+                    checked={transportModes.includes(mode.value)}
+                    aria-invalid={Boolean(errors.transportModes) || undefined}
+                    aria-describedby={errors.transportModes ? 'private-transport-error' : undefined}
+                    onChange={(event) => onChange({ transportModes: event.target.checked ? [...transportModes, mode.value] : transportModes.filter((selected) => selected !== mode.value) })}
+                  />
+                );
+              })}
+            </div>
+            {errors.transportModes && <p id="private-transport-error" className="type-small m-0 font-medium text-danger-ink" role="alert">{errors.transportModes}</p>}
+          </fieldset>
+
+          <Checkbox
+            label="Allow AI trip drafts"
+            description="Send my departure city, travel month, interests and transport choices to Groq. My budget, name and passport stay private."
+            checked={value.aiPlanningConsent === true}
+            disabled={disabled || busy}
+            onChange={(event) => onChange({ aiPlanningConsent: event.target.checked })}
+          />
 
           {domesticOnly ? (
             <p className="type-small m-0 flex items-start gap-2 rounded-xl bg-surface-muted px-3.5 py-3 text-ink-soft">
@@ -246,7 +274,7 @@ export function PrivateDetailsForm({ trip, value, dirty, disabled, busy, onChang
               <Checkbox
                 variant="tile"
                 label={domesticOnly ? "I'll check travel rules before booking" : "I'll check entry rules before booking"}
-                description={domesticOnly ? 'Like the ID you need to fly' : 'On the official government site'}
+                description={domesticOnly ? 'Including ID and ticket requirements for your transport' : 'On the official government site'}
                 checked={value.entryCheckAcknowledged}
                 aria-invalid={Boolean(errors.entryCheckAcknowledged) || undefined}
                 aria-describedby={errors.entryCheckAcknowledged ? 'private-confirmation-error' : undefined}
@@ -289,12 +317,14 @@ export function PrivateDetailsSummary({ trip, value }: { trip: any; value: Priva
     [icons.budget, 'Budget', formatMoney(value.budget, trip?.currency || 'INR')],
     [icons.passport, 'Passport', passport],
     [icons.visa, 'Visas', value.visas.length ? plural(value.visas.length, 'visa') : 'None'],
+    [TrainFront, 'Transport', transportOptions.filter((mode) => value.transportModes?.includes(mode.value)).map((mode) => mode.label).join(', ') || 'Not selected'],
+    [Sparkles, 'AI trip drafts', value.aiPlanningConsent === true ? 'Allowed' : 'Not allowed'],
   ];
   return (
     <div className="grid gap-3 rounded-xl bg-private-soft p-4 text-private-ink">
     <p className="type-caption m-0 flex items-center gap-1.5 font-semibold">
       <icons.private className="size-3.5 shrink-0" strokeWidth={2} aria-hidden />
-      Only you see this
+      Private from the group
     </p>
     <dl className="m-0 grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-4">
       {rows.map(([Icon, label, text]) => (
@@ -303,10 +333,11 @@ export function PrivateDetailsSummary({ trip, value }: { trip: any; value: Priva
             <Icon className="size-3.5 shrink-0" strokeWidth={1.75} aria-hidden />
             {label}
           </dt>
-          <dd className="type-small m-0 mt-0.5 truncate font-semibold">{text}</dd>
+          <dd className="type-small m-0 mt-0.5 break-words font-semibold">{text}</dd>
         </div>
       ))}
     </dl>
+    {value.departurePlaceId?.startsWith('geonames:') && <p className="type-caption m-0"><a href="https://www.geonames.org/" target="_blank" rel="noreferrer" className="underline">City data: GeoNames</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer" className="underline">CC BY 4.0</a></p>}
     </div>
   );
 }

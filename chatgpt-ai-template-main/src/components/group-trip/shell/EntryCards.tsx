@@ -152,6 +152,7 @@ export interface RoomDraft {
   /** ISO-4217. Follows the home country unless the organizer picks another. */
   currency: string;
   scope: TripScope;
+  planningMode?: 'ai';
 }
 
 const groupSizeOptions = Array.from({ length: 19 }, (_, index) => index + 2);
@@ -185,19 +186,22 @@ export function validateRoomDraft(draft: RoomDraft): RoomDraftErrors {
   if (!Number.isInteger(draft.expectedSize) || draft.expectedSize < 2 || draft.expectedSize > 20) errors.expectedSize = 'Choose between 2 and 20 people.';
   if (!homeCountryOptions.some((country) => country.code === draft.homeCountry)) errors.homeCountry = 'Choose a supported home country.';
   if (!currencyOptions.some((currency) => currency.code === draft.currency)) errors.currency = 'Choose a supported travel currency.';
-  const available = scopeAvailability(draft.homeCountry);
-  if ((draft.scope === 'domestic' && !available.domestic) || (draft.scope === 'international' && !available.international)) errors.scope = 'That trip type is not available from this country yet.';
+  if (draft.planningMode !== 'ai') {
+    const available = scopeAvailability(draft.homeCountry);
+    if ((draft.scope === 'domestic' && !available.domestic) || (draft.scope === 'international' && !available.international)) errors.scope = 'That trip type is not available from this country yet.';
+  }
   return errors;
 }
 
 /** Where the group lives and what kind of trip it wants. Prices follow the country unless changed. */
 function TripBasics({ draft, onChange, errors, structuralDisabled = false }: { draft: RoomDraft; onChange: (draft: RoomDraft) => void; errors: RoomDraftErrors; structuralDisabled?: boolean }) {
   const home = countryInSentence(draft.homeCountry);
+  const aiPlanning = draft.planningMode === 'ai';
   const available = scopeAvailability(draft.homeCountry);
   const setHome = (homeCountry: string) => {
     const following = draft.currency === currencyForCountry(draft.homeCountry);
     const next = scopeAvailability(homeCountry);
-    const scope: TripScope = (draft.scope === 'domestic' && !next.domestic) || (draft.scope === 'international' && !next.international) ? 'any' : draft.scope;
+    const scope: TripScope = !aiPlanning && ((draft.scope === 'domestic' && !next.domestic) || (draft.scope === 'international' && !next.international)) ? 'any' : draft.scope;
     onChange({ ...draft, homeCountry, scope, currency: following ? currencyForCountry(homeCountry) || draft.currency : draft.currency });
   };
   const popular = homeCountryOptions.filter((c) => popularHomeCountries.includes(c.code)).sort((a, b) => popularHomeCountries.indexOf(a.code) - popularHomeCountries.indexOf(b.code));
@@ -252,11 +256,11 @@ function TripBasics({ draft, onChange, errors, structuralDisabled = false }: { d
           {
             value: 'domestic',
             label: 'In your country',
-            description: available.domestic ? `Only places in ${home}. No passports needed.` : `No trips in ${home} yet`,
+            description: aiPlanning || available.domestic ? `Only places in ${home}. No passports needed.` : `No trips in ${home} yet`,
             icon: icons.destination,
-            disabled: structuralDisabled || !available.domestic,
+            disabled: structuralDisabled || (!aiPlanning && !available.domestic),
           },
-          { value: 'international', label: 'Abroad', description: 'We check passports and visas', icon: icons.passport, disabled: structuralDisabled || !available.international },
+          { value: 'international', label: 'Abroad', description: 'We check passports and visas', icon: icons.passport, disabled: structuralDisabled || (!aiPlanning && !available.international) },
           { value: 'any', label: 'Open to both', description: 'See every option', icon: Globe, disabled: structuralDisabled },
         ]}
       />

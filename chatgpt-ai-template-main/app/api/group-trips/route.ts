@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createHash } from 'node:crypto';
 import { firebaseAdmin } from '@/lib/firebaseAdmin';
+import { identity } from '@/lib/server/identity';
 
 const domain = require('@/lib/collaborativeTrip');
 const service = require('@/lib/groupTripCommandService');
@@ -67,16 +68,6 @@ async function enforceRateLimit(
       expiresAt: new Date(resetAt + 24 * 60 * 60 * 1000),
     });
   });
-}
-
-async function identity(request: NextRequest) {
-  const header = request.headers.get('authorization') || '';
-  if (!header.startsWith('Bearer ')) throw new Error('AUTH_REQUIRED');
-  try { return await firebaseAdmin().auth.verifyIdToken(header.slice(7), true); }
-  catch (error) {
-    if (error instanceof Error && /not configured|credentials|project ID/i.test(error.message)) throw error;
-    throw new Error('AUTH_REQUIRED');
-  }
 }
 
 function errorResponse(error: unknown) {

@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, Pencil, WifiOff } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Pencil, Sparkles, WifiOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody } from '@/components/ui/card';
@@ -33,6 +33,7 @@ import { CONSENT_KEY, LEGAL } from '@/lib/legal';
 import { plural } from '@/lib/format';
 import previewFixtures from './preview/fixtures.json';
 import PlanView from './PlanView';
+import DynamicDestinationPlanner from './DynamicDestinationPlanner';
 import Pledges from './features/Pledges';
 import SettleUp from './features/SettleUp';
 import ShareCards from './features/ShareCards';
@@ -68,8 +69,6 @@ import {
   approvedCount,
   currencyForCountry,
   currentStep,
-  defaultBudget,
-  defaultDepartureCity,
   detectHomeCountry,
   inviteMessage,
   inviteUrl,
@@ -78,12 +77,13 @@ import {
   type StepId,
 } from './shell/tripState';
 
-/** Starting values for the private form, from the trip's settings. India trips start exactly as before (Delhi, ₹1,50,000). */
 function startingInput(trip: any): PrivateInput {
   const home = trip?.homeCountry || DEFAULT_HOME_COUNTRY;
   return {
-    departureCity: defaultDepartureCity(home),
-    budget: defaultBudget(trip?.currency || 'INR'),
+    departureCity: '',
+    transportModes: [],
+    aiPlanningConsent: false,
+    budget: 0,
     passportExpiry: trip?.scope === 'domestic' ? 'none' : '',
     visas: [],
     datesConfirmed: false,
@@ -97,6 +97,8 @@ function startingInput(trip: any): PrivateInput {
 /** Saved details into form values. Old saves only have hasIndianPassport, which means an Indian passport. */
 const fromSaved = (saved: any, trip: any): PrivateInput => ({
   ...saved,
+  ...(saved.transportModes ? { transportModes: saved.transportModes } : {}),
+  aiPlanningConsent: saved.aiPlanningConsent === true,
   passportCountry:
     saved.passportCountry ||
     (saved.hasIndianPassport
@@ -106,7 +108,8 @@ const fromSaved = (saved: any, trip: any): PrivateInput => ({
 
 /** What the engine stores: passportCountry always; hasIndianPassport only for Indian passports, for older readers. */
 function constraintsPayload(input: PrivateInput) {
-  const { hasIndianPassport: _legacy, ...rest } = input;
+  const { hasIndianPassport: _legacy, departurePlace: _serverPlace, ...rest } = input as PrivateInput & { departurePlace?: unknown };
+  if (!rest.transportModes?.length) delete rest.transportModes;
   return input.passportCountry === 'IN'
     ? { ...rest, hasIndianPassport: true }
     : rest;
@@ -327,6 +330,7 @@ export default function CollaborativeTripPlanner() {
   const [planStepOverride, setPlanStepOverride] = useState<
     'plan' | 'go' | null
   >(null);
+  const [assistantJump, setAssistantJump] = useState(false);
   // Pre-lock steps you've chosen to look at (step bar, Back, Edit). Cleared whenever the trip itself moves on.
   const [collectStep, setCollectStep] = useState<StepId | null>(null);
   const [openGo, setOpenGo] = useState<string | null>(null);
@@ -336,13 +340,14 @@ export default function CollaborativeTripPlanner() {
     () => `create-${globalThis.crypto?.randomUUID?.() || Date.now()}`,
   );
   const [draft, setDraft] = useState<RoomDraft>({
-    name: 'Friends escape',
-    startDate: '2026-12-10',
-    endDate: '2026-12-15',
+    name: '',
+    startDate: '',
+    endDate: '',
     expectedSize: 2,
     homeCountry: DEFAULT_HOME_COUNTRY,
     currency: 'INR',
     scope: 'any',
+    planningMode: 'ai',
   });
   // Guess where the group is based from the browser language (en-US -> US). Runs once, before anyone edits the form.
   useEffect(() => {
@@ -597,6 +602,13 @@ export default function CollaborativeTripPlanner() {
     () => setPlanStepOverride(null),
     [trip?.id, trip?.activePlan?.version],
   );
+  useEffect(() => {
+    if (!assistantJump || planStepOverride !== 'plan') return;
+    const heading = document.getElementById('trip-assistant-title');
+    heading?.focus({ preventScroll: true });
+    heading?.scrollIntoView({ block: 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    setAssistantJump(false);
+  }, [assistantJump, planStepOverride]);
 
   // Commands (payloads unchanged).
   const saveDetails = async () => {
@@ -651,6 +663,7 @@ export default function CollaborativeTripPlanner() {
       homeCountry: trip.homeCountry,
       currency: trip.currency,
       scope: trip.scope,
+      planningMode: trip.planningMode === 'ai' ? 'ai' : undefined,
     });
     setSetupDraftRevision(trip.inputRevision);
     setEditingSetup(true);
@@ -670,11 +683,12 @@ export default function CollaborativeTripPlanner() {
       'currency',
       'scope',
     ].some((key) => setupDraft[key as keyof RoomDraft] !== trip[key]);
+    const { planningMode: _planningMode, ...setupPatch } = setupDraft;
     if (
       await command({
         type: 'updateTripSetup',
         expectedInputRevision: setupDraftRevision,
-        patch: setupDraft,
+        patch: setupPatch,
       })
     ) {
       setAnnouncement(
@@ -1000,7 +1014,7 @@ export default function CollaborativeTripPlanner() {
             icon={icons.vote}
             className="w-full sm:w-auto"
             loading={pendingCommand === 'openVoting'}
-            disabled={disabled}
+            disabled={disabled || !trip.destinations?.length}
             onClick={openVoting}
           >
             Open voting
@@ -1037,14 +1051,17 @@ export default function CollaborativeTripPlanner() {
       }
     >
       {chooseBar}
+      {owner && trip.phase === 'collecting' && !preview && (
+        <DynamicDestinationPlanner key={trip.id} trip={trip} disabled={disabled || privateInputDirty || editingSetup} onAdded={() => readTrip(trip.id)} />
+      )}
       {hasBoard ? (
         <DestinationPicker trip={trip} disabled={disabled} onVote={vote} />
       ) : (
         <EmptyState
           icon={icons.destination}
           art={asciiArt.pin}
-          title="Places show up here soon"
-          description="Once everyone has added their details, you'll see where the whole group can go."
+          title={trip.planningMode === 'ai' ? 'No destinations added yet' : 'Places show up here soon'}
+          description={trip.planningMode === 'ai' ? 'Destinations appear here after the organizer reviews and adds a draft.' : "Once everyone has added their details, you'll see where the whole group can go."}
         />
       )}
     </Section>
@@ -1081,6 +1098,7 @@ export default function CollaborativeTripPlanner() {
         disabled={disabled}
         command={command}
         onShare={sharePlan}
+        onAssistantApplied={preview ? undefined : () => readTrip(trip.id)}
       />
       <PlanMoney trip={trip} uid={user!.uid} />
     </Section>
@@ -1119,6 +1137,15 @@ export default function CollaborativeTripPlanner() {
       title="Get going"
       description="Collect the advance, split costs and share the trip."
     >
+      {owner && !preview && (
+        <section aria-labelledby="go-assistant-title" className="flex flex-wrap items-center justify-between gap-4 border-y border-line py-5">
+          <div className="min-w-0 flex-1">
+            <h4 id="go-assistant-title" className="type-h3 m-0 flex items-center gap-2"><Sparkles className="size-5 shrink-0 text-brand-700" aria-hidden />Intelligent trip planner</h4>
+            <p className="type-small m-0 mt-1 text-ink-muted">Lower the estimate, slow the pace, or rethink an activity.</p>
+          </div>
+          <Button icon={Pencil} disabled={disabled} onClick={() => { setPlanStepOverride('plan'); setAssistantJump(true); }}>Review trip changes</Button>
+        </section>
+      )}
       <div className="grid gap-4">
         <CoordinationDisclosure
           icon={icons.money}
@@ -1192,7 +1219,7 @@ export default function CollaborativeTripPlanner() {
             trip?.myConstraints
               ? trip.phase === 'voting'
                 ? 'Saved · locked while voting is open'
-                : 'Saved · only you can see them'
+                : 'Saved · private from the group'
               : 'Not added yet'
           }
           actionLabel={
@@ -1328,13 +1355,13 @@ export default function CollaborativeTripPlanner() {
                       </p>
                     ) : (
                       <CreateRoomCard
-                        draft={draft}
+                        draft={preview ? { ...draft, planningMode: undefined } : draft}
                         onChange={setDraft}
                         onCreate={() =>
                           request({
                             action: 'create',
                             idempotencyKey: createKey,
-                            trip: draft,
+                            trip: { ...draft, planningMode: 'ai' },
                           })
                         }
                         disabled={disabled}

@@ -62,3 +62,21 @@ test('setup edits derive organizer identity server-side and reject stale or forg
   assert.equal(updated.state.name, 'Safe rename');
   await assert.rejects(() => mutateTrip({ firestore, uid: 'owner', body: { tripId: 'trip-setup', action: 'command', command: { type: 'updateTripSetup', expectedInputRevision: 0, patch: { name: 'Stale rename' } } }, ...common }), /stale/i);
 });
+
+test('dynamic departure cities resolve server-side and never accept client coordinates', async () => {
+  const firestore = memoryFirestore();
+  await createTrip({ firestore, uid: 'owner', body: { idempotencyKey: 'dynamic-city-request', trip: basics }, ...common, makeId: () => 'dynamic-city-trip' });
+  const place = { id: 'geonames:1262321', name: 'Mysuru', label: 'Mysuru, Karnataka, India', countryCode: 'IN', lat: 12.3, lon: 76.65, source: 'GeoNames', fetchedAt: '2026-11-10' };
+  const constraints = { departureCity: 'client claim', departurePlaceId: place.id, budget: 300000, passportExpiry: '2032-12', visas: [], datesConfirmed: true, preferences: ['food'], entryCheckAcknowledged: true, isAdult: true, hasIndianPassport: true };
+  const body = { action: 'command', tripId: 'dynamic-city-trip', command: { type: 'submitConstraints', expectedInputRevision: 0, constraints } };
+  const options = { firestore, uid: 'owner', body, ...common, resolveDeparture: (id) => { assert.equal(id, place.id); return place; } };
+  await assert.rejects(() => mutateTrip({ ...options, body: { ...body, command: { ...body.command, constraints: { ...constraints, departurePlace: { ...place, lat: 0 } } } } }), /not allowed/);
+  const updated = await mutateTrip(options);
+  assert.equal(updated.state.constraints.owner.departureCity, place.label);
+  assert.equal(updated.state.constraints.owner.departurePlace.lat, place.lat);
+  assert.equal(updated.state.constraints.owner.departurePlaceId, place.id);
+  const domain = require('./collaborativeTrip');
+  assert.equal(domain.journeyFor({ currency: 'INR', homeCountry: 'IN' }, place.label, domain.seeds.destinations[0], place).basis, 'distance');
+  assert.equal(domain.journeyFor({ currency: 'INR', homeCountry: 'IN' }, 'Unknown', domain.seeds.destinations[0]), null);
+  assert.equal(buildTripProjection(updated.state, 'owner').myConstraints.departurePlaceId, place.id);
+});
