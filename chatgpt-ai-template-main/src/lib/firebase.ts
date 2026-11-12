@@ -7,6 +7,8 @@ import {
   signOut,
   onAuthStateChanged,
   createUserWithEmailAndPassword,
+  EmailAuthProvider,
+  linkWithCredential,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   updateProfile,
@@ -108,7 +110,16 @@ const emailAuthError = (error: any): Error => {
 
 export const signUpWithEmail = async (name: string, email: string, password: string) => {
   try {
-    const { user } = await createUserWithEmailAndPassword(auth, email, password);
+    // Upgrade an invited guest in place so their trip membership and private
+    // inputs keep the same Firebase UID. Creating a second account here leaves
+    // an unreachable anonymous member behind and blocks the whole group.
+    const result = auth.currentUser?.isAnonymous
+      ? await linkWithCredential(
+          auth.currentUser,
+          EmailAuthProvider.credential(email, password),
+        )
+      : await createUserWithEmailAndPassword(auth, email, password);
+    const { user } = result;
     await updateProfile(user, { displayName: name });
     return user;
   } catch (error: any) {

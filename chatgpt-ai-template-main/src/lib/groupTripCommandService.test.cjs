@@ -63,6 +63,19 @@ test('setup edits derive organizer identity server-side and reject stale or forg
   await assert.rejects(() => mutateTrip({ firestore, uid: 'owner', body: { tripId: 'trip-setup', action: 'command', command: { type: 'updateTripSetup', expectedInputRevision: 0, patch: { name: 'Stale rename' } } }, ...common }), /stale/i);
 });
 
+test('organizers can remove an orphaned approved member and reopen the spot', async () => {
+  const firestore = memoryFirestore();
+  await createTrip({ firestore, uid: 'owner', body: { idempotencyKey: 'remove-member-request', trip: { ...basics, expectedSize: 2 } }, ...common, makeId: () => 'remove-member-trip', makeSecret: () => 'invite-secret' });
+  await mutateTrip({ firestore, uid: 'orphan', body: { tripId: 'remove-member-trip', action: 'join', inviteSecret: 'invite-secret', nickname: 'Orphan guest' }, ...common });
+  const admitted = await mutateTrip({ firestore, uid: 'owner', body: { tripId: 'remove-member-trip', action: 'command', command: { type: 'admitMember', memberUid: 'orphan' } }, ...common });
+  assert.equal(admitted.state.members.orphan.status, 'approved');
+  await assert.rejects(() => mutateTrip({ firestore, uid: 'orphan', body: { tripId: 'remove-member-trip', action: 'command', command: { type: 'removeMember', memberUid: 'owner' } }, ...common }), /organizer/i);
+  const removed = await mutateTrip({ firestore, uid: 'owner', body: { tripId: 'remove-member-trip', action: 'command', command: { type: 'removeMember', memberUid: 'orphan' } }, ...common });
+  assert.equal(removed.state.members.orphan, undefined);
+  assert.equal(removed.state.expectedSize, 2);
+  assert.equal(Object.keys(removed.state.members).length, 1);
+});
+
 test('dynamic departure cities resolve server-side and never accept client coordinates', async () => {
   const firestore = memoryFirestore();
   await createTrip({ firestore, uid: 'owner', body: { idempotencyKey: 'dynamic-city-request', trip: basics }, ...common, makeId: () => 'dynamic-city-trip' });

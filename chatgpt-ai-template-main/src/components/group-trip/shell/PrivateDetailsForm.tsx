@@ -5,6 +5,7 @@ import { BusFront, Car, Plane, Sparkles, TrainFront } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody, CardFooter, CardHeader } from '@/components/ui/card';
 import { ChipGroup, Checkbox, Field, Input, Select, ToggleChip } from '@/components/ui/field';
+import { SearchableSelect } from '@/components/ui/searchable-select';
 import { MonthYearSelect } from '@/components/ui/month-year-select';
 import DepartureCitySearch from './DepartureCitySearch';
 import { PrivateBadge, StatusPill } from '@/components/ui/badge';
@@ -81,8 +82,6 @@ export function PrivateDetailsForm({ trip, value, dirty, disabled, busy, onChang
     passportExpiry: domesticOnly || noPassport || /^\d{4}-(0[1-9]|1[0-2])$/.test(value.passportExpiry || '') ? undefined : 'Choose the expiry month and year, or select no passport.',
     preferences: value.preferences.length ? undefined : 'Choose at least one interest.',
     datesConfirmed: value.datesConfirmed ? undefined : 'Confirm that these dates work for you.',
-    isAdult: value.isAdult ? undefined : "Confirm that you're 18 or older.",
-    entryCheckAcknowledged: value.entryCheckAcknowledged ? undefined : `Confirm you'll check official ${domesticOnly ? 'travel' : 'entry'} rules.`,
   } : {};
 
   const revealErrors = () => {
@@ -200,13 +199,12 @@ export function PrivateDetailsForm({ trip, value, dirty, disabled, busy, onChang
           ) : (
             <div className="grid gap-5 sm:grid-cols-2">
               <Field label="Passport country" hint="Visa checks use this" error={errors.passportCountry}>
-                <Select value={value.passportCountry || home} onChange={(e) => onChange({ passportCountry: e.target.value, hasIndianPassport: e.target.value === 'IN' })}>
-                  {passportCountries.map((c) => (
-                    <option key={c.code} value={c.code}>
-                      {c.name}
-                    </option>
-                  ))}
-                </Select>
+                <SearchableSelect
+                  value={value.passportCountry || home}
+                  searchPlaceholder="Search passport countries…"
+                  options={passportCountries.map((country) => ({ value: country.code, label: country.name }))}
+                  onValueChange={(passportCountry) => onChange({ passportCountry, hasIndianPassport: passportCountry === 'IN' })}
+                />
               </Field>
               <div className="grid content-start gap-3">
                 <Field label="Passport expires" hint={noPassport ? `Trips in ${homeName} only` : 'Some countries need 6 months left on it'} error={errors.passportExpiry}>
@@ -248,10 +246,10 @@ export function PrivateDetailsForm({ trip, value, dirty, disabled, busy, onChang
 
           <fieldset
             className="m-0 grid min-w-0 gap-3 border-0 p-0"
-            aria-describedby={showErrors && (errors.datesConfirmed || errors.isAdult || errors.entryCheckAcknowledged) ? 'private-confirmation-error' : undefined}
+            aria-describedby={showErrors && errors.datesConfirmed ? 'private-confirmation-error' : undefined}
           >
-            <legend className={`type-small mb-2 p-0 font-semibold ${showErrors && (errors.datesConfirmed || errors.isAdult || errors.entryCheckAcknowledged) ? 'text-danger-ink' : 'text-ink'}`}>Please confirm</legend>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <legend className={`type-small mb-2 p-0 font-semibold ${showErrors && errors.datesConfirmed ? 'text-danger-ink' : 'text-ink'}`}>Confirm your dates</legend>
+            <div className="grid gap-3">
               <Checkbox
                 variant="tile"
                 label="These dates work for me"
@@ -262,28 +260,9 @@ export function PrivateDetailsForm({ trip, value, dirty, disabled, busy, onChang
                 className={errors.datesConfirmed ? 'bg-danger-soft ring-2 ring-danger hover:ring-danger' : undefined}
                 onChange={(e) => onChange({ datesConfirmed: e.target.checked })}
               />
-              <Checkbox
-                variant="tile"
-                label="I'm 18 or older"
-                checked={value.isAdult}
-                aria-invalid={Boolean(errors.isAdult) || undefined}
-                aria-describedby={errors.isAdult ? 'private-confirmation-error' : undefined}
-                className={errors.isAdult ? 'bg-danger-soft ring-2 ring-danger hover:ring-danger' : undefined}
-                onChange={(e) => onChange({ isAdult: e.target.checked })}
-              />
-              <Checkbox
-                variant="tile"
-                label={domesticOnly ? "I'll check travel rules before booking" : "I'll check entry rules before booking"}
-                description={domesticOnly ? 'Including ID and ticket requirements for your transport' : 'On the official government site'}
-                checked={value.entryCheckAcknowledged}
-                aria-invalid={Boolean(errors.entryCheckAcknowledged) || undefined}
-                aria-describedby={errors.entryCheckAcknowledged ? 'private-confirmation-error' : undefined}
-                className={errors.entryCheckAcknowledged ? 'bg-danger-soft ring-2 ring-danger hover:ring-danger' : undefined}
-                onChange={(e) => onChange({ entryCheckAcknowledged: e.target.checked })}
-              />
             </div>
-            {showErrors && (errors.datesConfirmed || errors.isAdult || errors.entryCheckAcknowledged) && (
-              <p id="private-confirmation-error" className="type-small m-0 font-medium text-danger-ink" role="alert">Confirm each highlighted item to continue.</p>
+            {showErrors && errors.datesConfirmed && (
+              <p id="private-confirmation-error" className="type-small m-0 font-medium text-danger-ink" role="alert">Confirm that the trip dates work for you.</p>
             )}
           </fieldset>
           {!domesticOnly && <p className="type-small m-0 text-ink-muted">We never ask for your passport number or documents.</p>}

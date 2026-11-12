@@ -4,7 +4,7 @@ const features = require('./features');
 const { resolveCity } = require('./geo/cityDirectory.server');
 
 const digest = (value) => createHash('sha256').update(value).digest('hex');
-const commandTypes = new Set(['admitMember', 'rejectMember', 'submitConstraints', 'updateBudget', 'updateTripSetup', 'openVoting', 'vote', 'lock', 'approvePlan', 'editPlanItem', 'reopen', 'rotateInvite', 'revokeInvite', 'setPayee', 'markPaid', 'addDemoMembers', ...features.commandTypes]);
+const commandTypes = new Set(['admitMember', 'rejectMember', 'removeMember', 'submitConstraints', 'updateBudget', 'updateTripSetup', 'openVoting', 'vote', 'lock', 'approvePlan', 'editPlanItem', 'reopen', 'rotateInvite', 'revokeInvite', 'setPayee', 'markPaid', 'addDemoMembers', ...features.commandTypes]);
 
 async function createTrip({ firestore, uid, body, serverTimestamp, now = Date.now, makeId = randomUUID, makeSecret = () => randomBytes(24).toString('base64url') }) {
   const idempotencyKey = String(body.idempotencyKey || '');

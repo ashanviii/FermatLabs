@@ -19,8 +19,8 @@ function safeText(value, maximum) {
 }
 
 function canonicalPlace(place) {
-  if (!plainObject(place) || typeof place.id !== 'string' || !/^geonames:\d{1,12}$/.test(place.id) ||
-    (place.source !== undefined && place.source !== 'GeoNames') || !safeText(place.name, 200) ||
+  if (!plainObject(place) || typeof place.id !== 'string' || !/^(?:geonames:\d{1,12}|ourairports:[A-Z0-9]{3,4})$/.test(place.id) ||
+    (place.source !== undefined && !['GeoNames', 'OurAirports'].includes(place.source)) || !safeText(place.name, 200) ||
     (place.label !== undefined && !safeText(place.label, 400)) || !geo.isCountry(place.countryCode) ||
     !Number.isFinite(place.lat) || Math.abs(place.lat) > 90 || !Number.isFinite(place.lon) || Math.abs(place.lon) > 180) invalidContext();
   return { id: place.id, name: place.name, label: place.label || place.name, countryCode: place.countryCode, lat: place.lat, lon: place.lon };
@@ -29,8 +29,8 @@ function canonicalPlace(place) {
 function departureFor(constraint) {
   if (constraint.departurePlaceId !== undefined) {
     const place = constraint.departurePlace;
-    if (!plainObject(place) || place.source !== 'GeoNames' || place.id !== constraint.departurePlaceId ||
-      typeof place.id !== 'string' || !/^geonames:\d{1,12}$/.test(place.id) ||
+    if (!plainObject(place) || !['GeoNames', 'OurAirports'].includes(place.source) || place.id !== constraint.departurePlaceId ||
+      typeof place.id !== 'string' || !/^(?:geonames:\d{1,12}|ourairports:[A-Z0-9]{3,4})$/.test(place.id) ||
       !safeText(place.label, 400) || constraint.departureCity !== place.label || !geo.isCountry(place.countryCode) ||
       !Number.isFinite(place.lat) || Math.abs(place.lat) > 90 || !Number.isFinite(place.lon) || Math.abs(place.lon) > 180 ||
       (place.name !== undefined && !safeText(place.name, 200))) invalidContext();
@@ -49,7 +49,7 @@ function completeDetails(constraint, currency) {
     : geo.isCountry(constraint.passportCountry) && (constraint.hasIndianPassport === undefined || constraint.hasIndianPassport === (constraint.passportCountry === 'IN'));
   return Number.isSafeInteger(constraint.budget) && constraint.budget > 0 &&
     constraint.budget <= Math.max(MAX_AMOUNT, geo.convert(MAX_AMOUNT, seeds.currency, currency)) &&
-    constraint.datesConfirmed === true && constraint.isAdult === true && constraint.entryCheckAcknowledged === true && passportValid &&
+    constraint.datesConfirmed === true && passportValid &&
     (constraint.passportExpiry === 'none' || /^\d{4}-(0[1-9]|1[0-2])$/.test(constraint.passportExpiry || '')) &&
     Array.isArray(constraint.preferences) && constraint.preferences.length > 0 && constraint.preferences.length <= INTERESTS.size &&
     new Set(constraint.preferences).size === constraint.preferences.length && constraint.preferences.every((tag) => INTERESTS.has(tag) && safeText(tag, 40)) &&

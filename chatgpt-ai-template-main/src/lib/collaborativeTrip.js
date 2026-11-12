@@ -198,7 +198,7 @@ function validPassport(value) {
 const knownDepartureCity = (name) => typeof name === 'string' && Boolean(seeds.departureCities[name] || geo.departureCity(name));
 
 function validDeparturePlace(place) {
-  return Boolean(place && place.source === 'GeoNames' && typeof place.id === 'string' && /^geonames:\d{1,12}$/.test(place.id) &&
+  return Boolean(place && ['GeoNames', 'OurAirports'].includes(place.source) && typeof place.id === 'string' && /^(?:geonames:\d{1,12}|ourairports:[A-Z0-9]{3,4})$/.test(place.id) &&
     typeof place.label === 'string' && place.label.length > 0 && place.label.length <= 400 && geo.isCountry(place.countryCode) &&
     Number.isFinite(place.lat) && Math.abs(place.lat) <= 90 && Number.isFinite(place.lon) && Math.abs(place.lon) <= 180);
 }
@@ -211,10 +211,10 @@ function completeConstraint(value) {
     (value.transportModes === undefined || (Array.isArray(value.transportModes) && value.transportModes.length > 0 &&
       value.transportModes.length <= transportModes.length && new Set(value.transportModes).size === value.transportModes.length && value.transportModes.every((mode) => transportModes.includes(mode)))) &&
     (value.aiPlanningConsent === undefined || typeof value.aiPlanningConsent === 'boolean') &&
-    value.datesConfirmed === true && value.isAdult === true && validPassport(value) &&
+    value.datesConfirmed === true && validPassport(value) &&
     (value.passportExpiry === 'none' || /^\d{4}-(0[1-9]|1[0-2])$/.test(value.passportExpiry || '')) && Array.isArray(value.preferences) &&
     value.preferences.length > 0 && value.preferences.length <= preferenceKeys.size && new Set(value.preferences).size === value.preferences.length && value.preferences.every((item) => preferenceKeys.has(item)) &&
-    Array.isArray(value.visas) && value.visas.length <= visaKeys.size && new Set(value.visas).size === value.visas.length && value.visas.every((item) => visaKeys.has(item)) && value.entryCheckAcknowledged === true;
+    Array.isArray(value.visas) && value.visas.length <= visaKeys.size && new Set(value.visas).size === value.visas.length && value.visas.every((item) => visaKeys.has(item));
 }
 
 function validatedConstraint(value, settings = settingsOf({})) {
@@ -463,7 +463,7 @@ function resetConstraintsAfterSetupChange(state) {
   demos.forEach((member, index) => {
     const person = people[index % people.length];
     const passport = person.passportCountry ? { passportCountry: person.passportCountry } : { hasIndianPassport: true };
-    state.constraints[member.uid] = { departureCity: person.departureCity, budget: person.budget, passportExpiry: '2031-12', visas: Object.keys(seeds.holdableVisas), datesConfirmed: true, preferences: person.preferences, entryCheckAcknowledged: true, isAdult: true, ...passport };
+    state.constraints[member.uid] = { departureCity: person.departureCity, transportModes: [...transportModes], aiPlanningConsent: true, budget: person.budget, passportExpiry: '2031-12', visas: Object.keys(seeds.holdableVisas), datesConfirmed: true, preferences: person.preferences, ...passport };
   });
 }
 
@@ -474,7 +474,7 @@ function addDemoMembers(state) {
     const uid = `demo-${index}-${state.inputRevision}-${Object.keys(state.members).length}`;
     state.members[uid] = { uid, nickname: person.nickname, role: 'member', status: 'approved', joinOrder: approvedIds(state).length, demo: true };
     const passport = person.passportCountry ? { passportCountry: person.passportCountry } : { hasIndianPassport: true };
-    state.constraints[uid] = { departureCity: person.departureCity, budget: person.budget, passportExpiry: '2031-12', visas: Object.keys(seeds.holdableVisas), datesConfirmed: true, preferences: person.preferences, entryCheckAcknowledged: true, isAdult: true, ...passport };
+    state.constraints[uid] = { departureCity: person.departureCity, transportModes: [...transportModes], aiPlanningConsent: true, budget: person.budget, passportExpiry: '2031-12', visas: Object.keys(seeds.holdableVisas), datesConfirmed: true, preferences: person.preferences, ...passport };
   });
   invalidate(state); return state;
 }
@@ -531,6 +531,24 @@ function applyTripCommand(input, command) {
       state.members[command.memberUid] = { uid: command.memberUid, nickname: request.nickname, role: 'member', status: 'approved', joinOrder: approvedIds(state).length }; delete state.pending[command.memberUid]; invalidate(state); return state;
     }
     case 'rejectMember': ownerOnly(state, command.uid); delete state.pending[command.memberUid]; return state;
+    case 'removeMember': {
+      ownerOnly(state, command.uid); collecting(state);
+      const memberUid = command.memberUid;
+      if (!memberUid || memberUid === state.ownerUid) fail('The organizer cannot be removed');
+      if (state.members[memberUid]?.status !== 'approved') fail('Approved member required');
+      if (hasPlanOrMoneyHistory(state)) fail('Members cannot be removed after planning or money activity has started');
+      delete state.members[memberUid];
+      delete state.constraints[memberUid];
+      delete state.ballots[memberUid];
+      if (state.privatePrefs) delete state.privatePrefs[memberUid];
+      if (state.pledges) delete state.pledges[memberUid];
+      if (state.payments) delete state.payments[memberUid];
+      if (Array.isArray(state.tasks)) {
+        state.tasks = state.tasks.map((task) => task.assigneeUid === memberUid ? { ...task, assigneeUid: null } : task);
+      }
+      invalidate(state);
+      return state;
+    }
     case 'submitConstraints': memberOnly(state, command.uid); if (!['collecting', 'voting'].includes(state.phase)) fail('Trip is not accepting inputs'); if (command.expectedInputRevision !== state.inputRevision) fail('Stale input revision'); state.constraints[command.uid] = validatedConstraint(command.constraints, settingsOf(state)); invalidate(state); return state;
     case 'updateBudget': {
       memberOnly(state, command.uid);

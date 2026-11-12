@@ -1,13 +1,14 @@
 'use client';
 // Step 1: get everyone in. Invite link, join requests, who's joined, and the demo-travellers testing helper.
 import { useEffect, useState } from 'react';
-import { FlaskConical, RefreshCw, Ban } from 'lucide-react';
+import { FlaskConical, RefreshCw, Ban, UserMinus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarStack } from '@/components/ui/avatar';
 import { Badge, StatusPill } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { icons } from '@/components/ui/icons';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { plural } from '@/lib/format';
 import { approvedCount, avatarName, inviteMessage, inviteUrl, memberList, openWhatsApp } from './tripState';
 
@@ -56,6 +57,7 @@ function InviteLink({ trip, invite }: { trip: any; invite: string }) {
 }
 
 export function InvitePanel({ trip, owner, invite, disabled, command }: InvitePanelProps) {
+  const [removeTarget, setRemoveTarget] = useState<any>(null);
   const members = memberList(trip);
   const joined = approvedCount(trip);
   const open = Math.max(0, trip.expectedSize - joined);
@@ -89,6 +91,36 @@ export function InvitePanel({ trip, owner, invite, disabled, command }: InvitePa
           </div>
           <Progress label="People joined" value={joined} max={trip.expectedSize} size="sm" />
         </div>
+
+        {owner && canInvite && members.length > 1 && (
+          <div className="grid gap-2">
+            <h4 className="type-small m-0 font-bold text-ink">Trip members</h4>
+            <ul className="m-0 grid list-none gap-2 p-0">
+              {members.map((member: any) => (
+                <li key={member.uid} className="flex min-h-12 items-center justify-between gap-3 rounded-xl bg-surface-muted px-3 py-2.5">
+                  <span className="flex min-w-0 items-center gap-3">
+                    <Avatar name={avatarName(member.nickname)} size="sm" />
+                    <span className="min-w-0">
+                      <span className="type-small block truncate font-semibold text-ink">{member.nickname}</span>
+                      <span className="type-caption block text-ink-muted">{member.role === 'owner' ? 'Organizer' : member.demo ? 'Demo traveller' : 'Member'}</span>
+                    </span>
+                  </span>
+                  {member.role !== 'owner' && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      icon={UserMinus}
+                      disabled={disabled}
+                      onClick={() => setRemoveTarget(member)}
+                    >
+                      Remove
+                    </Button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* Join requests (organizer only) */}
         {owner && requests.length > 0 && (
@@ -151,6 +183,29 @@ export function InvitePanel({ trip, owner, invite, disabled, command }: InvitePa
           </div>
         )}
       </CardBody>
+      <Dialog open={Boolean(removeTarget)} onOpenChange={(open) => !open && setRemoveTarget(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Remove {removeTarget?.nickname}?</DialogTitle>
+            <DialogDescription>
+              Their private trip details will be removed and the spot will reopen. They can ask to join again from the invite link.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setRemoveTarget(null)}>Keep member</Button>
+            <Button
+              variant="danger"
+              icon={UserMinus}
+              disabled={disabled}
+              onClick={async () => {
+                if (await command({ type: 'removeMember', memberUid: removeTarget.uid })) setRemoveTarget(null);
+              }}
+            >
+              Remove member
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

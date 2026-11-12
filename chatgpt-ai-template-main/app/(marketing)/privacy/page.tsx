@@ -13,7 +13,7 @@ export default function PrivacyPage() {
     <Section title="What we collect">
       <p><b>Account details.</b> Your email address and name if you sign in with email or Google (and your Google profile photo if Google provides it). Guests get an anonymous ID and choose a nickname.</p>
       <p><b>Trip details.</b> Trip name, dates, group size, member nicknames, votes, plan edits and approvals.</p>
-      <p><b>Your private inputs.</b> Departure city, budget ceiling, passport expiry month (or that you don't have a passport yet), visas you say you hold, travel preferences, and confirmations such as being 18 or older.</p>
+      <p><b>Your private inputs.</b> Departure city, budget ceiling, passport expiry month (or that you don't have a passport yet), visas you say you hold, travel preferences, and whether the trip dates work for you.</p>
       <p><b>Payment details you choose to share.</b> If an organizer adds a payment ID (for example a UPI ID), other members of that trip can see it. Fermat never processes, holds or sees the money.</p>
       <p><b>Technical data.</b> Basic device, browser and log information (such as IP address) recorded by our hosting and database providers, and small items stored in your browser so you stay signed in and return to your trip.</p>
       <p>We do <b>not</b> ask for passport numbers, identity documents, dates of birth, or card or bank details.</p>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
   ArrowLeft,
@@ -16,9 +16,10 @@ import { useAuth } from '../../contexts/AuthContext';
 import FermatMark from '../landing/FermatMark';
 import { Button } from '../ui/button';
 import { Card, CardBody, CardHeader } from '../ui/card';
-import { Field, Input } from '../ui/field';
+import { Checkbox, Field, Input } from '../ui/field';
 import { Notice } from '../ui/notice';
 import { Tabs, TabsList, TabsTrigger } from '../ui/tabs';
+import { CONSENT_KEY, LEGAL } from '../../lib/legal';
 import '../../../app/(marketing)/landing.css';
 
 type Mode = 'login' | 'signup';
@@ -143,7 +144,12 @@ export default function LoginScreen({
   );
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  const [consented, setConsented] = useState(false);
   const t = copy[mode];
+
+  useEffect(() => {
+    setConsented(localStorage.getItem(CONSENT_KEY) === LEGAL.version);
+  }, []);
 
   const switchMode = (next: Mode) => {
     setMode(next);
@@ -170,6 +176,11 @@ export default function LoginScreen({
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    if (!consented) {
+      setError('Confirm that you are 18 or older and agree to the legal terms.');
+      return;
+    }
+    localStorage.setItem(CONSENT_KEY, LEGAL.version);
     run('email', () =>
       mode === 'signup'
         ? signUpWithEmail(name.trim(), email.trim(), password)
@@ -248,6 +259,22 @@ export default function LoginScreen({
                 />
               </Field>
 
+              <Checkbox
+                variant="tile"
+                checked={consented}
+                onChange={(event) => {
+                  setConsented(event.target.checked);
+                  if (event.target.checked) setError('');
+                }}
+                label="I'm 18 or older and I agree to the terms"
+                description={
+                  <>
+                    Read the <Link href="/terms" target="_blank" className="font-semibold text-brand-700 underline">Terms of Use</Link> and{' '}
+                    <Link href="/privacy" target="_blank" className="font-semibold text-brand-700 underline">Privacy Policy</Link>.
+                  </>
+                }
+              />
+
               <Field
                 label="Password"
                 aside={
@@ -304,7 +331,7 @@ export default function LoginScreen({
                 type="submit"
                 block
                 loading={pending === 'email'}
-                disabled={pending !== null}
+                disabled={pending !== null || !consented}
               >
                 {t.submit}
               </Button>
@@ -321,7 +348,7 @@ export default function LoginScreen({
               variant="outline"
               block
               onClick={() => run('google', onGoogleSignIn)}
-              disabled={pending !== null}
+              disabled={pending !== null || !consented}
             >
               {pending === 'google' ? (
                 <Loader2 className="size-4 animate-spin" />
@@ -331,9 +358,7 @@ export default function LoginScreen({
               {pending === 'google' ? 'Opening Google…' : 'Google'}
             </Button>
 
-            <p className="type-caption mb-0 mt-6 text-center text-ink-muted">
-              By continuing, you agree to Fermat’s terms and privacy policy.
-            </p>
+            {!consented && <p className="type-caption mb-0 mt-6 text-center text-ink-muted">Confirm the legal terms above to continue.</p>}
           </main>
 
           <footer className="type-caption text-ink-muted">

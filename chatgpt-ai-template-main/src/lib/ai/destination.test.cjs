@@ -289,8 +289,6 @@ test('incomplete roster, required private details and invalid canonical places f
     (state) => { delete state.constraints['private-member-uid']; },
     (state) => { state.constraints[state.ownerUid].budget = 0; },
     (state) => { state.constraints[state.ownerUid].datesConfirmed = false; },
-    (state) => { state.constraints[state.ownerUid].entryCheckAcknowledged = false; },
-    (state) => { state.constraints[state.ownerUid].isAdult = false; },
     (state) => { state.constraints[state.ownerUid].passportExpiry = 'invalid'; },
     (state) => { state.constraints[state.ownerUid].preferences = ['raw private instructions']; },
     (state) => { state.constraints[state.ownerUid].visas = ['invalid']; },
