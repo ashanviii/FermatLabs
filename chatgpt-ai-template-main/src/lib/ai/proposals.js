@@ -23,10 +23,13 @@ async function generateProposal({ firestore, uid, body, provider, now = Date.now
   const tripRef = firestore.doc(`groupTrips/${body.tripId}`);
   const proposalRef = firestore.doc(`_aiProposals/${proposalId}`);
   const leaseRef = firestore.doc(`_aiLeases/${hash(body.tripId)}`);
+  const burstLimit = firestore.doc(`_aiUsage/${hash(`burst\0${uid}`)}`);
   const userLimit = firestore.doc(`_aiUsage/${hash(uid)}`);
   const globalLimit = firestore.doc('_aiUsage/global');
   const reserved = await firestore.runTransaction(async (transaction) => {
-    const [trip, existing, lease, userUsage, globalUsage] = await Promise.all([tripRef, proposalRef, leaseRef, userLimit, globalLimit].map((ref) => transaction.get(ref)));
+    const [trip, existing, lease, burstUsage, userUsage, globalUsage] = await Promise.all(
+      [tripRef, proposalRef, leaseRef, burstLimit, userLimit, globalLimit].map((ref) => transaction.get(ref)),
+    );
     const state = trip.data()?.state; assertOrganizer(state, uid);
     const clock = now();
     if (existing.exists) {
@@ -40,8 +43,10 @@ async function generateProposal({ firestore, uid, body, provider, now = Date.now
       fail('REQUEST_ALREADY_USED', 'This request is already processing or finished. Start a new request explicitly.', 409);
     }
     if (Number(lease.data()?.until) > clock) fail('BUSY', 'Another suggestion is processing for this trip.', 409);
+    const nextBurst = rateBucket(burstUsage.data(), clock, 3, 60 * 1000);
     const nextUser = rateBucket(userUsage.data(), clock, 10, 60 * 60 * 1000);
     const nextGlobal = rateBucket(globalUsage.data(), clock, 100, 24 * 60 * 60 * 1000);
+    transaction.set(burstLimit, nextBurst);
     transaction.set(userLimit, nextUser); transaction.set(globalLimit, nextGlobal);
     transaction.set(leaseRef, { proposalId, until: clock + LEASE_MS, expiresAt: new Date(clock + LEASE_MS) });
     transaction.set(proposalRef, { uid, tripId: body.tripId, inputHash, status: 'pending', expiresAt: clock + EXPIRY_MS, deleteAfter: new Date(clock + EXPIRY_MS) });

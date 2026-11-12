@@ -368,7 +368,11 @@ test('destination stale and expired previews fail on reuse and addition without 
 });
 
 test('destination quotas and the trip lease share edit-assistant records and fail before dispatch', async () => {
-  for (const [path, count] of [['_aiUsage/global', 100], [`_aiUsage/${destinationHash('private-owner-uid')}`, 10]]) {
+  for (const [path, count] of [
+    ['_aiUsage/global', 100],
+    [`_aiUsage/${destinationHash('private-owner-uid')}`, 10],
+    [`_aiUsage/${destinationHash('burst\0private-owner-uid')}`, 3],
+  ]) {
     const options = destinationOptions(); options.firestore.records.set(path, { count, resetAt: 5000 });
     options.provider.generateDestination = () => assert.fail('Quota must prevent dispatch');
     await assert.rejects(() => generateDestinationProposal(options), { code: 'RATE_LIMITED' });
@@ -449,6 +453,7 @@ function destinationRoute({ state = destinationFixture(), uid = state.ownerUid, 
     '@/lib/server/identity': { identity: async () => { if (!uid) throw new Error('AUTH_REQUIRED'); return { uid }; } },
     '@/lib/firebaseAdmin': { firebaseAdmin: () => ({ firestore: { doc: () => ({ get: async () => ({ data: () => ({ state }) }) }) } }) },
     '@/lib/ai/providers': require('./providers'),
+    '@/lib/ai/userProvider': require('./userProvider'),
     '@/lib/ai/contracts': require('./contracts'),
     '@/lib/server/jsonRequest': require('../server/jsonRequest'),
     '@/lib/ai/labsGate': require('./labsGate'),
