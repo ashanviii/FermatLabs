@@ -63,6 +63,7 @@ const footerColumns: { title: string; links: { label: string; href: string }[] }
   {
     title: 'Resources',
     links: [
+      { label: 'Planning guides', href: '/guides' },
       { label: 'Example plan', href: '/plan?preview=locked' },
       { label: 'FAQ', href: '/#faq' },
       { label: 'Any home country', href: '/#anywhere' },

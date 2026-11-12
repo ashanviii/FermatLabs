@@ -161,6 +161,24 @@ const faqs: { q: string; a: React.ReactNode }[] = [
   },
 ];
 
+const planningGuides = [
+  {
+    href: '/guides/plan-a-group-trip-with-friends',
+    title: 'How to plan a group trip with friends',
+    body: 'A practical workflow from private constraints to commitment, bookings and the final itinerary.',
+  },
+  {
+    href: '/guides/group-trip-budget-planner',
+    title: 'Build a fair group trip budget',
+    body: 'Compare total costs, keep personal limits private and split shared expenses without awkwardness.',
+  },
+  {
+    href: '/guides/group-trip-planning-checklist',
+    title: 'Use the complete planning checklist',
+    body: 'Keep decisions, owners, deadlines, bookings and departure checks in the right order.',
+  },
+] as const;
+
 /* ---------------------------------------------------------------------------------------------------------------- */
 /* Pieces                                                                                                             */
 /* ---------------------------------------------------------------------------------------------------------------- */
@@ -210,6 +228,7 @@ export default function LandingPage() {
         { label: 'Features', href: '#features' },
         { label: 'Results', href: '#results' },
         { label: 'Privacy', href: '#privacy' },
+        { label: 'Guides', href: '/guides' },
         { label: 'FAQ', href: '#faq' },
       ]} />
 
@@ -238,12 +257,12 @@ export default function LandingPage() {
             <div className="relative -mt-4 flex flex-col items-center sm:-mt-8">
               <div data-hero="item" className="frost-frame rounded-full p-1.5">
                 <p className="type-small m-0 inline-flex flex-wrap items-center justify-center gap-x-1.5 rounded-full bg-surface px-3.5 py-1.5 font-medium text-ink-soft shadow-card">
-                  Private group planning for 2 to 20 friends.
+                  Private group trip planner for 2 to 20 friends.
                   <span className="font-semibold text-ink">Budgets stay private.</span>
                 </p>
               </div>
               <h1 data-hero="item" id="hero-title" className="type-display m-0 mt-6 max-w-[16ch] text-balance">
-                One plan everyone can <span className="type-accent whitespace-nowrap">actually join.</span>
+                The group trip planner everyone can <span className="type-accent whitespace-nowrap">actually join.</span>
               </h1>
               <p data-hero="item" className="type-lead m-0 mt-6 max-w-prose text-ink-soft">
                 Everyone adds their budget, city and passport in private. Fermat shows which trips, at home or abroad, work
@@ -494,6 +513,42 @@ export default function LandingPage() {
               ))}
             </ul>
           </div>
+        </section>
+
+        {/* Planning guides: useful next steps and prominent crawl paths into the guide library. */}
+        <section aria-labelledby="guides-title" className="mx-auto w-full max-w-page px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+            <SectionHeading
+              id="guides-title"
+              eyebrow="Planning guides"
+              title={<>Make the trip happen, <span className="type-accent">step by step.</span></>}
+              lead="Practical advice for the decisions a group needs to make before anyone books."
+            />
+            <Link
+              href="/guides"
+              className="type-body inline-flex shrink-0 items-center gap-1.5 self-start rounded-full px-2 py-2 font-semibold text-ink no-underline hover:text-ink-soft focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/35 sm:self-auto"
+            >
+              Browse all guides
+              <ArrowRight className="size-4" strokeWidth={2} aria-hidden />
+            </Link>
+          </div>
+          <ul data-stagger className="m-0 mt-8 grid list-none gap-4 p-0 md:grid-cols-3">
+            {planningGuides.map((guide) => (
+              <li key={guide.href}>
+                <Link
+                  href={guide.href}
+                  className="group flex h-full flex-col rounded-2xl bg-surface p-5 text-ink no-underline shadow-card transition-[box-shadow,transform] duration-300 ease-apple hover:-translate-y-0.5 hover:shadow-raised focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/35 sm:p-6"
+                >
+                  <h3 className="type-h3 m-0">{guide.title}</h3>
+                  <p className="type-small m-0 mt-2 flex-1 text-ink-soft">{guide.body}</p>
+                  <span className="type-small mt-5 inline-flex items-center gap-1.5 font-semibold text-brand-700">
+                    Read guide
+                    <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" strokeWidth={2} aria-hidden />
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </section>
 
         {/* FAQ */}

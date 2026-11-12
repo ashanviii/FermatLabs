@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   description:
     'Start a private trip room, invite your friends, compare feasible destinations and plan the winning trip together.',
   alternates: { canonical: '/plan' },
+  robots: { index: false, follow: true },
 };
 
 export default function PlanPage() {
