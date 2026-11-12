@@ -6,12 +6,15 @@ const reasons = {
   pace: 'Leave more breathing room in this day instead of filling every available slot.',
   later: 'Start this activity later without changing its duration or overlapping another scheduled stop.',
   food: 'Swap a sightseeing slot for a food-focused catalog activity, keeping the group cost checks intact.',
+  custom: 'Apply the requested change using only current itinerary items and approved catalog alternatives.',
+  itinerary: 'Refresh the day-by-day flow with compatible catalog activities and non-overlapping local times.',
 };
 
 function reviewChanges(state, uid, request, operations, provider) {
   const plan = state.activePlan;
   const baseline = { planVersion: plan.version, planRevision: plan.revision, inputRevision: state.inputRevision };
-  const allowed = { cost: ['remove', 'replace'], pace: ['remove', 'replace'], later: ['reschedule'], food: ['replace'] };
+  const allowed = { cost: ['remove', 'replace'], pace: ['remove', 'replace'], later: ['reschedule'], food: ['replace'],
+    custom: ['remove', 'replace', 'reschedule'], itinerary: ['replace', 'reschedule'] };
   if (operations.some((operation) => !allowed[request.goal].includes(operation.kind))) fail('UNSAFE_PROPOSAL', 'The proposal does not match the requested goal.', 422);
   let next = state;
   try {

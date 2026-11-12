@@ -19,7 +19,7 @@ async function generateProposal({ firestore, uid, body, provider, now = Date.now
   parseRequest(body);
   if (body.action !== 'propose') fail('INVALID_REQUEST', 'A proposal request is required.');
   const proposalId = hash(`${uid}\0${body.tripId}\0${body.requestId}`);
-  const inputHash = hash(JSON.stringify([body.goal, body.day, provider.mode]));
+  const inputHash = hash(JSON.stringify([body.goal, body.day, body.instruction || null, provider.mode]));
   const tripRef = firestore.doc(`groupTrips/${body.tripId}`);
   const proposalRef = firestore.doc(`_aiProposals/${proposalId}`);
   const leaseRef = firestore.doc(`_aiLeases/${hash(body.tripId)}`);

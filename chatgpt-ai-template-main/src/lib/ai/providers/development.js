@@ -38,7 +38,7 @@ function validChoice(item) {
 }
 
 function assertContext(context) {
-  if (!context || !['cost', 'pace', 'later', 'food'].includes(context.goal)
+  if (!context || !['cost', 'pace', 'later', 'food', 'custom', 'itinerary'].includes(context.goal)
     || !Number.isInteger(context.day) || context.day < 0
     || !Array.isArray(context.activities) || !Array.isArray(context.busy)
     || !context.busy.every(validInterval)
@@ -114,6 +114,14 @@ function generateDevelopment(context) {
         operation = { kind: 'replace', activityRef: activity.ref, candidateRef: candidate.ref };
         break;
       }
+    }
+  } else if (context.goal === 'custom' || context.goal === 'itinerary') {
+    const activity = eligible[0];
+    const candidate = activity && availableCandidates(activity)[0];
+    if (activity && candidate) operation = { kind: 'replace', activityRef: activity.ref, candidateRef: candidate.ref };
+    else if (activity && fits(context, activity, minutes(activity.time) + 30, activity.durationMinutes)) {
+      const start = minutes(activity.time) + 30;
+      operation = { kind: 'reschedule', activityRef: activity.ref, time: `${String(Math.floor(start / 60)).padStart(2, '0')}:${String(start % 60).padStart(2, '0')}` };
     }
   }
 

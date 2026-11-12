@@ -88,11 +88,13 @@ server draft, never browser-supplied destination data. Each trip supports up to
 coverage. Replaced/stale data is pruned and trip-input changes invalidate dynamic
 choices. Historical plans retain their own destination snapshot.
 
-After destination selection and voting, the plan still uses a deterministic
-schedule layout with generated activities. This is not a free-form autonomous
-complete itinerary. Multi-leg transport, automatic global AI destination
-recommendations without selecting a city, user-entered quotes and live price or
-availability providers are not implemented.
+After destination selection and voting, the core plan still uses a deterministic
+schedule layout with generated activities. Allowlisted AI Labs accounts can also
+preview budget-aware canonical city suggestions, same-city day ideas, natural-
+language bounded itinerary edits and a full-trip day-by-day refresh. Every edit
+is restricted to server-supplied activity references and is rechecked for private
+budgets and schedule overlaps before confirmation. Live prices, availability,
+bookings and customer-money handling are not implemented.
 
 The recommended runtime uses `FERMAT_AI_PROVIDER=openai`, `OPENAI_API_KEY` and
 `OPENAI_MODEL=gpt-4o-mini`, all as server-only environment variables. Optional `FERMAT_DESTINATION_PROVIDER` overrides destination
@@ -101,6 +103,12 @@ generation rejects `disabled` and `development` with no fallback. OpenAI uses
 the Responses API with strict Structured Outputs, capped at 6,000 output tokens
 and 25 seconds for destinations and 1,600 tokens and 15 seconds for edits.
 Groq remains available as an explicit fallback; there is no automatic failover.
+
+AI Labs fails closed unless `FERMAT_AI_LABS_ENABLED=true` and the verified
+Firebase token matches `FERMAT_AI_LABS_UIDS` or `FERMAT_AI_LABS_EMAILS`. The gate
+is enforced by the API as well as the UI. Discovery sends a rounded combined
+budget band; individual budgets, names and passports are never sent. Labs uses
+OpenAI only and adds separate per-user and global request limits.
 
 Both flows share limits of 10 attempts per user/hour and 100 globally/day, a
 30-second per-trip generation lease and 10-minute preview expiry. Existing

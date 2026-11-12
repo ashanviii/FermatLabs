@@ -4,7 +4,7 @@ import { Check, RefreshCw, Sparkles, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Field, Select } from '@/components/ui/field';
+import { Field, Select, Textarea } from '@/components/ui/field';
 import { Notice } from '@/components/ui/notice';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { formatMoney } from '@/lib/format';
@@ -22,14 +22,19 @@ const goals = [
   { value: 'cost', label: 'Reduce estimated cost' }, { value: 'pace', label: 'Leave more free time' },
   { value: 'later', label: 'Start an activity later' }, { value: 'food', label: 'Choose a food experience' },
 ];
+const labGoals = [
+  { value: 'custom', label: 'Describe a custom change' },
+  { value: 'itinerary', label: 'Refresh the full day-by-day flow' },
+];
 
 export default function TripAssistant({ trip, disabled, onApplied }: { trip: any; disabled: boolean; onApplied: () => Promise<void> }) {
   const { user } = useAuth();
-  const [capability, setCapability] = useState<{ mode: string; label: string } | null>(null);
+  const [capability, setCapability] = useState<{ mode: string; label: string; labs?: boolean } | null>(null);
   const [checking, setChecking] = useState(true);
   const [error, setError] = useState('');
   const [goal, setGoal] = useState('cost');
   const [day, setDay] = useState(0);
+  const [instruction, setInstruction] = useState('');
   const [pending, setPending] = useState(false);
   const [proposal, setProposal] = useState<Proposal | null>(null);
   const [confirming, setConfirming] = useState(false);
@@ -82,7 +87,8 @@ export default function TripAssistant({ trip, disabled, onApplied }: { trip: any
     const current = ++generation.current;
     setPending(true); setError(''); setProposal(null);
     try {
-      const result = await send({ action: 'propose', tripId: trip.id, requestId: crypto.randomUUID(), goal, day });
+      const result = await send({ action: 'propose', tripId: trip.id, requestId: crypto.randomUUID(), goal,
+        day: goal === 'itinerary' ? 0 : day, ...(goal === 'custom' ? { instruction: instruction.trim() } : {}) });
       if (current === generation.current) setProposal(result.proposal);
     } catch (cause) { if (current === generation.current) setError(cause instanceof Error ? cause.message : 'Could not prepare a suggestion.'); }
     finally { if (current === generation.current) setPending(false); }
@@ -109,14 +115,19 @@ export default function TripAssistant({ trip, disabled, onApplied }: { trip: any
       {!capability && !checking && <Button variant="ghost" size="sm" icon={RefreshCw} onClick={() => setReload((value) => value + 1)} className="mt-3">Retry availability</Button>}
       {capability && <>
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          <Field label="What would improve this trip?"><Select value={goal} disabled={pending || disabled} onChange={(event) => { setGoal(event.target.value); setProposal(null); }}>
+          <Field label="What would improve this trip?"><Select value={goal} disabled={pending || disabled} onChange={(event) => { const value = event.target.value; setGoal(value); if (value === 'itinerary') setDay(0); setProposal(null); }}>
             {goals.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+            {capability.labs && <optgroup label="AI Labs">{labGoals.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</optgroup>}
           </Select></Field>
-          <Field label="Day"><Select value={day} disabled={pending || disabled} onChange={(event) => { setDay(Number(event.target.value)); setProposal(null); }}>
+          <Field label="Day"><Select value={goal === 'itinerary' ? 0 : day} disabled={pending || disabled || goal === 'itinerary'} onChange={(event) => { setDay(Number(event.target.value)); setProposal(null); }}>
             <option value={0}>Any day</option>{plan.itinerary.map((entry: any) => <option key={entry.day} value={entry.day}>Day {entry.day}</option>)}
           </Select></Field>
         </div>
-        <Button className="mt-4" icon={Sparkles} loading={pending && !confirming} disabled={disabled || pending} onClick={suggest}>Preview suggestion</Button>
+        {goal === 'custom' && <Field label="Describe the change" hint="The assistant can remove, replace or reschedule existing activities. It cannot book travel or invent new catalog items." className="mt-4">
+          <Textarea value={instruction} maxLength={400} placeholder="For example: Make day 2 calmer and move the museum after lunch." disabled={pending || disabled} onChange={(event) => { setInstruction(event.target.value); setProposal(null); }} />
+        </Field>}
+        {goal === 'itinerary' && <Notice tone="info" title="AI Labs preview">This refresh can replace and reschedule existing activities across the trip. Fermat still checks private budgets and time overlaps before showing the preview.</Notice>}
+        <Button className="mt-4" icon={Sparkles} loading={pending && !confirming} disabled={disabled || pending || (goal === 'custom' && instruction.trim().length < 5)} onClick={suggest}>Preview suggestion</Button>
       </>}
       {proposal && <div className="mt-6 min-w-0 space-y-4" aria-live="polite">
         <p className="type-body m-0 text-ink">{proposal.explanation}</p>

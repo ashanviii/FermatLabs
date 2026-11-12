@@ -4,7 +4,8 @@ import { identity } from '@/lib/server/identity';
 import { firebaseAdmin } from '@/lib/firebaseAdmin';
 
 const { createProvider, AIConfigurationError, AIProviderError } = require('@/lib/ai/providers');
-const { AIWorkflowError, readRequest, GOALS } = require('@/lib/ai/contracts');
+const { AIWorkflowError, readRequest, GOALS, LAB_GOALS } = require('@/lib/ai/contracts');
+const { labsEnabled, assertLabsEnabled } = require('@/lib/ai/labsGate');
 const { assertOrganizer } = require('@/lib/ai/agents/catalog');
 const { generateProposal, applyProposal } = require('@/lib/ai/proposals');
 
@@ -33,7 +34,7 @@ export async function GET(request: NextRequest) {
     const snapshot = await firebaseAdmin().firestore.doc(`groupTrips/${tripId}`).get();
     assertOrganizer(snapshot.data()?.state, user.uid);
     const provider = createProvider();
-    return reply({ mode: provider.mode, label: provider.label, goals: GOALS });
+    return reply({ mode: provider.mode, label: provider.label, goals: GOALS, labs: labsEnabled(user) });
   } catch (error) { return failure(error); }
 }
 
@@ -41,6 +42,7 @@ export async function POST(request: NextRequest) {
   try {
     const user = await identity(request);
     const body = await readRequest(request);
+    if (body.action === 'propose' && LAB_GOALS.includes(body.goal)) assertLabsEnabled(user);
     const provider = createProvider();
     const options = { firestore: firebaseAdmin().firestore, uid: user.uid, body, provider };
     if (body.action === 'propose') return reply({ proposal: await generateProposal(options) });

@@ -112,6 +112,34 @@ test('OpenAI destination generation uses its own schema, policy and token cap', 
   assert.deepEqual(await provider.generateDestination(destination), draft);
 });
 
+test('OpenAI Labs uses separate strict discovery and local-day schemas', async () => {
+  const requests = [];
+  const results = [
+    { suggestions: [
+      { name: 'Jaipur', countryCode: 'IN', reason: 'Good fit.', estimatedPerPerson: { low: 10, high: 20 }, tags: ['food'] },
+      { name: 'Udaipur', countryCode: 'IN', reason: 'Good fit.', estimatedPerPerson: { low: 10, high: 20 }, tags: ['culture'] },
+      { name: 'Agra', countryCode: 'IN', reason: 'Good fit.', estimatedPerPerson: { low: 10, high: 20 }, tags: ['history'] },
+    ] },
+    { summary: 'A local day.', caveats: ['Check details.'], ideas: [
+      { title: 'Walk', area: 'Centre', time: '09:00', durationMinutes: 60, estimatedPerPerson: { low: 0, high: 10 }, tags: ['culture'] },
+      { title: 'Lunch', area: 'Market', time: '12:00', durationMinutes: 60, estimatedPerPerson: { low: 10, high: 20 }, tags: ['food'] },
+      { title: 'Park', area: 'South', time: '15:00', durationMinutes: 60, estimatedPerPerson: { low: 0, high: 10 }, tags: ['nature'] },
+    ] },
+  ];
+  const provider = createOpenAIProvider(openAIEnv, { fetchImpl: async (url, options) => {
+    const body = JSON.parse(options.body); requests.push(body);
+    return responseEnvelope(results[requests.length - 1]);
+  } });
+  assert.deepEqual(await provider.discoverDestinations({ groupSize: 2 }), results[0]);
+  assert.deepEqual(await provider.generateLocalDay({ city: { name: 'Delhi' } }), results[1]);
+  assert.equal(requests[0].text.format.name, 'destination_discovery');
+  assert.equal(requests[0].max_output_tokens, 3600);
+  assert.match(requests[0].instructions, /coarse combined budget/);
+  assert.equal(requests[1].text.format.name, 'local_day_ideas');
+  assert.equal(requests[1].max_output_tokens, 4200);
+  assert.match(requests[1].instructions, /one-day outing/);
+});
+
 test('OpenAI sanitizes HTTP, response and input failures without retries', async () => {
   let calls = 0;
   await assert.rejects(completeJson(context(), openAIEnv, { fetchImpl: async () => {

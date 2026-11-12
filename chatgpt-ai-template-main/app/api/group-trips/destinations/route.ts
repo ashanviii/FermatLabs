@@ -6,6 +6,7 @@ import { firebaseAdmin } from '@/lib/firebaseAdmin';
 const { createProvider, AIConfigurationError, AIProviderError } = require('@/lib/ai/providers');
 const { AIWorkflowError } = require('@/lib/ai/contracts');
 const { RequestError } = require('@/lib/server/jsonRequest');
+const { labsEnabled } = require('@/lib/ai/labsGate');
 const { assertDestinationOrganizer, destinationCapabilities, readDestinationRequest,
   generateDestinationProposal, addDestinationProposal } = require('@/lib/ai/destinations');
 
@@ -40,7 +41,7 @@ export async function GET(request: NextRequest) {
     const snapshot = await firebaseAdmin().firestore.doc(`groupTrips/${tripId}`).get();
     const state = snapshot.data()?.state;
     assertDestinationOrganizer(state, user.uid);
-    return reply(destinationCapabilities({ state, uid: user.uid, provider: destinationProvider() }));
+    return reply({ ...destinationCapabilities({ state, uid: user.uid, provider: destinationProvider() }), labs: labsEnabled(user) });
   } catch (error) { return failure(error); }
 }
 
