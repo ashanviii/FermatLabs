@@ -26,7 +26,7 @@ async function acceptTerms(page) {
   const email = page.getByLabel('Email');
   if (await email.isDisabled().catch(() => false)) {
     await page.evaluate((version) => localStorage.setItem('fermat.legal.accepted', version), process.env.FERMAT_LEGAL_VERSION || '2026-10-25');
-    await page.reload();
+    await page.reload({ waitUntil: 'domcontentloaded', timeout: 60_000 });
   }
 }
 
@@ -139,9 +139,25 @@ async function joinTrip(page, inviteUrl) {
   await page.getByText('Request sent', { exact: true }).waitFor();
 }
 
+async function reloadWorkspace(page) {
+  await page.reload({ waitUntil: 'domcontentloaded', timeout: 60_000 });
+  await page.getByRole('heading', { name: tripName }).waitFor({ timeout: 60_000 });
+}
+
 async function generateDestination(page) {
   const heading = page.getByRole('heading', { name: 'Search destination' });
   await heading.waitFor({ timeout: 20_000 });
+  const retry = page.getByRole('button', { name: 'Retry availability' });
+  if (await retry.isVisible().catch(() => false)) {
+    const responsePromise = page.waitForResponse((response) => (
+      response.request().method() === 'GET'
+      && response.url().includes('/api/group-trips/destinations?')
+    ));
+    await retry.click();
+    const response = await responsePromise;
+    const result = await response.json().catch(() => null);
+    throw new Error(`Destination capability failed (${response.status()} ${result?.code || 'UNKNOWN'}): ${result?.error || 'No error detail returned'}`);
+  }
   const fields = page.getByPlaceholder('Search a city or town');
   const destination = fields.last();
   await destination.fill('Goa');
@@ -149,9 +165,24 @@ async function generateDestination(page) {
   await searchButtons.last().click();
   const resultLists = page.getByRole('list', { name: 'City search results' });
   await resultLists.last().getByRole('button').first().click();
-  await page.getByRole('button', { name: 'Generate draft' }).click();
-  await page.getByText('Draft preview', { exact: true }).waitFor({ timeout: 45_000 });
-  log('Groq destination draft generated successfully');
+  const generate = page.getByRole('button', { name: /Generate draft|Regenerate draft/ });
+  const preview = page.getByText('Draft preview', { exact: true });
+  const error = page.getByRole('alert').filter({ hasText: 'Destination planning' });
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    await generate.click();
+    await error.waitFor({ state: 'hidden', timeout: 2_000 }).catch(() => {});
+    const outcome = await Promise.race([
+      preview.waitFor({ timeout: 45_000 }).then(() => 'preview'),
+      error.waitFor({ timeout: 45_000 }).then(() => 'error'),
+    ]);
+    if (outcome === 'preview') {
+      log(`Groq destination draft generated successfully${attempt > 1 ? ` after ${attempt} attempts` : ''}`);
+      return;
+    }
+    const message = (await error.innerText()).replace(/\s+/g, ' ').trim();
+    if (attempt === 3) throw new Error(`Groq destination draft failed after 3 attempts: ${message}`);
+    log(`Groq draft attempt ${attempt} was rejected; retrying`);
+  }
 }
 
 const browser = await chromium.launch({ headless: !headed });
@@ -168,14 +199,14 @@ try {
   await signInOrCreate(member, memberEmail);
   await joinTrip(member, inviteUrl);
 
-  await admin.reload();
+  await reloadWorkspace(admin);
   await admin.getByRole('button', { name: 'Let in' }).click();
   await admin.getByText('2 of 2 joined', { exact: false }).first().waitFor();
 
-  await member.reload();
+  await reloadWorkspace(member);
   await fillPrivateDetails(member, 30000);
 
-  await admin.reload();
+  await reloadWorkspace(admin);
   await admin.getByText('1 still needs to add their trip details', { exact: false }).waitFor({ state: 'detached', timeout: 20_000 }).catch(() => {});
   if (generateAi) {
     await generateDestination(admin);
