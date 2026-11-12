@@ -2,6 +2,7 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 const { completeJson, createOpenAIProvider } = require('./providers/openai');
 const { createProvider } = require('./providers');
+const { safetyIdentifier, createUserProvider } = require('./userProvider');
 
 const openAIEnv = { FERMAT_AI_PROVIDER: 'openai', OPENAI_API_KEY: 'test-openai-key-not-a-secret' };
 
@@ -74,14 +75,36 @@ test('OpenAI provider factory selects only explicit OpenAI configuration', async
   assert.throws(() => createOpenAIProvider({ ...openAIEnv, OPENAI_MODEL: '' }), hasError('AI_NOT_CONFIGURED', 503));
   assert.throws(() => createOpenAIProvider({ ...openAIEnv, FERMAT_AI_PROVIDER: 'groq' }), hasError('AI_NOT_CONFIGURED', 503));
 
+  const userSafetyIdentifier = safetyIdentifier('private-firebase-uid');
   const provider = createProvider({ ...openAIEnv, OPENAI_MODEL: 'test-model' }, {
+    safetyIdentifier: userSafetyIdentifier,
     fetchImpl: async (url, options) => {
-      assert.equal(JSON.parse(options.body).model, 'test-model');
+      const body = JSON.parse(options.body);
+      assert.equal(body.model, 'test-model');
+      assert.equal(body.safety_identifier, userSafetyIdentifier);
+      assert.equal(options.body.includes('private-firebase-uid'), false);
       return responseEnvelope();
     },
   });
   assert.equal(provider.mode, 'openai');
   assert.match(provider.label, /OpenAI/);
+  assert.deepEqual(await provider.generate(context()), { operations: [] });
+});
+
+test('user-scoped providers use a stable pseudonymous safety identifier', async () => {
+  const first = safetyIdentifier('private-firebase-uid');
+  assert.match(first, /^fermat_[a-f0-9]{64}$/);
+  assert.equal(first, safetyIdentifier('private-firebase-uid'));
+  assert.notEqual(first, safetyIdentifier('another-firebase-uid'));
+  assert.equal(first.includes('private-firebase-uid'), false);
+  assert.throws(() => safetyIdentifier(''));
+
+  const provider = createUserProvider('private-firebase-uid', openAIEnv, {
+    fetchImpl: async (url, options) => {
+      assert.equal(JSON.parse(options.body).safety_identifier, first);
+      return responseEnvelope();
+    },
+  });
   assert.deepEqual(await provider.generate(context()), { operations: [] });
 });
 

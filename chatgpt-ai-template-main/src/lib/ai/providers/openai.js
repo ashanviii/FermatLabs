@@ -189,6 +189,9 @@ function requestBody(context, model, workflow, options = {}) {
   if (!isObject(context)) throw providerError('AI_INVALID_CONTEXT', 400);
   const maxTokens = options.maxTokens ?? workflow.maxTokens;
   if (!Number.isInteger(maxTokens) || maxTokens < 1) throw providerError('AI_INVALID_CONTEXT', 400);
+  const safetyIdentifier = options.safetyIdentifier;
+  if (safetyIdentifier !== undefined && (typeof safetyIdentifier !== 'string'
+    || !/^fermat_[a-f0-9]{64}$/.test(safetyIdentifier))) throw providerError('AI_INVALID_CONTEXT', 400);
   let body;
   try {
     const input = JSON.stringify(context);
@@ -199,6 +202,7 @@ function requestBody(context, model, workflow, options = {}) {
       input,
       max_output_tokens: Math.min(maxTokens, workflow.maxTokens),
       text: { format: { type: 'json_schema', name: workflow.name, strict: true, schema: workflow.schema(context) } },
+      ...(safetyIdentifier ? { safety_identifier: safetyIdentifier } : {}),
     });
   } catch {
     throw providerError('AI_INVALID_CONTEXT', 400);
@@ -209,7 +213,9 @@ function requestBody(context, model, workflow, options = {}) {
 
 async function requestJson(context, configuration, deps, options, workflow) {
   assertServerOnly();
-  const body = requestBody(context, configuration.model, workflow, options);
+  const body = requestBody(context, configuration.model, workflow, {
+    ...options, safetyIdentifier: deps.safetyIdentifier,
+  });
   const fetchImpl = deps.fetchImpl ?? globalThis.fetch;
   if (typeof fetchImpl !== 'function') throw new AIConfigurationError();
   const controller = new AbortController();

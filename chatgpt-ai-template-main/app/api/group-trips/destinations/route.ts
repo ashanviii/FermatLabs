@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { identity } from '@/lib/server/identity';
 import { firebaseAdmin } from '@/lib/firebaseAdmin';
 
-const { createProvider, AIConfigurationError, AIProviderError } = require('@/lib/ai/providers');
+const { AIConfigurationError, AIProviderError } = require('@/lib/ai/providers');
+const { createUserProvider } = require('@/lib/ai/userProvider');
 const { AIWorkflowError } = require('@/lib/ai/contracts');
 const { RequestError } = require('@/lib/server/jsonRequest');
 const { labsEnabled } = require('@/lib/ai/labsGate');
@@ -18,8 +19,8 @@ function reply(body: unknown, status = 200) {
   return NextResponse.json(body, { status, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
 }
 
-function destinationProvider() {
-  return createProvider({ ...process.env,
+function destinationProvider(uid: string) {
+  return createUserProvider(uid, { ...process.env,
     FERMAT_AI_PROVIDER: process.env.FERMAT_DESTINATION_PROVIDER || process.env.FERMAT_AI_PROVIDER });
 }
 
@@ -41,7 +42,7 @@ export async function GET(request: NextRequest) {
     const snapshot = await firebaseAdmin().firestore.doc(`groupTrips/${tripId}`).get();
     const state = snapshot.data()?.state;
     assertDestinationOrganizer(state, user.uid);
-    return reply({ ...destinationCapabilities({ state, uid: user.uid, provider: destinationProvider() }), labs: labsEnabled(user) });
+    return reply({ ...destinationCapabilities({ state, uid: user.uid, provider: destinationProvider(user.uid) }), labs: labsEnabled(user) });
   } catch (error) { return failure(error); }
 }
 
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
   try {
     const user = await identity(request);
     const body = await readDestinationRequest(request);
-    const options = { firestore: firebaseAdmin().firestore, uid: user.uid, body, provider: destinationProvider() };
+    const options = { firestore: firebaseAdmin().firestore, uid: user.uid, body, provider: destinationProvider(user.uid) };
     if (body.action === 'generate') return reply({ draft: await generateDestinationProposal(options) });
     return reply(await addDestinationProposal(options));
   } catch (error) { return failure(error); }

@@ -4,7 +4,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { identity } from '@/lib/server/identity';
 import { firebaseAdmin } from '@/lib/firebaseAdmin';
 
-const { createProvider, AIConfigurationError, AIProviderError } = require('@/lib/ai/providers');
+const { AIConfigurationError, AIProviderError } = require('@/lib/ai/providers');
+const { createUserProvider } = require('@/lib/ai/userProvider');
 const { AIWorkflowError } = require('@/lib/ai/contracts');
 const { RequestError } = require('@/lib/server/jsonRequest');
 const { assertLabsEnabled } = require('@/lib/ai/labsGate');
@@ -34,12 +35,16 @@ function failure(error: unknown) {
 
 async function consume(uid: string, now = Date.now()) {
   const firestore = firebaseAdmin().firestore;
-  const userRef = firestore.doc(`_aiUsage/${hash(`labs-user\0${uid}`)}`);
-  const globalRef = firestore.doc('_aiUsage/labs-global');
+  const burstRef = firestore.doc(`_aiUsage/${hash(`burst\0${uid}`)}`);
+  const userRef = firestore.doc(`_aiUsage/${hash(uid)}`);
+  const globalRef = firestore.doc('_aiUsage/global');
   await firestore.runTransaction(async (transaction: any) => {
-    const [userUsage, globalUsage] = await Promise.all([transaction.get(userRef), transaction.get(globalRef)]);
-    transaction.set(userRef, rateBucket(userUsage.data(), now, 20, 60 * 60 * 1000));
-    transaction.set(globalRef, rateBucket(globalUsage.data(), now, 200, 24 * 60 * 60 * 1000));
+    const [burstUsage, userUsage, globalUsage] = await Promise.all(
+      [burstRef, userRef, globalRef].map((ref) => transaction.get(ref)),
+    );
+    transaction.set(burstRef, rateBucket(burstUsage.data(), now, 3, 60 * 1000));
+    transaction.set(userRef, rateBucket(userUsage.data(), now, 10, 60 * 60 * 1000));
+    transaction.set(globalRef, rateBucket(globalUsage.data(), now, 100, 24 * 60 * 60 * 1000));
   });
 }
 
@@ -53,7 +58,7 @@ export async function POST(request: NextRequest) {
     assertDestinationOrganizer(state, user.uid);
     collectDiscoveryContext(state);
     await consume(user.uid);
-    const provider = createProvider();
+    const provider = createUserProvider(user.uid);
     if (body.action === 'discover') return reply(await discoverCities({ state, provider }));
     return reply(await localDayIdeas({ state, placeId: body.placeId, provider }));
   } catch (error) { return failure(error); }

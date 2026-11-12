@@ -108,10 +108,13 @@ AI Labs fails closed unless `FERMAT_AI_LABS_ENABLED=true` and the verified
 Firebase token matches `FERMAT_AI_LABS_UIDS` or `FERMAT_AI_LABS_EMAILS`. The gate
 is enforced by the API as well as the UI. Discovery sends a rounded combined
 budget band; individual budgets, names and passports are never sent. Labs uses
-OpenAI only and adds separate per-user and global request limits.
+OpenAI only.
 
-Both flows share limits of 10 attempts per user/hour and 100 globally/day, a
-30-second per-trip generation lease and 10-minute preview expiry. Existing
+All paid AI generation paths share Firestore-backed abuse controls: at most three
+calls per verified user per minute, ten per user per hour, and one hundred total
+calls per deployment per day. The OpenAI key remains server-only, requests include
+a one-way hashed safety identifier, and request/output sizes and timeouts are bounded.
+Generation also uses a 30-second per-trip lease and 10-minute preview expiry. Existing
 server-only AI collections deny browser access; TTL cleanup still requires
 deployment. API keys must remain in the deployment secret store and must never
 use the `NEXT_PUBLIC_` prefix.
