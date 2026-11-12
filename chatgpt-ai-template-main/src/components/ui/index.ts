@@ -3,6 +3,7 @@ export * from './button';
 export * from './card';
 export * from './badge';
 export * from './field';
+export * from './choice-select';
 export * from './month-year-select';
 export * from './notice';
 export * from './stat-tile';
