@@ -435,7 +435,7 @@ function destinationRoute({ state = destinationFixture(), uid = state.ownerUid, 
     'next/server': { NextResponse: { json: (body, options) => ({ body, ...options }) } },
     '@/lib/server/identity': { identity: async () => { if (!uid) throw new Error('AUTH_REQUIRED'); return { uid }; } },
     '@/lib/firebaseAdmin': { firebaseAdmin: () => ({ firestore: { doc: () => ({ get: async () => ({ data: () => ({ state }) }) }) } }) },
-    '@/lib/ai/providers/groq': require('./providers/groq'),
+    '@/lib/ai/providers': require('./providers'),
     '@/lib/ai/contracts': require('./contracts'),
     '@/lib/server/jsonRequest': require('../server/jsonRequest'),
     '@/lib/ai/destinations': { ...require('./destinations'), ...service },
@@ -445,12 +445,15 @@ function destinationRoute({ state = destinationFixture(), uid = state.ownerUid, 
   return exports;
 }
 
-test('destination route capabilities validate Groq config without network and authorize before exposing it', async () => {
+test('destination route capabilities validate provider config without network and authorize before exposing it', async () => {
   const incoming = { nextUrl: new URL('http://localhost/api/group-trips/destinations?tripId=trip-fixture') };
   const result = await destinationRoute().GET(incoming);
   assert.equal(result.status, 200);
   assert.equal(JSON.stringify(result.body), JSON.stringify({ mode: 'groq', label: 'Groq destination drafts' }));
   assert.equal(result.headers['Cache-Control'], 'no-store');
+  const openAI = await destinationRoute({ env: { FERMAT_AI_PROVIDER: 'openai', OPENAI_API_KEY: 'synthetic-unit-test-key' } }).GET(incoming);
+  assert.equal(openAI.status, 200);
+  assert.equal(JSON.stringify(openAI.body), JSON.stringify({ mode: 'openai', label: 'OpenAI destination drafts' }));
   for (const env of [
     { FERMAT_AI_PROVIDER: 'disabled' },
     { FERMAT_AI_PROVIDER: 'development', GROQ_API_KEY: 'synthetic-unit-test-key' },

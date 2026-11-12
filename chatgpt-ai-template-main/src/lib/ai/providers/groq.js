@@ -87,7 +87,7 @@ function readProviderMode(env) {
   if (mode === 'disabled') {
     throw new AIConfigurationError('Fermat AI is unavailable.', 'AI_DISABLED');
   }
-  if (mode !== 'development' && mode !== 'groq') {
+  if (mode !== 'development' && mode !== 'groq' && mode !== 'openai') {
     throw new AIConfigurationError('Fermat AI is unavailable.', 'AI_PROVIDER_INVALID');
   }
   return mode;

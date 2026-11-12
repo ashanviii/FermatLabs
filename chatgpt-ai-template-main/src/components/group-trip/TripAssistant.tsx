@@ -103,7 +103,7 @@ export default function TripAssistant({ trip, disabled, onApplied }: { trip: any
     <section aria-labelledby="trip-assistant-title" className="min-w-0 border-y border-line py-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h4 id="trip-assistant-title" tabIndex={-1} className="type-h3 m-0 flex scroll-mt-24 items-center gap-2"><Sparkles className="size-5 text-brand-700" aria-hidden />Trip assistant</h4>
-        <Badge>{capability?.mode === 'development' ? 'Development simulation - no AI call' : capability?.mode === 'groq' ? 'Groq AI' : checking ? 'Checking availability' : 'Unavailable'}</Badge>
+        <Badge>{capability?.mode === 'development' ? 'Development simulation - no AI call' : capability?.mode === 'openai' ? 'OpenAI' : capability?.mode === 'groq' ? 'Groq AI' : checking ? 'Checking availability' : 'Unavailable'}</Badge>
       </div>
       {error && <div role="alert" className="mt-4"><Notice tone="warning" title="Assistant status">{error}</Notice></div>}
       {!capability && !checking && <Button variant="ghost" size="sm" icon={RefreshCw} onClick={() => setReload((value) => value + 1)} className="mt-3">Retry availability</Button>}

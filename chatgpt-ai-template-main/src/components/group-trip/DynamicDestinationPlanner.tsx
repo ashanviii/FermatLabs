@@ -52,7 +52,7 @@ export default function DynamicDestinationPlanner({ trip, disabled, onAdded }: {
   trip: any; disabled: boolean; onAdded: () => Promise<void>;
 }) {
   const { user } = useAuth();
-  const [capability, setCapability] = useState<{ mode: 'groq'; label: string } | null>(null);
+  const [capability, setCapability] = useState<{ mode: 'groq' | 'openai'; label: string } | null>(null);
   const [checking, setChecking] = useState(true);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -84,7 +84,7 @@ export default function DynamicDestinationPlanner({ trip, disabled, onAdded }: {
       ...(body ? { body: JSON.stringify(body) } : {}),
     });
     const result = await response.json().catch(() => null);
-    if (!response.ok) throw new DestinationRequestError(typeof result?.error === 'string' ? result.error : 'Groq destination planning is unavailable. Please try again later.', response.status);
+    if (!response.ok) throw new DestinationRequestError(typeof result?.error === 'string' ? result.error : 'AI destination planning is unavailable. Please try again later.', response.status);
     if (!result) throw new Error('The destination service returned an invalid response.');
     return result;
   }
@@ -100,7 +100,7 @@ export default function DynamicDestinationPlanner({ trip, disabled, onAdded }: {
       try {
         if (!allowed) return;
         const result = await send(controller.signal);
-        if (result.mode !== 'groq' || typeof result.label !== 'string') throw new Error('Groq destination planning is unavailable. No draft was generated.');
+        if (!['groq', 'openai'].includes(result.mode) || typeof result.label !== 'string') throw new Error('AI destination planning is unavailable. No draft was generated.');
         if (current === sequence.current && !controller.signal.aborted) setCapability(result);
       } catch (cause) {
         if (current === sequence.current) setError(controller.signal.aborted ? 'Availability check timed out. Please retry.' : cause instanceof Error ? cause.message : 'Destination planning is unavailable.');
@@ -183,7 +183,7 @@ export default function DynamicDestinationPlanner({ trip, disabled, onAdded }: {
       {message && <p className="type-small m-0 text-ink-muted" role="status">{message}</p>}
       {!checking && !capability && <Button variant="outline" icon={RefreshCw} disabled={blocked} onClick={() => setReload((value) => value + 1)}>Retry availability</Button>}
       {capability && <>
-        <p className="type-small m-0 text-ink-muted">AI drafts require each traveller's consent to send their departure city, travel month, interests and transport choices to Groq. Budgets, names and passports stay private.</p>
+        <p className="type-small m-0 text-ink-muted">AI drafts require each traveller's consent to send their departure city, travel month, interests and transport choices to {capability.mode === 'openai' ? 'OpenAI' : 'Groq'}. Budgets, names and passports stay private.</p>
         {(!consented || !hasTransport) && <Notice tone="warning">Your saved details need transport choices and permission to allow AI trip drafts before generating.</Notice>}
         <Field label="Destination">
           <DepartureCitySearch

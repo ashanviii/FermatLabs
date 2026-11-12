@@ -82,7 +82,7 @@ function collectDestinationContext(state, place) {
     const constraint = state.constraints[uid];
     if (!completeDetails(constraint, settings.currency)) invalidContext();
     const consent = constraint.aiPlanningConsent ?? (member.demo === true ? true : undefined);
-    if (consent !== true) throw new AIWorkflowError('AI_CONSENT_REQUIRED', 'Every real traveller must explicitly consent to AI planning before departure cities and preferences are shared with Groq.', 409);
+    if (consent !== true) throw new AIWorkflowError('AI_CONSENT_REQUIRED', 'Every real traveller must explicitly consent before departure cities and preferences are shared with the configured AI provider.', 409);
     const modes = constraint.transportModes === undefined && member.demo === true ? MODES : constraint.transportModes;
     if (!Array.isArray(modes) || !modes.length || modes.length > MODES.length || new Set(modes).size !== modes.length || !modes.every((mode) => MODES.includes(mode))) {
       throw new AIWorkflowError('TRANSPORT_MODES_REQUIRED', 'Every traveller must choose at least one supported transport mode before AI planning.', 409);
@@ -162,8 +162,8 @@ async function generateDestinationDraft({ state, place, provider, draftId, now =
   if (typeof draftId !== 'string' || !/^ai-[a-f0-9]{1,64}$/.test(draftId) || typeof now !== 'function') {
     throw new AIWorkflowError('INVALID_DESTINATION_REQUEST', 'A server-generated destination ID and clock are required.');
   }
-  if (provider?.mode !== 'groq' || typeof provider.generateDestination !== 'function') {
-    throw new AIWorkflowError('AI_DESTINATION_UNAVAILABLE', 'Destination suggestions require the Groq provider. No simulated fallback is available.', 503);
+  if (!['groq', 'openai'].includes(provider?.mode) || typeof provider.generateDestination !== 'function') {
+    throw new AIWorkflowError('AI_DESTINATION_UNAVAILABLE', 'Destination suggestions require a configured AI provider. No simulated fallback is available.', 503);
   }
   const destination = canonicalPlace(place);
   const domestic = destination.countryCode === settingsOf(state).homeCountry;
@@ -173,7 +173,7 @@ async function generateDestinationDraft({ state, place, provider, draftId, now =
     raw = await provider.generateDestination(structuredClone(context));
   } catch (error) {
     if (error instanceof AIProviderError) throw error;
-    throw new AIWorkflowError('AI_DESTINATION_UNAVAILABLE', 'Groq could not generate a destination suggestion right now.', 503);
+    throw new AIWorkflowError('AI_DESTINATION_UNAVAILABLE', 'The AI provider could not generate a destination suggestion right now.', 503);
   }
   const draft = validateDraft(raw, context);
   const generatedAt = now();
@@ -193,7 +193,7 @@ async function generateDestinationDraft({ state, place, provider, draftId, now =
     activities: draft.activities.map((activity, index) => ({ id: `${draftId}-activity-${index}`, title: activity.title, location: activity.location,
       durationMinutes: activity.durationMinutes, costPerPerson: activity.cost.high, tags: activity.tags })),
     journeyQuotes,
-    provenance: { kind: 'ai-estimate', provider: 'groq', generatedAt, verified: false, summary: draft.summary,
+    provenance: { kind: 'ai-estimate', provider: provider.mode, generatedAt, verified: false, summary: draft.summary,
       caveats: draft.caveats, costRanges: draft.costs },
   };
 }

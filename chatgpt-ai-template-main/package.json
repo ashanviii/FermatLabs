@@ -12,6 +12,7 @@
     "test:firestore-rules": "firebase emulators:exec --project demo-fermat --only firestore \"node --test src/lib/firestore.rules.test.cjs\"",
     "dry-run:group-trip": "node scripts/emulator-group-trip-dry-run.mjs",
     "test:groq": "node scripts/test-groq.mjs",
+    "test:openai": "node scripts/test-openai.mjs",
     "test:ai": "node --test src/lib/ai/*.test.cjs",
     "test:geo": "node --test src/lib/geo/*.test.cjs",
     "simulate:group-trip": "node scripts/simulate-group-trip.mjs",
