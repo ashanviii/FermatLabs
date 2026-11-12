@@ -2,42 +2,25 @@
 
 ## Decision
 
-Fermat is using **Groq** for the first server-side AI integration.
+Fermat uses **OpenAI** as its primary server-side AI provider. Groq remains an
+explicitly selected fallback; the application never fails over automatically.
 
-The initial model is `openai/gpt-oss-20b`. It is called through Groq's
-OpenAI-compatible chat completions endpoint, with JSON mode enabled for
-responses that application code can validate before use.
+The default model is `gpt-4o-mini`. It is called through OpenAI's Responses API
+with strict Structured Outputs, followed by Fermat's deterministic application
+validation before any proposal can be shown or saved.
 
-## Why Groq
+## Why OpenAI
 
-We evaluated the free options available in November 2026, including Gemini,
-Cloudflare Workers AI, Cerebras, Mistral, OpenRouter, Hugging Face Inference,
-Alibaba Model Studio and GitHub Models.
-
-Groq was selected for the MVP because it offered the best combination of:
-
-- a recurring free API allowance instead of a short promotional trial;
-- an API that can be swapped with minimal application changes;
-- structured JSON output;
-- no payment method required for the free tier;
-- an inference-specific Zero Data Retention control; and
-- enough throughput for early product testing.
-
-Cloudflare Workers AI remains the preferred fallback if Fermat needs a second
-provider. Gemini and Mistral free modes were not selected for private trip data
-because their free-mode data policies were less suitable. OpenRouter's free
-request allowance was too small for production use, Hugging Face's free credit
-was negligible, Alibaba's offer was time-limited, and GitHub Models had been
-retired.
-
-Free-tier limits and provider terms can change. Re-check them before relying on
-this setup for production traffic.
+The maintainer selected OpenAI after the original Groq integration proved
+unreliable for the product workflow. The Responses API supplies a stable,
+documented schema-constrained interface while Fermat keeps provider-specific
+code behind a small adapter. OpenAI API usage is billed separately from ChatGPT
+subscriptions, so project-level usage limits should be configured before
+production traffic.
 
 ## Privacy and product boundaries
 
-Inference API Zero Data Retention is enabled in the Groq organization.
-
-Even with that control, Fermat must not send names, email addresses, passport
+Fermat must not send names, email addresses, passport
 numbers, uploaded documents or other unnecessary identifiers to the model.
 Use anonymous member labels and only the minimum trip context needed for the
 request.
@@ -53,7 +36,7 @@ prices or transport availability.
 
 Destination generation additionally requires explicit consent from every real
 member before sending coarse departure city/region, travel month, interests and
-chosen bus/train/car/flight modes to Groq. Budgets, passport data, names and UIDs
+chosen bus/train/car/flight modes to the configured AI provider. Budgets, passport data, names and UIDs
 are excluded, as are precise coordinates and exact travel dates. This consented
 context is separate from the catalog-based itinerary editor's context below.
 
@@ -63,22 +46,21 @@ The API key is intentionally not stored in Git. Contact a Fermat maintainer for
 development access, then create `.env.local` in the application root:
 
 ```env
-GROQ_API_KEY=contact-a-maintainer-for-the-key
-GROQ_MODEL=openai/gpt-oss-20b
+FERMAT_AI_PROVIDER=openai
+OPENAI_API_KEY=contact-a-maintainer-for-the-key
+OPENAI_MODEL=gpt-4o-mini
 ```
 
 Never prefix the key with `NEXT_PUBLIC_`, expose it to client components, paste
 it into an issue, or commit `.env.local`. The current local setup already has a
 server-only key in its ignored environment file and runs with
-`FERMAT_AI_PROVIDER=groq`; this is real-provider configuration, not a simulator
+`FERMAT_AI_PROVIDER=openai`; this is real-provider configuration, not a simulator
 or evidence of a successful live call.
 
-The approved proxy is known to block `api.groq.com`; it was not retried in this
-session. Obtain IT-approved access before live validation. Once access is
-approved, verify the connection and JSON mode with:
+Verify the connection and Structured Outputs with:
 
 ```bash
-npm run test:groq
+npm run test:openai
 ```
 
 The test makes one very small completion request and never prints the API key.
@@ -86,12 +68,12 @@ It is a connectivity check, not an end-to-end destination-generation check.
 
 ## Implementation
 
-- `src/lib/ai/groq.ts` contains the server-only Groq JSON client.
-- `scripts/test-groq.mjs` is the standalone connection test.
+- `src/lib/ai/providers/openai.js` contains the server-only OpenAI Responses client.
+- `scripts/test-openai.mjs` is the standalone connection test.
 - `.env.example` documents the required environment variables.
-- `package.json` exposes the test as `npm run test:groq`.
+- `package.json` exposes the test as `npm run test:openai`.
 
-Production deployment must receive `GROQ_API_KEY` through the hosting
+Production deployment must receive `OPENAI_API_KEY` through the hosting
 platform's encrypted environment-variable settings. Rotate the key immediately
 if it is ever exposed.
 
@@ -114,18 +96,17 @@ drafting during input collection is a separate workflow described below.
 | `disabled` | Fail closed; no inference or proposal application | Reject; no fallback |
 | `development` | Explicitly labelled deterministic simulation; no network/model call | Reject; no simulated fallback |
 | `groq` | One bounded edit request to the fixed Groq endpoint | One bounded destination request to the same fixed endpoint |
+| `openai` | One schema-constrained Responses API request | One schema-constrained destination request |
 
 Optional server-only `FERMAT_DESTINATION_PROVIDER` overrides destination
 generation only; when omitted it inherits `FERMAT_AI_PROVIDER`. It does not
-change the itinerary edit provider. The current local runtime uses
-`FERMAT_AI_PROVIDER=groq`, although the unset default remains `disabled`.
+change the itinerary edit provider. The recommended runtime uses
+`FERMAT_AI_PROVIDER=openai`; the unset default remains `disabled`.
 
 Development mode requires a non-production Node environment and both Firebase
 emulator hosts set to loopback addresses. It is not a connection to VS Code
 Copilot or a substitute model hidden behind an AI label. There is no runtime
-API for calling the current editor chat, no automatic provider fallback, and no
-attempt to bypass a company network restriction. Live Groq access is currently
-blocked by the approved company proxy and has not been validated locally.
+API for calling the current editor chat and no automatic provider fallback.
 
 Set `FERMAT_APP_ORIGIN` to the exact browser origin, such as
 `http://127.0.0.1:3000` locally or the canonical HTTPS origin in production.
@@ -139,9 +120,9 @@ configuration (not the current runtime and not a destination simulator):
 FERMAT_AI_PROVIDER=development FERMAT_APP_ORIGIN=http://127.0.0.1:3000 npm run dev -- --hostname 127.0.0.1
 ```
 
-For approved live access, set `FERMAT_AI_PROVIDER=groq` on the server and retain
+For live access, set `FERMAT_AI_PROVIDER=openai` on the server and retain
 the key in the ignored local environment file or hosting secret store. Never use
-`NEXT_PUBLIC_` for the provider flag or key. The standalone `test:groq` script is
+`NEXT_PUBLIC_` for the provider flag or key. The standalone `test:openai` script is
 a separate explicit connectivity test; it is not part of offline test suites.
 
 ### Module Boundaries
@@ -150,7 +131,7 @@ a separate explicit connectivity test; it is not part of offline test suites.
 - `src/lib/ai/agents/planner.js`: calls the selected provider and validates/translates references.
 - `src/lib/ai/agents/reviewer.js`: deterministic budget/schedule checks and source-labelled preview.
 - `src/lib/ai/orchestrator.js`: bounded sequence of those agents, with at most one inference call.
-- `src/lib/ai/providers/`: isolated development and Groq adapters.
+- `src/lib/ai/providers/`: isolated development, OpenAI and Groq adapters.
 - `src/lib/ai/proposals.js`: transactional quota reservation, leases, expiring proposals and atomic Apply.
 - `app/api/group-trips/assistant/route.ts`: authenticated capabilities, proposal and confirmation endpoints.
 - `src/components/group-trip/TripAssistant.tsx`: goal/day controls, before/after preview, discard and confirmation.
@@ -169,7 +150,7 @@ extended with no-op protection and catalog replacements.
 
 - The new-trip UI sends `planningMode: 'ai'`; the create service defaults to `ai` when omitted. There is no automatic 33-catalog restriction for new trips. Explicit `catalog` remains supported for legacy clients, the offline demo and tests.
 - An approved organizer selects a city during input collection using the existing global GeoNames search. The server resolves canonical city names and region labels, enforces trip scope and controls currency; the model cannot choose a different identity or currency.
-- All real members must explicitly consent to the coarse context described above. Groq receives anonymous traveller references and permitted interests/modes, not private budgets or identifying member data.
+- All real members must explicitly consent to the coarse context described above. The configured AI provider receives anonymous traveller references and permitted interests/modes, not private budgets or identifying member data.
 - The separate fixed `generateDestination` policy returns activities and low/high cost ranges. Bus, train, car and flight are supported preferences, not verified routes. Unknown travel fare or duration fails pricing assessment, with no silent flight default.
 - Model costs are plausible estimates only, not live quotes or source-verified prices. Upper ends feed deterministic per-member budget checks with FX conversion and a 10% buffer. The UI uses travel-neutral headings and unverified-estimate labels.
 - Generation saves a server-owned draft and returns a preview without adding a choice. Add requires a proposal ID and explicit confirmation; only the stored draft can be added, never destination fields supplied by the browser. Fingerprint, expiry, ownership, scope and capacity checks apply; replay does not add twice.
@@ -195,7 +176,7 @@ extended with no-op protection and catalog replacements.
 
 - Itinerary edits allow at most 8 changes per proposal; 40 editable activities, 100 busy intervals and 3 replacement candidates per activity in model context. Destination drafts allow at most 12 generated activities.
 - Destination drafts and itinerary edits share 10 new attempts per user per hour and 100 globally per 24-hour window. Reusing an eligible ready request ID returns the saved preview rather than dispatching again; stale, expired or already-used requests are rejected as applicable.
-- Both workflows share one active generation per trip with a 30-second lease. The fixed edit policy has a 12-second deadline and 1,600 output-token cap; the separate fixed `generateDestination` policy has a 20-second deadline and 6,000-token cap. Neither automatically retries.
+- Both workflows share one active generation per trip with a 30-second lease. OpenAI uses a 15-second edit deadline and 25-second destination deadline, with 1,600 and 6,000 output-token caps respectively. Groq retains its 12/20-second deadlines. Neither automatically retries.
 - Request bodies are limited to 2 KiB with a 5-second read deadline. Provider requests are bounded to 32 KiB and responses to 64 KiB, including streamed reads.
 - Preview expiry is 10 minutes and checked synchronously before reuse or Apply/Add. Both workflows reuse the existing browser-denied AI collections. Firestore TTL declarations are included for `_aiProposals.deleteAfter`, `_aiLeases.expiresAt`, and `_aiUsage.expiresAt`.
 - TTL is asynchronous cleanup, not authorization. The TTL policies must be deployed and verified separately before production; this work has not deployed them or activated billing. Expiry denial works without TTL, but physical deletion requires the policy.
@@ -212,10 +193,8 @@ npm run build
 ```
 
 The implementation reports these test suites, production build and typecheck
-passing with the approved proxy. The final aggregate test count is left to the
-main implementation report. The build configuration skips lint. Browser checks
-are still in progress, and no live Groq validation is claimed. These checks were
-not rerun for this documentation-only update.
+passing. The build configuration skips lint. A live provider call still requires
+a valid deployment secret and available API billing or credits.
 
 The older assistant smoke test is **development-provider only**, with local
 Auth/Firestore emulators and a local app URL:
@@ -226,14 +205,12 @@ APP_URL=http://127.0.0.1:3000 npm run dry-run:group-trip -- 4 --assistant
 
 It uses synthetic identities and tests auth, provider override rejection,
 preview without mutation, explicit confirmation, replay, stale rejection and
-private response boundaries. It does not validate dynamic destinations and
-must not be claimed to work against the current `groq` runtime.
+private response boundaries. It does not validate live dynamic destination calls.
 
 ### Manual Verification
 
-Use synthetic trips and local Firebase emulators. Live generation steps remain
-blocked until IT approves access through the approved proxy; do not retry or
-bypass that restriction. Configuration alone is not a passed check.
+Use synthetic trips and local Firebase emulators. Configuration alone is not a
+passed live-provider check.
 
 1. Create a trip in the UI and confirm `planningMode: 'ai'` and no automatic catalog restriction. Separately check an explicit `catalog` test client still uses the legacy path.
 2. Select a destination through GeoNames search; check canonical city/region labels, scope rejection, trip currency, travel-neutral headings and bus/train/car/flight preferences.

@@ -185,7 +185,7 @@ export function PrivateDetailsForm({ trip, value, dirty, disabled, busy, onChang
 
           <Checkbox
             label="Allow AI trip drafts"
-            description="Send my departure city, travel month, interests and transport choices to Groq. My budget, name and passport stay private."
+            description="Send my departure city, travel month, interests and transport choices to the configured AI provider. My budget, name and passport stay private."
             checked={value.aiPlanningConsent === true}
             disabled={disabled || busy}
             onChange={(event) => onChange({ aiPlanningConsent: event.target.checked })}

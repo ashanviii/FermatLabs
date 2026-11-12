@@ -21,15 +21,15 @@ function assertDestinationOrganizer(state, uid, requireCollecting = true) {
 
 function assertProvider(provider) {
   assertServerOnly();
-  if (provider?.mode !== 'groq' || typeof provider.generateDestination !== 'function') {
-    fail('AI_DESTINATION_UNAVAILABLE', 'Destination drafts require Groq. No simulated fallback is available.', 503);
+  if (!['groq', 'openai'].includes(provider?.mode) || typeof provider.generateDestination !== 'function') {
+    fail('AI_DESTINATION_UNAVAILABLE', 'Destination drafts require a configured AI provider. No simulated fallback is available.', 503);
   }
 }
 
 function destinationCapabilities({ state, uid, provider }) {
   assertDestinationOrganizer(state, uid);
   assertProvider(provider);
-  return { mode: 'groq', label: 'Groq destination drafts' };
+  return { mode: provider.mode, label: provider.mode === 'openai' ? 'OpenAI destination drafts' : 'Groq destination drafts' };
 }
 
 function assertCapacity(state, placeId) {

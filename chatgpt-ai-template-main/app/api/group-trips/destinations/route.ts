@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { identity } from '@/lib/server/identity';
 import { firebaseAdmin } from '@/lib/firebaseAdmin';
 
-const { createGroqProvider, AIConfigurationError, AIProviderError } = require('@/lib/ai/providers/groq');
+const { createProvider, AIConfigurationError, AIProviderError } = require('@/lib/ai/providers');
 const { AIWorkflowError } = require('@/lib/ai/contracts');
 const { RequestError } = require('@/lib/server/jsonRequest');
 const { assertDestinationOrganizer, destinationCapabilities, readDestinationRequest,
@@ -18,7 +18,7 @@ function reply(body: unknown, status = 200) {
 }
 
 function destinationProvider() {
-  return createGroqProvider({ ...process.env,
+  return createProvider({ ...process.env,
     FERMAT_AI_PROVIDER: process.env.FERMAT_DESTINATION_PROVIDER || process.env.FERMAT_AI_PROVIDER });
 }
 
@@ -28,7 +28,7 @@ function failure(error: unknown) {
     const safe = error as Error & { code: string; status: number };
     return reply({ code: safe.code, error: safe.message }, safe.status);
   }
-  if (error instanceof AIProviderError) return reply({ code: 'AI_DESTINATION_UNAVAILABLE', error: 'Groq destination planning is unavailable. Try again later.' }, 503);
+  if (error instanceof AIProviderError) return reply({ code: 'AI_DESTINATION_UNAVAILABLE', error: 'AI destination planning is unavailable. Try again later.' }, 503);
   return reply({ code: 'DESTINATIONS_UNAVAILABLE', error: 'Destination planning is unavailable. Refresh the trip before retrying.' }, 503);
 }
 
