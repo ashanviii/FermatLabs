@@ -50,7 +50,7 @@ function parseDestinationRequest(body) {
     fail('INVALID_REQUEST', 'A valid trip ID is required.');
   }
   if (body.action === 'generate' && exactKeys(body, ['action', 'tripId', 'placeId', 'requestId'])) {
-    if (typeof body.placeId !== 'string' || !/^geonames:\d{1,12}$/.test(body.placeId) || typeof body.requestId !== 'string' ||
+    if (typeof body.placeId !== 'string' || !/^(?:geonames:\d{1,12}|ourairports:[A-Z0-9]{3,4})$/.test(body.placeId) || typeof body.requestId !== 'string' ||
       !/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(body.requestId)) {
       fail('INVALID_REQUEST', 'Choose a city and use a new destination request ID.');
     }
@@ -105,7 +105,9 @@ async function generateDestinationProposal({ firestore, uid, body, provider, res
   parseDestinationRequest(body);
   if (body.action !== 'generate') fail('INVALID_REQUEST', 'A destination generation request is required.');
   assertProvider(provider);
-  const placeId = `geonames:${body.placeId.slice(9).replace(/^0+(?=\d)/, '')}`;
+  const placeId = body.placeId.startsWith('geonames:')
+    ? `geonames:${body.placeId.slice(9).replace(/^0+(?=\d)/, '')}`
+    : `ourairports:${body.placeId.slice(12).toUpperCase()}`;
   const proposalId = hash(`destination\0${uid}\0${body.tripId}\0${body.requestId.toLowerCase()}`);
   const inputHash = hash(JSON.stringify([placeId, provider.mode]));
   const tripRef = firestore.doc(`groupTrips/${body.tripId}`);
@@ -122,7 +124,7 @@ async function generateDestinationProposal({ firestore, uid, body, provider, res
     let place;
     try { place = await resolvePlace(placeId); }
     catch { fail('PLACE_UNAVAILABLE', 'Search and select an available destination city.', 400); }
-    if (place?.id !== placeId || place.source !== 'GeoNames') fail('PLACE_UNAVAILABLE', 'Search and select an available destination city.', 400);
+    if (place?.id !== placeId || !['GeoNames', 'OurAirports'].includes(place.source)) fail('PLACE_UNAVAILABLE', 'Search and select an available destination city.', 400);
     collectDestinationContext(state, place);
     assertScope(state, place);
     const clock = now();

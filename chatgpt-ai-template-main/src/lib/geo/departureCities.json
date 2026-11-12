@@ -122,6 +122,15 @@
    "airportType": "large_airport"
   },
   {
+   "name": "Bhopal",
+   "countryCode": "IN",
+   "lat": 23.2875,
+   "lon": 77.3374,
+   "iata": "BHO",
+   "airport": "Raja Bhoj Airport",
+   "airportType": "medium_airport"
+  },
+  {
    "name": "New York",
    "countryCode": "US",
    "lat": 40.6394,

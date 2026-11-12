@@ -88,8 +88,9 @@ function startingInput(trip: any): PrivateInput {
     visas: [],
     datesConfirmed: false,
     preferences: [],
-    entryCheckAcknowledged: false,
-    isAdult: false,
+    // Age/terms and travel-rule acknowledgement happen at entry, not in every trip form.
+    entryCheckAcknowledged: true,
+    isAdult: true,
     passportCountry: home,
   };
 }

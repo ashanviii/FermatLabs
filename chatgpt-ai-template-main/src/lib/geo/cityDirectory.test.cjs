@@ -36,5 +36,6 @@ test('missing city extract exposes an explicitly labelled airport-data fallback'
   assert.equal(result.fallback, true);
   assert.equal(result.source, 'OurAirports');
   assert.ok(result.cities.some((city) => city.name === 'Delhi'));
-  assert.equal(result.cities[0].id, null);
+  assert.match(result.cities[0].id, /^ourairports:/);
+  assert.equal(createCityDirectory().resolve(result.cities[0].id).source, 'OurAirports');
 });

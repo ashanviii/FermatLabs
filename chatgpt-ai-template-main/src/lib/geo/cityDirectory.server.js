@@ -4,6 +4,7 @@ const geo = require('./index');
 
 const DATA_FILE = path.join(process.cwd(), 'data/cities.json');
 const normalize = (value) => String(value).normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase().trim();
+const PLACE_ID = /^(?:geonames:\d{1,12}|ourairports:[A-Z0-9]{3,4})$/;
 
 function validCity(city) {
   return city && /^geonames:\d{1,12}$/.test(city.id) && typeof city.name === 'string' && city.name.length > 0 && city.name.length <= 200 &&
@@ -20,7 +21,7 @@ function createCityDirectory(snapshot) {
   for (const city of usable ? snapshot.cities : geo.departureCities) {
     if (usable && (!validCity(city) || byId.has(city.id))) continue;
     const record = usable ? { id: city.id, name: city.name, label: city.label, countryCode: city.countryCode, lat: city.lat, lon: city.lon, source: 'GeoNames', fetchedAt }
-      : { id: null, name: city.name, label: `${city.name}${city.iata ? ` (${city.iata})` : ''}, ${geo.countryName(city.countryCode)}`, countryCode: city.countryCode, source, fetchedAt };
+      : { id: city.iata ? `ourairports:${city.iata}` : null, name: city.name, label: `${city.name}${city.iata ? ` (${city.iata})` : ''}, ${geo.countryName(city.countryCode)}`, countryCode: city.countryCode, lat: city.lat, lon: city.lon, source, fetchedAt };
     if (record.id) byId.set(record.id, record);
     const aliases = Array.isArray(city.aliases) ? city.aliases.filter((alias) => typeof alias === 'string').slice(0, 40) : [];
     entries.push({ record, name: normalize(city.name), aliases: aliases.map(normalize), haystack: normalize([record.label, city.iata || '', ...aliases].join(' ')), population: Math.max(0, Number(city.population) || 0) });
@@ -42,7 +43,7 @@ function createCityDirectory(snapshot) {
     };
   }
   function resolve(id) {
-    if (typeof id !== 'string' || !/^geonames:\d{1,12}$/.test(id)) throw new Error('Invalid departure place ID.');
+    if (typeof id !== 'string' || !PLACE_ID.test(id)) throw new Error('Invalid departure place ID.');
     const record = byId.get(id);
     if (!record) throw new Error('Departure place is unavailable. Search and select it again.');
     return { ...record };

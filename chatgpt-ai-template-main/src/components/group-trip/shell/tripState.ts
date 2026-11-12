@@ -26,7 +26,7 @@ export const memberList = (trip: any): any[] =>
 /** Name for avatars: drop a trailing "(demo)" so initials read "AA", not "A(". */
 export const avatarName = (nickname: string) => (nickname || '').replace(/\s*\(demo\)\s*$/i, '') || nickname;
 
-export const approvedCount = (trip: any) => memberList(trip).filter((m) => m.status !== 'pending').length;
+export const approvedCount = (trip: any) => memberList(trip).filter((m) => m.status === 'approved').length;
 
 export const planApprovals = (trip: any) =>
   Object.values(trip?.activePlan?.approvals || {}).filter((decision) => decision === 'approved').length;
@@ -86,9 +86,7 @@ export function missingDetails(input: any, requireTransport = false): string[] {
   if (!(input.passportExpiry === 'none' || /^\d{4}-(0[1-9]|1[0-2])$/.test(input.passportExpiry || ''))) missing.push('passport expiry month and year');
   if (!input.preferences?.length) missing.push('at least one interest');
   if (!input.datesConfirmed) missing.push('the dates');
-  if (!input.isAdult) missing.push('the 18+ box');
   if (!input.passportCountry && !input.hasIndianPassport) missing.push('your citizenship');
-  if (!input.entryCheckAcknowledged) missing.push('the entry rules box');
   return missing;
 }
 
