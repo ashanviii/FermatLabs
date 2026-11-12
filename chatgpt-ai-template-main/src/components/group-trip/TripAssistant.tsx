@@ -4,7 +4,8 @@ import { Check, RefreshCw, Sparkles, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Field, Select, Textarea } from '@/components/ui/field';
+import { Field, Textarea } from '@/components/ui/field';
+import { ChoiceSelect, type ChoiceSelectGroup } from '@/components/ui/choice-select';
 import { Notice } from '@/components/ui/notice';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { formatMoney } from '@/lib/format';
@@ -23,8 +24,8 @@ const goals = [
   { value: 'later', label: 'Start an activity later' }, { value: 'food', label: 'Choose a food experience' },
 ];
 const labGoals = [
-  { value: 'custom', label: 'Describe a custom change' },
-  { value: 'itinerary', label: 'Refresh the full day-by-day flow' },
+  { value: 'custom', label: 'Describe a custom change', description: 'Tell Fermat what to move or replace' },
+  { value: 'itinerary', label: 'Refresh the full day-by-day flow', description: 'Rework activities across every day' },
 ];
 
 export default function TripAssistant({ trip, disabled, onApplied }: { trip: any; disabled: boolean; onApplied: () => Promise<void> }) {
@@ -105,6 +106,14 @@ export default function TripAssistant({ trip, disabled, onApplied }: { trip: any
   }
 
   const money = (amount: number) => formatMoney(amount, proposal?.currency || plan.currency);
+  const goalGroups: ChoiceSelectGroup[] = [
+    { options: goals },
+    ...(capability?.labs ? [{ label: 'AI Labs', icon: Sparkles, options: labGoals }] : []),
+  ];
+  const dayGroups: ChoiceSelectGroup[] = [{ options: [
+    { value: '0', label: 'Any day' },
+    ...plan.itinerary.map((entry: any) => ({ value: String(entry.day), label: `Day ${entry.day}` })),
+  ] }];
   return (
     <section aria-labelledby="trip-assistant-title" className="min-w-0 border-y border-line py-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -115,13 +124,12 @@ export default function TripAssistant({ trip, disabled, onApplied }: { trip: any
       {!capability && !checking && <Button variant="ghost" size="sm" icon={RefreshCw} onClick={() => setReload((value) => value + 1)} className="mt-3">Retry availability</Button>}
       {capability && <>
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          <Field label="What would improve this trip?"><Select value={goal} disabled={pending || disabled} onChange={(event) => { const value = event.target.value; setGoal(value); if (value === 'itinerary') setDay(0); setProposal(null); }}>
-            {goals.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-            {capability.labs && <optgroup label="AI Labs">{labGoals.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</optgroup>}
-          </Select></Field>
-          <Field label="Day"><Select value={goal === 'itinerary' ? 0 : day} disabled={pending || disabled || goal === 'itinerary'} onChange={(event) => { setDay(Number(event.target.value)); setProposal(null); }}>
-            <option value={0}>Any day</option>{plan.itinerary.map((entry: any) => <option key={entry.day} value={entry.day}>Day {entry.day}</option>)}
-          </Select></Field>
+          <Field label="What would improve this trip?">
+            <ChoiceSelect value={goal} groups={goalGroups} disabled={pending || disabled} onValueChange={(value) => { setGoal(value); if (value === 'itinerary') setDay(0); setProposal(null); }} />
+          </Field>
+          <Field label="Day">
+            <ChoiceSelect value={String(goal === 'itinerary' ? 0 : day)} groups={dayGroups} disabled={pending || disabled || goal === 'itinerary'} onValueChange={(value) => { setDay(Number(value)); setProposal(null); }} />
+          </Field>
         </div>
         {goal === 'custom' && <Field label="Describe the change" hint="The assistant can remove, replace or reschedule existing activities. It cannot book travel or invent new catalog items." className="mt-4">
           <Textarea value={instruction} maxLength={400} placeholder="For example: Make day 2 calmer and move the museum after lunch." disabled={pending || disabled} onChange={(event) => { setInstruction(event.target.value); setProposal(null); }} />

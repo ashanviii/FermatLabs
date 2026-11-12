@@ -200,6 +200,14 @@ Badge tones `neutral` (tags), `brand`, `warm`, `success`, `warning`, `danger`, `
 </Field>
 ```
 
+### ChoiceSelect — `@/components/ui/choice-select`
+Use for short, curated option lists that should match Fermat's interface instead of opening the browser's native select menu. It supports grouped options, descriptions, selected checkmarks and arrow-key navigation. Keep native `Select` for long system-owned lists where the mobile picker is useful.
+```tsx
+<Field label="What would improve this trip?">
+  <ChoiceSelect value={goal} groups={[{ options: goals }, { label: 'AI Labs', icon: Sparkles, options: labGoals }]} onValueChange={setGoal} />
+</Field>
+```
+
 ### Checkbox — `@/components/ui/field`
 `label`, `description`, `variant="plain|tile"`, plus every native input prop (`checked`, `onChange`, `disabled`).
 ```tsx
