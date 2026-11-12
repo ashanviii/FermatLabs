@@ -21,7 +21,30 @@ function collectContext(state, uid, request) {
       const trusted = catalog.find((activity) => activity.templateId === item.templateId);
       if (!trusted) { busy.push({ day: day.day, time: item.time, durationMinutes: item.durationMinutes }); continue; }
       const ref = `activity-${activities.length + 1}`;
-      const options = domain.planActivityOptions(state, item).sort((left, right) =>
+      const baseline = {
+        planVersion: state.activePlan.version,
+        planRevision: state.activePlan.revision,
+        inputRevision: state.inputRevision,
+      };
+      const isGoalMatch = (candidate) => {
+        if (request.goal === 'cost') return candidate.groupCost < item.estimatedCost;
+        if (request.goal === 'pace') return candidate.durationMinutes < item.durationMinutes;
+        if (request.goal === 'food') return candidate.tags?.includes('food');
+        return true;
+      };
+      const passesPlanChecks = (candidate) => {
+        try {
+          domain.applyCommand(state, {
+            type: 'applyPlanSuggestion', uid, ...baseline,
+            operations: [{ kind: 'replace', itemId: item.id, templateId: candidate.templateId }],
+          });
+          return true;
+        } catch {
+          return false;
+        }
+      };
+      const options = domain.planActivityOptions(state, item).filter((candidate) =>
+        isGoalMatch(candidate) && passesPlanChecks(candidate)).sort((left, right) =>
         (request.goal === 'food' ? Number(right.tags?.includes('food')) - Number(left.tags?.includes('food')) : 0) || left.groupCost - right.groupCost).slice(0, 3);
       const candidates = options.map((candidate) => ({
         ref: `candidate-${++candidateIndex}`, title: candidate.title, durationMinutes: candidate.durationMinutes,
