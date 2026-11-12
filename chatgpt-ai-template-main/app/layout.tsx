@@ -4,13 +4,13 @@ import { Analytics } from '@vercel/analytics/next';
 import '../src/styles/App.css';
 
 const description =
-  'Plan a group trip everyone can actually take. Compare private budgets, departure cities and passport constraints, vote together and build the itinerary.';
+  'A private group trip planner for friends. Compare budgets, dates, departure cities and passports, vote together and build a shared itinerary.';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.fermatlabs.org'),
   applicationName: 'Fermat',
   title: {
-    default: 'Fermat · Group trips, sorted',
+    default: 'Fermat · Group trip planner for friends',
     template: '%s · Fermat',
   },
   description,
@@ -20,12 +20,12 @@ export const metadata: Metadata = {
     locale: 'en',
     url: '/',
     siteName: 'Fermat',
-    title: 'Fermat · Group trips, sorted',
+    title: 'Fermat · Group trip planner for friends',
     description,
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Fermat · Group trips, sorted',
+    title: 'Fermat · Group trip planner for friends',
     description,
   },
   robots: {

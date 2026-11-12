@@ -25,18 +25,18 @@ export type Guide = {
 
 const sharedDates = {
   publishedAt: '2026-11-08',
-  updatedAt: '2026-11-08',
+  updatedAt: '2026-11-12',
 };
 
 export const guides: Guide[] = [
   {
     slug: 'plan-a-group-trip-with-friends',
-    title: 'How to plan a group trip with friends without the group-chat chaos',
+    title: 'How to plan a group trip with friends',
     eyebrow: 'Group trip planning guide',
     description:
       'A practical group-trip planning workflow for agreeing on dates, budgets and destinations without making one friend do all the work.',
     searchIntent: 'Plan a trip with friends',
-    readingTime: '7 min read',
+    readingTime: '10 min read',
     ...sharedDates,
     takeaways: [
       'Collect constraints privately before suggesting destinations.',
@@ -71,10 +71,38 @@ export const guides: Guide[] = [
         ],
       },
       {
-        heading: 'Step 3: vote, lock the winner and turn it into work',
+        heading: 'Step 3: vote and lock the winner',
         paragraphs: [
           'Private voting reduces social pressure and gives quieter travellers an equal voice. Once the group has a winner, freeze the decision unless a material constraint changes.',
-          'The final plan should have a rough itinerary, realistic cost estimate, booking milestones and named owners. “Someone should check hotels” is not a task; “Aman compares three refundable hotels by Thursday” is.',
+          'Publish the decision rule before voting starts: most votes among the options that work for everyone, followed by a clear tie-break if needed. When the vote closes, record the winning dates, current estimate and assumptions in one place.',
+        ],
+      },
+      {
+        heading: 'Step 4: turn the vote into commitment',
+        paragraphs: [
+          'A vote means “I prefer this.” A commitment means “I am ready to proceed at these dates and this estimated cost.” Ask every traveller to confirm again before anyone takes on a non-refundable expense.',
+          'Set a commitment deadline and agree what happens when someone withdraws. If the group uses a deposit, decide who collects it, whether it is refundable and how it will be recorded. Fermat does not collect deposits or hold the group’s money.',
+        ],
+      },
+      {
+        heading: 'Step 5: give every booking a named owner',
+        paragraphs: [
+          'Turn the winning trip into concrete tasks for transport, accommodation, documents, insurance and activities. Every task needs one owner, one deadline and a link or note showing the latest status.',
+          '“Someone should check hotels” is not a task; “Aman compares three refundable hotels by Thursday” is. Travellers should verify live prices, names, baggage and cancellation terms directly with the provider before paying.',
+        ],
+      },
+      {
+        heading: 'Step 6: build a shared itinerary with breathing room',
+        paragraphs: [
+          'Create a day-by-day plan that shows arrival times, the group’s anchor activity, expected shared cost and any booking deadline. Leave deliberate free time so different energy levels do not turn the itinerary into an obligation.',
+          'Keep one shared version of the plan. If a booking or timing changes, update that version instead of relying on scattered group-chat messages.',
+        ],
+      },
+      {
+        heading: 'Step 7: run the final handoff before departure',
+        paragraphs: [
+          'A few days before the trip, confirm transport times, accommodation details, required documents, emergency contacts and who holds each booking reference. Make essential information available offline.',
+          'Agree how shared expenses will be logged and settled, then confirm the meeting point and first-day plan. The organiser should be able to step away without becoming the only person who knows what happens next.',
         ],
       },
     ],
@@ -98,7 +126,7 @@ export const guides: Guide[] = [
   },
   {
     slug: 'group-trip-budget-planner',
-    title: 'Group trip budget planner: build a budget everyone can live with',
+    title: 'Group trip budget planner for friends',
     eyebrow: 'Budget planning guide',
     description:
       'Plan a fair group travel budget across flights, stays, food, local transport and shared activities—without forcing friends to reveal personal finances.',
@@ -165,7 +193,7 @@ export const guides: Guide[] = [
   },
   {
     slug: 'trip-voting-app-for-friends',
-    title: 'How to vote on a trip with friends and actually reach a decision',
+    title: 'Trip voting app for friends',
     eyebrow: 'Group decision guide',
     description:
       'Use a fair destination-voting process that accounts for real dates, budgets and travel constraints—not just the loudest opinion in the group chat.',
@@ -225,7 +253,7 @@ export const guides: Guide[] = [
   },
   {
     slug: 'private-budget-group-trip-planning',
-    title: 'Private-budget group trip planning: coordinate without oversharing',
+    title: 'Private-budget group trip planning',
     eyebrow: 'Privacy-first planning guide',
     description:
       'Coordinate a trip across different budgets while keeping each traveller’s financial limit private and showing the group only feasible choices.',
@@ -367,7 +395,7 @@ export const guides: Guide[] = [
   },
   {
     slug: 'choose-a-group-trip-destination',
-    title: 'How to choose a group trip destination that works for everyone',
+    title: 'How to choose a group trip destination',
     eyebrow: 'Destination selection guide',
     description:
       'Choose a destination using date overlap, total cost, departure cities, travel requirements and group preferences instead of endless suggestions.',
@@ -432,7 +460,7 @@ export const guides: Guide[] = [
   },
   {
     slug: 'group-trip-planner-for-indian-friends',
-    title: 'Planning an international group trip with friends from India',
+    title: 'International group trips from India',
     eyebrow: 'India departure guide',
     description:
       'A planning framework for Indian friend groups coordinating different cities, passports, budgets, calendars and international travel requirements.',
