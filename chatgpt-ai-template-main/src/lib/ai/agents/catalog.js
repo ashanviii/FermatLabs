@@ -1,6 +1,6 @@
 const domain = require('../../collaborativeTrip');
 const { createHash } = require('node:crypto');
-const { fail, GOALS } = require('../contracts');
+const { fail, ALL_GOALS } = require('../contracts');
 
 function assertOrganizer(state, uid) {
   if (!state || state.ownerUid !== uid || state.members?.[uid]?.status !== 'approved') fail('FORBIDDEN', 'Only the trip organizer can use the assistant.', 403);
@@ -11,7 +11,7 @@ const fingerprint = (state) => createHash('sha256').update(JSON.stringify(state)
 
 function collectContext(state, uid, request) {
   assertOrganizer(state, uid);
-  if (!GOALS.includes(request.goal) || !Number.isInteger(request.day) || request.day < 0 || request.day > state.activePlan.itinerary.length) fail('INVALID_REQUEST', 'Choose an existing day and a supported goal.');
+  if (!ALL_GOALS.includes(request.goal) || !Number.isInteger(request.day) || request.day < 0 || request.day > state.activePlan.itinerary.length) fail('INVALID_REQUEST', 'Choose an existing day and a supported goal.');
   const catalog = domain.catalogActivities(state);
   const references = new Map();
   const activities = []; const busy = [];
@@ -32,7 +32,9 @@ function collectContext(state, uid, request) {
         groupCost: item.estimatedCost, tags: trusted.tags || [], candidates });
     }
   }
-  const context = { goal: request.goal, day: request.day, currency: state.activePlan.currency, activities, busy, seedVersion: state.activePlan.seedVersion || domain.seeds.version };
+  const context = { goal: request.goal, day: request.day, currency: state.activePlan.currency, activities, busy,
+    seedVersion: state.activePlan.seedVersion || domain.seeds.version,
+    ...(request.goal === 'custom' ? { instruction: request.instruction.trim() } : {}) };
   if (activities.length > 40 || busy.length > 100 || Buffer.byteLength(JSON.stringify(context)) > 32 * 1024) fail('CONTEXT_TOO_LARGE', 'This plan is too large for the assistant. Edit it manually for now.', 413);
   return { context, references, fingerprint: fingerprint(state) };
 }

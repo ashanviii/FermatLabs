@@ -64,9 +64,8 @@ function dateMillis(value) {
   return date.getTime();
 }
 
-function collectDestinationContext(state, place) {
+function collectPlanningContext(state) {
   assertServerOnly();
-  const destination = canonicalPlace(place);
   if (!plainObject(state) || !plainObject(state.members) || !plainObject(state.constraints) ||
     !Number.isInteger(state.expectedSize) || state.expectedSize < 2 || state.expectedSize > 20) invalidContext();
   const settings = settingsOf(state);
@@ -77,10 +76,11 @@ function collectDestinationContext(state, place) {
   if (roster.length !== state.expectedSize) throw new AIWorkflowError('ROSTER_INCOMPLETE', 'Approve the full trip roster before requesting destinations.', 409);
   if (roster.some(([uid, member]) => !plainObject(member) || !uid || member.uid !== uid || !Number.isSafeInteger(member.joinOrder) || member.joinOrder < 0)) invalidContext();
   roster.sort((left, right) => left[1].joinOrder - right[1].joinOrder);
-  const travellerIds = {};
+  const travellerIds = {}; const budgets = [];
   const travellers = roster.map(([uid, member], index) => {
     const constraint = state.constraints[uid];
     if (!completeDetails(constraint, settings.currency)) invalidContext();
+    budgets.push(constraint.budget);
     const consent = constraint.aiPlanningConsent ?? (member.demo === true ? true : undefined);
     if (consent !== true) throw new AIWorkflowError('AI_CONSENT_REQUIRED', 'Every real traveller must explicitly consent before departure cities and preferences are shared with the configured AI provider.', 409);
     const modes = constraint.transportModes === undefined && member.demo === true ? MODES : constraint.transportModes;
@@ -91,10 +91,42 @@ function collectDestinationContext(state, place) {
     travellerIds[ref] = uid;
     return { ref, departure: departureFor(constraint), transportModes: [...modes], interests: constraint.preferences.slice(0, 8), ...(member.demo === true ? { synthetic: true } : {}) };
   });
+  return { settings, days, travellers, travellerIds, budgets };
+}
+
+function collectDestinationContext(state, place) {
+  const destination = canonicalPlace(place);
+  const { settings, days, travellers, travellerIds } = collectPlanningContext(state);
   return {
     context: { destination: { name: destination.name, label: destination.label, countryCode: destination.countryCode }, currency: settings.currency,
       days, nights: days - 1, travelMonth: new Date(`${state.startDate}T00:00:00Z`).getUTCMonth() + 1, travellers },
     travellerIds,
+  };
+}
+
+function coarseBand(value) {
+  const step = 10 ** Math.max(0, Math.floor(Math.log10(Math.max(1, value))) - 1);
+  return { low: Math.floor(value / step) * step, high: Math.ceil(value / step) * step };
+}
+
+function collectDiscoveryContext(state) {
+  const { settings, days, travellers, budgets } = collectPlanningContext(state);
+  const interests = {};
+  const transportModes = {};
+  travellers.forEach((traveller) => {
+    traveller.interests.forEach((interest) => { interests[interest] = (interests[interest] || 0) + 1; });
+    traveller.transportModes.forEach((mode) => { transportModes[mode] = (transportModes[mode] || 0) + 1; });
+  });
+  const groupBudget = budgets.reduce((sum, budget) => sum + budget, 0);
+  return {
+    context: {
+      currency: settings.currency, days, nights: days - 1,
+      travelMonth: new Date(`${state.startDate}T00:00:00Z`).getUTCMonth() + 1,
+      groupSize: travellers.length, scope: settings.scope, homeCountry: settings.homeCountry,
+      coarseGroupBudget: coarseBand(groupBudget),
+      origins: travellers.map(({ departure }) => departure), interests, transportModes,
+    },
+    groupBudget,
   };
 }
 
@@ -198,4 +230,4 @@ async function generateDestinationDraft({ state, place, provider, draftId, now =
   };
 }
 
-module.exports = { collectDestinationContext, generateDestinationDraft };
+module.exports = { collectDestinationContext, collectDiscoveryContext, generateDestinationDraft };

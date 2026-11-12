@@ -89,6 +89,19 @@ test('development suggestions are validated and do not mutate the trip before co
   }
 });
 
+test('AI Labs custom and full-itinerary goals remain bounded to catalog operations', async () => {
+  const state = fixture(); const original = fingerprint(state);
+  const custom = { ...request('custom'), instruction: 'Make the day calmer after lunch.' };
+  const customResult = await runTripAgents(state, state.ownerUid, custom, development());
+  const itineraryResult = await runTripAgents(state, state.ownerUid, request('itinerary'), development());
+  for (const result of [customResult, itineraryResult]) {
+    assert.equal(result.preview.mode, 'development');
+    assert.ok(result.operations.every((operation) => ['replace', 'reschedule'].includes(operation.kind)));
+    assert.ok(result.preview.checks.includes('Allowed catalog activities'));
+  }
+  assert.equal(fingerprint(state), original);
+});
+
 test('proposal service calls model outside transactions, coalesces retries, and applies once', async () => {
   const state = fixture(); const firestore = memoryFirestore(state); const body = request();
   const inner = development(); let calls = 0;
@@ -438,6 +451,7 @@ function destinationRoute({ state = destinationFixture(), uid = state.ownerUid, 
     '@/lib/ai/providers': require('./providers'),
     '@/lib/ai/contracts': require('./contracts'),
     '@/lib/server/jsonRequest': require('../server/jsonRequest'),
+    '@/lib/ai/labsGate': require('./labsGate'),
     '@/lib/ai/destinations': { ...require('./destinations'), ...service },
   };
   vm.runInNewContext(compiled, { exports, process: { env }, Error,
@@ -449,11 +463,11 @@ test('destination route capabilities validate provider config without network an
   const incoming = { nextUrl: new URL('http://localhost/api/group-trips/destinations?tripId=trip-fixture') };
   const result = await destinationRoute().GET(incoming);
   assert.equal(result.status, 200);
-  assert.equal(JSON.stringify(result.body), JSON.stringify({ mode: 'groq', label: 'Groq destination drafts' }));
+  assert.equal(JSON.stringify(result.body), JSON.stringify({ mode: 'groq', label: 'Groq destination drafts', labs: false }));
   assert.equal(result.headers['Cache-Control'], 'no-store');
   const openAI = await destinationRoute({ env: { FERMAT_AI_PROVIDER: 'openai', OPENAI_API_KEY: 'synthetic-unit-test-key' } }).GET(incoming);
   assert.equal(openAI.status, 200);
-  assert.equal(JSON.stringify(openAI.body), JSON.stringify({ mode: 'openai', label: 'OpenAI destination drafts' }));
+  assert.equal(JSON.stringify(openAI.body), JSON.stringify({ mode: 'openai', label: 'OpenAI destination drafts', labs: false }));
   for (const env of [
     { FERMAT_AI_PROVIDER: 'disabled' },
     { FERMAT_AI_PROVIDER: 'development', GROQ_API_KEY: 'synthetic-unit-test-key' },

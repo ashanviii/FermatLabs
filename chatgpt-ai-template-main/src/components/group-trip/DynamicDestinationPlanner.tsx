@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { Check, RefreshCw, Sparkles, X } from 'lucide-react';
+import { Check, Compass, MapPin, RefreshCw, Sparkles, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -23,6 +23,8 @@ type DestinationDraft = {
   };
   myJourney: { mode: string; low: number; high: number; oneWayMinutes: number | null; status: 'unverified' } | null;
 };
+type CityIdea = { placeId: string; name: string; label: string; countryCode: string; reason: string; estimatedPerPerson: { low: number; high: number }; tags: string[]; withinCombinedBudget: boolean };
+type LocalDay = { city: { placeId: string; name: string; label: string; countryCode: string }; summary: string; caveats: string[]; ideas: { title: string; area: string; time: string; durationMinutes: number; estimatedPerPerson: { low: number; high: number }; tags: string[] }[]; currency: string; generatedAt: number; estimateNotice: string };
 
 class DestinationRequestError extends Error {
   constructor(message: string, readonly status: number) { super(message); }
@@ -52,7 +54,7 @@ export default function DynamicDestinationPlanner({ trip, disabled, onAdded }: {
   trip: any; disabled: boolean; onAdded: () => Promise<void>;
 }) {
   const { user } = useAuth();
-  const [capability, setCapability] = useState<{ mode: 'groq' | 'openai'; label: string } | null>(null);
+  const [capability, setCapability] = useState<{ mode: 'groq' | 'openai'; label: string; labs?: boolean } | null>(null);
   const [checking, setChecking] = useState(true);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -62,6 +64,10 @@ export default function DynamicDestinationPlanner({ trip, disabled, onAdded }: {
   const [confirmed, setConfirmed] = useState(false);
   const [invalidated, setInvalidated] = useState(false);
   const [reload, setReload] = useState(0);
+  const [labPending, setLabPending] = useState<'' | 'discover' | 'local'>('');
+  const [labError, setLabError] = useState('');
+  const [cityIdeas, setCityIdeas] = useState<{ suggestions: CityIdea[]; currency: string; generatedAt: number; estimateNotice: string } | null>(null);
+  const [localDay, setLocalDay] = useState<LocalDay | null>(null);
   const [clock, setClock] = useState(Date.now());
   const sequence = useRef(0);
   const operation = useRef<AbortController | null>(null);
@@ -92,7 +98,7 @@ export default function DynamicDestinationPlanner({ trip, disabled, onAdded }: {
   useEffect(() => {
     const controller = new AbortController();
     const current = ++sequence.current;
-    setChecking(true); setCapability(null); setError(''); setPending(''); setConfirmed(false);
+    setChecking(true); setCapability(null); setError(''); setPending(''); setConfirmed(false); setLabPending(''); setLabError(''); setCityIdeas(null); setLocalDay(null);
     setMessage(operation.current ? 'The trip changed. Generate a new draft using the latest details.' : '');
     operation.current?.abort(); operation.current = null;
     const timeout = setTimeout(() => controller.abort(), 12_000);
@@ -142,6 +148,30 @@ export default function DynamicDestinationPlanner({ trip, disabled, onAdded }: {
     }
   }
 
+  async function runLab(action: 'discover' | 'local') {
+    if (!user || !capability?.labs || labPending || pending || disabled || (action === 'local' && !selection.placeId)) return;
+    setLabPending(action); setLabError('');
+    if (action === 'discover') setCityIdeas(null); else setLocalDay(null);
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch('/api/group-trips/labs', {
+        method: 'POST', cache: 'no-store', signal: AbortSignal.timeout(30_000),
+        headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+        body: JSON.stringify({ action, tripId: trip.id, requestId: crypto.randomUUID(), ...(action === 'local' ? { placeId: selection.placeId } : {}) }),
+      });
+      const result = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(result?.error || 'AI Labs is unavailable.');
+      if (action === 'discover') {
+        if (!Array.isArray(result?.suggestions) || typeof result.currency !== 'string') throw new Error('AI Labs returned an incomplete city shortlist.');
+        setCityIdeas(result);
+      } else {
+        if (!Array.isArray(result?.ideas) || typeof result?.city?.placeId !== 'string') throw new Error('AI Labs returned an incomplete local-day plan.');
+        setLocalDay(result);
+      }
+    } catch (cause) { setLabError(cause instanceof Error ? cause.message : 'AI Labs is unavailable.'); }
+    finally { setLabPending(''); }
+  }
+
   async function add() {
     if (!draft || !allowed || disabled || pending || operation.current || !capability || !consented || !hasTransport || !confirmed || stale) return;
     if (Date.now() >= expiresAt) { setClock(Date.now()); setConfirmed(false); return; }
@@ -170,7 +200,7 @@ export default function DynamicDestinationPlanner({ trip, disabled, onAdded }: {
   }
 
   if (!allowed) return null;
-  const blocked = disabled || Boolean(pending);
+  const blocked = disabled || Boolean(pending) || Boolean(labPending);
   const money = (value: number | null) => value === null ? 'Not yet available' : formatMoney(value, draft!.assessment.currency);
   const budgetIncomplete = draft && (draft.assessment.missingTravelEstimates || draft.assessment.groupTotal === null || draft.assessment.myTotal === null);
   return (
@@ -183,8 +213,15 @@ export default function DynamicDestinationPlanner({ trip, disabled, onAdded }: {
       {message && <p className="type-small m-0 text-ink-muted" role="status">{message}</p>}
       {!checking && !capability && <Button variant="outline" icon={RefreshCw} disabled={blocked} onClick={() => setReload((value) => value + 1)}>Retry availability</Button>}
       {capability && <>
-        <p className="type-small m-0 text-ink-muted">AI drafts require each traveller's consent to send their departure city, travel month, interests and transport choices to {capability.mode === 'openai' ? 'OpenAI' : 'Groq'}. Budgets, names and passports stay private.</p>
+        <p className="type-small m-0 text-ink-muted">AI drafts require each traveller's consent to send their departure city, travel month, interests and transport choices to {capability.mode === 'openai' ? 'OpenAI' : 'Groq'}. Names, passports and individual budgets stay private.{capability.labs ? ' AI Labs sends only a rounded combined budget band for city and local suggestions.' : ''}</p>
         {(!consented || !hasTransport) && <Notice tone="warning">Your saved details need transport choices and permission to allow AI trip drafts before generating.</Notice>}
+        {capability.labs && <div className="rounded-2xl border border-brand-200 bg-brand-50/60 p-4 sm:p-5">
+          <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="type-caption m-0 font-semibold uppercase tracking-wide text-brand-700">AI Labs · private preview</p><h5 className="type-h3 m-0 mt-1">Find cities that fit the group</h5><p className="type-small m-0 mt-1 text-ink-muted">Uses a rounded combined budget band, trip length, origins and shared interests. No individual budget is sent.</p></div><Button variant="outline" icon={Compass} loading={labPending === 'discover'} disabled={blocked || !consented || !hasTransport} onClick={() => runLab('discover')}>Suggest cities</Button></div>
+          {labError && <div className="mt-3"><Notice tone="warning">{labError}</Notice></div>}
+          {cityIdeas && <div className="mt-4 grid gap-3 sm:grid-cols-2">{cityIdeas.suggestions.map((idea) => <button key={idea.placeId} type="button" disabled={blocked} onClick={() => { setSelection({ name: idea.label, placeId: idea.placeId }); setPreview(null); setLocalDay(null); }} className="min-w-0 rounded-xl border border-line bg-surface p-4 text-left transition hover:border-brand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 disabled:opacity-60">
+            <span className="type-body block font-semibold text-ink">{idea.label}</span><span className="type-small mt-1 block text-ink-muted">{idea.reason}</span><span className="type-caption mt-2 block text-ink-muted">{formatMoney(idea.estimatedPerPerson.low, cityIdeas.currency)}–{formatMoney(idea.estimatedPerPerson.high, cityIdeas.currency)} per person · {idea.withinCombinedBudget ? 'within combined budget estimate' : 'may exceed combined budget'}</span>
+          </button>)}</div>}
+        </div>}
         <Field label="Destination">
           <DepartureCitySearch
             key={trip.id}
@@ -195,6 +232,8 @@ export default function DynamicDestinationPlanner({ trip, disabled, onAdded }: {
             onSelect={(city) => { setSelection({ name: city.departureCity, placeId: city.departurePlaceId }); setPreview(null); setConfirmed(false); setError(''); setMessage(''); }}
           />
         </Field>
+        {capability.labs && <div className="flex flex-wrap items-center gap-3"><Button variant="outline" icon={MapPin} loading={labPending === 'local'} disabled={blocked || !selection.placeId || !consented || !hasTransport} onClick={() => runLab('local')}>Plan a local day here</Button><span className="type-caption text-ink-muted">Useful for same-city outings, cafés and affordable group plans.</span></div>}
+        {localDay && <div className="space-y-3 rounded-2xl border border-line bg-surface-muted p-4 sm:p-5"><div><p className="type-caption m-0 font-semibold text-brand-700">Local-day preview · {localDay.city.label}</p><p className="type-body m-0 mt-1">{localDay.summary}</p></div><ol className="m-0 grid list-none gap-2 p-0">{localDay.ideas.map((idea) => <li key={`${idea.time}-${idea.title}`} className="rounded-xl bg-surface px-3 py-3"><p className="type-small m-0 font-semibold">{idea.time} · {idea.title}</p><p className="type-caption m-0 mt-1 text-ink-muted">{idea.area} · {idea.durationMinutes} min · {formatMoney(idea.estimatedPerPerson.low, localDay.currency)}–{formatMoney(idea.estimatedPerPerson.high, localDay.currency)} per person</p></li>)}</ol><Notice tone="warning">{localDay.estimateNotice}</Notice></div>}
         <Button icon={Sparkles} loading={pending === 'generate'} disabled={blocked || !selection.placeId || !consented || !hasTransport} onClick={generate}>{draft ? 'Regenerate draft' : 'Generate draft'}</Button>
       </>}
       {draft && <div className="min-w-0 space-y-4 border-t border-line pt-5" aria-live="polite">
