@@ -57,6 +57,11 @@ test('OpenAI uses the fixed Responses endpoint and strict Structured Outputs', a
     assert.equal(body.text.format.name, 'trip_edits');
     assert.equal(body.text.format.strict, true);
     assert.equal(body.text.format.schema.additionalProperties, false);
+    assert.equal(body.text.format.schema.properties.operations.maxItems, 1);
+    const replace = body.text.format.schema.properties.operations.items.anyOf.find((choice) =>
+      choice.properties.kind.enum.includes('replace'));
+    assert.deepEqual(replace.properties.activityRef.enum, ['activity-1']);
+    assert.deepEqual(replace.properties.candidateRef.enum, ['candidate-1']);
     assert.equal(body.input, JSON.stringify(input));
     assert.doesNotMatch(body.instructions, /private-context-text|private-system-text/);
     assert.ok(Buffer.byteLength(options.body) <= 32 * 1024);
@@ -66,6 +71,27 @@ test('OpenAI uses the fixed Responses endpoint and strict Structured Outputs', a
     maxTokens: 9000, system: 'private-system-text', endpoint: 'https://example.invalid',
   }), { operations: [] });
   assert.equal(calls, 1);
+});
+
+test('OpenAI edit schema prevents cross-activity candidate references and unsupported goal operations', async () => {
+  const input = context();
+  input.goal = 'food';
+  input.activities.push({
+    ref: 'activity-2', day: 2, title: 'Park', time: '12:00', durationMinutes: 60,
+    groupCost: 40, tags: ['nature'],
+    candidates: [{ ref: 'candidate-2', title: 'Lunch', durationMinutes: 60, groupCost: 30, tags: ['food'] }],
+  });
+  const provider = createOpenAIProvider(openAIEnv, { fetchImpl: async (url, options) => {
+    const schema = JSON.parse(options.body).text.format.schema;
+    const choices = schema.properties.operations.items.anyOf;
+    assert.equal(schema.properties.operations.maxItems, 1);
+    assert.ok(choices.every((choice) => choice.properties.kind.enum[0] === 'replace'));
+    assert.deepEqual(choices.map((choice) => [
+      choice.properties.activityRef.enum[0], choice.properties.candidateRef.enum[0],
+    ]), [['activity-1', 'candidate-1'], ['activity-2', 'candidate-2']]);
+    return responseEnvelope({ operations: [] });
+  } });
+  await provider.generate(input);
 });
 
 test('OpenAI provider factory selects only explicit OpenAI configuration', async () => {
